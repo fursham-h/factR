@@ -1,10 +1,10 @@
 context("Test resizeTranscript function")
 
 # setup GRanges
-gr1 <- GRanges(seqnames = "chr1", strand = c("+", "+", "+"),
+gr1 <- GenomicRanges::GRanges(seqnames = "chr1", strand = c("+", "+", "+"),
               ranges = IRanges(start = c(1,500,1000), 
                                end = c(100,600,1100)))
-gr2 <- GRanges(seqnames = "chr1", strand = c("-", "-", "-"),
+gr2 <- GenomicRanges::GRanges(seqnames = "chr1", strand = c("-", "-", "-"),
                ranges = IRanges(start = c(1,500,1000), 
                                 end = c(100,600,1100)))
 

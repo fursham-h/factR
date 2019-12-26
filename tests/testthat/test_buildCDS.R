@@ -1,5 +1,6 @@
 context("Test buildCDS function")
 
+library(BSgenome.Mmusculus.UCSC.mm10)
 out1 = buildCDS(query_exons, ref_cds, Mmusculus, q2rcovs)
 
 test_that("Test the structure of outputs", {
