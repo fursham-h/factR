@@ -1,0 +1,19 @@
+---
+title: "pondeR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ponder}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(pondeR)
+```

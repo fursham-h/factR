@@ -1,0 +1,42 @@
+Package: factR
+Title: What the Package Does (one line, title case)
+Version: 0.0.0.9000
+Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Description: What the package does (one paragraph).
+Depends: R (>= 3.4.0)
+biocViews:
+Imports:
+    BiocGenerics,
+    Biostrings,
+    BSgenome,
+    doParallel,
+    dplyr,
+    foreach,
+    GenomicFeatures,
+    GenomeInfoDb,
+    GenomicRanges,
+    IRanges,
+    parallel,
+    purrr,
+    rtracklayer,
+    tidyr,
+    bio3d,
+    signalHsmm,
+    methods,
+    BiocParallel,
+    S4Vectors,
+    data.table,
+    rlang,
+    tibble
+License: file LICENSE
+Encoding: UTF-8
+LazyData: true
+ByteCompile: true
+RoxygenNote: 7.0.2
+Suggests: 
+    BSgenome.Mmusculus.UCSC.mm10,
+    testthat,
+    wiggleplotr,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

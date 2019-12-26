@@ -1,0 +1,11 @@
+####### ToDos ####### 
+
+- Differential AS and domain comparison
+
+- test different input types. 
+  - GTFs from Cufflinks, Stringtie, denovo assemblers(Trinity etc)
+  -AnnHub gtfs, Ensembl gtfs, custom fasta
+
+- Package function to identify alternative segments. See hmmer for ideas on output 
+- Simplify variable names
+- Run Checks
