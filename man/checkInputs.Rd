@@ -2,7 +2,7 @@
 % Please edit documentation in R/checkInputs.R
 \name{checkInputs}
 \alias{checkInputs}
-\title{Title}
+\title{Check input files for workflow}
 \usage{
 checkInputs(input, ref, fasta)
 }
@@ -14,5 +14,5 @@ checkInputs(input, ref, fasta)
 \item{fasta}{BSgenome or Biostrings object containing genomic sequence}
 }
 \description{
-Title
+Check input files for workflow
 }

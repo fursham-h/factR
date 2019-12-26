@@ -21,48 +21,15 @@ New Description
     * *Disordered domain prediction*
   * *Compare alternative spliced segments between isoforms*
   * *Compare biological significance between mRNA isoforms*
-  
-See vignette for full instructions on how to get started
 
 ## Installation
 ```r
 # install.packages("devtools")
-devtools::install_github("fursham-h/ponder")
+devtools::install_github("fursham-h/factR")
 ```
 
-## Example
-pondeR is packaged with sample GenomicRangesList objects containing 
-exon and cds ranges of 4 transcripts from the same gene
-```r
-library(pondeR)
-
-names(query_exons[1])
-# [1] "transcript1" "transcript2" "transcript3" "transcript4"
-names(query_cds[1])
-# [1] "transcript1" "transcript2" "transcript3" "transcript4"
-
-```
-
-Transcript architecture of these transcripts can be visualized 
-using _wiggleplotr_ package
-```r
-#if (!requireNamespace("BiocManager", quietly=TRUE))
-#    install.packages("BiocManager")
-#BiocManager::install("wiggleplotr")
-
-library(wiggleplotr)
-plotTranscripts(query_exons, query_cds)
-```
-<img src="wiggleplot_query.png" width="600">
-
-Run predictNMD with exon and cds information as input
-```r
-predictNMD(query_exons, query_cds)
-## A tibble: 1 x 6
-#  tx          is_NMD dist_to_lastEJ num_of_down_EJs dist_to_downEJs threeUTRlength
-#  <chr>       <lgl>           <int>           <dbl> <chr>                    <dbl>
-#1 transcript3 TRUE              361               3 66,283,361                 641
-```
+## Getting started
+See vignette for full instructions on how to get started
 
 ## Acknowledgements
 * [Kaur Alasoo](https://github.com/kauralasoo)

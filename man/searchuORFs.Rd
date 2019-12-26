@@ -36,7 +36,7 @@ Search coding mRNAs for upstream and overlapping ORFs
 
 library(BSgenome.Mmusculus.UCSC.mm10)
 searchuORFs(query_exons, query_cds, Mmusculus)
-searchuORFs(query_exons, query_cds, Mmusculus, append = T)
+searchuORFs(query_exons, query_cds, Mmusculus, append = TRUE)
 
 # To separate exons and cds GRangesList into differebt objects
 unpack[query_exons_uORF, query_cds_uORF] = searchuORFs(query_exons, query_cds, Mmusculus)
