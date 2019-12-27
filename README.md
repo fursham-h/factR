@@ -1,23 +1,18 @@
 # factR
 
-## Description
-
-High-throughout RNA sequencing have unveiled a repertoire of *de novo* RNA isoform. This it typically achieved 
-by assembling genome-aligned reads into contiguous transcripts using current state of the art assemblers (StringTie, Trinity). 
-
+factR is a robust and easy-to-use R package for annotating custom-assembled transcripts (GTF/GFF3) guided by a reference annotation. 
 
 ## Features
-* Scans for NMD-inducing features on coding RNAs from various sources:
-  * Most transcript annotation databases
-  * Custom transcript annotation (GTF) generated from RNA-seq experiemnts
-* Constructs coding region (CDS) on custom-generated GTF annotation using reference CDS as guide
-* Extract features of coding proteins. Currently support:
-  * Protein domains prediction
-  * Signal peptide prediction
-* Matches chromosome levels and gene_id levels between query and reference GRanges object
-* Search coding mRNAs for uORFs and overlapping ORFs
+* Core features 
+* Constructs coding (CDS) information for each transcript using a reference annotation as guide
+* Searches coding transcripts for protein features
+* Scans coding transcripts for NMD-inducing features
+* Reanalyzes coding transcripts for upstream and overlapping ORFs
+* Secondary features 
+* Matches chromosome levels and gene_id levels between custom gtf and reference annotation 
+* Calculates percent base coverage between two transcripts or two list-of-transcripts
 * Resizes start and end of transcript-organized GRanges object
-* *In development*
+* *In development features*
   * *Extract more features to be predicted from translated proteins*
     * *Transmembrane domain prediction*
     * *Disordered domain prediction*
@@ -27,11 +22,13 @@ by assembling genome-aligned reads into contiguous transcripts using current sta
 ## Installation
 ```r
 # install.packages("devtools")
-devtools::install_github("fursham-h/factR")
+devtools::install_github("fursham-h/factR"
 ```
 
+## What you need
+
 ## Getting started
-See vignette for full instructions on how to get started
+See vignette for full instructions on how to 
 
 ## Acknowledgements
 * [Kaur Alasoo](https://github.com/kauralasoo)
