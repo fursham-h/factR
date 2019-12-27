@@ -1,5 +1,7 @@
 ####### ToDos ####### 
 
+- getCoverages from GRanges object than GRangesList. various denomiator types
+- Consider combining exons and cds into a GRanges rather than making GTF
 - Differential AS and domain comparison
 
 - test different input types. 
@@ -9,3 +11,4 @@
 - Package function to identify alternative segments. See hmmer for ideas on output 
 - Simplify variable names
 - Run Checks
+

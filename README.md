@@ -1,23 +1,19 @@
 # factR
 
-factR is a robust and easy-to-use R package for annotating custom-assembled transcripts (GTF/GFF3) guided by a reference annotation. 
+factR is a robust and easy-to-use R package for post-processing of custom-assembled
+transcripts (GTF/GFF3)
 
 ## Features
 * Core features 
-* Constructs coding (CDS) information for each transcript using a reference annotation as guide
-* Searches coding transcripts for protein features
-* Scans coding transcripts for NMD-inducing features
-* Reanalyzes coding transcripts for upstream and overlapping ORFs
-* Secondary features 
-* Matches chromosome levels and gene_id levels between custom gtf and reference annotation 
-* Calculates percent base coverage between two transcripts or two list-of-transcripts
-* Resizes start and end of transcript-organized GRanges object
-* *In development features*
-  * *Extract more features to be predicted from translated proteins*
-    * *Transmembrane domain prediction*
-    * *Disordered domain prediction*
-  * *Compare alternative spliced segments between isoforms*
-  * *Compare biological significance between mRNA isoforms*
+  1. Constructs coding (CDS) information for each transcript entry using a reference annotation as guide
+  2. Analyzes coding transcripts for protein-coding features
+  3. Scans coding transcripts for NMD-inducing features
+  4. Reanalyzes coding transcripts for upstream and overlapping ORFs
+* Supporting features 
+  1. Matches chromosome levels of query GTF/object to a reference annotation
+  2. Matches gene_id and gene_names of query GTF to a reference annotation
+  3. Calculates percent base coverage between two transcripts or two list-of-transcripts
+  4. Resizes start and end of multi-exon GRanges transcript
 
 ## Installation
 ```r
@@ -26,9 +22,16 @@ devtools::install_github("fursham-h/factR"
 ```
 
 ## What you need
+1. Assembled transcripts (GTF/GFF3) imported as GenomicRanges object
+2. Reference annotation as GenomicRanges object. Obtained from:
+  * Resource database including AnnotationHub, ensembldb, TxDb
+  * Import of reference annotation assembly (GTF/GFF3)
+3. Genomic sequence. Obtained from:
+  * Resource database including BSGenome, AnnotationHub
+  * Import of genomic fasta file
 
 ## Getting started
-See vignette for full instructions on how to 
+See vignette for full instructions on how to make the most of your assembled transcripts
 
 ## Acknowledgements
 * [Kaur Alasoo](https://github.com/kauralasoo)

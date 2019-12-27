@@ -1,0 +1,44 @@
+---
+title: "Using factR"
+author: "Fursham Hamid"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Using factR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, include=FALSE}
+#Silent import of all dependencies
+
+```
+
+## Introduction
+## Getting started
+### How to install
+To install factR, open R and type:
+```{r, eval = FALSE}
+install.packages("devtools")
+devtools::install_github("fursham-h/factR")
+```
+
+### What you need
+#### Assembled transcripts
+#### Reference annotation
+#### Genomic sequence
+```{r setup}
+
+```
+
+## Workflow
+### Preparing input objects
