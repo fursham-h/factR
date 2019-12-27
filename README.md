@@ -24,11 +24,11 @@ devtools::install_github("fursham-h/factR"
 ## What you need
 1. Assembled transcripts (GTF/GFF3) imported as GenomicRanges object
 2. Reference annotation as GenomicRanges object. Obtained from:
-  * Resource database including AnnotationHub, ensembldb, TxDb
-  * Import of reference annotation assembly (GTF/GFF3)
+    * Resource database including AnnotationHub, ensembldb, TxDb
+    * Import of reference annotation assembly (GTF/GFF3)
 3. Genomic sequence. Obtained from:
-  * Resource database including BSGenome, AnnotationHub
-  * Import of genomic fasta file
+    * Resource database including BSGenome, AnnotationHub
+    * Import of genomic fasta file
 
 ## Getting started
 See [vignette](https://htmlpreview.github.io/?https://github.com/fursham-h/factR/blob/master/vignettes/factR.html) for full instructions on how to make the most of your assembled transcripts
