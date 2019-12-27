@@ -31,7 +31,7 @@ devtools::install_github("fursham-h/factR"
   * Import of genomic fasta file
 
 ## Getting started
-See vignette for full instructions on how to make the most of your assembled transcripts
+See [vignette](https://htmlpreview.github.io/?https://github.com/fursham-h/factR/blob/master/vignettes/factR.html) for full instructions on how to make the most of your assembled transcripts
 
 ## Acknowledgements
 * [Kaur Alasoo](https://github.com/kauralasoo)

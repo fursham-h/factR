@@ -42,3 +42,6 @@ devtools::install_github("fursham-h/factR")
 
 ## Workflow
 ### Preparing input objects
+###
+
+## Other exported functions
