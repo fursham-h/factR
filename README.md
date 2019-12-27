@@ -2,7 +2,9 @@
 
 ## Description
 
-New Description
+High-throughout RNA sequencing have unveiled a repertoire of *de novo* RNA isoform. This it typically achieved 
+by assembling genome-aligned reads into contiguous transcripts using current state of the art assemblers (StringTie, Trinity). 
+
 
 ## Features
 * Scans for NMD-inducing features on coding RNAs from various sources:
