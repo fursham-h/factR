@@ -59,7 +59,7 @@ matchGeneIDs <- function(query, ref,
   gene_id <- transcript_id <- matched <- match_level <- appended_ens_id <- NULL
   basic_gene_id <- type <- seqnames <- strand <- gene_name <- ref_gene_name <- NULL
   # testing and matching gene_ids
-  message("Checking and matching gene_ids...")
+  #message("Checking and matching gene_ids...")
 
   # prepare a df with a list of gene_ids found in reference
   ref.genelist <- ref %>%
@@ -77,16 +77,17 @@ matchGeneIDs <- function(query, ref,
 
   # count number of non standard ID before correction
   nonstand_before <- query %>%
-    dplyr::distinct(transcript_id, .keep_all = TRUE) %>%
+    dplyr::distinct(gene_id, .keep_all = TRUE) %>%
     dplyr::filter(is.na(matched)) %>%
     nrow()
+  message(sprintf("Number of mismatched gene_ids found: %s", nonstand_before))
 
   # Matching function 1: replace primary_gene_id with secondary_gene_id, IF both args are provided
   if (!is.null(primary_gene_id) & !is.null(secondary_gene_id)) {
 
     # count number of non-standard ids before matching
     countsbefore <- query %>%
-      dplyr::distinct(transcript_id, .keep_all = TRUE) %>%
+      dplyr::distinct(gene_id, .keep_all = TRUE) %>%
       dplyr::filter(is.na(matched)) %>%
       nrow()
 
@@ -123,13 +124,13 @@ matchGeneIDs <- function(query, ref,
 
       # count number of non-standard ids after matching
       countsafter <- query %>%
-        dplyr::distinct(transcript_id, .keep_all = TRUE) %>%
+        dplyr::distinct(gene_id, .keep_all = TRUE) %>%
         dplyr::filter(is.na(matched)) %>%
         nrow()
 
       # report number of IDs corrected
       message(sprintf(
-        "-> %s transcripts corrected for gene ids",
+        "-> %s gene_ids matched",
         (countsbefore - countsafter)
       ))
     }
@@ -141,7 +142,7 @@ matchGeneIDs <- function(query, ref,
 
     # count number of non-standard ids before matching
     countsbefore <- query %>%
-      dplyr::distinct(transcript_id, .keep_all = TRUE) %>%
+      dplyr::distinct(gene_id, .keep_all = TRUE) %>%
       dplyr::filter(is.na(matched)) %>%
       nrow()
 
@@ -186,14 +187,14 @@ matchGeneIDs <- function(query, ref,
 
       # count number of non-standard ids after matching
       countsafter <- query %>%
-        dplyr::distinct(transcript_id, .keep_all = TRUE) %>%
+        dplyr::distinct(gene_id, .keep_all = TRUE) %>%
         dplyr::filter(is.na(matched)) %>%
         nrow()
 
       # print out statistics of the match
       #   or print out warning if none of the genes were matched
       if (countsbefore > countsafter) {
-        message(sprintf("--> %s transcripts corrected for gene ids", (countsbefore - countsafter)))
+        message(sprintf("--> %s gene_ids matched", (countsbefore - countsafter)))
       } else {
         anyEnsid <- query %>%
           dplyr::select(gene_id) %>%
@@ -204,7 +205,7 @@ matchGeneIDs <- function(query, ref,
         if (anyEnsid == TRUE) {
           message("--> All ensembl gene ids have been matched")
         } else {
-          warnLog("--> No ensembl gene ids found in query")
+          message("--> No ensembl gene ids found in query")
         }
       }
     }
@@ -215,7 +216,7 @@ matchGeneIDs <- function(query, ref,
 
   # count number of unmatched ids before matching
   countsbefore <- query %>%
-    dplyr::distinct(transcript_id, .keep_all = TRUE) %>%
+    dplyr::distinct(gene_id, .keep_all = TRUE) %>%
     dplyr::filter(is.na(matched)) %>%
     nrow()
 
@@ -255,13 +256,13 @@ matchGeneIDs <- function(query, ref,
 
     # count number of unmatched ids after matching
     countsafter <- query %>%
-      dplyr::distinct(transcript_id, .keep_all = TRUE) %>%
+      dplyr::distinct(gene_id, .keep_all = TRUE) %>%
       dplyr::filter(is.na(matched)) %>%
       nrow()
 
 
     # report statistics of the match
-    message(sprintf("---> %s transcripts corrected for gene ids", (countsbefore - countsafter)))
+    message(sprintf("---> %s gene_id matched", (countsbefore - countsafter)))
   }
 
 
@@ -274,35 +275,39 @@ matchGeneIDs <- function(query, ref,
       5, match_level
     )) %>%
     dplyr::select(-matched)
-
-  if ("gene_name" %in% names(query) & "gene_name" %in% names(S4Vectors::mcols(ref))) {
+  
+  if ("gene_name" %in% names(S4Vectors::mcols(ref))) {
     ref.genelist.1 <- ref %>%
       as.data.frame() %>%
       dplyr::select(gene_id, ref_gene_name = gene_name) %>%
       dplyr::distinct()
-
-    query <- query %>%
-      dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
-      dplyr::mutate(gene_name = ifelse(match_level != 5 & is.na(gene_name),
-        ref_gene_name, gene_name
-      )) %>%
-      dplyr::select(-ref_gene_name)
-  } else {
-    query <- query %>%
-      dplyr::mutate(gene_name = NA)
+    
+    if ("gene_name" %in% names(query)) {
+      query <- query %>%
+        dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
+        dplyr::mutate(gene_name = ifelse(match_level != 5 & is.na(gene_name),
+                                         ref_gene_name, gene_name
+        )) %>%
+        dplyr::select(-ref_gene_name)
+    } else {
+      query <- query %>%
+        dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
+        dplyr::mutate(gene_name = ref_gene_name) %>%
+        dplyr::select(-ref_gene_name)
+    }
   }
 
   # report pre-testing analysis and return query
   nonstand_after <- query %>%
-    dplyr::distinct(transcript_id, .keep_all = TRUE) %>%
+    dplyr::distinct(gene_id, .keep_all = TRUE) %>%
     dplyr::filter(match_level == 5) %>%
     nrow()
   corrected_ids <- nonstand_before - nonstand_after
 
   message(sprintf("Total gene_ids corrected: %s", corrected_ids))
-  message(sprintf("Remaining number of non-standard gene_ids: %s", nonstand_after))
+  message(sprintf("Remaining number of mismatched gene_ids: %s", nonstand_after))
   if (nonstand_after > 0) {
-    warnLog("Transcripts with non-standard gene_ids will be skipped from analysis")
+    #warnLog("Transcripts with non-standard gene_ids will be skipped from analysis")
   }
 
   query <- GenomicRanges::makeGRangesFromDataFrame(query, keep.extra.columns = TRUE)
