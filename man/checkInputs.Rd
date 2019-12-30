@@ -4,10 +4,10 @@
 \alias{checkInputs}
 \title{Check input files for workflow}
 \usage{
-checkInputs(input, ref, fasta)
+checkInputs(query, ref, fasta)
 }
 \arguments{
-\item{input}{GRanges object containing imported query GTF data}
+\item{query}{GRanges object containing imported query GTF data}
 
 \item{ref}{GRanges object containing reference GTF data}
 

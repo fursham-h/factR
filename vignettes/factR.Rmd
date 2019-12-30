@@ -2,46 +2,272 @@
 title: "Using factR"
 author: "Fursham Hamid"
 date: "`r Sys.Date()`"
-output: 
-  rmarkdown::html_vignette:
-    toc: true
-vignette: >
-  %\VignetteIndexEntry{Using factR}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    number_sections: true
+    toc_depth: 3
 ---
 
-```{r, include = FALSE}
+
+```{r setup, echo=FALSE, cache=FALSE}
+## Global options
+options(max.print="75")
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
-)
+  comment = "#>")
+knitr::opts_knit$set(width=75)
 ```
 
-```{r, include=FALSE}
-#Silent import of all dependencies
 
+```{r silentload, include=FALSE}
+#Silent load all dependencies for vignette
+library(factR)
+library(BSgenome.Mmusculus.UCSC.mm10)
+library(wiggleplotr)
+library(GenomicFeatures)
+library(dplyr)
 ```
 
-## Introduction
-## Getting started
-### How to install
+# Introduction
+Briefly describe the current problem and how factR solves it
+
+# Getting started
+
+## How to install
 To install factR, open R and type:
-```{r, eval = FALSE}
+```{r install.factR, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("fursham-h/factR")
 ```
 
-### What you need
-#### Assembled transcripts
-#### Reference annotation
-#### Genomic sequence
-```{r setup}
+## What you need
 
+### Query transcript assembly
+
+Transcript assembly programs typically outputs a GTF/GFF3 file containing transcript and exon coordinates, as well as attributes for each entry. It is mandatory that your assembly contain *gene_id* and *transcript_id* attributes.
+
+Query GTF file have to be imported into R and parsed into a GenomicRanges object. 
+To do so, run:
+```{r load,query, eval = FALSE}
+# install rtracklayer if not yet installed
+BiocManager::install("rtracklayer")
+
+# import gtf file
+library(rtracklayer)
+query_gtf <- import('path/to/your.gtf')
 ```
 
-## Workflow
-### Preparing input objects
-###
+### Reference annotation
 
-## Other exported functions
+
+Reference transcript annotation serves as a guide in the construction of query CDS. We strongly recommend using transcript annotation in GTF/GFF3 format for the workflow. This will facilitate matching of gene families between query and reference. (advanced user? see section....)
+
+Reference GTF annotation can be acquired from the Annotation Hub database in R or downloaded locally from data server website via FTP. For the latter, the GTF file have to be imported into R and parsed into a GenomicRanges object. 
+
+Here, we will describe three ways to obtain mouse GRCm38 annotation:
+
+1. Gencode annotation from Annotation Hub database
+```{r load.gencode, eval = FALSE}
+# install package if not yet installed
+BiocManager::install("AnnotationHub")
+
+# query database for mouse gencode basic annotation
+library(AnnotationHub)
+ah <- AnnotationHub()
+query(ah, c('Mus musculus', 'gencode', 'gff', 'basic'))
+#AnnotationHub with 2 records
+## snapshotDate(): 2019-05-02 
+## $dataprovider: Gencode
+## $species: Mus musculus
+## $rdataclass: GRanges
+## additional mcols(): taxonomyid, genome, description, coordinate_1_based, maintainer,
+##   rdatadateadded, preparerclass, tags, rdatapath, sourceurl, sourcetype 
+## retrieve records with, e.g., 'object[["AH49547"]]' 
+#
+#            title                                                    
+#  AH49547 | gencode.vM6.basic.annotation.gff3.gz                     
+#  AH49549 | gencode.vM6.chr_patch_hapl_scaff.basic.annotation.gff3.gz
+
+# retrieve id 'AH49547'
+ref_gtf <- ah[['AH49547']]
+```
+
+2. Ensembl annotation from Annotation Hub database
+```{r load.ensembl, eval = FALSE}
+# Load annotation hub and query database for ensembl annotation as in method 1 above.
+
+# retrieve latest GRCm38 annotation from ensembl
+ref_gtf <- ah[['AH60127']]
+```
+
+3. Import locally downloaded GTF annotation into R
+```{r load.localref, eval = FALSE}
+# install rtracklayer if not yet installed
+BiocManager::install("rtracklayer")
+
+# import reference gtf file
+library(rtracklayer)
+query_gtf <- import('path/to/reference.gtf')
+```
+
+
+### Genomic sequence
+
+Genomic DNA sequence is required for determining open-reading frames and for *in silico* translation of  query transcripts. Here, we describe three ways in obtaining genomic sequence for mouse GRCm38 assembly:
+
+1. BSgenome sequence object from UCSC
+```{r load.BSgenome, eval = FALSE}
+# install GRCm38 sequence object and rename for convenience
+BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
+library(BSgenome.Mmusculus.UCSC.mm10)
+Mmusculus <- BSgenome.Mmusculus.UCSC.mm10
+```
+
+2. TwoBit fasta sequence from Annotation Hub
+```{r load.fastaAH, eval = FALSE}
+# install package if not yet installed
+BiocManager::install("AnnotationHub")
+
+# query database for mouse gencode basic annotation
+library(AnnotationHub)
+ah <- AnnotationHub()
+query(ah, c("Mus musculus", "release-91", 'fasta', 'GRCm38'))
+#AnnotationHub with 5 records
+## snapshotDate(): 2019-05-02 
+## $dataprovider: Ensembl
+## $species: Mus musculus
+## $rdataclass: TwoBitFile
+## additional mcols(): taxonomyid, genome, description, coordinate_1_based, maintainer,
+##   rdatadateadded, preparerclass, tags, rdatapath, sourceurl, sourcetype 
+## retrieve records with, e.g., 'object[["AH60491"]]' 
+#
+#            title                                           
+#  AH60491 | Mus_musculus.GRCm38.cdna.all.2bit               
+#  AH60492 | Mus_musculus.GRCm38.dna.primary_assembly.2bit   
+#  AH60493 | Mus_musculus.GRCm38.dna_rm.primary_assembly.2bit
+#  AH60494 | Mus_musculus.GRCm38.dna_sm.primary_assembly.2bit
+#  AH60495 | Mus_musculus.GRCm38.ncrna.2bit  
+
+# retrieve id 'AH49547'
+Mmusculus <- ah[['AH60492']]
+```
+
+3. Import local FASTA genome sequence file
+```{r load.localfasta, eval = FALSE}
+# install Biostrings package if not yet installed
+BiocManager::install("Biostrings")
+
+# load package and import fasta file as a DNAStringSet
+library(Biostrings)
+Mmusculus <- readDNAStringSet('path/to/fasta')
+```
+
+Note: when using DNA FASTA from Ensembl, do check header lines for entry names. If long names are given (eg. 1 dna:chromosome chromosome:GRCm38:1:1:195471971:1 REF), you would need to convert them to short names in order to have consistent sequence levels. This can be done by running the following:
+
+```{r convert.fastaheader, eval = FALSE}
+# install purrr and stringr packages if not yet installed
+install.packages('purrr', 'stringr')
+
+# load package and import fasta file as a DNAStringSet
+library(purrr)
+library(stringr)
+names(Mmusculus) <- str_split(seqlevels(Mmusculus), " ") %>% map_chr(`[`, 1)
+```
+
+
+# Example workflow
+
+This section will describe the workflow to analyze a sample GTF query.
+
+To run the code examples shown in this workflow, we need to load the following packages:
+```{r load.dep.workflow, eval = FALSE}
+library(factR)
+library(BSgenome.Mmusculus.UCSC.mm10)
+library(wiggleplotr)
+library(GenomicFeatures)
+library(dplyr)
+```
+
+**Query:** 
+factR package contains a sample assembled GTF imported as a GRanges object. The assembly was constructed from a mouse dataset and contain *transcript* and *exon* descriptions of 4 transcript isoforms from the same parent gene. Gene and transcript IDs have been given generic names to....
+
+```{r checkquery}
+# inspect query object
+head(query_gtf)
+
+# list out transcript_id and gene_id names
+unique(query_gtf$transcript_id)
+
+unique(query_gtf$gene_id)
+```
+
+We can quickly visualize the exon structure of these query transcripts using the *wiggleplotr* package
+```{r viewquery}
+# prepare a list of exons by transcript
+query_exons <- split(query_gtf[query_gtf$type == 'exon'], 
+                     as.factor(unique(query_gtf$transcript_id)))
+
+# list out transcript_id and gene_id names
+plotTranscripts(query_exons)
+```
+
+**Reference:** 
+For our reference annotation, we will be using a subset of GRCm38 gencode reference annotation which contain basic transcripts from the same gene family as our query gene. Acquisition of this annotation have been described in section 2.2.2.1.
+```{r viewref}
+# inspect reference object
+head(ref_gtf)
+
+# list out transcript_id and gene_id names
+unique(ref_gtf$transcript_id)
+
+unique(ref_gtf$gene_id)
+```
+
+**Genome:** 
+Lastly, we will be using a GRCm38 genome sequence object from BSgenome
+```{r loadfasta}
+Mmusculus <- BSgenome.Mmusculus.UCSC.mm10
+```
+
+## Check and rectify input objects for cross-compatibility
+
+Before running the core functions of factR, we have to ensure that the mandatory input objects are cross-compatible for the analysis. Two key features that has to be consistent among the inputs include:
+
+1. Chromosome ID (seqlevels). 
+This is required for many downstream analyses, including extraction of transcript sequence and construction of query CDS.
+2. Matched gene_id between query and reference. 
+This is required to pair query transcripts to a reference transcript based on common gene family in order to construct its CDS information.
+
+factR comes with a tool to check the mandatory input files and return recommendations on functions to execute to increase consistency of your query object. To check the input files, run:
+```{r checkinputs}
+checkInputs(query_gtf, ref_gtf, Mmusculus)
+```
+
+As seen from the report above, our `query_gtf` object has inconsistent chromosome levels (seqlevels) and gene_ids. To rectify these inconsistencies, you may follow the functions as recommended.
+```{r matchfuns}
+# matching seqlevels
+query_gtf <- matchSeqLevels(query_gtf, Mmusculus)
+
+head(query_gtf)
+
+# matching gene_id
+query_gtf <- matchGeneIDs(query_gtf, ref_gtf)
+
+head(query_gtf)
+```
+
+After the `query_gtf` object have been rectified, we can re-check our inputs:
+```{r recheckinputs}
+checkInputs(query_gtf, ref_gtf, Mmusculus)
+```
+
+## Building CDS information of query
+## Analyzing functional consequence of coding transcripts
+### Predicting protein features
+### Predicting NMD-inducing features
+## Building CDS data on query 
+## Combining 
+
+# Other exported functions
+## Resize GRanges transcript
