@@ -208,7 +208,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
   width <- NULL
 
   # get coord of start codon on reference and strand info
-  startcodon <- resizeGRangesTranscripts(refCDS, end = sum(BiocGenerics::width(refCDS)) - 3)
+  startcodon <- resizeTranscript(refCDS, end = sum(BiocGenerics::width(refCDS)) - 3)
   strand <- as.character(BiocGenerics::strand(query))[1]
 
   # if query containg annotated start codon:
@@ -258,7 +258,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
       inframestartsingranges <- do.call("c", base::mapply(function(x, y) {
         start <- x - 1
         end <- length(refsequence) - y
-        startcodoninGRanges <- resizeGRangesTranscripts(refCDS, start, end)
+        startcodoninGRanges <- resizeTranscript(refCDS, start, end)
         return(startcodoninGRanges)
       }, BiocGenerics::start(inframestarts), BiocGenerics::end(inframestarts)))
 
@@ -298,7 +298,7 @@ getCDSstop_ <- function(query, fasta, fiveUTRlength) {
   )
 
   # append query GRanges to start from star codon, and retrieve seq
-  queryCDS <- resizeGRangesTranscripts(query, start = fiveUTRlength)
+  queryCDS <- resizeTranscript(query, start = fiveUTRlength)
   queryseq <- unlist(BSgenome::getSeq(fasta, queryCDS))
 
   # prepare a dict of stop codons for pattern matching
@@ -336,7 +336,7 @@ getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength) {
   width <- seqnames <- strand <- phase <- type <- transcript_id <- NULL
 
   # resize query GRanges to ORF and renew metadata info
-  CDSranges <- resizeGRangesTranscripts(query, fiveUTRlength, threeUTRlength)
+  CDSranges <- resizeTranscript(query, fiveUTRlength, threeUTRlength)
   CDSranges <- CDSranges %>%
     as.data.frame() %>%
     dplyr::mutate(
