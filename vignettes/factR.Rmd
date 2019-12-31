@@ -27,10 +27,14 @@ library(BSgenome.Mmusculus.UCSC.mm10)
 library(wiggleplotr)
 library(GenomicFeatures)
 library(dplyr)
+library(zeallot)
 ```
 
 # Introduction
-Briefly describe the current problem and how factR solves it
+High throughput RNA sequencing experiments have been very useful in the discovery of many new RNA species. Current pipelines that processes these sequencing data usually involve aligning the reads to a genome and assembling contiguous reads into a transcript architectures. With the assembled transcripts, one may quantify the relative number of reads mapped to the list of genes/transcripts and determine differentially expressed gene/transcripts between conditions. However, these assembled transcripts commonly do not contain information on its coding potential and thus inferring its function can be a difficult task.
+
+Here, we develop a program that Functionally Annotates Custom-assembled Transcripts in R (factR). At its core, factR will construct CDS coordinates for assembled transcriptomes with the guide of a reference annotation. With this newly-built coding information, users may utilise factR to query transcripts for protein-coding features as well as NMD-inducing features. 
+
 
 # Getting started
 
@@ -187,6 +191,7 @@ library(BSgenome.Mmusculus.UCSC.mm10)
 library(wiggleplotr)
 library(GenomicFeatures)
 library(dplyr)
+library(zeallot)
 ```
 
 **Query:** 
@@ -205,8 +210,7 @@ unique(query_gtf$gene_id)
 We can quickly visualize the exon structure of these query transcripts using the *wiggleplotr* package
 ```{r viewquery}
 # prepare a list of exons by transcript
-query_exons <- split(query_gtf[query_gtf$type == 'exon'], 
-                     as.factor(unique(query_gtf$transcript_id)))
+query_exons <- split(query_gtf[query_gtf$type == 'exon'], ~transcript_id)
 
 # list out transcript_id and gene_id names
 plotTranscripts(query_exons)
@@ -257,17 +261,207 @@ query_gtf <- matchGeneIDs(query_gtf, ref_gtf)
 head(query_gtf)
 ```
 
-After the `query_gtf` object have been rectified, we can re-check our inputs:
+After `query_gtf`  have been rectified, we can re-check our inputs:
 ```{r recheckinputs}
 checkInputs(query_gtf, ref_gtf, Mmusculus)
 ```
 
-## Building CDS information of query
-## Analyzing functional consequence of coding transcripts
+## Convert input objects into GRangesList
+
+Our sample `query_gtf` and `ref_gtf` assemblies are currently formatted as a GRanges object, each of which may consist of multiple entry types (transcript, exon and cds). Therefore, we need to segregate each input into several GRangesList objects, and group the entries by its *transcript_id*. Here, we will describe two methods of conversion:
+
+1. Manual splitting of exon/cds entries of your GRanges object based on transcript_id. This method will retain all attributes of your GRanges object, but requires a basic understanding on subsetting a GRanges object
+```{r manualsplit, warning=FALSE}
+# get GrangesList of query exons grouped by transcript_id
+query_exons <- split(query_gtf[query_gtf$type == 'exon'], ~transcript_id)
+
+# get GrangesList of ref cds grouped by transcript_id
+ref_cds <- split(ref_gtf[ref_gtf$type == 'CDS'], ~transcript_id)
+
+# get GrangesList of ref exons grouped by transcript_id
+ref_exons <- split(ref_gtf[ref_gtf$type == 'exon'], ~transcript_id)
+# keep only coding transcripts
+ref_exons <- ref_exons[names(ref_exons) %in% names(ref_cds)] 
+
+# inspect new query_exon object
+is(query_exons, 'GRangesList')  #check that query_exons is a List of GRanges
+
+names(query_exons)  # check for correct grouping of exons by transcript_id
+```
+
+2. Construct a TxDb object, followed by grouping using exonBy and cdsBy functions. This method is easier to execute but may not carry over the attributes from input GRanges.
+```{r txdbsplit, eval=FALSE}
+#make txdb for query and reference
+queryDB = makeTxDbFromGRanges(query_gtf)
+refDB = makeTxDbFromGRanges(ref_gtf)
+
+# get GRangesList using exonsBy and cdsBy functions
+query_exons = exonsBy(queryDB, by="tx", use.names=TRUE)
+ref_cds = cdsBy(refDB, by="tx", use.names=TRUE)
+ref_exons = exonsBy(refDB, by="tx", use.names=TRUE)
+```
+
+## Construct query CDS
+
+In order to build CDS information on our query data, we need `query_exons`, `ref_cds` and `Mmusculus` objects, as well as a two-column dataframe containing list of query transcript_ids and its paired reference transcript_id. This dataframe can be easily constructed using the following code:
+```{r prepareq2r, message=F}
+# prepare dataframes with unique gene_id and transcript_id attributes for query and ref
+query_ids = query_gtf %>% as.data.frame() %>%
+  dplyr::select(gene_id, transcript_id) %>%
+  distinct()
+ref_ids = ref_gtf %>% as.data.frame() %>%
+  dplyr::select(gene_id, ref_transcript_id = transcript_id) %>%
+  distinct()
+
+# join both dataframes and select only transcript_id colums
+q2r <- left_join(query_ids, ref_ids) %>%
+  dplyr::select(-gene_id)
+
+q2r
+```
+
+From the example above, the reference gene contain 2 basic coding transcript. Therefore, each of the query transcripts has been paired to 2 reference transcripts. This means that each transcript on GeneA will undergo CDS construction twice, creating computational redundancy. Therefore ideally, the dataframe has to be simplified in such a way that each transcript is paired to one reference transcript. One way to achieve this is to select the reference transcript with the greatest coverage to the query transcript. To facilitate with this selection process, we can run the `getCoverages` function that is exported with factR.
+
+Below, we will run the `getCoverages` function. The function will calculate the coverage values between the paired transcripts in q2r dataframe and return the pair with the highest coverage.
+```{r getcoverage}
+q2rcovs <- getCoverages(query_exons, ref_exons, q2r)
+
+q2rcovs
+```
+
+We can now build the query cds information using the subsetted `q2rcovs` dataframe. We may also specify the `coverage` argument as the q2rcovs dataframe contain a column with coverage values. This may speed up the cds construction process by assigning the reference cds to the full coverage query transcript.
+```{r buildcds}
+query_cds <- buildCDS(query_exons, ref_cds, 
+                        Mmusculus, q2rcovs, coverage = 3)
+
+head(query_cds)
+```
+
+We can visualize the cds structure using *wiggleplotr*
+```{r viewcds}
+plotTranscripts(query_exons, query_cds)
+```
+
+## Analyze functional consequence of coding transcripts
+
+#> Write a short description?
+
 ### Predicting protein features
+
+To extract protein coding features found in our list of coding transcripts, we can run the `extractCDSfeature` function using our `query_cds` and `Mmusculus` objects as input. This tool will currently query the translated protein sequence for two features: protein domains and signal peptide. 
+```{r testfeature, eval=F}
+extractCDSfeature(query_cds, Mmusculus)
+## A tibble: 4 x 3
+#  id          Domains                   SignalP_prob
+#  <chr>       <chr>                            <dbl>
+#1 transcript1 4xRNA-binding domain, RBD     0.000575
+#2 transcript2 4xRNA-binding domain, RBD     0.000575
+#3 transcript3 2xRNA-binding domain, RBD     0.000575
+#4 transcript4 4xRNA-binding domain, RBD     0.000575
+```
+
+In order to extract the domain features, `extractCDSfeature` will attempt to submit the protein coding sequence to the SuperFamily database and return a summary of the domain structure. As this process is done over HTTP, the speed of this function is greatly dependent on the server and on the number of cds in your list. This process can be sped up by subsetting the list of cds for analysis using the `which` argument.
+```{r testfeaturewhich, eval=F}
+extractCDSfeature(query_cds, Mmusculus, which = c('transcript1', 'transcript3'))
+## A tibble: 2 x 3
+#  id          Domains                   SignalP_prob
+#  <chr>       <chr>                            <dbl>
+#1 transcript1 4xRNA-binding domain, RBD     0.000575
+#2 transcript3 2xRNA-binding domain, RBD     0.000575
+```
+
 ### Predicting NMD-inducing features
-## Building CDS data on query 
-## Combining 
+
+To test whether any of our sample coding transcripts are targets of NMD, we can run the `predictNMD` function using our `query_exons` and `query_cds` GRangesList as input:
+```{r testnmd1}
+predictNMD(query_exons, query_cds)
+```
+
+The column containing logical values for `is_NMD` is determined based on whether the `dist_to_lastEJ` value exceed the `NMDthreshold` argument. The `NMDthreshold` value is set to 50(bp) as default, but can be altered based on users' requirement. The `which` argument accepts a list of transcript names found in query and will return results listed in the argument. This may be useful if you are interested in several transcripts within a big GRangesList object.
+```{r testnmdwhich}
+predictNMD(query_exons, query_cds, which = c('transcript1', 'transcript3'))
+```
+
+## Search coding transcripts for upstream and overlapping ORFs
+
+Coding transcripts with long 5' untranslated regions may contain multiple start codons. This may be recognized by ribosomes as an initiating site for translation and create additional upstream open-reading frame or overlapping open-reading frame with the cds. To test for presence of upstream or overlapping ORFs, we can run `searchuORFs` function using `query_exons`, `query_cds` and our fasta `Mmusculus` as inputs.
+```{r testuorfs}
+# test for uORFs
+uORFs <- searchuORFs(query_exons, query_cds, Mmusculus)
+
+# inspect output
+names(uORFs)
+
+names(uORFs$exons)
+
+```
+
+`searchuORFs` will return a list object containing a pair of exon and cds information of uORFs found. Each uORF will be named by its type (uORF or uATG), index of the uORF found in the transcript and its parent transcript name. The returned object can be separated into two separate objects zeallot's unpacking feature
+```{r testuorfsunpack}
+# test for uORFs
+c(uORFs_exons, uORFs_cds) %<-% searchuORFs(query_exons, query_cds, Mmusculus)
+
+# inspect output
+names(uORFs_exons)
+
+names(uORFs_cds)
+
+```
+
+`searchuORFs` can also append the list of uORFs found to the original `query_exons` and `query_cds` lists.
+```{r testuorfsappend}
+# test for uORFs
+c(newquery_exons, newquery_cds) %<-% searchuORFs(query_exons, query_cds, 
+                                              Mmusculus, append = T)
+
+# inspect output
+names(newquery_exons)
+
+names(newquery_cds)
+
+```
+
+With the new list of coding transcript, we can retest the list for functional consequence.
+```{r retestuorf}
+# visualize new list
+plotTranscripts(newquery_exons, newquery_cds)
+
+# retest list for NMD features
+predictNMD(newquery_exons, newquery_cds)
+
+```
+
+## Merging exon and cds objects for export
+
+After constructing query cds entries, one may be interested in combining the exon and cds objects and save it as a GTF file. factR comes a `mergeExonsCDS` function which effeciently unlists the GRangeList objects, fill any missing important attributes (type and transcript_id) and combine them into a single GRanges object. 
+```{r merge}
+# combine exons and cds objects
+newquery_gtf <- mergeExonsCDS(newquery_exons, newquery_cds)
+head(newquery_gtf)
+
+```
+
+The returned object may then be exported as a GTF file using rtracklayer's export function
+```{r output, eval=F}
+# save newquery_gtf as gtf file
+export(newquery_gtf, 'path/to/output.gtf', format = 'gtf')
+```
 
 # Other exported functions
 ## Resize GRanges transcript
+
+GRanges objects may contain exon coordinates from a single transcript. Users who wish to trim the ends of this exon block may utilize the `resizeTranscripts` function. This is particularly useful to shorten transcripts to its cds coordinates or lengthening the 5' end of a transcript to include promoter sequences:
+```{r resizeexamples}
+# trim ends of transcript1
+transcript1_trimmed <- resizeTranscript(query_exons$transcript1, start = 100, end = 1000)
+
+# add 500bp to 5' end of transcript1
+transcript1_lengthen <- resizeTranscript(query_exons$transcript1, start = -500)
+
+# combine the GRanges into a list and visualize
+combine <- list('transcript1' = query_exons$transcript1, 
+                'transcript1_trimmed' = transcript1_trimmed, 
+                'transcript1_lengthen' = transcript1_lengthen)
+plotTranscripts(combine)
+
+```
