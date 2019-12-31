@@ -15,7 +15,7 @@ for query missing from query2ref}
 
 \item{fasta}{BSgenome or Biostrings object containing genomic sequence}
 
-\item{query2ref}{Dataframe with at least 2 columns: query transcript_id and its
+\item{query2ref}{Dataframe with at least 2 columns: query transcript_id and its paired
 reference transcript_id. Query and ref transcript_ids have to match transcript
 names in query and refCDS objects. Transcripts with missing corrresponding
 GRanges object will return error}
