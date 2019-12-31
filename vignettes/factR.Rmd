@@ -6,6 +6,7 @@ output:
   rmarkdown::html_document:
     theme: lumen 
     number_sections: true
+    toc: true
     toc_depth: 3
 ---
 
