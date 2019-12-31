@@ -14,8 +14,8 @@
 #' @param which
 #' List containing names of transcripts from exons to filter for analysis
 #' @param return
-#' If exons and cds are GRangesList, returns only NMD-sensitive (default)
-#' transcripts or all transcripts.
+#' If exons and cds are GRangesList, returns results for all transcripts (defailt) or 
+#' only NMD-sensitive (default) transcripts 
 #'
 #' @return
 #' List with prediction of NMD sensitivity and statistics:
@@ -47,10 +47,10 @@
 #'
 #' ### Examples with GRangesList object
 #' predictNMD(query_exons, query_cds)
-#' predictNMD(query_exons, query_cds, return = "all")
+#' predictNMD(query_exons, query_cds, return = "NMD")
 #' predictNMD(query_exons, query_cds, which = c("transcript1", "transcript3"), return = "all")
 predictNMD <- function(exons, cds, NMDthreshold = 50,
-                       which = NULL, return = c("NMD", "all")) {
+                       which = NULL, return = c("all", "NMD")) {
 
   # catch missing args
   mandargs <- c("exons", "cds")
