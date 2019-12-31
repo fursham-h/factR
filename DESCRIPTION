@@ -38,5 +38,6 @@ Suggests:
     testthat,
     wiggleplotr,
     knitr,
-    rmarkdown
+    rmarkdown,
+    zeallot
 VignetteBuilder: knitr
