@@ -18,7 +18,7 @@ transcripts (GTF/GFF3)
 ## Installation
 ```r
 # install.packages("devtools")
-devtools::install_github("fursham-h/factR"
+devtools::install_github("fursham-h/factR")
 ```
 
 ## What you need
