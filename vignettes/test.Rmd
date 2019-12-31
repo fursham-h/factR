@@ -4,10 +4,6 @@ date: "`r Sys.Date()`"
 output:
   rmdformats::readthedown:
     highlight: kate
-    number_sections: true
-    toc_depth: 3
-    
-    
 ---
 
 
