@@ -1,16 +1,22 @@
-#' Combine and export exons and cds Granges to GTF
+#' Merge GRangesList exons and cds objects
+#' 
+#' @description 
+#' Merges two GRangesList objects; one containing exon coordinates and one containing cds coordinates. 
 #'
-#' @param exons GRangesList object containing exons for each query transcript.
-#' @param cds GRangesList object containing cds for each query transcript.
-#' @param con See ?rtracklayer::export for a description of this argument
+#' @param exons 
+#' GRangesList object containing exons
+#' for each transcript.
+#' @param cds 
+#' GRangesList object containing cds
+#' for each transcript.
 #'
-#' @return See ?rtracklayer::export for a description of this argument
+#' @return
+#' GRanges object
 #' @export
-#'
-makeGTF <- function(exons, cds, con) {
-
+mergeExonsCDS <- function(exons, cds) {
+  
   # catch missing args
-  mandargs <- c("exons", "cds", "con")
+  mandargs <- c("exons", "cds")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
     stop(paste(
@@ -18,12 +24,12 @@ makeGTF <- function(exons, cds, con) {
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
   }
-
+  
   # check seqlevels
   if (GenomeInfoDb::seqlevelsStyle(exons) != GenomeInfoDb::seqlevelsStyle(cds)) {
     stop("exons and cds has unmatched seqlevel styles. try matching using matchSeqLevels function")
   }
-
+  
   # unlist GRangesList and fill important attribute columns
   exons <- unlist(exons)
   cds <- unlist(cds)
@@ -52,6 +58,6 @@ makeGTF <- function(exons, cds, con) {
   }
   names(exons) <- NULL
   names(cds) <- NULL
-
-  rtracklayer::export(c(exons, cds), con, "gtf")
+  
+  return(c(exons,cds))
 }
