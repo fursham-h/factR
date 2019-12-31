@@ -1722,7 +1722,7 @@ $(document).ready(function () {
 <a class="sourceLine" id="cb7-21" data-line-number="21"><span class="co">#  AH60494 | Mus_musculus.GRCm38.dna_sm.primary_assembly.2bit</span></a>
 <a class="sourceLine" id="cb7-22" data-line-number="22"><span class="co">#  AH60495 | Mus_musculus.GRCm38.ncrna.2bit  </span></a>
 <a class="sourceLine" id="cb7-23" data-line-number="23"></a>
-<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="co"># retrieve id 'AH49547'</span></a>
+<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="co"># retrieve id 'AH60492'</span></a>
 <a class="sourceLine" id="cb7-25" data-line-number="25">Mmusculus &lt;-<span class="st"> </span>ah[[<span class="st">'AH60492'</span>]]</a></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Import local FASTA genome sequence file</li>
@@ -2097,26 +2097,36 @@ $(document).ready(function () {
 <p>After constructing query cds entries, one may be interested in combining the exon and cds objects and save it as a GTF file. factR comes a <code>mergeExonsCDS</code> function which effeciently unlists the GRangeList objects, fill any missing important attributes (type and transcript_id) and combine them into a single GRanges object.</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="co"># combine exons and cds objects</span></a>
 <a class="sourceLine" id="cb33-2" data-line-number="2">newquery_gtf &lt;-<span class="st"> </span><span class="kw">mergeExonsCDS</span>(newquery_exons, newquery_cds)</a>
-<a class="sourceLine" id="cb33-3" data-line-number="3"><span class="kw">head</span>(newquery_gtf)</a>
-<a class="sourceLine" id="cb33-4" data-line-number="4"><span class="co">#&gt; GRanges object with 6 ranges and 8 metadata columns:</span></a>
-<a class="sourceLine" id="cb33-5" data-line-number="5"><span class="co">#&gt;       seqnames            ranges strand |     type transcript_id               gene_id           old_gene_id</span></a>
-<a class="sourceLine" id="cb33-6" data-line-number="6"><span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;factor&gt;   &lt;character&gt;           &lt;character&gt;           &lt;character&gt;</span></a>
-<a class="sourceLine" id="cb33-7" data-line-number="7"><span class="co">#&gt;   [1]    chr10 79854427-79854721      + |     exon   transcript1 ENSMUSG00000006498.14 ENSMUSG00000006498.14</span></a>
-<a class="sourceLine" id="cb33-8" data-line-number="8"><span class="co">#&gt;   [2]    chr10 79856504-79856534      + |     exon   transcript1 ENSMUSG00000006498.14 ENSMUSG00000006498.14</span></a>
-<a class="sourceLine" id="cb33-9" data-line-number="9"><span class="co">#&gt;   [3]    chr10 79858752-79858824      + |     exon   transcript1 ENSMUSG00000006498.14 ENSMUSG00000006498.14</span></a>
-<a class="sourceLine" id="cb33-10" data-line-number="10"><span class="co">#&gt;   [4]    chr10 79858952-79859271      + |     exon   transcript1 ENSMUSG00000006498.14 ENSMUSG00000006498.14</span></a>
-<a class="sourceLine" id="cb33-11" data-line-number="11"><span class="co">#&gt;   [5]    chr10 79859352-79859522      + |     exon   transcript1 ENSMUSG00000006498.14 ENSMUSG00000006498.14</span></a>
-<a class="sourceLine" id="cb33-12" data-line-number="12"><span class="co">#&gt;   [6]    chr10 79859602-79859712      + |     exon   transcript1 ENSMUSG00000006498.14 ENSMUSG00000006498.14</span></a>
-<a class="sourceLine" id="cb33-13" data-line-number="13"><span class="co">#&gt;       match_level   gene_name     frame     phase</span></a>
-<a class="sourceLine" id="cb33-14" data-line-number="14"><span class="co">#&gt;         &lt;numeric&gt; &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt;</span></a>
-<a class="sourceLine" id="cb33-15" data-line-number="15"><span class="co">#&gt;   [1]           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb33-16" data-line-number="16"><span class="co">#&gt;   [2]           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb33-17" data-line-number="17"><span class="co">#&gt;   [3]           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb33-18" data-line-number="18"><span class="co">#&gt;   [4]           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb33-19" data-line-number="19"><span class="co">#&gt;   [5]           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb33-20" data-line-number="20"><span class="co">#&gt;   [6]           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb33-21" data-line-number="21"><span class="co">#&gt;   -------</span></a>
-<a class="sourceLine" id="cb33-22" data-line-number="22"><span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></a></code></pre></div>
+<a class="sourceLine" id="cb33-3" data-line-number="3">newquery_gtf</a>
+<a class="sourceLine" id="cb33-4" data-line-number="4"><span class="co">#&gt; GRanges object with 116 ranges and 8 metadata columns:</span></a>
+<a class="sourceLine" id="cb33-5" data-line-number="5"><span class="co">#&gt;         seqnames            ranges strand |     type transcript_id               gene_id</span></a>
+<a class="sourceLine" id="cb33-6" data-line-number="6"><span class="co">#&gt;            &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;factor&gt;   &lt;character&gt;           &lt;character&gt;</span></a>
+<a class="sourceLine" id="cb33-7" data-line-number="7"><span class="co">#&gt;     [1]    chr10 79854427-79854721      + |     exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb33-8" data-line-number="8"><span class="co">#&gt;     [2]    chr10 79856504-79856534      + |     exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb33-9" data-line-number="9"><span class="co">#&gt;     [3]    chr10 79858752-79858824      + |     exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb33-10" data-line-number="10"><span class="co">#&gt;     [4]    chr10 79858952-79859271      + |     exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb33-11" data-line-number="11"><span class="co">#&gt;     [5]    chr10 79859352-79859522      + |     exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb33-12" data-line-number="12"><span class="co">#&gt;     ...      ...               ...    ... .      ...           ...                   ...</span></a>
+<a class="sourceLine" id="cb33-13" data-line-number="13"><span class="co">#&gt;   [112]    chr10 79862449-79862541      + |      CDS   transcript4                  &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb33-14" data-line-number="14"><span class="co">#&gt;   [113]    chr10 79862653-79862869      + |      CDS   transcript4                  &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb33-15" data-line-number="15"><span class="co">#&gt;   [114]    chr10 79862978-79863055      + |      CDS   transcript4                  &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb33-16" data-line-number="16"><span class="co">#&gt;   [115]    chr10 79863145-79863277      + |      CDS   transcript4                  &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb33-17" data-line-number="17"><span class="co">#&gt;   [116]    chr10 79854489-79854518      + |      CDS   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb33-18" data-line-number="18"><span class="co">#&gt;                   old_gene_id match_level   gene_name     frame     phase</span></a>
+<a class="sourceLine" id="cb33-19" data-line-number="19"><span class="co">#&gt;                   &lt;character&gt;   &lt;numeric&gt; &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt;</span></a>
+<a class="sourceLine" id="cb33-20" data-line-number="20"><span class="co">#&gt;     [1] ENSMUSG00000006498.14           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb33-21" data-line-number="21"><span class="co">#&gt;     [2] ENSMUSG00000006498.14           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb33-22" data-line-number="22"><span class="co">#&gt;     [3] ENSMUSG00000006498.14           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb33-23" data-line-number="23"><span class="co">#&gt;     [4] ENSMUSG00000006498.14           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb33-24" data-line-number="24"><span class="co">#&gt;     [5] ENSMUSG00000006498.14           0       Ptbp1      &lt;NA&gt;      &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb33-25" data-line-number="25"><span class="co">#&gt;     ...                   ...         ...         ...       ...       ...</span></a>
+<a class="sourceLine" id="cb33-26" data-line-number="26"><span class="co">#&gt;   [112]                  &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;      &lt;NA&gt;         1</span></a>
+<a class="sourceLine" id="cb33-27" data-line-number="27"><span class="co">#&gt;   [113]                  &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;      &lt;NA&gt;         1</span></a>
+<a class="sourceLine" id="cb33-28" data-line-number="28"><span class="co">#&gt;   [114]                  &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;      &lt;NA&gt;         2</span></a>
+<a class="sourceLine" id="cb33-29" data-line-number="29"><span class="co">#&gt;   [115]                  &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;      &lt;NA&gt;         2</span></a>
+<a class="sourceLine" id="cb33-30" data-line-number="30"><span class="co">#&gt;   [116] ENSMUSG00000006498.14           0       Ptbp1         0         0</span></a>
+<a class="sourceLine" id="cb33-31" data-line-number="31"><span class="co">#&gt;   -------</span></a>
+<a class="sourceLine" id="cb33-32" data-line-number="32"><span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></a></code></pre></div>
 <p>The returned object may then be exported as a GTF file using rtracklayer’s export function</p>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="co"># save newquery_gtf as gtf file</span></a>
 <a class="sourceLine" id="cb34-2" data-line-number="2"><span class="kw">export</span>(newquery_gtf, <span class="st">'path/to/output.gtf'</span>, <span class="dt">format =</span> <span class="st">'gtf'</span>)</a></code></pre></div>

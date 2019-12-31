@@ -153,7 +153,7 @@ query(ah, c("Mus musculus", "release-91", 'fasta', 'GRCm38'))
 #  AH60494 | Mus_musculus.GRCm38.dna_sm.primary_assembly.2bit
 #  AH60495 | Mus_musculus.GRCm38.ncrna.2bit  
 
-# retrieve id 'AH49547'
+# retrieve id 'AH60492'
 Mmusculus <- ah[['AH60492']]
 ```
 
@@ -437,7 +437,7 @@ After constructing query cds entries, one may be interested in combining the exo
 ```{r merge}
 # combine exons and cds objects
 newquery_gtf <- mergeExonsCDS(newquery_exons, newquery_cds)
-head(newquery_gtf)
+newquery_gtf
 
 ```
 
