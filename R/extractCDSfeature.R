@@ -65,7 +65,8 @@ extractCDSfeature <- function(cds, fasta, which = NULL) {
     tibble::rownames_to_column('id') %>%
     dplyr::rowwise() %>%
     dplyr::mutate(y = strsplit(substr(x,1,nchar(x)-1), split = '')) %>%
-    dplyr::mutate(startendaa = paste0(substr(x,1,1), substr(x,nchar(x),nchar(x))))
+    dplyr::mutate(startendaa = paste0(substr(x,1,1), substr(x,nchar(x),nchar(x)))) %>%
+    ungroup()
   
   if (!'M*' %in% aaSeq$startendaa) {
     aaSeqORF <- aaSeq %>%
