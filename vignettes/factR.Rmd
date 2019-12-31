@@ -3,10 +3,9 @@ title: "Using factR"
 author: "Fursham Hamid"
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_document:
-    theme: lumen 
+  rmdformats::readthedown:
+    highlight: kate
     number_sections: true
-    toc: true
     toc_depth: 3
 ---
 
