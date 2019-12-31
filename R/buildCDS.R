@@ -15,7 +15,7 @@
 #' @param fasta
 #' BSgenome or Biostrings object containing genomic sequence
 #' @param query2ref
-#' Dataframe with at least 2 columns: query transcript_id and its
+#' Dataframe with at least 2 columns: query transcript_id and its paired
 #' reference transcript_id. Query and ref transcript_ids have to match transcript
 #' names in query and refCDS objects. Transcripts with missing corrresponding
 #' GRanges object will return error
@@ -128,8 +128,10 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
       dplyr::left_join(fullcovs[ids],
         by = c("group_name" = refname)
       ) %>%
+      dplyr::group_by(group_name) %>%
       dplyr::mutate(phase = cumsum(width %% 3) %% 3) %>%
       dplyr::mutate(phase = dplyr::lag(phase, default = 0)) %>%
+      dplyr::ungroup() %>%
       dplyr::select(-group_name)
   }
 
