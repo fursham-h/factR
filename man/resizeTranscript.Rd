@@ -29,8 +29,8 @@ gr1 <- GRanges(
   )
 )
 
-resizeGRangesTranscripts(gr1, 20, 80)
-resizeGRangesTranscripts(gr1, 110, 150)
+resizeTranscript(gr1, 20, 80)
+resizeTranscript(gr1, 110, 150)
 }
 \author{
 Fursham Hamid
