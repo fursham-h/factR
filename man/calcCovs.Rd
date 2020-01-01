@@ -2,9 +2,16 @@
 % Please edit documentation in R/calcCovs.R
 \name{calcCovs}
 \alias{calcCovs}
-\title{Obtain percent coverage between query and reference transcripts}
+\title{Calculate percent coverage between query and reference transcript(s)}
 \usage{
-calcCovs(query, ref, query2ref, ids = c(1, 2), return = c("best", "all"))
+calcCovs(
+  query,
+  ref,
+  query2ref,
+  ids = c(1, 2),
+  return = c("best", "all"),
+  over = c("mean", "query", "ref")
+)
 }
 \arguments{
 \item{query}{GRanges or GRangesList object containing exons for each query transcript. 
@@ -29,12 +36,15 @@ query and reference transcript_ids respectively.}
 \item{return}{If query2ref contain query transcripts with multiple comparisons, function
 will return comparisons with 'best' coverage value by default. Alternatively,
 a full report can be returned by setting argument to 'all'}
+
+\item{over}{Return shared coverage as a percentage of the mean widths of query and ref (default),
+or as percentage of query or ref.}
 }
 \value{
 Dataframe from query2ref with coverage values appended as a new column
 }
 \description{
-Obtain percent coverage between query and reference transcripts
+Calculate percent coverage between query and reference transcript(s)
 }
 \examples{
 calcCovs(query_exons, ref_exons, q2r)
