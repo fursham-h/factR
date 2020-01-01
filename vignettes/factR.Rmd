@@ -7,8 +7,11 @@ output:
     highlight: kate
     number_sections: true
     toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{factR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
-
 
 ```{r setup, echo=FALSE, cache=FALSE}
 ## Global options
@@ -320,11 +323,11 @@ q2r <- left_join(query_ids, ref_ids) %>%
 q2r
 ```
 
-From the example above, the reference gene contain 2 basic coding transcript. Therefore, each of the query transcripts has been paired to 2 reference transcripts. This means that each transcript on GeneA will undergo CDS construction twice, creating computational redundancy. Therefore ideally, the dataframe has to be simplified in such a way that each transcript is paired to one reference transcript. One way to achieve this is to select the reference transcript with the greatest coverage to the query transcript. To facilitate with this selection process, we can run the `getCoverages` function that is exported with factR.
+From the example above, the reference gene contain 2 basic coding transcript. Therefore, each of the query transcripts has been paired to 2 reference transcripts. This means that each transcript on GeneA will undergo CDS construction twice, creating computational redundancy. Therefore ideally, the dataframe has to be simplified in such a way that each transcript is paired to one reference transcript. One way to achieve this is to select the reference transcript with the greatest coverage to the query transcript. To facilitate with this selection process, we can run the `calcCovs` function that is exported with factR.
 
-Below, we will run the `getCoverages` function. The function will calculate the coverage values between the paired transcripts in q2r dataframe and return the pair with the highest coverage.
+Below, we will run the `calcCovs` function. The function will calculate the coverage values between the paired transcripts in q2r dataframe and return the pair with the highest coverage.
 ```{r getcoverage}
-q2rcovs <- getCoverages(query_exons, ref_exons, q2r)
+q2rcovs <- calcCovs(query_exons, ref_exons, q2r)
 
 q2rcovs
 ```
