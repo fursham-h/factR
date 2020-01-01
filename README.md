@@ -13,7 +13,7 @@ transcripts (GTF/GFF3)
   1. Matches chromosome levels of query GTF/object to a reference annotation
   2. Matches gene_id and gene_names of query GTF to a reference annotation
   3. Calculates percent base coverage between two transcripts or two list-of-transcripts
-  4. Resizes start and end of multi-exon GRanges transcript
+  4. Trims start and end of multi-exon GRanges transcript
 
 ## Installation
 ```r
