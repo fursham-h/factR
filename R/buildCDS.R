@@ -73,6 +73,18 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
   if (GenomeInfoDb::seqlevelsStyle(query) != GenomeInfoDb::seqlevelsStyle(refCDS)) {
     stop("query and refCDS has unmatched seqlevel styles. try matching using matchSeqLevels function")
   }
+  
+  # extract colnames and try catching wrong indices
+  tryCatch({
+    txname <- names(query2ref[ids[1]])
+    refname <- names(query2ref[ids[2]])},
+    error = function(e) {
+      stop("column indices in `ids` are not found in query2ref")
+    }
+  )
+  if (txname == refname) {
+    stop("`ids` contain duplicate indices")
+  }
 
   # sanity check if all tx in q2r have GRanges object
   if (!all(query2ref[[ids[1]]] %in% names(query))) {
@@ -105,11 +117,6 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
       unannotatedr
     ))
   }
-
-  # extract colnames and prepare outputCDS
-  txname <- names(query2ref)[ids[1]]
-  refname <- names(query2ref)[ids[2]]
-  outCDS <- data.frame()
 
   # create CDS list for tx with coverage of 1
   if (!is.null(coverage)) {

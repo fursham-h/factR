@@ -84,8 +84,18 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
     stop("query and ref has unmatched seqlevel styles. try matching matchSeqLevels function")
   }
   
+  # extract colnames and try catching wrong indices
+  tryCatch({
+    txname <- names(query2ref[ids[1]])
+    refname <- names(query2ref[ids[2]])},
+    error = function(e) {
+      stop("column indices in `ids` are not found in query2ref")
+    }
+  )
+  if (txname == refname) {
+    stop("`ids` contain duplicate indices")
+  }
   
-
   # sanity check if all tx in q2r have GRanges object
   if (!all(query2ref[[ids[1]]] %in% names(query))) {
     missing <- sum(!query2ref[[ids[1]]] %in% names(query))
@@ -117,10 +127,6 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
       unnanotatedr
     ))
   }
-
-  # extract colnames and prepare outputCDS
-  txname <- names(query2ref)[ids[1]]
-  refname <- names(query2ref)[ids[2]]
 
   # get Coverage values for all comparisons
   out <- BiocParallel::bpmapply(function(x, y) {
