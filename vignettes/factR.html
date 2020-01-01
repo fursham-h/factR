@@ -1758,22 +1758,22 @@ $(document).ready(function () {
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># inspect query object</span></a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">head</span>(query_gtf)</a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; GRanges object with 6 ranges and 6 metadata columns:</span></a>
-<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt;       seqnames            ranges strand |       type transcript_id               gene_id old_gene_id</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;factor&gt;   &lt;character&gt;           &lt;character&gt; &lt;character&gt;</span></a>
-<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt;   [1]    chr10 79854427-79864432      + | transcript   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt;   [2]    chr10 79854427-79854721      + |       exon   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt;   [3]    chr10 79856504-79856534      + |       exon   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb11-9" data-line-number="9"><span class="co">#&gt;   [4]    chr10 79858752-79858824      + |       exon   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="co">#&gt;   [5]    chr10 79858952-79859271      + |       exon   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="co">#&gt;   [6]    chr10 79859352-79859522      + |       exon   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb11-12" data-line-number="12"><span class="co">#&gt;       match_level   gene_name</span></a>
-<a class="sourceLine" id="cb11-13" data-line-number="13"><span class="co">#&gt;         &lt;numeric&gt; &lt;character&gt;</span></a>
-<a class="sourceLine" id="cb11-14" data-line-number="14"><span class="co">#&gt;   [1]           4       Ptbp1</span></a>
-<a class="sourceLine" id="cb11-15" data-line-number="15"><span class="co">#&gt;   [2]           4       Ptbp1</span></a>
-<a class="sourceLine" id="cb11-16" data-line-number="16"><span class="co">#&gt;   [3]           4       Ptbp1</span></a>
-<a class="sourceLine" id="cb11-17" data-line-number="17"><span class="co">#&gt;   [4]           4       Ptbp1</span></a>
-<a class="sourceLine" id="cb11-18" data-line-number="18"><span class="co">#&gt;   [5]           4       Ptbp1</span></a>
-<a class="sourceLine" id="cb11-19" data-line-number="19"><span class="co">#&gt;   [6]           4       Ptbp1</span></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt;       seqnames            ranges strand |       type transcript_id               gene_id</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;factor&gt;   &lt;character&gt;           &lt;character&gt;</span></a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt;   [1]    chr10 79854427-79864432      + | transcript   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt;   [2]    chr10 79854427-79854721      + |       exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt;   [3]    chr10 79856504-79856534      + |       exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb11-9" data-line-number="9"><span class="co">#&gt;   [4]    chr10 79858752-79858824      + |       exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="co">#&gt;   [5]    chr10 79858952-79859271      + |       exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="co">#&gt;   [6]    chr10 79859352-79859522      + |       exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb11-12" data-line-number="12"><span class="co">#&gt;                 old_gene_id match_level   gene_name</span></a>
+<a class="sourceLine" id="cb11-13" data-line-number="13"><span class="co">#&gt;                 &lt;character&gt;   &lt;numeric&gt; &lt;character&gt;</span></a>
+<a class="sourceLine" id="cb11-14" data-line-number="14"><span class="co">#&gt;   [1] ENSMUSG00000006498.14           0       Ptbp1</span></a>
+<a class="sourceLine" id="cb11-15" data-line-number="15"><span class="co">#&gt;   [2] ENSMUSG00000006498.14           0       Ptbp1</span></a>
+<a class="sourceLine" id="cb11-16" data-line-number="16"><span class="co">#&gt;   [3] ENSMUSG00000006498.14           0       Ptbp1</span></a>
+<a class="sourceLine" id="cb11-17" data-line-number="17"><span class="co">#&gt;   [4] ENSMUSG00000006498.14           0       Ptbp1</span></a>
+<a class="sourceLine" id="cb11-18" data-line-number="18"><span class="co">#&gt;   [5] ENSMUSG00000006498.14           0       Ptbp1</span></a>
+<a class="sourceLine" id="cb11-19" data-line-number="19"><span class="co">#&gt;   [6] ENSMUSG00000006498.14           0       Ptbp1</span></a>
 <a class="sourceLine" id="cb11-20" data-line-number="20"><span class="co">#&gt;   -------</span></a>
 <a class="sourceLine" id="cb11-21" data-line-number="21"><span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></a>
 <a class="sourceLine" id="cb11-22" data-line-number="22"></a>
@@ -1844,22 +1844,22 @@ $(document).ready(function () {
 <a class="sourceLine" id="cb16-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb16-4" data-line-number="4"><span class="kw">head</span>(query_gtf)</a>
 <a class="sourceLine" id="cb16-5" data-line-number="5"><span class="co">#&gt; GRanges object with 6 ranges and 6 metadata columns:</span></a>
-<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="co">#&gt;       seqnames            ranges strand |       type transcript_id               gene_id old_gene_id</span></a>
-<a class="sourceLine" id="cb16-7" data-line-number="7"><span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;factor&gt;   &lt;character&gt;           &lt;character&gt; &lt;character&gt;</span></a>
-<a class="sourceLine" id="cb16-8" data-line-number="8"><span class="co">#&gt;   [1]    chr10 79854427-79864432      + | transcript   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb16-9" data-line-number="9"><span class="co">#&gt;   [2]    chr10 79854427-79854721      + |       exon   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb16-10" data-line-number="10"><span class="co">#&gt;   [3]    chr10 79856504-79856534      + |       exon   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb16-11" data-line-number="11"><span class="co">#&gt;   [4]    chr10 79858752-79858824      + |       exon   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb16-12" data-line-number="12"><span class="co">#&gt;   [5]    chr10 79858952-79859271      + |       exon   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb16-13" data-line-number="13"><span class="co">#&gt;   [6]    chr10 79859352-79859522      + |       exon   transcript1 ENSMUSG00000006498.14       GeneA</span></a>
-<a class="sourceLine" id="cb16-14" data-line-number="14"><span class="co">#&gt;       match_level   gene_name</span></a>
-<a class="sourceLine" id="cb16-15" data-line-number="15"><span class="co">#&gt;         &lt;numeric&gt; &lt;character&gt;</span></a>
-<a class="sourceLine" id="cb16-16" data-line-number="16"><span class="co">#&gt;   [1]           4       Ptbp1</span></a>
-<a class="sourceLine" id="cb16-17" data-line-number="17"><span class="co">#&gt;   [2]           4       Ptbp1</span></a>
-<a class="sourceLine" id="cb16-18" data-line-number="18"><span class="co">#&gt;   [3]           4       Ptbp1</span></a>
-<a class="sourceLine" id="cb16-19" data-line-number="19"><span class="co">#&gt;   [4]           4       Ptbp1</span></a>
-<a class="sourceLine" id="cb16-20" data-line-number="20"><span class="co">#&gt;   [5]           4       Ptbp1</span></a>
-<a class="sourceLine" id="cb16-21" data-line-number="21"><span class="co">#&gt;   [6]           4       Ptbp1</span></a>
+<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="co">#&gt;       seqnames            ranges strand |       type transcript_id               gene_id</span></a>
+<a class="sourceLine" id="cb16-7" data-line-number="7"><span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;factor&gt;   &lt;character&gt;           &lt;character&gt;</span></a>
+<a class="sourceLine" id="cb16-8" data-line-number="8"><span class="co">#&gt;   [1]    chr10 79854427-79864432      + | transcript   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb16-9" data-line-number="9"><span class="co">#&gt;   [2]    chr10 79854427-79854721      + |       exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb16-10" data-line-number="10"><span class="co">#&gt;   [3]    chr10 79856504-79856534      + |       exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb16-11" data-line-number="11"><span class="co">#&gt;   [4]    chr10 79858752-79858824      + |       exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb16-12" data-line-number="12"><span class="co">#&gt;   [5]    chr10 79858952-79859271      + |       exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb16-13" data-line-number="13"><span class="co">#&gt;   [6]    chr10 79859352-79859522      + |       exon   transcript1 ENSMUSG00000006498.14</span></a>
+<a class="sourceLine" id="cb16-14" data-line-number="14"><span class="co">#&gt;                 old_gene_id match_level   gene_name</span></a>
+<a class="sourceLine" id="cb16-15" data-line-number="15"><span class="co">#&gt;                 &lt;character&gt;   &lt;numeric&gt; &lt;character&gt;</span></a>
+<a class="sourceLine" id="cb16-16" data-line-number="16"><span class="co">#&gt;   [1] ENSMUSG00000006498.14           0       Ptbp1</span></a>
+<a class="sourceLine" id="cb16-17" data-line-number="17"><span class="co">#&gt;   [2] ENSMUSG00000006498.14           0       Ptbp1</span></a>
+<a class="sourceLine" id="cb16-18" data-line-number="18"><span class="co">#&gt;   [3] ENSMUSG00000006498.14           0       Ptbp1</span></a>
+<a class="sourceLine" id="cb16-19" data-line-number="19"><span class="co">#&gt;   [4] ENSMUSG00000006498.14           0       Ptbp1</span></a>
+<a class="sourceLine" id="cb16-20" data-line-number="20"><span class="co">#&gt;   [5] ENSMUSG00000006498.14           0       Ptbp1</span></a>
+<a class="sourceLine" id="cb16-21" data-line-number="21"><span class="co">#&gt;   [6] ENSMUSG00000006498.14           0       Ptbp1</span></a>
 <a class="sourceLine" id="cb16-22" data-line-number="22"><span class="co">#&gt;   -------</span></a>
 <a class="sourceLine" id="cb16-23" data-line-number="23"><span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></a>
 <a class="sourceLine" id="cb16-24" data-line-number="24"></a>
