@@ -1,7 +1,7 @@
 context("Test getCoverages function")
 
-out1 = getCoverages(query_exons, ref_exons, q2r)
-out2 = getCoverages(query_exons, ref_exons, q2r, return = 'all')
+out1 = calcCovs(query_exons, ref_exons, q2r)
+out2 = calcCovs(query_exons, ref_exons, q2r, return = 'all')
 
 test_that("Test the structure of outputs", {
   

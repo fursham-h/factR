@@ -1,16 +1,21 @@
 #' Obtain percent coverage between query and reference transcripts
 #'
 #' @param query
-#' GRangesList object containing exons for each query transcript. Transcripts
-#' have to be listed in query2ref dataframe, else coverage values will not be
-#' calculated
+#' GRanges or GRangesList object containing exons for each query transcript. 
+#' If query is a GRangesList object with length > 1, transcript names
+#' have to be listed in query2ref dataframe
 #' @param ref
-#' GRangesList object containing CDS for each reference transcript.
+#' If query is a GRanges object, ref is a GRanges object containing CDS for a 
+#' reference transcript. If query is a GRangesList object, ref is a GRangesList object 
+#' containing CDS for each reference transcript. Ref transcript names have to be 
+#' listed in query2ref dataframe
 #' @param query2ref
-#' Dataframe with at least 2 columns: query transcript_id and its
-#' reference transcript_id. Query and ref transcript_ids have to match transcript
-#' names in query and refCDS objects. Transcripts with missing corrresponding
-#' GRanges object will return error
+#' If query and ref are GRangesList objects, dataframe with at least 2 columns: 
+#' query transcript_id and its reference transcript_id. Query and ref transcript_ids 
+#' have to match transcript names in query and refCDS objects. Transcripts with 
+#' missing corrresponding GRanges object will return error.
+#' query2ref is not mandatory if query and ref are GRanges object or a GRangesList 
+#' object of length 1
 #' @param ids
 #' Numeric vector stating which columns of query2ref dataframe contain the
 #' query and reference transcript_ids respectively.
@@ -25,14 +30,14 @@
 #' @author Fursham Hamid
 #'
 #' @examples
-#' getCoverages(query_exons, ref_exons, q2r)
-getCoverages <- function(query, ref, query2ref, ids = c(1, 2),
+#' calcCovs(query_exons, ref_exons, q2r)
+calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
                          return = c("best", "all")) {
 
   # Plans: set 'over' arg to allow user to choose the denominator
 
   # catch missing args
-  mandargs <- c("query", "ref", "query2ref")
+  mandargs <- c("query", "ref")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
     stop(paste(
@@ -43,11 +48,43 @@ getCoverages <- function(query, ref, query2ref, ids = c(1, 2),
   
   # define global variables
   unnanotatedq <- unnanotatedr <- coverage <- NULL
+  
+  # check if exons and ref are GR or GRlist
+  if (all(is(query) %in% is(ref))) {
+    if (is(query, "GRanges")) {
+      intype <- "gr"
+    } else if (is(query, "GRangesList")) {
+      intype <- "grl"
+      if (!'query2ref' %in% passed) {
+        if (length(query) > 1){
+          stop("missing values for query2ref")
+        } else {
+          query2ref <- data.frame(transcript_id = names(query), 
+                                  ref_transcript_id = names(ref))
+        }
+      }
+    } else {
+      stop("input object types not compatible")
+    }
+  } else {
+    querytype <- is(query)[1]
+    reftype <- is(ref)[1]
+    stop(sprintf(
+      "ref is type %s but query is type %s",
+      querytype, reftype
+    ))
+  }
+  
+  if (intype == 'gr') {
+    return(countCoverage_(query, ref))
+  }
 
   # catch unmatched seqlevels
   if (GenomeInfoDb::seqlevelsStyle(query) != GenomeInfoDb::seqlevelsStyle(ref)) {
     stop("query and ref has unmatched seqlevel styles. try matching matchSeqLevels function")
   }
+  
+  
 
   # sanity check if all tx in q2r have GRanges object
   if (!all(query2ref[[ids[1]]] %in% names(query))) {
