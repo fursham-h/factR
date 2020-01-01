@@ -1,4 +1,4 @@
-#' Obtain percent coverage between query and reference transcripts
+#' Calculate percent coverage between query and reference transcript(s)
 #'
 #' @param query
 #' GRanges or GRangesList object containing exons for each query transcript. 
@@ -23,6 +23,9 @@
 #' If query2ref contain query transcripts with multiple comparisons, function
 #' will return comparisons with 'best' coverage value by default. Alternatively,
 #' a full report can be returned by setting argument to 'all'
+#' @param over
+#' Return shared coverage as a percentage of the mean widths of query and ref (default),
+#' or as percentage of query or ref.
 #'
 #' @return
 #' Dataframe from query2ref with coverage values appended as a new column
@@ -32,7 +35,8 @@
 #' @examples
 #' calcCovs(query_exons, ref_exons, q2r)
 calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
-                         return = c("best", "all")) {
+                     return = c("best", "all"),
+                     over = c("mean", "query", "ref")) {
 
   # Plans: set 'over' arg to allow user to choose the denominator
 
@@ -76,7 +80,7 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
   }
   
   if (intype == 'gr') {
-    return(countCoverage_(query, ref))
+    return(countCoverage_(query, ref, over[1]))
   }
 
   # catch unmatched seqlevels
@@ -130,7 +134,7 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
 
   # get Coverage values for all comparisons
   out <- BiocParallel::bpmapply(function(x, y) {
-    covrep <- countCoverage_(query[[x]], ref[[y]])
+    covrep <- countCoverage_(query[[x]], ref[[y]], over[1])
     return(covrep)
   }, query2ref[[txname]], query2ref[[refname]],
   BPPARAM = BiocParallel::MulticoreParam()
@@ -146,12 +150,20 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
   return(query2ref)
 }
 
-countCoverage_ <- function(tx1, tx2) {
+countCoverage_ <- function(tx1, tx2, over) {
   chrom <- as.character(S4Vectors::runValue(GenomeInfoDb::seqnames(tx1)))
   cov <- GenomicRanges::coverage(c(tx1, tx2))
   index <- which(names(cov) == chrom)
   cov <- cov[[index]]
   cov_val <- S4Vectors::runValue(cov)
   cov_len <- S4Vectors::runLength(cov)
-  return(sum(cov_len[cov_val == 2]) / ((sum(cov_len[cov_val == 1]) + (sum(cov_len[cov_val == 2]) * 2)) / 2))
+  
+  if (over == 'mean') {
+    denom <- sum(width(tx1), width(tx2))/2
+  } else if (over == 'query') {
+    denom <- sum(width(tx1))
+  } else if (over == 'ref') {
+    denom <- sum(width(tx2))
+  }
+  return(sum(cov_len[cov_val == 2]) / denom)
 }
