@@ -66,7 +66,7 @@ extractCDSfeature <- function(cds, fasta, which = NULL) {
     dplyr::rowwise() %>%
     dplyr::mutate(y = strsplit(substr(x,1,nchar(x)-1), split = '')) %>%
     dplyr::mutate(startendaa = paste0(substr(x,1,1), substr(x,nchar(x),nchar(x)))) %>%
-    ungroup()
+    dplyr::ungroup()
   
   if (!'M*' %in% aaSeq$startendaa) {
     aaSeqORF <- aaSeq %>%
