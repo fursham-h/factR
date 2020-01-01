@@ -241,10 +241,6 @@ getuORFuATG_ <- function(txlist, cdslist, fasta, size) {
   txlistnew <- txlistnew %>%
     as.data.frame() %>%
     dplyr::mutate(type = "exon")
-  if ('transcript_id' %in% names(txlistnew)) {
-    txlistnew <- txlistnew %>%
-      dplyr::mutate(transcript_id = group_name)
-  }
 
   # get CDS with newly found uATG
   if (any(startsWith(names(uORFgr), "uATG"))) {
@@ -264,6 +260,10 @@ getuORFuATG_ <- function(txlist, cdslist, fasta, size) {
     as.data.frame() %>%
     dplyr::bind_rows(txlistnew) %>%
     dplyr::select(-group)
+  if ('transcript_id' %in% names(combinedDF)) {
+    combinedDF <- combinedDF %>%
+      dplyr::mutate(transcript_id = group_name)
+  }
 
   return(combinedDF)
 }
