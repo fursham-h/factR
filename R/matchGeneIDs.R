@@ -59,7 +59,7 @@ matchGeneIDs <- function(query, ref,
   gene_id <- transcript_id <- matched <- match_level <- appended_ens_id <- NULL
   basic_gene_id <- type <- seqnames <- strand <- gene_name <- ref_gene_name <- NULL
   # testing and matching gene_ids
-  #message("Checking and matching gene_ids...")
+  # message("Checking and matching gene_ids...")
 
   # prepare a df with a list of gene_ids found in reference
   ref.genelist <- ref %>%
@@ -275,18 +275,18 @@ matchGeneIDs <- function(query, ref,
       5, match_level
     )) %>%
     dplyr::select(-matched)
-  
+
   if ("gene_name" %in% names(S4Vectors::mcols(ref))) {
     ref.genelist.1 <- ref %>%
       as.data.frame() %>%
       dplyr::select(gene_id, ref_gene_name = gene_name) %>%
       dplyr::distinct()
-    
+
     if ("gene_name" %in% names(query)) {
       query <- query %>%
         dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
         dplyr::mutate(gene_name = ifelse(match_level != 5 & is.na(gene_name),
-                                         ref_gene_name, gene_name
+          ref_gene_name, gene_name
         )) %>%
         dplyr::select(-ref_gene_name)
     } else {
@@ -307,7 +307,7 @@ matchGeneIDs <- function(query, ref,
   message(sprintf("Total gene_ids corrected: %s", corrected_ids))
   message(sprintf("Remaining number of mismatched gene_ids: %s", nonstand_after))
   if (nonstand_after > 0) {
-    #warnLog("Transcripts with non-standard gene_ids will be skipped from analysis")
+    # warnLog("Transcripts with non-standard gene_ids will be skipped from analysis")
   }
 
   query <- GenomicRanges::makeGRangesFromDataFrame(query, keep.extra.columns = TRUE)

@@ -14,8 +14,8 @@
 #' @param which
 #' List containing names of transcripts from exons to filter for analysis
 #' @param return
-#' If exons and cds are GRangesList, returns results for all transcripts (defailt) or 
-#' only NMD-sensitive (default) transcripts 
+#' If exons and cds are GRangesList, returns results for all transcripts (defailt) or
+#' only NMD-sensitive (default) transcripts
 #'
 #' @return
 #' List with prediction of NMD sensitivity and statistics:
@@ -96,14 +96,16 @@ predictNMD <- function(exons, cds, NMDthreshold = 50,
     totest <- names(exons) # prepare vector with names for testing
     if (!is.null(which)) {
       which_matched <- which[which %in% names(cds)]
-      if (length(which_matched) == 0){
-        stop('transcript names in `which` is not found in cds')
-      } else if (length(which_matched) != length(which)){
+      if (length(which_matched) == 0) {
+        stop("transcript names in `which` is not found in cds")
+      } else if (length(which_matched) != length(which)) {
         num_unmatched <- length(which) - length(which_matched)
-        warning(sprintf('%s transcript names in `which` is missing from cds names',
-                        num_unmatched))
+        warning(sprintf(
+          "%s transcript names in `which` is missing from cds names",
+          num_unmatched
+        ))
       }
-      
+
       totest <- totest[totest %in% which] # subset list if which list is given
       exons <- exons[names(exons) %in% which]
     }
@@ -146,7 +148,7 @@ testNMD <- function(queryTranscript, queryCDS, distance_stop_EJ = 50) {
     dist_to_downEJs = as.numeric(0),
     threeUTRlength = as.numeric(0)
   )
-  
+
   # define global variable
   width <- disttolastEJ <- NULL
 

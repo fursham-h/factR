@@ -1,12 +1,12 @@
 #' Merge GRangesList exons and cds objects
-#' 
-#' @description 
-#' Merges two GRangesList objects; one containing exon coordinates and one containing cds coordinates. 
 #'
-#' @param exons 
+#' @description
+#' Merges two GRangesList objects; one containing exon coordinates and one containing cds coordinates.
+#'
+#' @param exons
 #' GRangesList object containing exons
 #' for each transcript.
-#' @param cds 
+#' @param cds
 #' GRangesList object containing cds
 #' for each transcript.
 #'
@@ -14,7 +14,7 @@
 #' GRanges object
 #' @export
 mergeExonsCDS <- function(exons, cds) {
-  
+
   # catch missing args
   mandargs <- c("exons", "cds")
   passed <- names(as.list(match.call())[-1])
@@ -24,12 +24,12 @@ mergeExonsCDS <- function(exons, cds) {
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
   }
-  
+
   # check seqlevels
   if (GenomeInfoDb::seqlevelsStyle(exons) != GenomeInfoDb::seqlevelsStyle(cds)) {
     stop("exons and cds has unmatched seqlevel styles. try matching using matchSeqLevels function")
   }
-  
+
   # unlist GRangesList and fill important attribute columns
   exons <- unlist(exons)
   cds <- unlist(cds)
@@ -58,6 +58,6 @@ mergeExonsCDS <- function(exons, cds) {
   }
   names(exons) <- NULL
   names(cds) <- NULL
-  
-  return(c(exons,cds))
+
+  return(c(exons, cds))
 }

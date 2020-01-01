@@ -1,20 +1,20 @@
 #' Calculate percent coverage between query and reference transcript(s)
 #'
 #' @param query
-#' GRanges or GRangesList object containing exons for each query transcript. 
+#' GRanges or GRangesList object containing exons for each query transcript.
 #' If query is a GRangesList object with length > 1, transcript names
 #' have to be listed in query2ref dataframe
 #' @param ref
-#' If query is a GRanges object, ref is a GRanges object containing CDS for a 
-#' reference transcript. If query is a GRangesList object, ref is a GRangesList object 
-#' containing CDS for each reference transcript. Ref transcript names have to be 
+#' If query is a GRanges object, ref is a GRanges object containing CDS for a
+#' reference transcript. If query is a GRangesList object, ref is a GRangesList object
+#' containing CDS for each reference transcript. Ref transcript names have to be
 #' listed in query2ref dataframe
 #' @param query2ref
-#' If query and ref are GRangesList objects, dataframe with at least 2 columns: 
-#' query transcript_id and its reference transcript_id. Query and ref transcript_ids 
-#' have to match transcript names in query and refCDS objects. Transcripts with 
+#' If query and ref are GRangesList objects, dataframe with at least 2 columns:
+#' query transcript_id and its reference transcript_id. Query and ref transcript_ids
+#' have to match transcript names in query and refCDS objects. Transcripts with
 #' missing corrresponding GRanges object will return error.
-#' query2ref is not mandatory if query and ref are GRanges object or a GRangesList 
+#' query2ref is not mandatory if query and ref are GRanges object or a GRangesList
 #' object of length 1
 #' @param ids
 #' Numeric vector stating which columns of query2ref dataframe contain the
@@ -49,22 +49,24 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
   }
-  
+
   # define global variables
   unnanotatedq <- unnanotatedr <- coverage <- NULL
-  
+
   # check if exons and ref are GR or GRlist
   if (all(is(query) %in% is(ref))) {
     if (is(query, "GRanges")) {
       intype <- "gr"
     } else if (is(query, "GRangesList")) {
       intype <- "grl"
-      if (!'query2ref' %in% passed) {
-        if (length(query) > 1){
+      if (!"query2ref" %in% passed) {
+        if (length(query) > 1) {
           stop("missing values for query2ref")
         } else {
-          query2ref <- data.frame(transcript_id = names(query), 
-                                  ref_transcript_id = names(ref))
+          query2ref <- data.frame(
+            transcript_id = names(query),
+            ref_transcript_id = names(ref)
+          )
         }
       }
     } else {
@@ -78,8 +80,8 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
       querytype, reftype
     ))
   }
-  
-  if (intype == 'gr') {
+
+  if (intype == "gr") {
     return(countCoverage_(query, ref, over[1]))
   }
 
@@ -87,11 +89,13 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
   if (GenomeInfoDb::seqlevelsStyle(query) != GenomeInfoDb::seqlevelsStyle(ref)) {
     stop("query and ref has unmatched seqlevel styles. try matching matchSeqLevels function")
   }
-  
+
   # extract colnames and try catching wrong indices
-  tryCatch({
-    txname <- names(query2ref[ids[1]])
-    refname <- names(query2ref[ids[2]])},
+  tryCatch(
+    {
+      txname <- names(query2ref[ids[1]])
+      refname <- names(query2ref[ids[2]])
+    },
     error = function(e) {
       stop("column indices in `ids` are not found in query2ref")
     }
@@ -99,7 +103,7 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
   if (txname == refname) {
     stop("`ids` contain duplicate indices")
   }
-  
+
   # sanity check if all tx in q2r have GRanges object
   if (!all(query2ref[[ids[1]]] %in% names(query))) {
     missing <- sum(!query2ref[[ids[1]]] %in% names(query))
@@ -157,12 +161,12 @@ countCoverage_ <- function(tx1, tx2, over) {
   cov <- cov[[index]]
   cov_val <- S4Vectors::runValue(cov)
   cov_len <- S4Vectors::runLength(cov)
-  
-  if (over == 'mean') {
-    denom <- sum(width(tx1), width(tx2))/2
-  } else if (over == 'query') {
+
+  if (over == "mean") {
+    denom <- sum(width(tx1), width(tx2)) / 2
+  } else if (over == "query") {
     denom <- sum(width(tx1))
-  } else if (over == 'ref') {
+  } else if (over == "ref") {
     denom <- sum(width(tx2))
   }
   return(sum(cov_len[cov_val == 2]) / denom)

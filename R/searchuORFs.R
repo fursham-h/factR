@@ -1,20 +1,20 @@
 #' Search coding mRNAs for upstream and overlapping ORFs
 #'
-#' @param exons 
+#' @param exons
 #' GRanges object or GRangesList object containing exons
 #' for each transcript. To search for uORFs, transcripts have
 #' to be coding and thus contain a cds information of the same transcript name
-#' @param cds 
+#' @param cds
 #' GRanges object or GRangesList object containing coding regions (CDS)
 #' for each transcript. GRangesList must have names that match names in exons,
 #' else exons will not be analysed
-#' @param fasta 
+#' @param fasta
 #' BSgenome or Biostrings object containing genomic sequence
-#' @param ORFlength 
+#' @param ORFlength
 #' Minumum length of ORF. Default: 21
-#' @param which 
+#' @param which
 #' List containing transcript names to filter for analysis
-#' @param append 
+#' @param append
 #' Logical value to append GRangesList containing uORF ranges to input
 #' exons and cds. Default: FALSE
 #'
@@ -29,9 +29,9 @@
 #' library(BSgenome.Mmusculus.UCSC.mm10)
 #' searchuORFs(query_exons, query_cds, Mmusculus)
 #' searchuORFs(query_exons, query_cds, Mmusculus, append = TRUE)
-#' 
+#'
 #' # To separate exons and cds GRangesList into differebt objects
-#' unpack[query_exons_uORF, query_cds_uORF] = searchuORFs(query_exons, query_cds, Mmusculus)
+#' unpack[query_exons_uORF, query_cds_uORF] <- searchuORFs(query_exons, query_cds, Mmusculus)
 #' }
 searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
                         which = NULL, append = FALSE) {
@@ -103,7 +103,7 @@ searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
       split.field = "group_name",
       keep.extra.columns = T
     )
-  
+
   if (append == T) {
     newtx <- c(exons, newtx)
     newcds <- c(cds, newcds)
@@ -115,7 +115,7 @@ searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
 
 
 getuORFuATG_ <- function(txlist, cdslist, fasta, size) {
-  
+
   # define global variables
   group_name <- group <- width <- shiftype <- transcript_id <- NULL
 
@@ -260,7 +260,7 @@ getuORFuATG_ <- function(txlist, cdslist, fasta, size) {
     as.data.frame() %>%
     dplyr::bind_rows(txlistnew) %>%
     dplyr::select(-group)
-  if ('transcript_id' %in% names(combinedDF)) {
+  if ("transcript_id" %in% names(combinedDF)) {
     combinedDF <- combinedDF %>%
       dplyr::mutate(transcript_id = group_name)
   }

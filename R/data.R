@@ -10,7 +10,7 @@
 #'   ...
 #' }
 #' @source \url{http://www.ensembl.org/}
-'query_gtf'
+"query_gtf"
 
 #' Exons from 4 transcripts entries of the same gene
 #'
@@ -23,7 +23,7 @@
 #'   ...
 #' }
 #' @source \url{http://www.ensembl.org/}
-'query_exons'
+"query_exons"
 
 #' CDS from 4 transcripts entries of the same gene
 #'
@@ -36,11 +36,11 @@
 #'   ...
 #' }
 #' @source \url{http://www.ensembl.org/}
-'query_cds'
+"query_cds"
 
 #' Imported GTF file containing 2 reference transcript entries of the same gene
 #'
-#' A dataset containing coordinates of transcript and exons from 2 reference 
+#' A dataset containing coordinates of transcript and exons from 2 reference
 #' transcripts of mouse Ptbp1.
 #'
 #' @format A GRanges object with 64 ranges and 5 metadata columns:
@@ -49,7 +49,7 @@
 #'   ...
 #' }
 #' @source \url{https://www.gencodegenes.org/}
-'ref_gtf'
+"ref_gtf"
 
 #' Exons from 2 reference transcripts entries of the same gene
 #'
@@ -62,7 +62,7 @@
 #'   ...
 #' }
 #' @source \url{https://www.gencodegenes.org/}
-'ref_exons'
+"ref_exons"
 
 #' CDS from 2 reference transcripts entries of the same gene
 #'
@@ -75,11 +75,11 @@
 #'   ...
 #' }
 #' @source \url{https://www.gencodegenes.org/}
-'ref_cds'
+"ref_cds"
 
 #' Dataframe containing a list of matched query and reference IDs
 #'
-#' Dataframe with 2 columns, each containing a list of transcript_id from 
+#' Dataframe with 2 columns, each containing a list of transcript_id from
 #' query_gtf and ref_gtf dataset respectively
 #'
 #' @format A dataframe with 8 rows
@@ -88,11 +88,11 @@
 #'   \item{ref_transcript_id}{List of transcript_id from ref_gtf}
 #'   ...
 #' }
-'q2r'
+"q2r"
 
 #' Dataframe containing a list of matched query and reference IDs with coverage values
 #'
-#' Dataframe with 3 columns containing a list of transcript_id from 
+#' Dataframe with 3 columns containing a list of transcript_id from
 #' query_gtf, a list of matched ref_transcript_id and the percent coverage between
 #' query and reference transcripts
 #'
@@ -103,4 +103,4 @@
 #'   \item{coverage}{List of percent coverage values between query and ref transcripts}
 #'   ...
 #' }
-'q2rcovs'
+"q2rcovs"

@@ -37,7 +37,7 @@
 #'
 #' @examples
 #' library(BSgenome.Mmusculus.UCSC.mm10)
-#' buildCDS(query_exons, ref_exons, Mmusculus, q2rcovs,coverage=3)
+#' buildCDS(query_exons, ref_exons, Mmusculus, q2rcovs, coverage = 3)
 buildCDS <- function(query, refCDS, fasta, query2ref,
                      ids = c(1, 2), coverage = NULL) {
 
@@ -50,7 +50,7 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
   }
-  
+
   # define global variables
   group_name <- strand <- width <- phase <- transcript_id <- NULL
 
@@ -73,11 +73,13 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
   if (GenomeInfoDb::seqlevelsStyle(query) != GenomeInfoDb::seqlevelsStyle(refCDS)) {
     stop("query and refCDS has unmatched seqlevel styles. try matching using matchSeqLevels function")
   }
-  
+
   # extract colnames and try catching wrong indices
-  tryCatch({
-    txname <- names(query2ref[ids[1]])
-    refname <- names(query2ref[ids[2]])},
+  tryCatch(
+    {
+      txname <- names(query2ref[ids[1]])
+      refname <- names(query2ref[ids[2]])
+    },
     error = function(e) {
       stop("column indices in `ids` are not found in query2ref")
     }
@@ -340,7 +342,7 @@ getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength) {
 
   # prepare output list
   output <- list("ORF_considered" = NA)
-  
+
   # define global variables
   width <- seqnames <- strand <- phase <- type <- transcript_id <- NULL
 
