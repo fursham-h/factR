@@ -15,7 +15,7 @@
 q2rcovs
 }
 \description{
-Dataframe with 3 columns containing a list of transcript_id from 
+Dataframe with 3 columns containing a list of transcript_id from
 query_gtf, a list of matched ref_transcript_id and the percent coverage between
 query and reference transcripts
 }

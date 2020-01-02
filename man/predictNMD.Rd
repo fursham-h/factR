@@ -26,7 +26,7 @@ Default = 50bp}
 
 \item{which}{List containing names of transcripts from exons to filter for analysis}
 
-\item{return}{If exons and cds are GRangesList, returns results for all transcripts (defailt) or 
+\item{return}{If exons and cds are GRangesList, returns results for all transcripts (defailt) or
 only NMD-sensitive (default) transcripts}
 }
 \value{

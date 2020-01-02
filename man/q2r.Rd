@@ -14,7 +14,7 @@
 q2r
 }
 \description{
-Dataframe with 2 columns, each containing a list of transcript_id from 
+Dataframe with 2 columns, each containing a list of transcript_id from
 query_gtf and ref_gtf dataset respectively
 }
 \keyword{datasets}
