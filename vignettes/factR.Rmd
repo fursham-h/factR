@@ -347,8 +347,6 @@ plotTranscripts(query_exons, query_cds)
 
 ## Analyze functional consequence of coding transcripts
 
-#> Write a short description?
-
 ### Predicting protein features
 
 To extract protein coding features found in our list of coding transcripts, we can run the `extractCDSfeature` function using our `query_cds` and `Mmusculus` objects as input. This tool will currently query the translated protein sequence for two features: protein domains and signal peptide. 
