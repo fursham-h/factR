@@ -6,4 +6,4 @@
 
 - Amend extractCDSfeature output
 - Check PROSITE
-- argument to return searchUORFs
+- argument to return searchUORFs (not necessary)
