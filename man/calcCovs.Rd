@@ -14,20 +14,20 @@ calcCovs(
 )
 }
 \arguments{
-\item{query}{GRanges or GRangesList object containing exons for each query transcript. 
+\item{query}{GRanges or GRangesList object containing exons for each query transcript.
 If query is a GRangesList object with length > 1, transcript names
 have to be listed in query2ref dataframe}
 
-\item{ref}{If query is a GRanges object, ref is a GRanges object containing CDS for a 
-reference transcript. If query is a GRangesList object, ref is a GRangesList object 
-containing CDS for each reference transcript. Ref transcript names have to be 
+\item{ref}{If query is a GRanges object, ref is a GRanges object containing CDS for a
+reference transcript. If query is a GRangesList object, ref is a GRangesList object
+containing CDS for each reference transcript. Ref transcript names have to be
 listed in query2ref dataframe}
 
-\item{query2ref}{If query and ref are GRangesList objects, dataframe with at least 2 columns: 
-query transcript_id and its reference transcript_id. Query and ref transcript_ids 
-have to match transcript names in query and refCDS objects. Transcripts with 
+\item{query2ref}{If query and ref are GRangesList objects, dataframe with at least 2 columns:
+query transcript_id and its reference transcript_id. Query and ref transcript_ids
+have to match transcript names in query and refCDS objects. Transcripts with
 missing corrresponding GRanges object will return error.
-query2ref is not mandatory if query and ref are GRanges object or a GRangesList 
+query2ref is not mandatory if query and ref are GRanges object or a GRangesList
 object of length 1}
 
 \item{ids}{Numeric vector stating which columns of query2ref dataframe contain the

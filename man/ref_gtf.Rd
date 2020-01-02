@@ -16,7 +16,7 @@
 ref_gtf
 }
 \description{
-A dataset containing coordinates of transcript and exons from 2 reference 
+A dataset containing coordinates of transcript and exons from 2 reference
 transcripts of mouse Ptbp1.
 }
 \keyword{datasets}
