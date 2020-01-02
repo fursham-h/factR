@@ -75,6 +75,7 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
   }
 
   # extract colnames and try catching wrong indices
+  outCDS <- NULL
   tryCatch(
     {
       txname <- names(query2ref[ids[1]])
