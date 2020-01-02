@@ -163,7 +163,7 @@ countCoverage_ <- function(tx1, tx2, over) {
   cov_len <- S4Vectors::runLength(cov)
 
   if (over == "mean") {
-    denom <- sum(BiocGenerics::width(tx1), width(tx2)) / 2
+    denom <- sum(BiocGenerics::width(tx1), BiocGenerics::width(tx2)) / 2
   } else if (over == "query") {
     denom <- sum(BiocGenerics::width(tx1))
   } else if (over == "ref") {
