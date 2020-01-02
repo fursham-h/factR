@@ -1,14 +1,9 @@
 ####### ToDos ####### 
 
-- getCoverages from GRanges object than GRangesList. various denomiator types
-- Consider combining exons and cds into a GRanges rather than making GTF
 - Differential AS and domain comparison
-
-- test different input types. 
-  - GTFs from Cufflinks, Stringtie, denovo assemblers(Trinity etc)
-  -AnnHub gtfs, Ensembl gtfs, custom fasta
-
-- Package function to identify alternative segments. See hmmer for ideas on output 
 - Simplify variable names
-- Run Checks
+- Run BiocCheck
 
+- Amend extractCDSfeature output
+- Check PROSITE
+- argument to return searchUORFs
