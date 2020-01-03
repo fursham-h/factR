@@ -1,20 +1,65 @@
-#' Classify alternative splicing between transcripts
-#'
-#' @param tx1 GRanges object of exons by transcript 1
-#' @param tx2 GRanges object of exons by transcript 2
-#'
-#' @return GRanges object of alternative segments
-#'
-#'
-classifyAS <- function(tx1, tx2) {
-
-  # input checks
-  if (missing(tx1) | missing(tx2)) {
-    stop("Please provide input GRanges objects")
-  } else if (!any(tx1 %over% tx2)) {
-    stop("Transcripts have no overlap")
+classifyAS <- function(exons, ...) {
+  
+  # catch missing args
+  mandargs <- c("exons")
+  passed <- names(as.list(match.call())[-1])
+  if (any(!mandargs %in% passed)) {
+    stop(paste(
+      "missing values for",
+      paste(setdiff(mandargs, passed), collapse = ", ")
+    ))
   }
 
+  
+  
+  ########################################
+  # if a second GRanges object is given, carry out pairwise comparison
+  if (!is.null(...)) {
+    tx2 <- list(...)
+    
+    # check object types and return warnings if not GRanges
+    if (any(is(exons, "GRangesList"), is(tx2, "GRangesList"))) {
+      warning("GRangesList objects are not supported in pair-wise mode. First item in list was used")
+      
+      exons <- if (is(exons, "GRangesList")) exons[[1]] else exons
+      tx2 <- if (is(tx2, "GRangesList")) tx2[[1]] else tx2
+      
+      return(getAS_(exons, tx2))
+    }
+  }
+
+  
+  
+  # check if exons and cds are GR or GRlist
+  if (all(is(exons) %in% is(cds))) {
+    if (is(exons, "GRanges")) {
+      intype <- "gr"
+    } else if (is(exons, "GRangesList")) {
+      intype <- "grl"
+    } else {
+      stop("input object types not compatible")
+    }
+  } else {
+    txtype <- is(exons)[1]
+    cdstype <- is(cds)[1]
+    stop(sprintf(
+      "cds is type %s but exons is type %s",
+      cdstype, txtype
+    ))
+  }
+  # catch unmatched seqlevels
+  if (GenomeInfoDb::seqlevelsStyle(exons) != GenomeInfoDb::seqlevelsStyle(cds)) {
+    stop("exons and cds has unmatched seqlevel styles. try matching using matchSeqLevels function")
+  }
+}
+
+
+
+
+
+
+getAS_ <- function(tx1, tx2) {
+  
   # get information on transcripts
   tx1index <- c(1:length(tx1))
   tx2index <- c((length(tx1) + 1):(length(tx1) + length(tx2)))
@@ -26,14 +71,9 @@ classifyAS <- function(tx1, tx2) {
     as.data.frame() %>%
     dplyr::mutate(type = ifelse(lengths(revmap) == 2, "cons", "alt"))
 
-  # return empty GRanges if there is no alternative segments
+  # return NULL GRanges if there is no alternative segments
   if (!"alt" %in% disjoint$type) {
-    disjoint <- disjoint %>%
-      dplyr::mutate(AS = as.character(NA)) %>%
-      dplyr::filter(type != "cons") %>%
-      dplyr::select(seqnames:strand, AS) %>%
-      GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
-    return(disjoint)
+    return(NULL)
   }
   constartindex <- min(which(disjoint$type == "cons"))
   if (constartindex > 1) {
@@ -79,7 +119,8 @@ classifyAS <- function(tx1, tx2) {
   # return as GRanges
   disjoint <- disjoint %>%
     dplyr::mutate(AS = ifelse(source == 1, toupper(AS), tolower(AS))) %>%
-    dplyr::select(seqnames:strand, AS) %>%
-    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+    dplyr::mutate(source = ifelse(source == 1, 'inclusion', 'skipped')) %>%
+    dplyr::select(seqnames:strand, source, AS) %>%
+    GenomicRanges::makeGRangesListFromDataFrame(split.field = 'source',keep.extra.columns = T)
   return(disjoint)
 }

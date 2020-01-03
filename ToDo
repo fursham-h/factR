@@ -1,5 +1,13 @@
 ####### ToDos ####### 
 
+- Add in checks/warnings for tx that don't overlap
+  - buildCDS
+  - calcCovs
+  - AS
+  
+- Amend vigentte on
+  - extractCDSfeature
+
 - Differential AS and domain comparison
 - Simplify variable names
 - Run BiocCheck
