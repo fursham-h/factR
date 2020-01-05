@@ -1,3 +1,31 @@
+#' Compare and classify alternative spliced segments
+#'
+#' @param exons 
+#' In pair-wise mode: GRanges object containing exons for a particular transcript.
+#' 
+#' In intra-list mode: GRangesList bject containing exons for each transcripts.  
+#' Transcripts will be paired and compared based on its gene family or groups. 
+#' In order to do so, object has to contain gene_id attribute. Alternatively, user 
+#' may provide a dataframe with a list of transcripts and its groupings as a `groupings`
+#' argument. See `groupings`.
+#' @param ... 
+#' In pair-wise mode, argument is a GRanges object containing exons for a particular transcript
+#' @param groupings 
+#' Dataframe describing the groupings of the transcripts in `exons`. Ideally, Transcripts should be 
+#' grouped by gene families. Therefore, first column in the dataframe is a list of gene_id or
+#' gene_names and the second column is the names of transcripts in `exons` which fall into
+#' the gene groupings. This argument is optional if gene_id metadata is present in `exons`
+#' 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' # pair-wise comparison
+#' compareAS(query_exons[[1]], query_exons[[3]])
+#' 
+#' #intra-list comparison
+#' comapreAS(query_exons)
 compareAS <- function(exons, ..., groupings = NULL) {
   
   # catch missing args

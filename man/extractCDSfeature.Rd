@@ -4,7 +4,7 @@
 \alias{extractCDSfeature}
 \title{Extract protein features from coding mRNAs}
 \usage{
-extractCDSfeature(cds, fasta, which = NULL)
+extractCDSfeature(cds, fasta, which = NULL, hmmer = "default", ...)
 }
 \arguments{
 \item{cds}{GRanges object or GRangesList object containing coding regions (CDS)
@@ -13,6 +13,14 @@ for each transcript.}
 \item{fasta}{BSgenome or Biostrings object containing genomic sequence}
 
 \item{which}{List containing names of transcripts from cds to filter for analysis}
+
+\item{hmmer}{List of fields to report from hmmer protein domain search. 'default' will
+return 'desc', 'evalue' and 'nincluded' columns. See ?bio3d::hmmer for a list
+of returned fields. Set argument to NULL to skip hmmer analysis}
+
+\item{...}{Other features to test and its fields to return. Written as named list with
+features as names and list of fields as arguements (eg. signalHsmm = 'default')
+Current supported features:}
 }
 \value{
 Dataframe containing protein features for each cds entry

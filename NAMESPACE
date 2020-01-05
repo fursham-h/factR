@@ -3,6 +3,7 @@
 export(buildCDS)
 export(calcCovs)
 export(checkInputs)
+export(compareAS)
 export(extractCDSfeature)
 export(matchGeneIDs)
 export(matchSeqLevels)

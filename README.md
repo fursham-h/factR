@@ -9,6 +9,7 @@ transcripts (GTF/GFF3)
   2. Analyzes coding transcripts for protein-coding features
   3. Scans coding transcripts for NMD-inducing features
   4. Reanalyzes coding transcripts for upstream and overlapping ORFs
+  5. Compare and classify alternative segments between transcripts
 * Supporting features 
   1. Matches chromosome levels of query GTF/object to a reference annotation
   2. Matches gene_id and gene_names of query GTF to a reference annotation
