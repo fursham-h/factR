@@ -9,7 +9,8 @@
 #' may provide a dataframe with a list of transcripts and its groupings as a `groupings`
 #' argument. See `groupings`.
 #' @param ... 
-#' In pair-wise mode, argument is a GRanges object containing exons for a particular transcript
+#' In pair-wise mode, argument is a GRanges object containing exons for a 
+#' particular transcript as a comparison to `exons`
 #' @param groupings 
 #' Dataframe describing the groupings of the transcripts in `exons`. Ideally, Transcripts should be 
 #' grouped by gene families. Therefore, first column in the dataframe is a list of gene_id or
@@ -18,6 +19,11 @@
 #' 
 #'
 #' @return
+#' In pairwise mode: a GRangesList object with included and skipped segments in `exons` 
+#' as compared to ...
+#' 
+#' In intralist mode: a dataframe with coordinates and information of alternative segments
+#' between every transcripts in its groupings.
 #' @export
 #'
 #' @examples
@@ -25,7 +31,7 @@
 #' compareAS(query_exons[[1]], query_exons[[3]])
 #' 
 #' #intra-list comparison
-#' comapreAS(query_exons)
+#' compareAS(query_exons)
 compareAS <- function(exons, ..., groupings = NULL) {
   
   # catch missing args
@@ -37,6 +43,11 @@ compareAS <- function(exons, ..., groupings = NULL) {
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
   }
+  # define global variables
+  tx.id <- index.y <- index.x <- tx.id.x <- tx.id.y <- NULL
+  Gene <- seqnames <- compare.to <- coord <- strand <- NULL
+  . <- AS.type <- AS.direction <- NULL
+  
   argnames <- as.character(match.call())[-1]
 
   # if a second GRanges object is given, carry out pairwise comparison
@@ -107,7 +118,7 @@ compareAS <- function(exons, ..., groupings = NULL) {
       dplyr::ungroup() %>%
       dplyr::left_join(., ., by = groupname) %>%
       dplyr::filter(index.y > index.x) %>%
-      dplyr::select(-starts_with('index')) %>%
+      dplyr::select(-dplyr::starts_with('index')) %>%
       dplyr::rename(tx.id = tx.id.x, compare.to = tx.id.y)
   } else {
     # check for metadata. error out if missing gene_id metadata
@@ -123,9 +134,9 @@ compareAS <- function(exons, ..., groupings = NULL) {
         dplyr::group_by(Gene) %>% 
         dplyr::mutate(index = dplyr::row_number()) %>% 
         dplyr::ungroup() %>%
-        dplyr::left_join(., ., by = groupname) %>%
+        dplyr::left_join(., ., by = 'Gene') %>%
         dplyr::filter(index.y > index.x) %>%
-        dplyr::select(-starts_with('index')) %>%
+        dplyr::select(-dplyr::starts_with('index')) %>%
         dplyr::rename(tx.id = tx.id.x, compare.to = tx.id.y)
     }
   }
@@ -173,6 +184,11 @@ compareAS <- function(exons, ..., groupings = NULL) {
 
 
 getAS_ <- function(tx1, tx2) {
+  
+  # define global variables
+  revmap <- type <- upcoord <- downcoord <- downdiff <- NULL
+  AS.type <- updiff <- countersource <- sourcedown <- NULL
+  sourceup <- seqnames <- NULL
   
   # get information on transcripts
   tx1index <- c(1:length(tx1))
