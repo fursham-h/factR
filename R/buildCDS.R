@@ -218,6 +218,11 @@ getCDSstart_ <- function(query, refCDS, fasta) {
   )
   # define global variables
   width <- NULL
+  
+  # return if query and ref do not overlap at all
+  if (all(suppressWarnings(!refCDS %within% query))) {
+    return(output)
+  }
 
   # get coord of start codon on reference and strand info
   startcodon <- resizeTranscript(refCDS, end = sum(BiocGenerics::width(refCDS)) - 3)

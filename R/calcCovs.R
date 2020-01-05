@@ -156,7 +156,7 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
 
 countCoverage_ <- function(tx1, tx2, over) {
   chrom <- as.character(S4Vectors::runValue(GenomeInfoDb::seqnames(tx1)))
-  cov <- GenomicRanges::coverage(c(tx1, tx2))
+  cov <- suppressWarnings(GenomicRanges::coverage(c(tx1, tx2)))
   index <- which(names(cov) == chrom)
   cov <- cov[[index]]
   cov_val <- S4Vectors::runValue(cov)
