@@ -1,4 +1,4 @@
-classifyAS <- function(exons, ..., groupings = NULL) {
+compareAS <- function(exons, ..., groupings = NULL) {
   
   # catch missing args
   mandargs <- c("exons")
@@ -46,6 +46,12 @@ classifyAS <- function(exons, ..., groupings = NULL) {
   # check for exons object type
   if (is(exons, "GRanges")){
     stop(sprintf("%s has to be GRangesList in intraList mode", 
+                 argnames[[1]]))
+  }
+  
+  # check for >1 items in list
+  if (length(exons) == 1){
+    stop(sprintf("%s has to contain >1 items intraList mode", 
                  argnames[[1]]))
   }
   
@@ -123,9 +129,9 @@ classifyAS <- function(exons, ..., groupings = NULL) {
   # add mirror analysis
   out <- out %>%
     dplyr::select(tx.id = compare.to, compare.to = tx.id, coord:AS.direction) %>%
-    dplyr::mutate(AS.direction = ifelse(AS.direction == 'inclusion',
-                                        'skipped', 'inclusion')) %>%
-    dplyr::mutate(AS.type = ifelse(AS.direction == 'inclusion',
+    dplyr::mutate(AS.direction = ifelse(AS.direction == 'included',
+                                        'skipped', 'included')) %>%
+    dplyr::mutate(AS.type = ifelse(AS.direction == 'included',
                                         toupper(AS.type), tolower(AS.type))) %>%
     dplyr::bind_rows(out,.) %>%
     dplyr::arrange(tx.id, compare.to, 
@@ -145,9 +151,17 @@ getAS_ <- function(tx1, tx2) {
   tx2index <- c((length(tx1) + 1):(length(tx1) + length(tx2)))
   strand <- BiocGenerics::strand(tx1)[1] %>% as.character()
 
-  # combine transcripts and disjoin, annotate position of alt segments
-  disjoint <- BiocGenerics::append(tx1, tx2) %>%
-    GenomicRanges::disjoin(with.revmap = T) %>%
+  # combine transcripts and disjoin
+  disjoint <- suppressWarnings(BiocGenerics::append(tx1, tx2) %>%
+    GenomicRanges::disjoin(with.revmap = T))
+  
+  # return if tx do not have common segments
+  if (length(disjoint) == tail(tx2index,1)) {
+    return(NULL)
+  }
+  
+  # annotate position of alt segments
+  disjoint <- disjoint %>%
     as.data.frame() %>%
     dplyr::mutate(type = ifelse(lengths(revmap) == 2, "cons", "alt"))
 
@@ -199,7 +213,7 @@ getAS_ <- function(tx1, tx2) {
   # return as GRanges
   disjoint <- disjoint %>%
     dplyr::mutate(AS.type = ifelse(source == 1, toupper(AS.type), tolower(AS.type))) %>%
-    dplyr::mutate(source = ifelse(source == 1, 'inclusion', 'skipped')) %>%
+    dplyr::mutate(source = ifelse(source == 1, 'included', 'skipped')) %>%
     dplyr::select(seqnames:strand, source, AS.type) %>%
     GenomicRanges::makeGRangesListFromDataFrame(split.field = 'source',keep.extra.columns = T)
   return(disjoint)
