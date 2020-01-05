@@ -1,17 +1,23 @@
 ####### ToDos ####### 
 
-- Add in checks/warnings for tx that don't overlap
-  - buildCDS
-  - calcCovs
-  - AS
+- Annotate start codon type
+  - annotated, predicted....
+
+- DONE:Revert merge to makeGTF
+- DONE:Add in checks/warnings for tx that don't overlap
+  - DONE:buildCDS
+  - ALREADYimplemented:calcCovs
+  - DONE:AS
   
+- AS ... accept multiple comparisons.... (in fture)
 - Amend vigentte on
   - extractCDSfeature
+  - exportExonsCDStoGTF
 
 - Differential AS and domain comparison
 - Simplify variable names
 - Run BiocCheck
 
-- Amend extractCDSfeature output
+- DONE:Amend extractCDSfeature output
 - Check PROSITE
 - argument to return searchUORFs (not necessary)

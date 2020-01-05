@@ -432,21 +432,33 @@ predictNMD(newquery_exons, newquery_cds)
 
 ```
 
-## Merging exon and cds objects for export
+## Compare and classify alternative segments between transcripts
 
-After constructing query cds entries, one may be interested in combining the exon and cds objects and save it as a GTF file. factR comes a `mergeExonsCDS` function which effeciently unlists the GRangeList objects, fill any missing important attributes (type and transcript_id) and combine them into a single GRanges object. 
-```{r merge}
+RNA transcripts commonly undergo alternative splicing to give rise to two or more isoforms. Each isoform may contain distinct segments that may ultimately affect the function of its translated protein. To compare and classify alternative segments between two transcripts, we can run the `compareAS` function that comes with factR.
+
+`compareAS` analyzes alternative spliced segments in two modes: pair-wise and intra-list. In pair-wise mode, we have to provide two GRanges objects for comparison. THe function will return a GRanges with segments included/skipped in the first transcript as compared to the second transcript
+```{r compareAS1}
+# compare transcript1 to transcript2
+compareAS(query_exons$transcript1, query_exons$transcript2)
+
+```
+
+In intralist mode, we can provide a GRangesList object containing exon coordinates for a set of transcripts. If a gene_id attribute is present as a metadata column, the function will group transcripts by its gene family and create transcript pairs for comparsion. 
+```{r compareAS2}
+# compare transcript1 to transcript2
+compareAS(query_exons)
+
+```
+
+## Export exons and cds as GTF
+
+After constructing query cds entries, one may be interested in combining the exon and cds objects and save it as a GTF file. factR comes a `exportExonsCDStoGTF` function which effeciently unlists the GRangeList objects, fill any missing important attributes (type and transcript_id) and export it as a GTF file
+```{r export, eval = F}
 # combine exons and cds objects
-newquery_gtf <- mergeExonsCDS(newquery_exons, newquery_cds)
-newquery_gtf
+exportExonsCDStoGTF(newquery_exons, newquery_cds, 'path/to/output.gtf')
 
 ```
 
-The returned object may then be exported as a GTF file using rtracklayer's export function
-```{r output, eval=F}
-# save newquery_gtf as gtf file
-export(newquery_gtf, 'path/to/output.gtf', format = 'gtf')
-```
 
 # Other exported functions
 ## Resize GRanges transcript
