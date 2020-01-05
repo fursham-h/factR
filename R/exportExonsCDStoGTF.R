@@ -1,4 +1,4 @@
-#' Merge GRangesList exons and cds objects
+#' Merge GRangesList exons and cds objects and export as GTF
 #'
 #' @description
 #' Merges two GRangesList objects; one containing exon coordinates and one containing cds coordinates.
@@ -9,14 +9,14 @@
 #' @param cds
 #' GRangesList object containing cds
 #' for each transcript.
+#' @param con
+#' Path to file for saving GTF
 #'
-#' @return
-#' GRanges object
 #' @export
-mergeExonsCDS <- function(exons, cds) {
+exportExonsCDStoGTF <- function(exons, cds, con) {
 
   # catch missing args
-  mandargs <- c("exons", "cds")
+  mandargs <- c("exons", "cds", "con")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
     stop(paste(
@@ -58,6 +58,6 @@ mergeExonsCDS <- function(exons, cds) {
   }
   names(exons) <- NULL
   names(cds) <- NULL
-
-  return(c(exons, cds))
+  
+  rtracklayer::export(c(exons, cds), con = con, format = 'gtf')
 }
