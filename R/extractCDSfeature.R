@@ -128,7 +128,7 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
 
   # run hmmer function if requested
   if (!is.null(features$hmmer)) {
-    output <- BiocParallel::bplapply(seq_along(aaSeq), function(y) {
+    output <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(y) {
       # account for return errors
       report <- tryCatch(
         bio3d::hmmer(aaSeq[y,]$x,
@@ -181,7 +181,7 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
     }
     
     # run signalHsmm
-    outSP <- BiocParallel::bplapply(seq_along(aaSeq), function(x) {
+    outSP <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(x) {
       report <- signalHsmm::run_signalHsmm(aaSeq[x,]$y)[[1]]
       report$struc <- paste(report$struc, collapse = '')
       report$prot <- paste(report$prot, collapse = '')
