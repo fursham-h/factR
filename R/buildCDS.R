@@ -142,7 +142,8 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
       dplyr::mutate(phase = cumsum(width %% 3) %% 3) %>%
       dplyr::mutate(phase = dplyr::lag(phase, default = 0)) %>%
       dplyr::ungroup() %>%
-      dplyr::select(-group_name)
+      dplyr::select(-group_name) %>%
+      dplyr::mutate(built_from = 'Full coverage')
   }
 
   # create CDS list for all remaining tx
@@ -203,7 +204,8 @@ getCDS_ <- function(query, CDS, fasta) {
   }
 
   # build new ORF Granges
-  report <- getCDSranges_(queryTx, output$fiveUTRlength, output$threeUTRlength)
+  report <- getCDSranges_(queryTx, output$fiveUTRlength, output$threeUTRlength,
+                          output$ORF_start)
   output <- utils::modifyList(output, report) # update output
   # return(output[c('ORF_considered', 'ORF_start', 'ORF_found')])
   return(output$ORF_considered)
@@ -252,7 +254,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
     }
 
     # update output list
-    output$ORF_start <- "Annotated"
+    output$ORF_start <- "Shared ATG"
     output$fiveUTRlength <- fiveUTRlength
 
     return(output)
@@ -295,7 +297,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
           fiveUTRlength <- disjoint[1, ]$cumsum
         }
 
-        output$ORF_start <- "Predicted"
+        output$ORF_start <- "Internal ATG"
         output$fiveUTRlength <- fiveUTRlength
 
         return(output)
@@ -344,7 +346,7 @@ getCDSstop_ <- function(query, fasta, fiveUTRlength) {
   }
 }
 
-getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength) {
+getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength, starttype) {
 
   # prepare output list
   output <- list("ORF_considered" = NA)
@@ -363,6 +365,7 @@ getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength) {
     dplyr::mutate(phase = cumsum(width %% 3) %% 3) %>%
     dplyr::select(seqnames:end, strand, type, phase, transcript_id)
   CDSranges$phase <- c(0, head(CDSranges$phase, -1))
+  CDSranges$built_from <- starttype
   # output$ORF_considered  = GenomicRanges::makeGRangesFromDataFrame(CDSranges, keep.extra.columns = TRUE)
   output$ORF_considered <- CDSranges
   return(output)
