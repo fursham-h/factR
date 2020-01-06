@@ -1,6 +1,6 @@
 ####### ToDos ####### 
 
-- Annotate start codon type
+- DONE:Annotate start codon type
   - annotated, predicted....
 
 - DONE:Revert merge to makeGTF
@@ -11,8 +11,8 @@
   
 - AS ... accept multiple comparisons.... (in fture)
 - Amend vigentte on
-  - extractCDSfeature
-  - exportExonsCDStoGTF
+  - DONE:extractCDSfeature
+  - DONE:exportExonsCDStoGTF
 
 - Differential AS and domain comparison
 - Simplify variable names

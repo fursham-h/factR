@@ -83,20 +83,20 @@ BiocManager::install("AnnotationHub")
 library(AnnotationHub)
 ah <- AnnotationHub()
 query(ah, c('Mus musculus', 'gencode', 'gff', 'basic'))
-#AnnotationHub with 2 records
-## snapshotDate(): 2019-05-02 
-## $dataprovider: Gencode
-## $species: Mus musculus
-## $rdataclass: GRanges
-## additional mcols(): taxonomyid, genome, description, coordinate_1_based, maintainer,
-##   rdatadateadded, preparerclass, tags, rdatapath, sourceurl, sourcetype 
-## retrieve records with, e.g., 'object[["AH49547"]]' 
-#
-#            title                                                    
-#  AH49547 | gencode.vM6.basic.annotation.gff3.gz                     
-#  AH49549 | gencode.vM6.chr_patch_hapl_scaff.basic.annotation.gff3.gz
+#> AnnotationHub with 2 records
+#> # snapshotDate(): 2019-05-02 
+#> # $dataprovider: Gencode
+#> # $species: Mus musculus
+#> # $rdataclass: GRanges
+#> # additional mcols(): taxonomyid, genome, description, coordinate_1_based, maintainer,
+#> #   rdatadateadded, preparerclass, tags, rdatapath, sourceurl, sourcetype 
+#> # retrieve records with, e.g., 'object[["AH49547"]]' 
+#> 
+#>             title                                                    
+#>   AH49547 | gencode.vM6.basic.annotation.gff3.gz                     
+#>   AH49549 | gencode.vM6.chr_patch_hapl_scaff.basic.annotation.gff3.gz
 
-# retrieve id 'AH49547'
+#>  retrieve id 'AH49547'
 ref_gtf <- ah[['AH49547']]
 ```
 
@@ -140,23 +140,23 @@ BiocManager::install("AnnotationHub")
 library(AnnotationHub)
 ah <- AnnotationHub()
 query(ah, c("Mus musculus", "release-91", 'fasta', 'GRCm38'))
-#AnnotationHub with 5 records
-## snapshotDate(): 2019-05-02 
-## $dataprovider: Ensembl
-## $species: Mus musculus
-## $rdataclass: TwoBitFile
-## additional mcols(): taxonomyid, genome, description, coordinate_1_based, maintainer,
-##   rdatadateadded, preparerclass, tags, rdatapath, sourceurl, sourcetype 
-## retrieve records with, e.g., 'object[["AH60491"]]' 
-#
-#            title                                           
-#  AH60491 | Mus_musculus.GRCm38.cdna.all.2bit               
-#  AH60492 | Mus_musculus.GRCm38.dna.primary_assembly.2bit   
-#  AH60493 | Mus_musculus.GRCm38.dna_rm.primary_assembly.2bit
-#  AH60494 | Mus_musculus.GRCm38.dna_sm.primary_assembly.2bit
-#  AH60495 | Mus_musculus.GRCm38.ncrna.2bit  
+#> AnnotationHub with 5 records
+#> # snapshotDate(): 2019-05-02 
+#> # $dataprovider: Ensembl
+#> # $species: Mus musculus
+#> # $rdataclass: TwoBitFile
+#> # additional mcols(): taxonomyid, genome, description, coordinate_1_based, maintainer,
+#> #   rdatadateadded, preparerclass, tags, rdatapath, sourceurl, sourcetype 
+#> # retrieve records with, e.g., 'object[["AH60491"]]' 
+#> 
+#>             title                                           
+#>   AH60491 | Mus_musculus.GRCm38.cdna.all.2bit               
+#>   AH60492 | Mus_musculus.GRCm38.dna.primary_assembly.2bit   
+#>   AH60493 | Mus_musculus.GRCm38.dna_rm.primary_assembly.2bit
+#>   AH60494 | Mus_musculus.GRCm38.dna_sm.primary_assembly.2bit
+#>   AH60495 | Mus_musculus.GRCm38.ncrna.2bit  
 
-# retrieve id 'AH60492'
+#>  retrieve id 'AH60492'
 Mmusculus <- ah[['AH60492']]
 ```
 
@@ -349,26 +349,38 @@ plotTranscripts(query_exons, query_cds)
 
 ### Predicting protein features
 
-To extract protein coding features found in our list of coding transcripts, we can run the `extractCDSfeature` function using our `query_cds` and `Mmusculus` objects as input. This tool will currently query the translated protein sequence for two features: protein domains and signal peptide. 
+To extract protein coding features found in our list of coding transcripts, we can run the `extractCDSfeature` function using our `query_cds` and `Mmusculus` objects as input. By default, this tool will query the SuperFamily database for domain features by calling out the `hmmer` function from `bio3d` package. The function will output 3 output fields: 'desc', 'evalue' and 'nincluded'. 
 ```{r testfeature, eval=F}
 extractCDSfeature(query_cds, Mmusculus)
-## A tibble: 4 x 3
-#  id          Domains                   SignalP_prob
-#  <chr>       <chr>                            <dbl>
-#1 transcript1 4xRNA-binding domain, RBD     0.000575
-#2 transcript2 4xRNA-binding domain, RBD     0.000575
-#3 transcript3 2xRNA-binding domain, RBD     0.000575
-#4 transcript4 4xRNA-binding domain, RBD     0.000575
+#> # A tibble: 4 x 4
+#>   id          hmmer.desc              hmmer.evalue hmmer.nincluded
+#>   <chr>       <chr>                          <dbl>           <dbl>
+#> 1 transcript1 RNA-binding domain, RBD     2.80e-81               4
+#> 2 transcript2 RNA-binding domain, RBD     2.10e-81               4
+#> 3 transcript3 RNA-binding domain, RBD     1.30e-43               2
+#> 4 transcript4 RNA-binding domain, RBD     1.20e-72               4
+```
+
+More fields from the `hmmer` function can be requested by providing a list of fields to the hmmer argument:
+```{r testfeature2, eval=F}
+extractCDSfeature(query_cds, Mmusculus, hmmer = c('default', 'bitscore', 'pvalue'))
+#> # A tibble: 4 x 6
+#>   id          hmmer.desc              hmmer.evalue hmmer.nincluded hmmer.bitscore hmmer.pvalue
+#>   <chr>       <chr>                          <dbl>           <dbl>          <dbl>        <dbl>
+#> 1 transcript1 RNA-binding domain, RBD     2.80e-81               4           266.        -195.
+#> 2 transcript2 RNA-binding domain, RBD     2.10e-81               4           267.        -195.
+#> 3 transcript3 RNA-binding domain, RBD     1.30e-43               2           146.        -108.
+#> 4 transcript4 RNA-binding domain, RBD     1.20e-72               4           239         -175.
 ```
 
 In order to extract the domain features, `extractCDSfeature` will attempt to submit the protein coding sequence to the SuperFamily database and return a summary of the domain structure. As this process is done over HTTP, the speed of this function is greatly dependent on the server and on the number of cds in your list. This process can be sped up by subsetting the list of cds for analysis using the `which` argument.
 ```{r testfeaturewhich, eval=F}
 extractCDSfeature(query_cds, Mmusculus, which = c('transcript1', 'transcript3'))
-## A tibble: 2 x 3
-#  id          Domains                   SignalP_prob
-#  <chr>       <chr>                            <dbl>
-#1 transcript1 4xRNA-binding domain, RBD     0.000575
-#2 transcript3 2xRNA-binding domain, RBD     0.000575
+#> # A tibble: 2 x 4
+#>   id          hmmer.desc              hmmer.evalue hmmer.nincluded
+#>   <chr>       <chr>                          <dbl>           <dbl>
+#> 1 transcript1 RNA-binding domain, RBD     2.80e-81               4
+#> 2 transcript2 RNA-binding domain, RBD     2.10e-81               4
 ```
 
 ### Predicting NMD-inducing features
