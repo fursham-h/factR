@@ -139,7 +139,7 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
       )
       
       if (is.null(report)) {
-        return("NA")
+        return(NULL)
       } else {
         report <- report$hit.tbl %>%
           dplyr::mutate(id = aaSeq[y,]$id)
