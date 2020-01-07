@@ -141,8 +141,9 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
       if (is.null(report)) {
         return("NA")
       } else {
-        report <- dplyr::bind_cols(id = aaSeq[y,]$id, 
-                                   report$hit.tbl)
+        report <- report$hit.tbl %>%
+          dplyr::mutate(id = aaSeq[y,]$id)
+
         return(report)
       }
     }, BPPARAM = BiocParallel::MulticoreParam()) %>%
