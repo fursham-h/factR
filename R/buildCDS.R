@@ -250,7 +250,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
     if (startcodonindex > 1) {
       fiveUTRlength <- disjoint[startcodonindex - 1, ]$cumsum
     } else {
-      fiveUTRlength <- disjoint[1, ]$cumsum
+      fiveUTRlength <- 0
     }
 
     # update output list
@@ -294,7 +294,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
         if (startcodonindex > 1) {
           fiveUTRlength <- disjoint[startcodonindex - 1, ]$cumsum
         } else {
-          fiveUTRlength <- disjoint[1, ]$cumsum
+          fiveUTRlength <- 0
         }
 
         output$ORF_start <- "Internal ATG"
