@@ -103,7 +103,7 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
 
   # get sequence
   cdsSeq <- GenomicFeatures::extractTranscriptSeqs(fasta, cds)
-  aaSeq <- suppressWarnings(Biostrings::translate(cdsSeq)) %>%
+  aaSeq <- suppressWarnings(Biostrings::translate(cdsSeq, if.fuzzy.codon = 'solve')) %>%
     as.data.frame() %>%
     tibble::rownames_to_column("id") %>%
     dplyr::rowwise() %>%
@@ -112,7 +112,8 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
     dplyr::mutate(instop = ifelse('*' %in% y,T,F)) %>% 
     dplyr::ungroup()
   
-  # check for ORF
+  # check for ATG and internal stop_codon, truncate proteins with internal stop codon
+  ## and remove entries without proteins after truncation
   if (T %in% aaSeq$noATG) {
     warning(sprintf("%s cds entries do not start with ATG", sum(aaSeq$noATG)))
   }
@@ -125,6 +126,10 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
       dplyr::mutate(y = strsplit(x, split = "")))
       
     warning(sprintf("%s cds entries contain internal stop_codon. These proteins have been truncated", sum(aaSeq$instop)))
+    if ('' %in% aaSeq$x) {
+      warning(sprintf("After truncation, %s cds have no coding sequences. These entries were not analyzed", sum(aaSeq$x == '')))
+      aaSeq <- aaSeq[aaSeq$x != '',]
+    }
   }
   
   # prepare output

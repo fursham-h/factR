@@ -139,8 +139,7 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
         by = c("group_name" = refname)
       ) %>%
       dplyr::group_by(group_name) %>%
-      dplyr::mutate(phase = cumsum(width %% 3) %% 3) %>%
-      dplyr::mutate(phase = dplyr::lag(phase, default = 0)) %>%
+      dplyr::mutate(phase = rev(cumsum(rev(width) %% 3) %% 3)) %>%
       dplyr::ungroup() %>%
       dplyr::select(-group_name) %>%
       dplyr::mutate(built_from = 'Full coverage')
@@ -269,9 +268,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
       BiocGenerics::start(startcodons) != 1]
 
     # return if no internal ATG is found
-    if (length(inframestarts) == 0) {
-      return(output)
-    } else {
+    if (length(inframestarts) > 0) {
 
       # This function attempts to map the XStringViews output back to refGRanges
       inframestartsingranges <- do.call("c", base::mapply(function(x, y) {
@@ -301,11 +298,13 @@ getCDSstart_ <- function(query, refCDS, fasta) {
         output$fiveUTRlength <- fiveUTRlength
 
         return(output)
-      } else {
-        return(output)
-      }
+      } 
     }
   }
+
+  
+  
+  
 }
 
 getCDSstop_ <- function(query, fasta, fiveUTRlength) {
@@ -362,9 +361,8 @@ getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength, starttype) {
       type = "CDS",
       transcript_id = S4Vectors::mcols(query)$transcript_id[1]
     ) %>%
-    dplyr::mutate(phase = cumsum(width %% 3) %% 3) %>%
+    dplyr::mutate(phase = rev(cumsum(rev(width) %% 3) %% 3)) %>%
     dplyr::select(seqnames:end, strand, type, phase, transcript_id)
-  CDSranges$phase <- c(0, head(CDSranges$phase, -1))
   CDSranges$built_from <- starttype
   # output$ORF_considered  = GenomicRanges::makeGRangesFromDataFrame(CDSranges, keep.extra.columns = TRUE)
   output$ORF_considered <- CDSranges

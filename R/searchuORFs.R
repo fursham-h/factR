@@ -222,7 +222,7 @@ getuORFuATG_ <- function(txlist, cdslist, fasta, size) {
       thisGR <- resizeTranscript(fiveUTRGRanges, start, end)
       S4Vectors::mcols(thisGR)$type <- "CDS"
       S4Vectors::mcols(thisGR)$frame <- a
-      S4Vectors::mcols(thisGR)$phase <- data.table::shift(cumsum(BiocGenerics::width(thisGR) %% 3) %% 3, fill = 0)
+      S4Vectors::mcols(thisGR)$phase <- rev(cumsum(rev(BiocGenerics::width(thisGR)) %% 3) %% 3)
       S4Vectors::mcols(thisGR)$newname <- paste0(z, "_", names(txlist))
       return(thisGR)
     }, nonOverlapsuORFuATG$start, nonOverlapsuORFuATG$end,
