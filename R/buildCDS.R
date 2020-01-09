@@ -144,7 +144,17 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
       dplyr::select(-group_name) %>%
       dplyr::mutate(built_from = 'Full coverage')
     
-
+    # remove no coverage comparisons
+    if (0 %in% query2ref[[coverage]]) {
+      nocov <- sum(query2ref[[coverage]] == 0)
+      rlang::warn(sprintf(
+        "%s comparisons in query2ref have 0 coverage. These were not analyzed",
+        nocov
+      ))
+      
+      query2ref <- query2ref %>%
+        dplyr::filter(!!as.symbol(covname) > 0)
+    }
   }
 
   # create CDS list for all remaining tx
