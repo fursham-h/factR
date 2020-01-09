@@ -71,7 +71,7 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
   
   
   # define global variables
-  . <- x <- startendaa <- nincluded <- desc <- id <- NULL
+  . <- x <- y<- instop <- nincluded <- desc <- id <- NULL
 
   # catch unmatched seqlevels
   if (GenomeInfoDb::seqlevelsStyle(cds) != GenomeInfoDb::seqlevelsStyle(fasta)) {

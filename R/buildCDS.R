@@ -37,7 +37,7 @@
 #'
 #' @examples
 #' library(BSgenome.Mmusculus.UCSC.mm10)
-#' buildCDS(query_exons, ref_exons, Mmusculus, q2rcovs, coverage = 3)
+#' buildCDS(query_exons, ref_cds, Mmusculus, q2rcovs, coverage = 3)
 buildCDS <- function(query, refCDS, fasta, query2ref,
                      ids = c(1, 2), coverage = NULL) {
 
@@ -196,7 +196,7 @@ getCDS_ <- function(query, CDS, fasta) {
   )
   
   # Extract info and sort all GRanges first
-  strand <- as.character(BiocGenerics::strand(query))[1]
+  strand <- as.character(BiocGenerics::strand(query[[1]]))[1]
   queryTx <- BiocGenerics::sort(query[[1]], decreasing = strand == "-")
   knownCDS <- BiocGenerics::sort(CDS[[1]], decreasing = strand == "-")
   S4Vectors::mcols(queryTx)$transcript_id <- names(query)
@@ -234,7 +234,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
     fiveUTRlength = 0
   )
   # define global variables
-  width <- NULL
+  phase <- width <- NULL
   
   # return if query and ref do not overlap at all
   if (all(suppressWarnings(!refCDS %within% query))) {
@@ -324,7 +324,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
   
   # final chance of assigning CDS, just assign inframeCDS
   #get tailphases on refCDS
-  mcols(refCDS)$tailphase <- cumsum(width(refCDS) %% 3)%%3
+  S4Vectors::mcols(refCDS)$tailphase <- cumsum(width(refCDS) %% 3)%%3
   
   combinedgr <- BiocGenerics::append(query, refCDS)
   disjoint <- combinedgr %>% 
@@ -332,7 +332,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
     sort(decreasing = strand == "-")
   revmap <- S4Vectors::mcols(disjoint)$revmap
   disjoint$phase <- S4Vectors::mcols(combinedgr)$tailphase[unlist(revmap)] %>% 
-    relist(revmap)
+    utils::relist(revmap)
   
   firstcdsindex <- min(which(lengths(disjoint$revmap) == 2))
   firstscds <- disjoint[firstcdsindex] %>% 

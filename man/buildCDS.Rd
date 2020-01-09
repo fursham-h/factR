@@ -43,7 +43,7 @@ and will return the CDS GRanges if found.
 }
 \examples{
 library(BSgenome.Mmusculus.UCSC.mm10)
-buildCDS(query_exons, ref_exons, Mmusculus, q2rcovs, coverage = 3)
+buildCDS(query_exons, ref_cds, Mmusculus, q2rcovs, coverage = 3)
 }
 \author{
 Fursham Hamid

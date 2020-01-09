@@ -46,7 +46,7 @@ searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
     ))
   }
   # define global variable
-  type <- NULL
+  strand <- group_name <- type <- NULL
 
   # check if exons and cds are GRlist
   if (!is(exons, "GRangesList") | !is(cds, "GRangesList")) {
