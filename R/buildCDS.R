@@ -143,6 +143,8 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
       dplyr::ungroup() %>%
       dplyr::select(-group_name) %>%
       dplyr::mutate(built_from = 'Full coverage')
+    
+
   }
 
   # create CDS list for all remaining tx
@@ -301,10 +303,46 @@ getCDSstart_ <- function(query, refCDS, fasta) {
       } 
     }
   }
-
+  
+  # final chance of assigning CDS, just assign inframeCDS
+  #get tailphases on refCDS
+  mcols(refCDS)$tailphase <- cumsum(width(refCDS) %% 3)%%3
+  
+  combinedgr <- BiocGenerics::append(query, refCDS)
+  disjoint <- combinedgr %>% 
+    GenomicRanges::disjoin(with.revmap = T) %>% 
+    sort(decreasing = strand == "-")
+  revmap <- S4Vectors::mcols(disjoint)$revmap
+  disjoint$phase <- S4Vectors::mcols(combinedgr)$tailphase[unlist(revmap)] %>% 
+    relist(revmap)
+  
+  firstcdsindex <- min(which(lengths(disjoint$revmap) == 2))
+  firstscds <- disjoint[firstcdsindex] %>% 
+    as.data.frame() %>% 
+    dplyr::mutate(phase = phase[[1]][2]) %>%
+    dplyr::mutate(fivetrim = (width - phase)%%3)
+  
+  firstcdsrange <- resizeTranscript(disjoint[firstcdsindex], firstscds$fivetrim)
+  disjoint <- BiocGenerics::append(query, firstcdsrange) %>%
+    GenomicRanges::disjoin(with.revmap = T) %>%
+    sort(decreasing = strand == "-") %>%
+    as.data.frame() %>%
+    dplyr::mutate(cumsum = cumsum(width))
   
   
+  # retrieve index of segment upstream of start codon and return its cumsumwidth
+  startcodonindex <- min(which(lengths(disjoint$revmap) == 2))
+  if (startcodonindex > 1) {
+    fiveUTRlength <- disjoint[startcodonindex - 1, ]$cumsum
+  } else {
+    fiveUTRlength <- 0
+  }
   
+  # update output list
+  output$ORF_start <- "Inferred frame"
+  output$fiveUTRlength <- fiveUTRlength
+  
+  return(output)
 }
 
 getCDSstop_ <- function(query, fasta, fiveUTRlength) {
