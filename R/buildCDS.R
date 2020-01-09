@@ -355,7 +355,7 @@ getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength, starttype) {
   width <- seqnames <- strand <- phase <- type <- transcript_id <- NULL
 
   # resize query GRanges to ORF and renew metadata info
-  CDSranges <- resizeTranscript(query, fiveUTRlength, threeUTRlength)
+  CDSranges <- resizeTranscript(query, fiveUTRlength, (threeUTRlength + 3))
   CDSranges <- CDSranges %>%
     as.data.frame() %>%
     dplyr::mutate(

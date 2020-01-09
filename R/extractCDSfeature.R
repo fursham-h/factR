@@ -107,20 +107,24 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
     as.data.frame() %>%
     tibble::rownames_to_column("id") %>%
     dplyr::rowwise() %>%
-    dplyr::mutate(y = strsplit(substr(x, 1, nchar(x) - 1), split = "")) %>%
-    dplyr::mutate(startendaa = paste0(substr(x, 1, 1), substr(x, nchar(x), nchar(x)))) %>%
+    dplyr::mutate(y = strsplit(x, split = "")) %>%
+    dplyr::mutate(noATG = ifelse(y[[1]] != 'M',T,F)) %>%
+    dplyr::mutate(instop = ifelse('*' %in% y,T,F)) %>% 
     dplyr::ungroup()
-
-  if (!"M*" %in% aaSeq$startendaa) {
-    aaSeqORF <- aaSeq %>%
-      dplyr::filter(startendaa == "M*")
-    if (nrow(aaSeqORF) == 0) {
-      stop("All cds are not ORFs. Please check cds GRangesList or fasta input")
-    } else if (nrow(aaSeqORF) < nrow(aaSeq)) {
-      num_nonCDS <- nrow(aaSeq) - nrow(aaSeqORF)
-      warning(sprintf("%s cds entries are not ORFs and have not been analysed"))
-    }
-    aaSeq <- aaSeqORF
+  
+  # check for ORF
+  if (T %in% aaSeq$noATG) {
+    warning(sprintf("%s cds entries do not start with ATG", sum(aaSeq$noATG)))
+  }
+  if (T %in% aaSeq$instop) {
+    aaSeq <- suppressWarnings(aaSeq %>% 
+      dplyr::rowwise() %>%
+      dplyr::mutate(x = ifelse(instop == T, 
+                               paste(y[1:which(y == '*')-1], collapse = ''),
+                               x)) %>%
+      dplyr::mutate(y = strsplit(x, split = "")))
+      
+    warning(sprintf("%s cds entries contain internal stop_codon. These proteins have been truncated", sum(aaSeq$instop)))
   }
   
   # prepare output

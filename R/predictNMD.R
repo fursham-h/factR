@@ -157,6 +157,8 @@ testNMD <- function(queryTranscript, queryCDS, distance_stop_EJ = 50) {
   queryCDS <- BiocGenerics::sort(queryCDS, decreasing = strand == "-")
   queryTranscript <- BiocGenerics::sort(queryTranscript, decreasing = strand == "-")
 
+  queryCDS <- resizeTranscript(queryCDS, end = -3)
+  
   # test if query is NMD sensitive
   #   get distance of last EJC from start of transcript
   #   disjoin will create a new GRanges that will separate the queryTranscript
