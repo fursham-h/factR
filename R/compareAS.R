@@ -55,19 +55,19 @@ compareAS <- function(exons, ..., groupings = NULL) {
     # multiple comparisons not supported. can be a feature in the future
     if (length(list(...)) > 1) {
       # idea for multiple comparison. convert grangeslist to df for comparison
-      warning("Multiple comparisons is not yet supported in pair-wise mode. First item in ... used")
+      rlang::warn("Multiple comparisons is not yet supported in pair-wise mode. First item in ... used")
     }
     tx2 <- list(...)[[1]]
     if (!is(tx2, "GRanges")){
       # escape out and carry out intra-list comparisons
-      warning(sprintf("`%s` is not a GRanges object. Intra-list comparison mode was executed",
+      rlang::warn(sprintf("`%s` is not a GRanges object. Intra-list comparison mode was executed",
                       argnames[[2]]))
     } else {
       # check object types and return warnings if not GRanges
       if (!is(exons, "GRanges")){
         if(is(exons, "GRangesList")){
           exons <- exons[[1]]
-          warning(sprintf("GRangesList objects are not supported in pair-wise mode. First item in `%s` was used",
+          rlang::warn(sprintf("GRangesList objects are not supported in pair-wise mode. First item in `%s` was used",
                           argnames[[1]]))
         } else {
           #error out
@@ -104,12 +104,12 @@ compareAS <- function(exons, ..., groupings = NULL) {
       missing <- sum(!groupings[[2]] %in% names(exons))
       groupings <- groupings %>%
         dplyr::filter(tx.id %in% names(exons))
-      warning(sprintf("%s transcript(s) in `%s` have missing GRanges in `%s`. These were not analyzed",
+      rlang::warn(sprintf("%s transcript(s) in `%s` have missing GRanges in `%s`. These were not analyzed",
                       missing, tail(argnames,1), argnames[[1]]))
     }
     if (nrow(groupings) > nrow(dplyr::distinct(groupings))){
       groupings <- dplyr::distinct(groupings)
-      warning(sprintf("Duplicate ids in `%s` were removed", tail(argnames,1)))
+      rlang::warn(sprintf("Duplicate ids in `%s` were removed", tail(argnames,1)))
     }
     
     groupings <- groupings %>%

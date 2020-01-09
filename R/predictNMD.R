@@ -100,7 +100,7 @@ predictNMD <- function(exons, cds, NMDthreshold = 50,
         stop("transcript names in `which` is not found in cds")
       } else if (length(which_matched) != length(which)) {
         num_unmatched <- length(which) - length(which_matched)
-        warning(sprintf(
+        rlang::warn(sprintf(
           "%s transcript names in `which` is missing from cds names",
           num_unmatched
         ))

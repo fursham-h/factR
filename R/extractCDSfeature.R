@@ -43,7 +43,7 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
   features <- c(as.list(environment())['hmmer'], list(...))
   if (any(!names(features) %in% c('hmmer', 'signalHsmm'))) {
     features_support <- names(features) %in% c('hmmer', 'signalHsmm')
-    warning(sprintf('feature(s) `%s` is not supported and its analysis is not run', 
+    rlang::warn(sprintf('feature(s) `%s` is not supported and its analysis is not run', 
                     paste(features[!features_support], collapse = ',')))
     features <- features[features_support]
   }
@@ -59,11 +59,11 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
   }
   if (any(!features$hmmer %in% hmmer.header)){
     fields_support <- features$hmmer %in% hmmer.header
-    warning(sprintf('`%s` are not supported hmmer reported fields', 
+    rlang::warn(sprintf('`%s` are not supported hmmer reported fields', 
                     features$hmmer[!fields_support]))
     if (sum(fields_support) == 0) {
       features$hmmer <- c('desc', 'evalue', 'nincluded')
-      warning('returning default hmmer fields')
+      rlang::warn('returning default hmmer fields')
     } else {
       features$hmmer <- features$hmmer[fields_support]
     }
@@ -94,7 +94,7 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
 
     if (length(which_matched) != length(which)) {
       num_unmatched <- length(which) - length(which_matched)
-      warning(sprintf(
+      rlang::warn(sprintf(
         "%s transcript names in `which` is missing from cds names",
         num_unmatched
       ))
@@ -118,7 +118,7 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
   # check for ATG and internal stop_codon, truncate proteins with internal stop codon
   ## and remove entries without proteins after truncation
   if (T %in% aaSeq$noATG) {
-    warning(sprintf("%s cds entries do not start with ATG", sum(aaSeq$noATG)))
+    rlang::warn(sprintf("%s cds entries do not start with ATG", sum(aaSeq$noATG)))
   }
   if (T %in% aaSeq$instop) {
     aaSeq <- suppressWarnings(aaSeq %>% 
@@ -128,9 +128,9 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
                                x)) %>%
       dplyr::mutate(y = strsplit(x, split = "")))
       
-    warning(sprintf("%s cds entries contain internal stop_codon. These proteins have been truncated", sum(aaSeq$instop)))
+    rlang::warn(sprintf("%s cds entries contain internal stop_codon. These proteins have been truncated", sum(aaSeq$instop)))
     if ('' %in% aaSeq$x) {
-      warning(sprintf("After truncation, %s cds have no coding sequences. These entries were not analyzed", sum(aaSeq$x == '')))
+      rlang::warn(sprintf("After truncation, %s cds have no coding sequences. These entries were not analyzed", sum(aaSeq$x == '')))
       aaSeq <- aaSeq[aaSeq$x != '',]
     }
   }
@@ -183,11 +183,11 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
     }
     if (any(!features$signalHsmm %in% signalHsmm.header)){
       fields_support <- features$signalHsmm %in% signalHsmm.header
-      warning(sprintf('`%s` are not supported signalHsmm reported fields', 
+      rlang::warn(sprintf('`%s` are not supported signalHsmm reported fields', 
                       features$signalHsmm[!fields_support]))
       if (sum(fields_support) == 0) {
         features$signalHsmm <- "sp_probability"
-        warning('returning default signalHsmm fields')
+        rlang::warn('returning default signalHsmm fields')
       } else {
         features$signalHsmm <- features$signalHsmm[fields_support]
       }
