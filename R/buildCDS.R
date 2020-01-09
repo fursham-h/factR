@@ -139,6 +139,7 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
         by = c("group_name" = refname)
       ) %>%
       dplyr::group_by(group_name) %>%
+      dplyr::arrange(ifelse(strand == '-', dplyr::desc(start), start)) %>%
       dplyr::mutate(phase = rev(cumsum(rev(width) %% 3) %% 3)) %>%
       dplyr::ungroup() %>%
       dplyr::select(-group_name) %>%
@@ -168,6 +169,7 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
     dplyr::bind_rows()
   outCDS <- suppressWarnings(dplyr::bind_rows(outCDS, out) %>%
     dplyr::mutate(group_name = transcript_id) %>%
+    dplyr::arrange(group_name, ifelse(strand == '-', dplyr::desc(start), start)) %>%
     GenomicRanges::makeGRangesListFromDataFrame(
       split.field = "group_name",
       keep.extra.columns = T
@@ -192,9 +194,11 @@ getCDS_ <- function(query, CDS, fasta) {
     threeUTRlength = 0,
     ORF_found = FALSE
   )
-
-  queryTx <- query[[1]]
-  knownCDS <- CDS[[1]]
+  
+  # Extract info and sort all GRanges first
+  strand <- as.character(BiocGenerics::strand(query))[1]
+  queryTx <- BiocGenerics::sort(query[[1]], decreasing = strand == "-")
+  knownCDS <- BiocGenerics::sort(CDS[[1]], decreasing = strand == "-")
   S4Vectors::mcols(queryTx)$transcript_id <- names(query)
   # attempt to find an aligned start codon
   report <- getCDSstart_(queryTx, knownCDS, fasta)
@@ -236,11 +240,15 @@ getCDSstart_ <- function(query, refCDS, fasta) {
   if (all(suppressWarnings(!refCDS %within% query))) {
     return(output)
   }
+  
+  # sort all GRanges, in case
+  strand <- as.character(BiocGenerics::strand(query))[1]
+  query <- BiocGenerics::sort(query, decreasing = strand == "-")
+  refCDS <- BiocGenerics::sort(refCDS, decreasing = strand == "-")
 
   # get coord of start codon on reference and strand info
   startcodon <- resizeTranscript(refCDS, end = sum(BiocGenerics::width(refCDS)) - 3)
-  strand <- as.character(BiocGenerics::strand(query))[1]
-
+  
   # if query containg annotated start codon:
   if (startcodon %within% query & length(startcodon) == 1) {
 
@@ -404,7 +412,8 @@ getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength, starttype) {
   # resize query GRanges to ORF and renew metadata info
   CDSranges <- resizeTranscript(query, fiveUTRlength, (threeUTRlength + 3))
   CDSranges <- CDSranges %>%
-    as.data.frame() %>%
+    as.data.frame() %>% 
+    dplyr::arrange(ifelse(strand == '-', dplyr::desc(start), start)) %>%
     dplyr::mutate(
       type = "CDS",
       transcript_id = S4Vectors::mcols(query)$transcript_id[1]
@@ -412,7 +421,6 @@ getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength, starttype) {
     dplyr::mutate(phase = rev(cumsum(rev(width) %% 3) %% 3)) %>%
     dplyr::select(seqnames:end, strand, type, phase, transcript_id)
   CDSranges$built_from <- starttype
-  # output$ORF_considered  = GenomicRanges::makeGRangesFromDataFrame(CDSranges, keep.extra.columns = TRUE)
   output$ORF_considered <- CDSranges
   return(output)
 }

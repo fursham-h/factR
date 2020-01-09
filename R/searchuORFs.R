@@ -91,6 +91,7 @@ searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
   newtx <- out %>%
     dplyr::filter(type == "exon") %>%
     dplyr::distinct() %>%
+    dplyr::arrange(group_name, ifelse(strand == '-', dplyr::desc(start), start)) %>%
     GenomicRanges::makeGRangesListFromDataFrame(
       split.field = "group_name",
       keep.extra.columns = T
@@ -99,6 +100,7 @@ searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
   newcds <- out %>%
     dplyr::filter(type == "CDS") %>%
     dplyr::distinct() %>%
+    dplyr::arrange(group_name, ifelse(strand == '-', dplyr::desc(start), start)) %>%
     GenomicRanges::makeGRangesListFromDataFrame(
       split.field = "group_name",
       keep.extra.columns = T

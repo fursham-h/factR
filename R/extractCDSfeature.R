@@ -101,6 +101,9 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
     }
   }
 
+  # sort cds just in case
+  
+  
   # get sequence
   cdsSeq <- GenomicFeatures::extractTranscriptSeqs(fasta, cds)
   aaSeq <- suppressWarnings(Biostrings::translate(cdsSeq, if.fuzzy.codon = 'solve')) %>%
