@@ -340,7 +340,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
     sort(decreasing = strand == "-")
   revmap <- S4Vectors::mcols(disjoint)$revmap
   disjoint$phase <- S4Vectors::mcols(combinedgr)$tailphase[unlist(revmap)] %>% 
-    utils::relist(revmap)
+    IRanges::relist(revmap)
   
   firstcdsindex <- min(which(lengths(disjoint$revmap) == 2))
   firstscds <- disjoint[firstcdsindex] %>% 
