@@ -75,19 +75,19 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
 
   # catch unmatched seqlevels
   if (GenomeInfoDb::seqlevelsStyle(cds) != GenomeInfoDb::seqlevelsStyle(fasta)) {
-    stop("cds and fasta has unmatched seqlevel styles. try matching using matchSeqLevels function")
+    rlang::abort("cds and fasta has unmatched seqlevel styles. try matching using matchSeqLevels function")
   }
 
   # catch wrong cds class
   if (!is(cds, "GRangesList")) {
-    stop("cds class type is not GRangesList")
+    rlang::abort("cds class type is not GRangesList")
   }
 
   # subset cds by which
   if (!is.null(which)) {
     which_matched <- which[which %in% names(cds)]
     if (length(which_matched) == 0) {
-      stop("transcript names in `which` is not found in cds")
+      rlang::abort("transcript names in `which` is not found in cds")
     } else {
       cds <- cds[names(cds) %in% which]
     }

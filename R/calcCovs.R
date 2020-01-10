@@ -44,7 +44,7 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
   mandargs <- c("query", "ref")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
-    stop(paste(
+    rlang::abort(paste(
       "missing values for",
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
@@ -75,7 +75,7 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
   } else {
     querytype <- is(query)[1]
     reftype <- is(ref)[1]
-    stop(sprintf(
+    rlang::abort(sprintf(
       "ref is type %s but query is type %s",
       querytype, reftype
     ))
@@ -107,14 +107,14 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
   # sanity check if all tx in q2r have GRanges object
   if (!all(query2ref[[ids[1]]] %in% names(query))) {
     missing <- sum(!query2ref[[ids[1]]] %in% names(query))
-    stop(sprintf(
+    rlang::abort(sprintf(
       "%s query transcripts have missing GRanges object",
       missing
     ))
   }
   if (!all(query2ref[[ids[2]]] %in% names(ref))) {
     missing <- sum(!query2ref[[ids[2]]] %in% names(ref))
-    stop(sprintf(
+    rlang::abort(sprintf(
       "%s reference CDSs have missing GRanges object",
       missing
     ))

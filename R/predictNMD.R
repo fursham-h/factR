@@ -112,7 +112,7 @@ predictNMD <- function(exons, cds, NMDthreshold = 50,
     # check for missing cds and return warnings/errors
     totest <- totest[totest %in% names(cds)]
     if (length(totest) == 0) {
-      stop("all exons have missing cds info. please ensure exons and cds names match")
+      rlang::abort("all exons have missing cds info. please ensure exons and cds names match")
     }
     if (length(totest) < length(exons)) {
       skiptest <- length(exons) - length(totest)

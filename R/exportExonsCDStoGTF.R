@@ -19,7 +19,7 @@ exportExonsCDStoGTF <- function(exons, cds, con) {
   mandargs <- c("exons", "cds", "con")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
-    stop(paste(
+    rlang::abort(paste(
       "missing values for",
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
@@ -27,7 +27,7 @@ exportExonsCDStoGTF <- function(exons, cds, con) {
 
   # check seqlevels
   if (GenomeInfoDb::seqlevelsStyle(exons) != GenomeInfoDb::seqlevelsStyle(cds)) {
-    stop("exons and cds has unmatched seqlevel styles. try matching using matchSeqLevels function")
+    rlang::abort("exons and cds has unmatched seqlevel styles. try matching using matchSeqLevels function")
   }
 
   # unlist GRangesList and fill important attribute columns

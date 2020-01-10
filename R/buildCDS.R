@@ -45,7 +45,7 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
   mandargs <- c("query", "refCDS", "fasta", "query2ref")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
-    stop(paste(
+    rlang::abort(paste(
       "missing values for",
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
@@ -63,7 +63,7 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
     obj <- paste(c("query", "refCDS")[error], collapse = ",")
     types <- paste(c(is(query)[1], is(refCDS)[1])[error], collapse = ",")
 
-    stop(sprintf(
+    rlang::abort(sprintf(
       "Incompatile input object. %s is type %s respectively",
       obj, types
     ))
@@ -71,7 +71,7 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
 
   # catch unmatched seqlevels
   if (GenomeInfoDb::seqlevelsStyle(query) != GenomeInfoDb::seqlevelsStyle(refCDS)) {
-    stop("query and refCDS has unmatched seqlevel styles. try matching using matchSeqLevels function")
+    rlang::abort("query and refCDS has unmatched seqlevel styles. try matching using matchSeqLevels function")
   }
 
   # extract colnames and try catching wrong indices
@@ -82,24 +82,24 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
       refname <- names(query2ref[ids[2]])
     },
     error = function(e) {
-      stop("column indices in `ids` are not found in query2ref")
+      rlang::abort("column indices in `ids` are not found in query2ref")
     }
   )
   if (txname == refname) {
-    stop("`ids` contain duplicate indices")
+    rlang::abort("`ids` contain duplicate indices")
   }
 
   # sanity check if all tx in q2r have GRanges object
   if (!all(query2ref[[ids[1]]] %in% names(query))) {
     missing <- sum(!query2ref[[ids[1]]] %in% names(query))
-    stop(sprintf(
+    rlang::abort(sprintf(
       "%s query transcripts have missing GRanges object",
       missing
     ))
   }
   if (!all(query2ref[[ids[2]]] %in% names(refCDS))) {
     missing <- sum(!query2ref[[ids[2]]] %in% names(refCDS))
-    stop(sprintf(
+    rlang::abort(sprintf(
       "%s reference CDSs have missing GRanges object",
       missing
     ))

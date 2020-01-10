@@ -38,7 +38,7 @@ compareAS <- function(exons, ..., groupings = NULL) {
   mandargs <- c("exons")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
-    stop(paste(
+    rlang::abort(paste(
       "missing values for",
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
@@ -71,7 +71,7 @@ compareAS <- function(exons, ..., groupings = NULL) {
                           argnames[[1]]))
         } else {
           #error out
-          stop(sprintf("`%s` is not of class GRanges or GRangesList",
+          rlang::abort(sprintf("`%s` is not of class GRanges or GRangesList",
                        argnames[[1]]))
         }
       } 
@@ -84,13 +84,13 @@ compareAS <- function(exons, ..., groupings = NULL) {
   
   # check for exons object type
   if (is(exons, "GRanges")){
-    stop(sprintf("%s has to be GRangesList in intraList mode", 
+    rlang::abort(sprintf("%s has to be GRangesList in intraList mode", 
                  argnames[[1]]))
   }
   
   # check for >1 items in list
   if (length(exons) == 1){
-    stop(sprintf("%s has to contain >1 items intraList mode", 
+    rlang::abort(sprintf("%s has to contain >1 items intraList mode", 
                  argnames[[1]]))
   }
   
@@ -126,7 +126,7 @@ compareAS <- function(exons, ..., groupings = NULL) {
       msg <- 'Unable to create comparison list as `gene_id` attribute is missing from `%s`. 
       Please provide `groupings` df'
       
-      stop(sprintf(msg, argnames[[1]]))
+      rlang::abort(sprintf(msg, argnames[[1]]))
     } else {
       tmp.exons <- unlist(exons)
       groupings <- data.frame(Gene = tmp.exons$gene_id, tx.id = names(tmp.exons)) %>%

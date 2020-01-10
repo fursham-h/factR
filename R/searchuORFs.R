@@ -40,7 +40,7 @@ searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
   mandargs <- c("exons", "cds", "fasta")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
-    stop(paste(
+    rlang::abort(paste(
       "missing values for",
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
@@ -57,7 +57,7 @@ searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
     obj <- paste(c("exons", "cds")[error], collapse = ",")
     types <- paste(c(is(exons)[1], is(cds)[1])[error], collapse = ",")
 
-    stop(sprintf(
+    rlang::abort(sprintf(
       "Incompatile input object. %s is type %s respectively",
       obj, types
     ))
@@ -65,7 +65,7 @@ searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
 
   # catch unmatched seqlevels
   if (GenomeInfoDb::seqlevelsStyle(exons) != GenomeInfoDb::seqlevelsStyle(cds)) {
-    stop("exons and cds has unmatched seqlevel styles. try matching using matchSeqLevels function")
+    rlang::abort("exons and cds has unmatched seqlevel styles. try matching using matchSeqLevels function")
   }
 
   # test for uORF and uATG
@@ -73,7 +73,7 @@ searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
   # check for missing cds and return warnings/errors
   totest <- totest[totest %in% names(cds)]
   if (length(totest) == 0) {
-    stop("all tx have missing cds info. please ensure tx and cds names match")
+    rlang::abort("all tx have missing cds info. please ensure tx and cds names match")
   }
   if (length(totest) < length(exons)) {
     skiptest <- length(exons) - length(totest)

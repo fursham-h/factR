@@ -24,7 +24,7 @@ resizeTranscript <- function(GRanges, start = 0, end = 0) {
 
   # return if appending length is longer than transcript
   if (sum(BiocGenerics::width(GRanges)) < (start + end)) {
-    stop("Appending length is larger than size of transcript")
+    rlang::abort("Appending length is larger than size of transcript")
   }
 
   # define global variable
