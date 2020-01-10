@@ -185,7 +185,7 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
 
   # warn users if program fails to find CDS for some transcripts
   if (length(outCDS) < nrow(query2ref)) {
-    missingCDS <- length(query2ref) - length(outCDS)
+    missingCDS <- nrow(query2ref) - length(outCDS)
     rlang::warn(sprintf("Unable to build CDS for %s transcripts", missingCDS))
   }
 
