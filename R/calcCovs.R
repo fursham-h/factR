@@ -38,8 +38,6 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
                      return = c("best", "all"),
                      over = c("mean", "query", "ref")) {
 
-  # Plans: set 'over' arg to allow user to choose the denominator
-
   # catch missing args
   mandargs <- c("query", "ref")
   passed <- names(as.list(match.call())[-1])
@@ -104,37 +102,36 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
     stop("`ids` contain duplicate indices")
   }
 
-  # sanity check if all tx in q2r have GRanges object
-  if (!all(query2ref[[ids[1]]] %in% names(query))) {
-    missing <- sum(!query2ref[[ids[1]]] %in% names(query))
-    rlang::abort(sprintf(
-      "%s query transcripts have missing GRanges object",
-      missing
-    ))
-  }
-  if (!all(query2ref[[ids[2]]] %in% names(ref))) {
-    missing <- sum(!query2ref[[ids[2]]] %in% names(ref))
-    rlang::abort(sprintf(
-      "%s reference CDSs have missing GRanges object",
-      missing
-    ))
+  # sanity check if all tx in q2r have GRanges object, else skip those transcripts
+  missing <- query2ref %>%
+    dplyr::filter(!(!!as.symbol(txname)) %in% names(query) | 
+                    !(!!as.symbol(refname)) %in% names(refCDS))
+  if (nrow(missing) > 0) {
+    query2ref <- dplyr::setdiff(query2ref, missing)
+    if (nrow(query2ref) == 0) {
+      rlang::abort('All transcripts in query2ref have no GRanges entries')
+    }
+    rlang::warn(sprintf(
+      '%s transcripts were skipped due to missing GRanges entries',
+      nrow(missing)))
   }
 
-  # sanity check if query and ref names are in q2f df
-  if (all(!names(query) %in% query2ref[[ids[1]]])) {
-    unannotatedq <- sum((!names(query) %in% query2ref[ids[1]]))
-    rlang::warn(sprintf(
-      "%s query transcript ids were missing from query2ref df",
-      unnanotatedq
-    ))
-  }
-  if (all(!names(ref) %in% query2ref[[ids[2]]])) {
-    unannotatedr <- sum((!names(ref) %in% query2ref[ids[2]]))
-    rlang::warn(sprintf(
-      "%s reference CDS ids were missing from query2ref df",
-      unnanotatedr
-    ))
-  }
+  ####### Commented out feature below
+  # # sanity check if query and ref names are in q2f df
+  # if (all(!names(query) %in% query2ref[[ids[1]]])) {
+  #   unannotatedq <- sum((!names(query) %in% query2ref[ids[1]]))
+  #   rlang::warn(sprintf(
+  #     "%s query transcript ids were missing from query2ref df",
+  #     unnanotatedq
+  #   ))
+  # }
+  # if (all(!names(ref) %in% query2ref[[ids[2]]])) {
+  #   unannotatedr <- sum((!names(ref) %in% query2ref[ids[2]]))
+  #   rlang::warn(sprintf(
+  #     "%s reference CDS ids were missing from query2ref df",
+  #     unnanotatedr
+  #   ))
+  # }
 
   # get Coverage values for all comparisons
   out <- BiocParallel::bpmapply(function(x, y) {
