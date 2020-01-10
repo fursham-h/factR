@@ -7,7 +7,7 @@
 predictNMD(
   exons,
   cds,
-  NMDthreshold = 50,
+  NMD_threshold = 50,
   which = NULL,
   return = c("all", "NMD")
 )
@@ -18,13 +18,13 @@ for each transcript. To search for NMD-inducing features, transcripts have
 to be coding and thus contain a cds information of the same transcript name}
 
 \item{cds}{GRanges object or GRangesList object containing coding regions (CDS)
-for each transcript. GRangesList must have names that match names in exons,
-else exons will not be analysed}
+for each transcript. Object type must match `exons` object type. GRangesList 
+must have names that match names in exons, else transcript will not be analysed}
 
-\item{NMDthreshold}{Minimum distance of STOP codon to last exon junction (EJ) which triggers NMD.
+\item{NMD_threshold}{Minimum distance of STOP codon to last exon junction (EJ) which triggers NMD.
 Default = 50bp}
 
-\item{which}{List containing names of transcripts from exons to filter for analysis}
+\item{which}{List containing names of transcripts from `exons` to filter for analysis}
 
 \item{return}{If exons and cds are GRangesList, returns results for all transcripts (defailt) or
 only NMD-sensitive (default) transcripts}
@@ -54,14 +54,14 @@ Predict sensitivity of mRNA transcripts to NMD
 library(wiggleplotr)
 plotTranscripts(query_exons, query_cds)
 
-### Examples with single GRanges objects
+### Examples with GRanges objects
 predictNMD(query_exons$transcript1, query_cds$transcript1) # NMD-insensitive
 predictNMD(query_exons$transcript3, query_cds$transcript3) # NMD-sensitive
 
 ### Examples with GRangesList object
 predictNMD(query_exons, query_cds)
 predictNMD(query_exons, query_cds, return = "NMD")
-predictNMD(query_exons, query_cds, which = c("transcript1", "transcript3"), return = "all")
+predictNMD(query_exons, query_cds, which = c("transcript1", "transcript3"))
 }
 \author{
 Fursham Hamid

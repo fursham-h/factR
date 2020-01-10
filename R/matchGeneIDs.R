@@ -58,8 +58,17 @@ matchGeneIDs <- function(query, ref,
   # define global variables
   gene_id <- transcript_id <- matched <- match_level <- appended_ens_id <- NULL
   basic_gene_id <- type <- seqnames <- strand <- gene_name <- ref_gene_name <- NULL
-  # testing and matching gene_ids
-  # message("Checking and matching gene_ids...")
+
+  # retrieve input object names
+  argnames <- as.character(match.call())[-1]
+  
+  # catch unmatched seqlevels
+  if (GenomeInfoDb::seqlevelsStyle(query)[1] != GenomeInfoDb::seqlevelsStyle(ref)[1]) {
+    rlang::abort(sprintf(
+      "`%s` and `%s` has unmatched seqlevel styles. try running: 
+      \t\t%s <- matchSeqLevels(%s, %s)",
+      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2])
+    )}
 
   # prepare a df with a list of gene_ids found in reference
   ref.genelist <- ref %>%

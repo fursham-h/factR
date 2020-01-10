@@ -18,7 +18,7 @@ for query missing from query2ref}
 \item{query2ref}{Dataframe with at least 2 columns: query transcript_id and its paired
 reference transcript_id. Query and ref transcript_ids have to match transcript
 names in query and refCDS objects. Transcripts with missing corrresponding
-GRanges object will return error}
+GRanges object will not be analyzed}
 
 \item{ids}{Numeric vector stating which columns of query2ref dataframe contain the
 query and reference transcript_ids respectively.}
@@ -35,11 +35,13 @@ GRangesList object containing CDS for each query transcript
 }
 \description{
 buildCDS will attempt to construct query CDS information by
-firstly deriving its start codon. This is done searching transcripts for an
-annotated start codon, provided by its corresponding reference CDS.
-If this fails, function will find the next common internal ATG codon and sets
-that as the start codon. buildCDS will then search for an in-frame stop codon
-and will return the CDS GRanges if found.
+firstly deriving its start_codon. To do this, the program will:
+(1) search transcript for an annotated start codon
+(2) if above fails, search for an internal ATG codon
+(3) if above fails, align the frame of query to reference
+
+If the start_codon or frame have been established, the program will search
+for an in-frame stop codon and  return the CDS GRanges if found.
 }
 \examples{
 library(BSgenome.Mmusculus.UCSC.mm10)

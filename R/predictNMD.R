@@ -6,13 +6,13 @@
 #' to be coding and thus contain a cds information of the same transcript name
 #' @param cds
 #' GRanges object or GRangesList object containing coding regions (CDS)
-#' for each transcript. GRangesList must have names that match names in exons,
-#' else exons will not be analysed
-#' @param NMDthreshold
+#' for each transcript. Object type must match `exons` object type. GRangesList 
+#' must have names that match names in exons, else transcript will not be analysed
+#' @param NMD_threshold
 #' Minimum distance of STOP codon to last exon junction (EJ) which triggers NMD.
 #' Default = 50bp
 #' @param which
-#' List containing names of transcripts from exons to filter for analysis
+#' List containing names of transcripts from `exons` to filter for analysis
 #' @param return
 #' If exons and cds are GRangesList, returns results for all transcripts (defailt) or
 #' only NMD-sensitive (default) transcripts
@@ -41,28 +41,31 @@
 #' library(wiggleplotr)
 #' plotTranscripts(query_exons, query_cds)
 #'
-#' ### Examples with single GRanges objects
+#' ### Examples with GRanges objects
 #' predictNMD(query_exons$transcript1, query_cds$transcript1) # NMD-insensitive
 #' predictNMD(query_exons$transcript3, query_cds$transcript3) # NMD-sensitive
 #'
 #' ### Examples with GRangesList object
 #' predictNMD(query_exons, query_cds)
 #' predictNMD(query_exons, query_cds, return = "NMD")
-#' predictNMD(query_exons, query_cds, which = c("transcript1", "transcript3"), return = "all")
-predictNMD <- function(exons, cds, NMDthreshold = 50,
+#' predictNMD(query_exons, query_cds, which = c("transcript1", "transcript3"))
+predictNMD <- function(exons, cds, NMD_threshold = 50,
                        which = NULL, return = c("all", "NMD")) {
 
   # catch missing args
   mandargs <- c("exons", "cds")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
-    stop(paste(
+    rlang::abort(paste(
       "missing values for",
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
   }
   # define global variable
   is_NMD <- NULL
+  
+  # retrieve input object names
+  argnames <- as.character(match.call())[-1]
 
   # check if exons and cds are GR or GRlist
   if (all(is(exons) %in% is(cds))) {
@@ -71,24 +74,29 @@ predictNMD <- function(exons, cds, NMDthreshold = 50,
     } else if (is(exons, "GRangesList")) {
       intype <- "grl"
     } else {
-      stop("input object types not compatible")
+      errorobj <- paste(unique(c(is(exons)[1], is(cds)[2])), collapse = ', ')
+      rlang::abort(sprintf(
+        "input object types %s not supported", errorobj))
     }
   } else {
     txtype <- is(exons)[1]
     cdstype <- is(cds)[1]
-    stop(sprintf(
-      "cds is type %s but exons is type %s",
-      cdstype, txtype
+    rlang::abort(sprintf(
+      "`%s` is type %s but `%s` is type %s",
+      argnames[2],cdstype,argnames[1], txtype
     ))
   }
   # catch unmatched seqlevels
-  if (GenomeInfoDb::seqlevelsStyle(exons) != GenomeInfoDb::seqlevelsStyle(cds)) {
-    stop("exons and cds has unmatched seqlevel styles. try matching using matchSeqLevels function")
-  }
+  if (GenomeInfoDb::seqlevelsStyle(exons)[1] != GenomeInfoDb::seqlevelsStyle(cds)[1]) {
+    rlang::abort(sprintf(
+      "`%s` and `%s` has unmatched seqlevel styles. try running: 
+      \t\t%s <- matchSeqLevels(%s, %s)",
+      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2])
+  )}
 
   # run testNMD_ for single GRanges object and output results
   if (intype == "gr") {
-    return(testNMD(exons, cds, distance_stop_EJ = NMDthreshold))
+    return(testNMD(exons, cds, distance_stop_EJ = NMD_threshold))
   }
 
   # for GRangesList,
@@ -97,12 +105,13 @@ predictNMD <- function(exons, cds, NMDthreshold = 50,
     if (!is.null(which)) {
       which_matched <- which[which %in% names(cds)]
       if (length(which_matched) == 0) {
-        stop("transcript names in `which` is not found in cds")
+        rlang::abort(sprintf("transcript names in `which` is not found in `%s`",
+                             argnames[2]))
       } else if (length(which_matched) != length(which)) {
         num_unmatched <- length(which) - length(which_matched)
         rlang::warn(sprintf(
-          "%s transcript names in `which` is missing from cds names",
-          num_unmatched
+          "%s transcripts in `which` is missing from `%s%",
+          num_unmatched, argnames[2]
         ))
       }
 
@@ -112,12 +121,12 @@ predictNMD <- function(exons, cds, NMDthreshold = 50,
     # check for missing cds and return warnings/errors
     totest <- totest[totest %in% names(cds)]
     if (length(totest) == 0) {
-      rlang::abort("all exons have missing cds info. please ensure exons and cds names match")
+      rlang::abort("all transcripts have missing cds info. please ensure exons and cds names match")
     }
     if (length(totest) < length(exons)) {
       skiptest <- length(exons) - length(totest)
       rlang::warn(sprintf(
-        "%s exons(s) have missing cds info and have been skipped",
+        "%s transcript(s) have missing cds info and have been skipped",
         skiptest
       ))
     }
@@ -125,10 +134,10 @@ predictNMD <- function(exons, cds, NMDthreshold = 50,
     # running brlapply and testNMD
     out <- BiocParallel::bplapply(totest, function(x) {
       report <- list(
-        exons = x, is_NMD = F, dist_to_lastEJ = 0,
+        transcript = x, is_NMD = F, dist_to_lastEJ = 0,
         num_of_down_EJs = 0, dist_to_downEJs = 0
       )
-      NMDreport <- testNMD(exons[[x]], cds[[x]], distance_stop_EJ = NMDthreshold)
+      NMDreport <- testNMD(exons[[x]], cds[[x]], distance_stop_EJ = NMD_threshold)
       report <- utils::modifyList(report, NMDreport)
       return(report)
     }, BPPARAM = BiocParallel::MulticoreParam()) %>%

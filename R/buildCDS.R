@@ -1,11 +1,14 @@
 #' Construct query CDS using reference as guide
 #'
-#' @description buildCDS will attempt to construct query CDS information by
-#' firstly deriving its start codon. This is done searching transcripts for an
-#' annotated start codon, provided by its corresponding reference CDS.
-#' If this fails, function will find the next common internal ATG codon and sets
-#' that as the start codon. buildCDS will then search for an in-frame stop codon
-#' and will return the CDS GRanges if found.
+#' @description 
+#' buildCDS will attempt to construct query CDS information by
+#' firstly deriving its start_codon. To do this, the program will:
+#' (1) search transcript for an annotated start codon
+#' (2) if above fails, search for an internal ATG codon
+#' (3) if above fails, align the frame of query to reference
+#' 
+#' If the start_codon or frame have been established, the program will search
+#' for an in-frame stop codon and  return the CDS GRanges if found.
 #' @param query
 #' GRangesList object containing exons for each query transcript. Transcripts
 #' have to be listed in query2ref dataframe, else CDS will not be constructed
@@ -18,7 +21,7 @@
 #' Dataframe with at least 2 columns: query transcript_id and its paired
 #' reference transcript_id. Query and ref transcript_ids have to match transcript
 #' names in query and refCDS objects. Transcripts with missing corrresponding
-#' GRanges object will return error
+#' GRanges object will not be analyzed
 #' @param ids
 #' Numeric vector stating which columns of query2ref dataframe contain the
 #' query and reference transcript_ids respectively.
@@ -68,11 +71,16 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
       types, obj
     ))
   }
+  # retrieve input object names
+  argnames <- as.character(match.call())[-1]
 
   # catch unmatched seqlevels
-  if (GenomeInfoDb::seqlevelsStyle(query) != GenomeInfoDb::seqlevelsStyle(refCDS)) {
-    rlang::abort("query and refCDS has unmatched seqlevel styles. try matching using matchSeqLevels function")
-  }
+  if (GenomeInfoDb::seqlevelsStyle(query)[1] != GenomeInfoDb::seqlevelsStyle(refCDS)[1]) {
+    rlang::abort(sprintf(
+      "`%s` and `%s` has unmatched seqlevel styles. try running: 
+      \t\t%s <- matchSeqLevels(%s, %s)",
+      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2])
+    )}
 
   # extract colnames and try catching wrong indices
   outCDS <- NULL
@@ -281,7 +289,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
     }
 
     # update output list
-    output$ORF_start <- "Shared ATG"
+    output$ORF_start <- "Annotated ATG"
     output$fiveUTRlength <- fiveUTRlength
 
     return(output)
