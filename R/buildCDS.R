@@ -60,12 +60,12 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
     cdstype <- is(refCDS)[1]
 
     error <- c(!is(query, "GRangesList"), !is(refCDS, "GRangesList"))
-    obj <- paste(c("query", "refCDS")[error], collapse = ",")
-    types <- paste(c(is(query)[1], is(refCDS)[1])[error], collapse = ",")
+    obj <- paste(c("query", "refCDS")[error], collapse = ", ")
+    types <- paste(unique(c(is(query)[1], is(refCDS)[1])[error], collapse = ", "))
 
     rlang::abort(sprintf(
-      "Incompatile input object. %s is type %s respectively",
-      obj, types
+      "%s object is not currently supported for argument `%s`",
+      types, obj
     ))
   }
 
@@ -88,38 +88,47 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
   if (txname == refname) {
     rlang::abort("`ids` contain duplicate indices")
   }
-
-  # sanity check if all tx in q2r have GRanges object
-  if (!all(query2ref[[ids[1]]] %in% names(query))) {
-    missing <- sum(!query2ref[[ids[1]]] %in% names(query))
-    rlang::abort(sprintf(
-      "%s query transcripts have missing GRanges object",
-      missing
-    ))
-  }
-  if (!all(query2ref[[ids[2]]] %in% names(refCDS))) {
-    missing <- sum(!query2ref[[ids[2]]] %in% names(refCDS))
-    rlang::abort(sprintf(
-      "%s reference CDSs have missing GRanges object",
-      missing
-    ))
+  
+  # check for duplicate query transcripts in query2ref
+  if (length(unique(query2ref[[txname]])) < nrow(query2ref)) {
+    query2ref <- query2ref %>%
+      dplyr::distinct(!!as.symbol(txname), .keep_all = T)
+    rlang::warn(sprintf(
+      'Duplicate `%s` found in query2ref. First comparison was used', txname))
   }
 
-  # # sanity check if query and ref names are in q2r df
-  if (all(!names(query) %in% query2ref[[ids[1]]])) {
-    unannotatedq <- sum((!names(query) %in% query2ref[ids[1]]))
+  # sanity check if all tx in q2r have GRanges object, else skip those transcripts
+  missing <- query2ref %>%
+    dplyr::filter(!(!!as.symbol(txname)) %in% names(query) | 
+                  !(!!as.symbol(refname)) %in% names(refCDS))
+  if (nrow(missing) > 0) {
+    query2ref <- dplyr::setdiff(query2ref, missing)
+    if (nrow(query2ref) == 0) {
+      rlang::abort('All transcripts in query2ref have no GRanges entries')
+    }
     rlang::warn(sprintf(
-      "%s query transcript ids were missing from query2ref df",
-      unannotatedq
-    ))
+      '%s transcripts were skipped due to missing GRanges entries',
+      nrow(missing)))
   }
-  if (all(!names(refCDS) %in% query2ref[[ids[2]]])) {
-    unannotatedr <- sum((!names(refCDS) %in% query2ref[ids[2]]))
-    rlang::warn(sprintf(
-      "%s reference CDS ids were missing from query2ref df",
-      unannotatedr
-    ))
-  }
+  
+
+  ##### Function below commented out. May not be necessary as
+  ##### CDS building is based on query2ref list
+  ### sanity check if query and ref names are in q2r df
+  # if (all(!names(query) %in% query2ref[[ids[1]]])) {
+  #   unannotatedq <- sum((!names(query) %in% query2ref[ids[1]]))
+  #   rlang::warn(sprintf(
+  #     "%s query transcript ids were missing from query2ref df",
+  #     unannotatedq
+  #   ))
+  # }
+  # if (all(!names(refCDS) %in% query2ref[[ids[2]]])) {
+  #   unannotatedr <- sum((!names(refCDS) %in% query2ref[ids[2]]))
+  #   rlang::warn(sprintf(
+  #     "%s reference CDS ids were missing from query2ref df",
+  #     unannotatedr
+  #   ))
+  # }
 
   # create CDS list for tx with coverage of 1
   if (!is.null(coverage)) {
@@ -152,7 +161,6 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
         "%s comparisons in query2ref have 0 coverage. These were not analyzed",
         nocov
       ))
-      
       query2ref <- query2ref %>%
         dplyr::filter(!!as.symbol(covname) > 0)
     }
@@ -176,9 +184,9 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
     ))
 
   # warn users if program fails to find CDS for some transcripts
-  if (length(outCDS) < length(query)) {
-    missingCDS <- length(query) - length(outCDS)
-    rlang::warn(sprintf("Unable to find CDS for %s transcripts", missingCDS))
+  if (length(outCDS) < nrow(query2ref)) {
+    missingCDS <- length(query2ref) - length(outCDS)
+    rlang::warn(sprintf("Unable to build CDS for %s transcripts", missingCDS))
   }
 
   return(outCDS)
