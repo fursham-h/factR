@@ -126,7 +126,8 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
       dplyr::mutate(x = ifelse(instop == T, 
                                paste(y[1:which(y == '*')-1], collapse = ''),
                                x)) %>%
-      dplyr::mutate(y = strsplit(x, split = "")))
+      dplyr::mutate(y = strsplit(x, split = "")) %>%
+        dplyr::ungroup())
       
     rlang::warn(sprintf("%s cds entries contain internal stop_codon. These proteins have been truncated", sum(aaSeq$instop)))
     if ('' %in% aaSeq$x) {

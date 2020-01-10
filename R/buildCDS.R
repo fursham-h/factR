@@ -158,7 +158,7 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
     if (0 %in% query2ref[[coverage]]) {
       nocov <- sum(query2ref[[coverage]] == 0)
       rlang::warn(sprintf(
-        "%s comparisons in query2ref have 0 coverage. These were not analyzed",
+        "%s transcripts in query2ref have 0 coverage. These were not analyzed",
         nocov
       ))
       query2ref <- query2ref %>%
