@@ -1,23 +1,44 @@
 #' Construct query CDS using reference as guide
 #'
 #' @description 
-#' buildCDS will attempt to construct query CDS information by
-#' firstly deriving its start_codon. To do this, the program will:
-#' (1) search transcript for an annotated start codon
-#' (2) if above fails, search for an internal ATG codon
+#' 
+#' 
+#' buildCDS will firstly construct a dataframe containing query-reference 
+#' transcript pairs. In situation where a reference gene expresses more than one
+#' coding transcript, the program will select a query-reference transcript
+#' pair with the highest coverage score.
+#' 
+#' buildCDS will next attempt to construct query CDS information by
+#' firstly deriving its start_codon as guided by the reference transcript. 
+#' This is done in three successive stages:
+#' (1) search transcript for a start_codon as annotated in reference
+#' (2) if above fails, search for an internal ATG codon as annotated in reference
 #' (3) if above fails, align the frame of query to reference
+#' 
+#' After the start_codon/coding frame have been established, the program
+#' will search for an in-frame stop_codon for each transcript and return its
+#' CDS GRanges entries if successfull.
 #'
 #' @param query 
+#' GRanges object containing query GTF data. Gene_id metadata have to match
+#' the gene_ids in `ref` in order for the program to create a query-reference 
+#' transcript pairs. See ?matchGeneIDs to match query gene_id to a reference
+#' annotation
 #' @param ref 
+#' GRanges object containing reference GTF data.
 #' @param fasta 
 #' BSgenome or Biostrings object containing genomic sequence
 #'
 #' @return
-#' GRanges object containing exon 
+#' GRanges object containing query exon entries and newly-constructed cds
+#' information
 #' @export
 #' @author Fursham Hamid
 #'
 #' @examples
+#' library(BSgenome.Mmusculus.UCSC.mm10)
+#' buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
+#' 
 buildCDS <- function(query, ref, fasta) {
   
   # catch missing args
@@ -67,7 +88,7 @@ buildCDS <- function(query, ref, fasta) {
 .getCDSgr <- function(query, refCDS, fasta, query2ref) {
 
   # define global variables
-  #group_name <- strand <- width <- phase <- transcript_id <- NULL
+  coverage <- group_name <- strand <- width <- transcript_id <- NULL
 
   # get total query tx and prepare output 
   totaltx <- nrow(query2ref)
@@ -388,6 +409,8 @@ buildCDS <- function(query, ref, fasta) {
 
 .prepq2r <- function(query, ref, query_exons, ref_exons, ref_cds, argnames) {
   
+  # define global variables
+  gene_id <- ref_transcript_id <- coverage <- transcript_id <- NULL
   # prepare q2r df
   query_ids = query %>% as.data.frame() %>%
     dplyr::select(gene_id, transcript_id) %>%
@@ -414,8 +437,21 @@ buildCDS <- function(query, ref, fasta) {
       nrow(unmatchedtx)))
   }
   
-  # subset q2r by best coverage
-  q2rcovs <- calcCovs(query_exons, ref_exons, q2r)
+  # calculate coverage values
+  out <- BiocParallel::bpmapply(function(x, y) {
+    covrep <- .calcCoverage (query_exons[[x]], ref_exons[[y]], 'mean')
+    return(covrep)
+  }, q2r$transcript_id, q2r$ref_transcript_id,
+  BPPARAM = BiocParallel::MulticoreParam()
+  )
+  q2r$coverage <- out
+  
+  # select best coevrage
+  q2rcovs <- q2r %>%
+    dplyr::arrange(transcript_id, dplyr::desc(coverage)) %>%
+    dplyr::distinct(transcript_id, .keep_all = T)
+  
+  # check for transcript-pairs with no coverage
   nocovtx <- q2rcovs %>%
     dplyr::filter(coverage == 0)
   if (nrow(q2rcovs) == nrow(nocovtx)){
@@ -430,3 +466,22 @@ buildCDS <- function(query, ref, fasta) {
   }
   return(q2rcovs)
 }
+
+.calcCoverage <- function(tx1, tx2, over) {
+  chrom <- as.character(S4Vectors::runValue(GenomeInfoDb::seqnames(tx1)))
+  cov <- suppressWarnings(GenomicRanges::coverage(c(tx1, tx2)))
+  index <- which(names(cov) == chrom)
+  cov <- cov[[index]]
+  cov_val <- S4Vectors::runValue(cov)
+  cov_len <- S4Vectors::runLength(cov)
+  
+  if (over == "mean") {
+    denom <- sum(BiocGenerics::width(tx1), BiocGenerics::width(tx2)) / 2
+  } else if (over == "query") {
+    denom <- sum(BiocGenerics::width(tx1))
+  } else if (over == "ref") {
+    denom <- sum(BiocGenerics::width(tx2))
+  }
+  return(sum(cov_len[cov_val == 2]) / denom)
+}
+
