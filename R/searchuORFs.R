@@ -249,7 +249,7 @@ getuORFuATG_ <- function(txlist, cdslist, fasta, size) {
     uATGindex <- which(startsWith(names(uORFgr), "uATG"))
     uATGgr <- uORFgr[uATGindex]
     uATGtx <- txlistnew[names(uATGgr)]
-    uATGCDS <- getCDS_(uATGtx, uATGgr, fasta)
+    uATGCDS <- .getthisCDS(uATGtx, uATGgr, fasta)
     if (!is.null(uATGCDS)) {
       uATGCDS <- uATGCDS %>%
         dplyr::select(-transcript_id) %>%
