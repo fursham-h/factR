@@ -1,4 +1,5 @@
 is_gtf <- function(...) {
+  type <- gene_id <- transcript_id <- NULL
   return(unlist(lapply(list(...), function(x){
     if (is(x, "GRanges")){
       x <- as.data.frame(x)
