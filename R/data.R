@@ -12,6 +12,18 @@
 #' @source \url{http://www.ensembl.org/}
 "query_gtf"
 
+
+#' Seqlevels and gene_id matched query data
+#'
+#' query_gtf data which have been corrected for its seqlevels and gene_ids
+#'
+#' @format A GRanges object with 56 ranges and 3 metadata columns:
+#' \describe{
+#'   \item{element}{Exon start and end coordinates from 4 transcripts}
+#'   ...
+#' }
+"matched_query_gtf"
+
 #' Exons from 4 transcripts entries of the same gene
 #'
 #' A dataset containing coordinates of exons from 4 transcripts of
@@ -24,6 +36,9 @@
 #' }
 #' @source \url{http://www.ensembl.org/}
 "query_exons"
+
+
+
 
 #' CDS from 4 transcripts entries of the same gene
 #'
