@@ -4,34 +4,17 @@
 \alias{buildCDS}
 \title{Construct query CDS using reference as guide}
 \usage{
-buildCDS(query, refCDS, fasta, query2ref, ids = c(1, 2), coverage = NULL)
+buildCDS(query, ref, fasta)
 }
 \arguments{
-\item{query}{GRangesList object containing exons for each query transcript. Transcripts
-have to be listed in query2ref dataframe, else CDS will not be constructed
-for query missing from query2ref}
+\item{query}{}
 
-\item{refCDS}{GRangesList object containing CDS for each reference transcript.}
+\item{ref}{}
 
 \item{fasta}{BSgenome or Biostrings object containing genomic sequence}
-
-\item{query2ref}{Dataframe with at least 2 columns: query transcript_id and its paired
-reference transcript_id. Query and ref transcript_ids have to match transcript
-names in query and refCDS objects. Transcripts with missing corrresponding
-GRanges object will not be analyzed}
-
-\item{ids}{Numeric vector stating which columns of query2ref dataframe contain the
-query and reference transcript_ids respectively.}
-
-\item{coverage}{Integer stating which column of query2ref dataframe contain percent coverage
-between query and reference transcripts. Providing a column with coverage
-values will speed up CDS building process. Query transcripts that share 100%
-coverage with reference CDS will be assigned the reference CDS and skip the
-CDS searching process. See getCoverages function to calculate coverage values
-(default:NULL)}
 }
 \value{
-GRangesList object containing CDS for each query transcript
+GRanges object containing exon
 }
 \description{
 buildCDS will attempt to construct query CDS information by
@@ -39,13 +22,6 @@ firstly deriving its start_codon. To do this, the program will:
 (1) search transcript for an annotated start codon
 (2) if above fails, search for an internal ATG codon
 (3) if above fails, align the frame of query to reference
-
-If the start_codon or frame have been established, the program will search
-for an in-frame stop codon and  return the CDS GRanges if found.
-}
-\examples{
-library(BSgenome.Mmusculus.UCSC.mm10)
-buildCDS(query_exons, ref_cds, Mmusculus, q2rcovs, coverage = 3)
 }
 \author{
 Fursham Hamid

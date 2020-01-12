@@ -105,7 +105,7 @@ calcCovs <- function(query, ref, query2ref, ids = c(1, 2),
   # sanity check if all tx in q2r have GRanges object, else skip those transcripts
   missing <- query2ref %>%
     dplyr::filter(!(!!as.symbol(txname)) %in% names(query) | 
-                    !(!!as.symbol(refname)) %in% names(refCDS))
+                    !(!!as.symbol(refname)) %in% names(ref))
   if (nrow(missing) > 0) {
     query2ref <- dplyr::setdiff(query2ref, missing)
     if (nrow(query2ref) == 0) {

@@ -6,46 +6,22 @@
 #' (1) search transcript for an annotated start codon
 #' (2) if above fails, search for an internal ATG codon
 #' (3) if above fails, align the frame of query to reference
-#' 
-#' If the start_codon or frame have been established, the program will search
-#' for an in-frame stop codon and  return the CDS GRanges if found.
-#' @param query
-#' GRangesList object containing exons for each query transcript. Transcripts
-#' have to be listed in query2ref dataframe, else CDS will not be constructed
-#' for query missing from query2ref
-#' @param refCDS
-#' GRangesList object containing CDS for each reference transcript.
-#' @param fasta
+#'
+#' @param query 
+#' @param ref 
+#' @param fasta 
 #' BSgenome or Biostrings object containing genomic sequence
-#' @param query2ref
-#' Dataframe with at least 2 columns: query transcript_id and its paired
-#' reference transcript_id. Query and ref transcript_ids have to match transcript
-#' names in query and refCDS objects. Transcripts with missing corrresponding
-#' GRanges object will not be analyzed
-#' @param ids
-#' Numeric vector stating which columns of query2ref dataframe contain the
-#' query and reference transcript_ids respectively.
-#' @param coverage
-#' Integer stating which column of query2ref dataframe contain percent coverage
-#' between query and reference transcripts. Providing a column with coverage
-#' values will speed up CDS building process. Query transcripts that share 100%
-#' coverage with reference CDS will be assigned the reference CDS and skip the
-#' CDS searching process. See getCoverages function to calculate coverage values
-#' (default:NULL)
 #'
 #' @return
-#' GRangesList object containing CDS for each query transcript
+#' GRanges object containing exon 
 #' @export
 #' @author Fursham Hamid
 #'
 #' @examples
-#' library(BSgenome.Mmusculus.UCSC.mm10)
-#' buildCDS(query_exons, ref_cds, Mmusculus, q2rcovs, coverage = 3)
-buildCDS <- function(query, refCDS, fasta, query2ref,
-                     ids = c(1, 2), coverage = NULL) {
-
+buildCDS <- function(query, ref, fasta) {
+  
   # catch missing args
-  mandargs <- c("query", "refCDS", "fasta", "query2ref")
+  mandargs <- c("query", "ref", "fasta")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
     rlang::abort(paste(
@@ -53,154 +29,99 @@ buildCDS <- function(query, refCDS, fasta, query2ref,
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
   }
-
-  # define global variables
-  group_name <- strand <- width <- phase <- transcript_id <- NULL
-
-  # check if query and cds are GRlist
-  if (!is(query, "GRangesList") | !is(refCDS, "GRangesList")) {
-    txtype <- is(query)[1]
-    cdstype <- is(refCDS)[1]
-
-    error <- c(!is(query, "GRangesList"), !is(refCDS, "GRangesList"))
-    obj <- paste(c("query", "refCDS")[error], collapse = ", ")
-    types <- paste(unique(c(is(query)[1], is(refCDS)[1])[error], collapse = ", "))
-
-    rlang::abort(sprintf(
-      "%s object is not currently supported for argument `%s`",
-      types, obj
-    ))
-  }
+  
   # retrieve input object names
   argnames <- as.character(match.call())[-1]
+  
+  # carry out input checks
+  .buildCDSchecks(query, ref, argnames)
 
-  # catch unmatched seqlevels
-  if (GenomeInfoDb::seqlevelsStyle(query)[1] != GenomeInfoDb::seqlevelsStyle(refCDS)[1]) {
-    rlang::abort(sprintf(
-      "`%s` and `%s` has unmatched seqlevel styles. try running: 
-      \t\t%s <- matchSeqLevels(%s, %s)",
-      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2])
-    )}
+  # makeGRangesList
+  query_exons <- S4Vectors::split(query[query$type == 'exon'], ~transcript_id)
+  ref_cds <- S4Vectors::split(ref[ref$type == 'CDS'], ~transcript_id)
+  ref_exons <- S4Vectors::split(ref[ref$type == 'exon'], ~transcript_id)
+  ref_exons <- ref_exons[names(ref_exons) %in% names(ref_cds)] 
+  
+  # prepare q2r df
+  q2r <- .prepq2r(query, ref, query_exons, 
+                 ref_exons, ref_cds, argnames)
+  
+  
+  # run buildCDS function
+   outCDS <- .getCDSgr(query_exons, ref_cds, fasta, q2r)
+   if (is.null(outCDS)) {
+     successtx <- 0
+   } else {
+     successtx <- length(unique(S4Vectors::mcols(outCDS)$transcript_id))
+   }
+   
+   # print out stats and return appended GRanges GTF
+   message(sprintf(
+     "Out of %s transcripts in `%s`, %s transcript CDSs were built", 
+     length(query_exons), argnames[1], successtx))
+   return(c(query, outCDS))
+}
 
-  # extract colnames and try catching wrong indices
+
+
+.getCDSgr <- function(query, refCDS, fasta, query2ref) {
+
+  # define global variables
+  #group_name <- strand <- width <- phase <- transcript_id <- NULL
+
+  # get total query tx and prepare output 
+  totaltx <- nrow(query2ref)
   outCDS <- NULL
-  tryCatch(
-    {
-      txname <- names(query2ref[ids[1]])
-      refname <- names(query2ref[ids[2]])
-    },
-    error = function(e) {
-      rlang::abort("column indices in `ids` are not found in query2ref")
-    }
-  )
-  if (txname == refname) {
-    rlang::abort("`ids` contain duplicate indices")
-  }
-  
-  # check for duplicate query transcripts in query2ref
-  if (length(unique(query2ref[[txname]])) < nrow(query2ref)) {
-    query2ref <- query2ref %>%
-      dplyr::distinct(!!as.symbol(txname), .keep_all = T)
-    rlang::warn(sprintf(
-      'Duplicate `%s` found in query2ref. First comparison was used', txname))
-  }
-
-  # sanity check if all tx in q2r have GRanges object, else skip those transcripts
-  missing <- query2ref %>%
-    dplyr::filter(!(!!as.symbol(txname)) %in% names(query) | 
-                  !(!!as.symbol(refname)) %in% names(refCDS))
-  if (nrow(missing) > 0) {
-    query2ref <- dplyr::setdiff(query2ref, missing)
-    if (nrow(query2ref) == 0) {
-      rlang::abort('All transcripts in query2ref have no GRanges entries')
-    }
-    rlang::warn(sprintf(
-      '%s transcripts were skipped due to missing GRanges entries',
-      nrow(missing)))
-  }
-  
-
-  ##### Function below commented out. May not be necessary as
-  ##### CDS building is based on query2ref list
-  ### sanity check if query and ref names are in q2r df
-  # if (all(!names(query) %in% query2ref[[ids[1]]])) {
-  #   unannotatedq <- sum((!names(query) %in% query2ref[ids[1]]))
-  #   rlang::warn(sprintf(
-  #     "%s query transcript ids were missing from query2ref df",
-  #     unannotatedq
-  #   ))
-  # }
-  # if (all(!names(refCDS) %in% query2ref[[ids[2]]])) {
-  #   unannotatedr <- sum((!names(refCDS) %in% query2ref[ids[2]]))
-  #   rlang::warn(sprintf(
-  #     "%s reference CDS ids were missing from query2ref df",
-  #     unannotatedr
-  #   ))
-  # }
 
   # create CDS list for tx with coverage of 1
-  if (!is.null(coverage)) {
-    covname <- names(query2ref)[coverage] # extract cov colname
-    # subset q2r for full coverages
-    fullcovs <- query2ref %>%
-      dplyr::filter(!!as.symbol(covname) == 1)
-    query2ref <- query2ref %>%
-      dplyr::filter(!!as.symbol(covname) != 1)
-    # prepare outputCDS for full coverages
+  fullcovs <- query2ref %>%
+    dplyr::filter(coverage == 1)
+  query2ref <- dplyr::setdiff(query2ref, fullcovs)
+    
+  # prepare outputCDS for full coverages
+  if (nrow(fullcovs) > 1){
     outCDS <- refCDS %>%
       as.data.frame() %>%
-      dplyr::filter(group_name %in% fullcovs[[ids[2]]]) %>%
+      dplyr::filter(group_name %in% fullcovs[[2]]) %>%
       dplyr::select(group_name:strand) %>%
       dplyr::mutate(type = "CDS") %>%
-      dplyr::left_join(fullcovs[ids],
-        by = c("group_name" = refname)
+      dplyr::left_join(fullcovs[1:2],
+                       by = c("group_name" = "ref_transcript_id")
       ) %>%
-      dplyr::group_by(group_name) %>%
+      dplyr::group_by(transcript_id) %>%
       dplyr::arrange(ifelse(strand == '-', dplyr::desc(start), start)) %>%
       dplyr::mutate(phase = rev(cumsum(rev(width) %% 3) %% 3)) %>%
       dplyr::ungroup() %>%
       dplyr::select(-group_name) %>%
       dplyr::mutate(built_from = 'Full coverage')
-    
-    # remove no coverage comparisons
-    if (0 %in% query2ref[[coverage]]) {
-      nocov <- sum(query2ref[[coverage]] == 0)
-      rlang::warn(sprintf(
-        "%s transcripts in query2ref have 0 coverage. These were not analyzed",
-        nocov
-      ))
-      query2ref <- query2ref %>%
-        dplyr::filter(!!as.symbol(covname) > 0)
-    }
   }
 
   # create CDS list for all remaining tx
   out <- BiocParallel::bpmapply(function(x, y) {
-    CDSreport <- getCDS_(query[x], refCDS[y], fasta) %>%
+    CDSreport <- .getthisCDS(query[x], refCDS[y], fasta) %>%
       as.data.frame()
     return(CDSreport)
-  }, query2ref[[txname]], query2ref[[refname]],
+  }, query2ref$transcript_id, query2ref$ref_transcript_id,
   BPPARAM = BiocParallel::MulticoreParam(), SIMPLIFY = F
   ) %>%
     dplyr::bind_rows()
   outCDS <- suppressWarnings(dplyr::bind_rows(outCDS, out) %>%
-    dplyr::mutate(group_name = transcript_id) %>%
-    dplyr::arrange(group_name, ifelse(strand == '-', dplyr::desc(start), start)) %>%
-    GenomicRanges::makeGRangesListFromDataFrame(
-      split.field = "group_name",
-      keep.extra.columns = T
-    ))
-
-  # warn users if program fails to find CDS for some transcripts
-  if (length(outCDS) < nrow(query2ref)) {
-    missingCDS <- nrow(query2ref) - length(outCDS)
-    rlang::warn(sprintf("Unable to build CDS for %s transcripts", missingCDS))
+    dplyr::arrange(transcript_id, ifelse(strand == '-', dplyr::desc(start), start)))
+  
+  if (length(unique(outCDS$transcript_id)) < totaltx) {
+    unsuccesstx <- totaltx - length(unique(outCDS$transcript_id))
+    rlang::warn(sprintf(
+      "%s transcripts CDS were not found", unsuccesstx))
   }
-
-  return(outCDS)
+  
+  if (nrow(outCDS) ==  0) {
+    return(NULL)
+  } else {
+    return(GenomicRanges::makeGRangesFromDataFrame(outCDS, keep.extra.columns = T))
+  }
 }
 
-getCDS_ <- function(query, CDS, fasta) {
+.getthisCDS <- function(query, CDS, fasta) {
 
   # prepare output list
   output <- list(
@@ -217,7 +138,7 @@ getCDS_ <- function(query, CDS, fasta) {
   knownCDS <- BiocGenerics::sort(CDS[[1]], decreasing = strand == "-")
   S4Vectors::mcols(queryTx)$transcript_id <- names(query)
   # attempt to find an aligned start codon
-  report <- getCDSstart_(queryTx, knownCDS, fasta)
+  report <- .getCDSstart(queryTx, knownCDS, fasta)
   output <- utils::modifyList(output, report) # update output
 
   # return if no start codon is found
@@ -226,7 +147,7 @@ getCDS_ <- function(query, CDS, fasta) {
   }
 
   # attempt to search for an in-frame stop codon
-  report <- getCDSstop_(queryTx, fasta, output$fiveUTRlength)
+  report <- .getCDSstop(queryTx, fasta, output$fiveUTRlength)
   output <- utils::modifyList(output, report) # update output
 
   # return if no stop codon is found
@@ -235,14 +156,14 @@ getCDS_ <- function(query, CDS, fasta) {
   }
 
   # build new ORF Granges
-  report <- getCDSranges_(queryTx, output$fiveUTRlength, output$threeUTRlength,
+  report <- .getCDSranges(queryTx, output$fiveUTRlength, output$threeUTRlength,
                           output$ORF_start)
-  output <- utils::modifyList(output, report) # update output
+  #output <- utils::modifyList(output, report) # update output
   # return(output[c('ORF_considered', 'ORF_start', 'ORF_found')])
-  return(output$ORF_considered)
+  return(report)
 }
 
-getCDSstart_ <- function(query, refCDS, fasta) {
+.getCDSstart <- function(query, refCDS, fasta) {
 
   # prepare output list
   output <- list(
@@ -379,7 +300,7 @@ getCDSstart_ <- function(query, refCDS, fasta) {
   return(output)
 }
 
-getCDSstop_ <- function(query, fasta, fiveUTRlength) {
+.getCDSstop <- function(query, fasta, fiveUTRlength) {
 
   # prepare output list
   output <- list(
@@ -417,7 +338,7 @@ getCDSstop_ <- function(query, fasta, fiveUTRlength) {
   }
 }
 
-getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength, starttype) {
+.getCDSranges <- function(query, fiveUTRlength, threeUTRlength, starttype) {
 
   # prepare output list
   output <- list("ORF_considered" = NA)
@@ -438,5 +359,74 @@ getCDSranges_ <- function(query, fiveUTRlength, threeUTRlength, starttype) {
     dplyr::select(seqnames:end, strand, type, phase, transcript_id)
   CDSranges$built_from <- starttype
   output$ORF_considered <- CDSranges
-  return(output)
+  return(CDSranges)
+}
+
+.buildCDSchecks <- function(query, ref, argnames) {
+  # check inputs are gtf
+  if (any(!is_gtf(query, ref))){
+    rlang::abort(sprintf(
+      "%s is/are not gtf GRanges", 
+      paste(argnames[1:2][!is_gtf(query, ref)], collapse = ',')))
+  }
+  
+  # check if ref have CDS info
+  if (!'CDS' %in% S4Vectors::mcols(ref)$type){
+    rlang::abort(sprintf(
+      "`%s` have missing CDS info",argnames[2])
+    )
+  }
+  
+  # catch unmatched seqlevels
+  if (GenomeInfoDb::seqlevelsStyle(query)[1] != GenomeInfoDb::seqlevelsStyle(ref)[1]) {
+    rlang::abort(sprintf(
+      "`%s` and `%s` has unmatched seqlevel styles. try running: 
+      \t\t%s <- matchSeqLevels(%s, %s)",
+      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2])
+    )}
+}
+
+.prepq2r <- function(query, ref, query_exons, ref_exons, ref_cds, argnames) {
+  
+  # prepare q2r df
+  query_ids = query %>% as.data.frame() %>%
+    dplyr::select(gene_id, transcript_id) %>%
+    dplyr::distinct()
+  ref_ids = ref %>% as.data.frame() %>%
+    dplyr::select(gene_id, ref_transcript_id = transcript_id) %>%
+    dplyr::distinct()
+  q2r <- dplyr::left_join(query_ids, ref_ids, by = 'gene_id') %>%
+    dplyr::select(-gene_id)
+  
+  # remove unmatched
+  totaltx <- length(unique(q2r$transcript_id))
+  unmatchedtx <- q2r %>%
+    dplyr::filter(is.na(ref_transcript_id))
+  if (nrow(q2r) == nrow(unmatchedtx)) {
+    rlang::abort(sprintf(
+      "all gene_ids in `%s` are not found in %s. try running:
+      \t%s <- matchGeneIDs(%s, %s)",
+      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]))
+  } else if (nrow(unmatchedtx) > 0) {
+    q2r <- dplyr::setdiff(q2r, unmatchedtx)
+    rlang::warn(sprintf(
+      "\t%s transcripts have unmatched gene_ids", 
+      nrow(unmatchedtx)))
+  }
+  
+  # subset q2r by best coverage
+  q2rcovs <- calcCovs(query_exons, ref_exons, q2r)
+  nocovtx <- q2rcovs %>%
+    dplyr::filter(coverage == 0)
+  if (nrow(q2rcovs) == nrow(nocovtx)){
+    rlang::abort(sprintf(
+      "all transcripts in `%s` have no overlap with transcripts in %s",
+      argnames[1], argnames[2]))
+  } else if (nrow(nocovtx) > 0) {
+    q2rcovs <- dplyr::setdiff(q2rcovs, nocovtx)
+    rlang::warn(sprintf(
+      "\t%s transcripts have no coverage with reference transcripts", 
+      nrow(nocovtx)))
+  }
+  return(q2rcovs)
 }
