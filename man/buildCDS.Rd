@@ -7,21 +7,40 @@
 buildCDS(query, ref, fasta)
 }
 \arguments{
-\item{query}{}
+\item{query}{GRanges object containing query GTF data. Gene_id metadata have to match
+the gene_ids in `ref` in order for the program to create a query-reference 
+transcript pairs. See ?matchGeneIDs to match query gene_id to a reference
+annotation}
 
-\item{ref}{}
+\item{ref}{GRanges object containing reference GTF data.}
 
 \item{fasta}{BSgenome or Biostrings object containing genomic sequence}
 }
 \value{
-GRanges object containing exon
+GRanges object containing query exon entries and newly-constructed cds
+information
 }
 \description{
-buildCDS will attempt to construct query CDS information by
-firstly deriving its start_codon. To do this, the program will:
-(1) search transcript for an annotated start codon
-(2) if above fails, search for an internal ATG codon
+buildCDS will firstly construct a dataframe containing query-reference 
+transcript pairs. In situation where a reference gene expresses more than one
+coding transcript, the program will select a query-reference transcript
+pair with the highest coverage score.
+
+buildCDS will next attempt to construct query CDS information by
+firstly deriving its start_codon as guided by the reference transcript. 
+This is done in three successive stages:
+(1) search transcript for a start_codon as annotated in reference
+(2) if above fails, search for an internal ATG codon as annotated in reference
 (3) if above fails, align the frame of query to reference
+
+After the start_codon/coding frame have been established, the program
+will search for an in-frame stop_codon for each transcript and return its
+CDS GRanges entries if successfull.
+}
+\examples{
+library(BSgenome.Mmusculus.UCSC.mm10)
+buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
+
 }
 \author{
 Fursham Hamid

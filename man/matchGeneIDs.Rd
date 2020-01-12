@@ -38,9 +38,6 @@ provide 'primary_gene_id' and 'secondary_gene_id' arguments. To determine if you
 possible secondary Gene IDs, try importing query GTF file using rtracklayer package and check its metadata
 columns
 }
-\examples{
-matchGeneIDs(query_gtf, ref_gtf)
-}
 \author{
 Fursham Hamid
 }

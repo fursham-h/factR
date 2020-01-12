@@ -57,9 +57,6 @@ Transcript assembly programs typically outputs a GTF/GFF3 file containing transc
 Query GTF file have to be imported into R and parsed into a GenomicRanges object. 
 To do so, run:
 ```{r load,query, eval = FALSE}
-# install rtracklayer if not yet installed
-BiocManager::install("rtracklayer")
-
 # import gtf file
 library(rtracklayer)
 query_gtf <- import('path/to/your.gtf')
@@ -76,9 +73,6 @@ Here, we will describe three ways to obtain mouse GRCm38 annotation:
 
 1. Gencode annotation from Annotation Hub database
 ```{r load.gencode, eval = FALSE}
-# install package if not yet installed
-BiocManager::install("AnnotationHub")
-
 # query database for mouse gencode basic annotation
 library(AnnotationHub)
 ah <- AnnotationHub()
@@ -110,9 +104,6 @@ ref_gtf <- ah[['AH60127']]
 
 3. Import locally downloaded GTF annotation into R
 ```{r load.localref, eval = FALSE}
-# install rtracklayer if not yet installed
-BiocManager::install("rtracklayer")
-
 # import reference gtf file
 library(rtracklayer)
 query_gtf <- import('path/to/reference.gtf')
@@ -133,9 +124,6 @@ Mmusculus <- BSgenome.Mmusculus.UCSC.mm10
 
 2. TwoBit fasta sequence from Annotation Hub
 ```{r load.fastaAH, eval = FALSE}
-# install package if not yet installed
-BiocManager::install("AnnotationHub")
-
 # query database for mouse gencode basic annotation
 library(AnnotationHub)
 ah <- AnnotationHub()
@@ -162,9 +150,6 @@ Mmusculus <- ah[['AH60492']]
 
 3. Import local FASTA genome sequence file
 ```{r load.localfasta, eval = FALSE}
-# install Biostrings package if not yet installed
-BiocManager::install("Biostrings")
-
 # load package and import fasta file as a DNAStringSet
 library(Biostrings)
 Mmusculus <- readDNAStringSet('path/to/fasta')
@@ -173,9 +158,6 @@ Mmusculus <- readDNAStringSet('path/to/fasta')
 Note: when using DNA FASTA from Ensembl, do check header lines for entry names. If long names are given (eg. 1 dna:chromosome chromosome:GRCm38:1:1:195471971:1 REF), you would need to convert them to short names in order to have consistent sequence levels. This can be done by running the following:
 
 ```{r convert.fastaheader, eval = FALSE}
-# install purrr and stringr packages if not yet installed
-install.packages('purrr', 'stringr')
-
 # load package and import fasta file as a DNAStringSet
 library(purrr)
 library(stringr)
@@ -194,12 +176,13 @@ library(BSgenome.Mmusculus.UCSC.mm10)
 library(wiggleplotr)
 library(GenomicFeatures)
 library(dplyr)
-library(zeallot)
 ```
 
-**Query:** 
-factR package contains a sample assembled GTF imported as a GRanges object. The assembly was constructed from a mouse dataset and contain *transcript* and *exon* descriptions of 4 transcript isoforms from the same parent gene. Gene and transcript IDs have been given generic names to....
 
+## Sample input datasets
+
+### **Query** 
+factR package contains a sample assembled GTF imported as a GRanges object. The assembly was constructed from a mouse dataset and contain *transcript* and *exon* descriptions of 4 transcript isoforms from the same parent gene. Transcripts in `query_gtf` have been assigned generic gene_ids and transcript_ids. This is to recapitulate the nomenclature of a typical custom-assembled GTF.
 ```{r checkquery}
 # inspect query object
 head(query_gtf)
@@ -219,7 +202,7 @@ query_exons <- split(query_gtf[query_gtf$type == 'exon'], ~transcript_id)
 plotTranscripts(query_exons)
 ```
 
-**Reference:** 
+### **Reference** 
 For our reference annotation, we will be using a subset of GRCm38 gencode reference annotation which contain basic transcripts from the same gene family as our query gene. Acquisition of this annotation have been described in section 2.2.2.1.
 ```{r viewref}
 # inspect reference object
@@ -231,7 +214,7 @@ unique(ref_gtf$transcript_id)
 unique(ref_gtf$gene_id)
 ```
 
-**Genome:** 
+### **Genome** 
 Lastly, we will be using a GRCm38 genome sequence object from BSgenome
 ```{r loadfasta}
 Mmusculus <- BSgenome.Mmusculus.UCSC.mm10
@@ -269,85 +252,42 @@ After `query_gtf`  have been rectified, we can re-check our inputs:
 checkInputs(query_gtf, ref_gtf, Mmusculus)
 ```
 
-## Convert input objects into GRangesList
-
-Our sample `query_gtf` and `ref_gtf` assemblies are currently formatted as a GRanges object, each of which may consist of multiple entry types (transcript, exon and cds). Therefore, we need to segregate each input into several GRangesList objects, and group the entries by its *transcript_id*. Here, we will describe two methods of conversion:
-
-1. Manual splitting of exon/cds entries of your GRanges object based on transcript_id. This method will retain all attributes of your GRanges object, but requires a basic understanding on subsetting a GRanges object
-```{r manualsplit, warning=FALSE}
-# get GrangesList of query exons grouped by transcript_id
-query_exons <- split(query_gtf[query_gtf$type == 'exon'], ~transcript_id)
-
-# get GrangesList of ref cds grouped by transcript_id
-ref_cds <- split(ref_gtf[ref_gtf$type == 'CDS'], ~transcript_id)
-
-# get GrangesList of ref exons grouped by transcript_id
-ref_exons <- split(ref_gtf[ref_gtf$type == 'exon'], ~transcript_id)
-# keep only coding transcripts
-ref_exons <- ref_exons[names(ref_exons) %in% names(ref_cds)] 
-
-# inspect new query_exon object
-is(query_exons, 'GRangesList')  #check that query_exons is a List of GRanges
-
-names(query_exons)  # check for correct grouping of exons by transcript_id
-```
-
-2. Construct a TxDb object, followed by grouping using exonBy and cdsBy functions. This method is easier to execute but may not carry over the attributes from input GRanges.
-```{r txdbsplit, eval=FALSE}
-#make txdb for query and reference
-queryDB = makeTxDbFromGRanges(query_gtf)
-refDB = makeTxDbFromGRanges(ref_gtf)
-
-# get GRangesList using exonsBy and cdsBy functions
-query_exons = exonsBy(queryDB, by="tx", use.names=TRUE)
-ref_cds = cdsBy(refDB, by="tx", use.names=TRUE)
-ref_exons = exonsBy(refDB, by="tx", use.names=TRUE)
-```
 
 ## Construct query CDS
 
-In order to build CDS information on our query data, we need `query_exons`, `ref_cds` and `Mmusculus` objects, as well as a two-column dataframe containing list of query transcript_ids and its paired reference transcript_id. This dataframe can be easily constructed using the following code:
-```{r prepareq2r, message=F}
-# prepare dataframes with unique gene_id and transcript_id attributes for query and ref
-query_ids = query_gtf %>% as.data.frame() %>%
-  dplyr::select(gene_id, transcript_id) %>%
-  distinct()
-ref_ids = ref_gtf %>% as.data.frame() %>%
-  dplyr::select(gene_id, ref_transcript_id = transcript_id) %>%
-  distinct()
-
-# join both dataframes and select only transcript_id colums
-q2r <- left_join(query_ids, ref_ids) %>%
-  dplyr::select(-gene_id)
-
-q2r
-```
-
-From the example above, the reference gene contain 2 basic coding transcript. Therefore, each of the query transcripts has been paired to 2 reference transcripts. This means that each transcript on GeneA will undergo CDS construction twice, creating computational redundancy. Therefore ideally, the dataframe has to be simplified in such a way that each transcript is paired to one reference transcript. One way to achieve this is to select the reference transcript with the greatest coverage to the query transcript. To facilitate with this selection process, we can run the `calcCovs` function that is exported with factR.
-
-Below, we will run the `calcCovs` function. The function will calculate the coverage values between the paired transcripts in q2r dataframe and return the pair with the highest coverage.
-```{r getcoverage}
-q2rcovs <- calcCovs(query_exons, ref_exons, q2r)
-
-q2rcovs
-```
-
-We can now build the query cds information using the subsetted `q2rcovs` dataframe. We may also specify the `coverage` argument as the q2rcovs dataframe contain a column with coverage values. This may speed up the cds construction process by assigning the reference cds to the full coverage query transcript.
+To build CDS information on our query data, simply run:
 ```{r buildcds}
-query_cds <- buildCDS(query_exons, ref_cds, 
-                        Mmusculus, q2rcovs, coverage = 3)
-
-head(query_cds)
+new_query_gtf <- buildCDS(query_gtf, ref_gtf, Mmusculus)
 ```
 
-We can visualize the cds structure using *wiggleplotr*
-```{r viewcds}
+The above function will return a new GRanges object containing exon entries from `query_gtf` and newly-constructed cds entries. We can inspect the contents of the object further.
+```{r checkCDS}
+# check lengths of input and output GRanges
+length(query_gtf)
+
+length(new_query_gtf)
+
+# inspect CDS entries
+head(new_query_gtf[mcols(new_query_gtf)$type == "CDS"])
+```
+
+We can visualize the coding structure of each transcripts using the *wiggleplotr* package:
+```{r viewCDS}
+# get GrangesList of query exons and cds
+query_exons <- split(new_query_gtf[new_query_gtf$type == 'exon'], ~transcript_id)
+query_cds <- split(new_query_gtf[new_query_gtf$type == 'CDS'], ~transcript_id)
+
 plotTranscripts(query_exons, query_cds)
 ```
 
-## Analyze functional consequence of coding transcripts
+The new query GTF Granges object can be exported as a .gtf file using `rtracklayer`'s export funcition:
+```{r export, eval=FALSE}
+# get GrangesList of query exons and cds
+rtracklayer::export(new_query_gtf, 'path/to/output.gtf', format = 'gtf')
+```
 
-### Predicting protein features
+
+## Extracting protein features on coding transcripts
 
 To extract protein coding features found in our list of coding transcripts, we can run the `extractCDSfeature` function using our `query_cds` and `Mmusculus` objects as input. By default, this tool will query the SuperFamily database for domain features by calling out the `hmmer` function from `bio3d` package. The function will output 3 output fields: 'desc', 'evalue' and 'nincluded'. 
 ```{r testfeature, eval=F}
@@ -373,7 +313,7 @@ extractCDSfeature(query_cds, Mmusculus, hmmer = c('default', 'bitscore', 'pvalue
 #> 4 transcript4 RNA-binding domain, RBD     1.20e-72               4           239         -175.
 ```
 
-In order to extract the domain features, `extractCDSfeature` will attempt to submit the protein coding sequence to the SuperFamily database and return a summary of the domain structure. As this process is done over HTTP, the speed of this function is greatly dependent on the server and on the number of cds in your list. This process can be sped up by subsetting the list of cds for analysis using the `which` argument.
+In order to extract the domain features, `extractCDSfeature` will attempt to submit the protein coding sequence to the SuperFamily database and return a summary of the domain structure. As this process is done over HTTP, the speed of this function is greatly dependent on the server and on the number of CDS in your list. This process can be sped up by subsetting the list of CDS for analysis using the `which` argument.
 ```{r testfeaturewhich, eval=F}
 extractCDSfeature(query_cds, Mmusculus, which = c('transcript1', 'transcript3'))
 #> # A tibble: 2 x 4
@@ -383,7 +323,7 @@ extractCDSfeature(query_cds, Mmusculus, which = c('transcript1', 'transcript3'))
 #> 2 transcript2 RNA-binding domain, RBD     2.10e-81               4
 ```
 
-### Predicting NMD-inducing features
+## Predicting NMD-inducing features on coding transcripts
 
 To test whether any of our sample coding transcripts are targets of NMD, we can run the `predictNMD` function using our `query_exons` and `query_cds` GRangesList as input:
 ```{r testnmd1}
@@ -462,31 +402,3 @@ compareAS(query_exons)
 
 ```
 
-## Export exons and cds as GTF
-
-After constructing query cds entries, one may be interested in combining the exon and cds objects and save it as a GTF file. factR comes a `exportExonsCDStoGTF` function which effeciently unlists the GRangeList objects, fill any missing important attributes (type and transcript_id) and export it as a GTF file
-```{r export, eval = F}
-# combine exons and cds objects
-exportExonsCDStoGTF(newquery_exons, newquery_cds, 'path/to/output.gtf')
-
-```
-
-
-# Other exported functions
-## Resize GRanges transcript
-
-GRanges objects may contain exon coordinates from a single transcript. Users who wish to trim the ends of this exon block may utilize the `resizeTranscripts` function. This is particularly useful to shorten transcripts to its cds coordinates or lengthening the 5' end of a transcript to include promoter sequences:
-```{r resizeexamples}
-# trim ends of transcript1
-transcript1_trimmed <- resizeTranscript(query_exons$transcript1, start = 100, end = 1000)
-
-# add 500bp to 5' end of transcript1
-transcript1_lengthen <- resizeTranscript(query_exons$transcript1, start = -500)
-
-# combine the GRanges into a list and visualize
-combine <- list('transcript1' = query_exons$transcript1, 
-                'transcript1_trimmed' = transcript1_trimmed, 
-                'transcript1_lengthen' = transcript1_lengthen)
-plotTranscripts(combine)
-
-```
