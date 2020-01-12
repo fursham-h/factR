@@ -35,8 +35,7 @@
 #' @export
 #'
 #' @author Fursham Hamid
-#' @examples
-#' matchGeneIDs(query_gtf, ref_gtf)
+
 matchGeneIDs <- function(query, ref,
                          primary_gene_id = NULL,
                          secondary_gene_id = NULL) {
