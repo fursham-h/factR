@@ -34,7 +34,8 @@ checkInputs <- function(query, ref, fasta) {
           argnames[x]
         ))
         message(sprintf(
-          "\tTry running: %s <- matchSeqLevels(%s, %s)",
+          "\tTry running: 
+          %s <- matchSeqLevels(%s, %s)",
           argnames[x], argnames[x], argnames[3]
         ))
       }
@@ -61,7 +62,8 @@ checkInputs <- function(query, ref, fasta) {
         unmatched, length(inIDs)
       ))
       message(sprintf(
-        "\tTry running: %s <- matchGeneIDs(%s, %s)",
+        "\tTry running: 
+        %s <- matchGeneIDs(%s, %s)",
         argnames[1], argnames[1], argnames[2]
       ))
     }

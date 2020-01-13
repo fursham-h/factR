@@ -63,6 +63,75 @@ buildCDS <- function(query, ref, fasta) {
   ref_exons <- S4Vectors::split(ref[ref$type == 'exon'], ~transcript_id)
   ref_exons <- ref_exons[names(ref_exons) %in% names(ref_cds)] 
   
+  q2r <- data.frame('transcript_id' = names(query_exons))
+  
+  
+  
+  
+  
+  fulloverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
+                                             type = 'equal', select = "first")
+  startoverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
+                                              type = 'start', select = "first")
+  anyoverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
+                                            type = 'any', select = "arbitrary")
+  
+  q2r <- data.frame('transcript_id' = names(query_exons),
+                    'ref_transcript_id' = names(ref_exons)[fulloverlap],
+                    'start_transcript_id' = names(ref_exons)[startoverlap],
+                    'any_transcript_id' = names(ref_exons)[anyoverlap]) %>%
+    dplyr::mutate(coverage = ifelse(!is.na(ref_transcript_id), 1, 0.9)) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(ref_transcript_id = ifelse(!is.na(ref_transcript_id), ref_transcript_id,
+                                             ifelse(!is.na(start_transcript_id), start_transcript_id,
+                                                    any_transcript_id))) %>%
+    dplyr::ungroup()
+    
+  
+  
+  %>%
+    dplyr::mutate(ref_transcript_id = names(ref_exons)[fulloverlap]) %>%
+    dplyr::mutate(coverage = ifelse(!is.na(ref_transcript_id), 'full', 'notfull')) %>%
+    dplyr::mutate(ref_transcript_id = ifelse(is.na(ref_transcript_id), 
+                                             names(ref_exons)[startoverlap],
+                                             ref_transcript_id))
+  
+  
+  q2r <- data.frame('transcript_id' = names(query_exons), 
+                    'ref_transcript_id' = names(ref_exons)[fulloverlap],
+                    'coverage' = 'full',
+                    stringsAsFactors = F)
+  
+  
+  
+  
+  fullq2r <- data.frame('transcript_id' = names(query_exons), 
+                    'ref_transcript_id' = names(ref_exons)[fulloverlap],
+                    'coverage' = 'full',
+                    stringsAsFactors = F)
+  
+  remaining_query_exons <- query_exons[!names(query_exons) %in% q2r$transcript_id]
+  startoverlap <- GenomicRanges::findOverlaps(remaining_query_exons, ref_exons, 
+                                              type = 'start', select = "first")
+  startq2r <- data.frame('transcript_id' = names(remaining_query_exons), 
+                    'ref_transcript_id' = names(remaining_query_exons)[startoverlap],
+                    'coverage' = 'start',
+                    stringsAsFactors = F)
+  
+  q2r <- dplyr::bind_rows(q2r, q2r2)
+  
+  
+  remaining_query_exons <- query_exons[!names(query_exons) %in% q2r$transcript_id]
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   # prepare q2r df
   q2r <- .prepq2r(query, ref, query_exons, 
                  ref_exons, ref_cds, argnames)
@@ -413,9 +482,11 @@ buildCDS <- function(query, ref, fasta) {
   gene_id <- ref_transcript_id <- coverage <- transcript_id <- NULL
   # prepare q2r df
   query_ids = query %>% as.data.frame() %>%
+    dplyr::filter(type == 'exon') %>% 
     dplyr::select(gene_id, transcript_id) %>%
     dplyr::distinct()
   ref_ids = ref %>% as.data.frame() %>%
+    dplyr::filter(type == 'CDS') %>% 
     dplyr::select(gene_id, ref_transcript_id = transcript_id) %>%
     dplyr::distinct()
   q2r <- dplyr::left_join(query_ids, ref_ids, by = 'gene_id') %>%
@@ -436,6 +507,17 @@ buildCDS <- function(query, ref, fasta) {
       "\t%s transcripts have unmatched gene_ids", 
       nrow(unmatchedtx)))
   }
+  
+  
+  
+  # simplify q2r if transcript_id and ref_transcript_id has same name
+  q2rident <- q2r %>%
+    dplyr::filter(transcript_id == ref_transcript_id)
+  q2r <- q2r %>% 
+    dplyr::filter(!transcript_id %in% q2rident$transcript_id) %>%
+    dplyr::bind_rows(q2rident)
+    
+    
   
   # calculate coverage values
   out <- BiocParallel::bpmapply(function(x, y) {

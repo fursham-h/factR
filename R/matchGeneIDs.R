@@ -135,6 +135,7 @@ matchGeneIDs <- function(query, ref,
         dplyr::distinct(gene_id, .keep_all = TRUE) %>%
         dplyr::filter(is.na(matched)) %>%
         nrow()
+      countsafter <- if (countsafter > countsbefore) countsbefore else countsafter
 
       # report number of IDs corrected
       message(sprintf(
