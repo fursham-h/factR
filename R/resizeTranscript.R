@@ -1,6 +1,6 @@
 #' Resize 5' and 3' ends of a transcript GenomicRanges
 #'
-#' @param GRanges GenomicRanges object containing exon coordinates from a transcript
+#' @param x GenomicRanges object containing exon coordinates from a transcript
 #' @param start Length to append from the start of transcript
 #' @param end Length to append from the end of transcript
 #'
@@ -20,10 +20,10 @@
 #'
 #' resizeTranscript(gr1, 20, 80)
 #' resizeTranscript(gr1, 110, 150)
-resizeTranscript <- function(GRanges, start = 0, end = 0) {
+resizeTranscript <- function(x, start = 0, end = 0) {
 
   # return if appending length is longer than transcript
-  if (sum(BiocGenerics::width(GRanges)) < (start + end)) {
+  if (sum(BiocGenerics::width(x)) < (start + end)) {
     rlang::abort("Appending length is larger than size of transcript")
   }
 
@@ -31,7 +31,7 @@ resizeTranscript <- function(GRanges, start = 0, end = 0) {
   width <- tmp.fwdcumsum <- tmp.revcumsum <- tmp.end <- tmp.start <- NULL
 
   # retrieve strand information
-  strand <- as.character(BiocGenerics::strand(GRanges))[1]
+  strand <- as.character(BiocGenerics::strand(x))[1]
 
   # subsequently,we will treat granges as forward stranded
   # so if granges is initially on rev strand, we will swap
@@ -41,7 +41,7 @@ resizeTranscript <- function(GRanges, start = 0, end = 0) {
 
 
 
-  GRanges <- GRanges %>%
+  x <- x %>%
     as.data.frame() %>%
     dplyr::arrange(start) %>%
     dplyr::mutate(

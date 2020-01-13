@@ -137,7 +137,7 @@ predictNMD <- function(exons, cds, NMD_threshold = 50,
         transcript = x, is_NMD = F, dist_to_lastEJ = 0,
         num_of_down_EJs = 0, dist_to_downEJs = 0
       )
-      NMDreport <- testNMD(exons[[x]], cds[[x]], distance_stop_EJ = NMD_threshold)
+      NMDreport <- .testNMD(exons[[x]], cds[[x]], distance_stop_EJ = NMD_threshold)
       report <- utils::modifyList(report, NMDreport)
       return(report)
     }, BPPARAM = BiocParallel::MulticoreParam()) %>%
@@ -147,7 +147,7 @@ predictNMD <- function(exons, cds, NMD_threshold = 50,
   }
 }
 
-testNMD <- function(queryTranscript, queryCDS, distance_stop_EJ = 50) {
+.testNMD <- function(queryTranscript, queryCDS, distance_stop_EJ = 50) {
 
   # prepare output list
   output <- list(
