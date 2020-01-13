@@ -55,3 +55,9 @@ test_that("Test .getCDSgr", {
   expect_equal(length(out), 49)
   expect_equal(BiocGenerics::start(out), BiocGenerics::start(unlist(query_cds)))
 })
+
+test_that("Test .calcCoverage", {
+  expect_equal(signif(.calcCoverage(query_exons[[1]], query_exons[[2]], 'mean'),3), 0.901)
+  expect_equal(signif(.calcCoverage(query_exons[[1]], query_exons[[2]], 'query'),3), 0.91)
+  expect_equal(signif(.calcCoverage(query_exons[[1]], query_exons[[2]], 'ref'),3), 0.893)
+})
