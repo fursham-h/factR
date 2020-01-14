@@ -59,5 +59,5 @@ resizeTranscript <- function(x, start = 0, end = 0) {
     dplyr::select(-dplyr::starts_with("tmp.")) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
 
-  return(GRanges)
+  return(x)
 }

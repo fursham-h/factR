@@ -63,9 +63,6 @@ buildCDS <- function(query, ref, fasta) {
   ref_exons <- S4Vectors::split(ref[ref$type == 'exon'], ~transcript_id)
   ref_exons <- ref_exons[names(ref_exons) %in% names(ref_cds)] 
   
-  q2r <- data.frame('transcript_id' = names(query_exons))
-  
-  
   # prepare q2r
   fulloverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
                                              type = 'equal', select = "first")
@@ -73,19 +70,29 @@ buildCDS <- function(query, ref, fasta) {
                                               type = 'start', select = "first")
   anyoverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
                                             type = 'any', select = "arbitrary")
-  
-  q2r <- data.frame('transcript_id' = rep(names(query_exons), 3),
-                    'ref_transcript_id' = c(names(ref_exons)[fulloverlap],
-                                            names(ref_exons)[startoverlap],
-                                            names(ref_exons)[anyoverlap]),
-                    'coverage' = c(rep(1, length(query_exons)),
-                                   rep(2, length(query_exons)),
-                                   rep(3, length(query_exons)))) %>%
-    dplyr::group_by(transcript_id) %>%
+
+  fullq2r <- data.frame('transcript_id' = names(query_exons),
+                    'ref_transcript_id' = names(ref_exons)[fulloverlap], 
+                    stringsAsFactors = F) %>%
     dplyr::filter(!is.na(ref_transcript_id)) %>%
-    dplyr::distinct(transcript_id, .keep_all = T) %>%
-    dplyr::ungroup()
+    dplyr::mutate(coverage = 1)
+  startq2r <- data.frame('transcript_id' = names(query_exons),
+                        'ref_transcript_id' = names(ref_exons)[startoverlap], 
+                        stringsAsFactors = F) %>%
+    dplyr::filter(!is.na(ref_transcript_id)) %>%
+    dplyr::filter(!transcript_id %in% fullq2r$transcript_id) %>%
+    dplyr::mutate(coverage = 2)
+  anyq2r <- data.frame('transcript_id' = names(query_exons),
+                        'ref_transcript_id' = names(ref_exons)[anyoverlap], 
+                       stringsAsFactors = F) %>%
+    dplyr::filter(!is.na(ref_transcript_id)) %>%
+    dplyr::filter(!transcript_id %in% fullq2r$transcript_id &
+                  !transcript_id %in% startq2r$transcript_id) %>%
+    dplyr::mutate(coverage = 3)
   
+  q2r <- dplyr::bind_rows(fullq2r, startq2r, anyq2r)
+  # report unmatched tx
+
 
   # run buildCDS function
    outCDS <- .getCDSgr(query_exons, ref_cds, fasta, q2r)
@@ -135,10 +142,14 @@ buildCDS <- function(query, ref, fasta) {
       dplyr::select(-group_name) %>%
       dplyr::mutate(built_from = 'Full coverage')
   }
+  
+  # prepare a dict of stop codons for pattern matching
+  list_stopcodons <- Biostrings::DNAStringSet(c("TAA", "TAG", "TGA"))
+  pdict_stopcodons <- Biostrings::PDict(list_stopcodons)
 
   # create CDS list for all remaining tx
   out <- BiocParallel::bpmapply(function(x, y) {
-    CDSreport <- .getthisCDS(query[x], refCDS[y], fasta) %>%
+    CDSreport <- .getthisCDS(query[x], refCDS[y], fasta, pdict_stopcodons) %>%
       as.data.frame()
     return(CDSreport)
   }, query2ref$transcript_id, query2ref$ref_transcript_id,
@@ -161,7 +172,7 @@ buildCDS <- function(query, ref, fasta) {
   }
 }
 
-.getthisCDS <- function(query, CDS, fasta) {
+.getthisCDS <- function(query, CDS, fasta, pdict_stopcodons) {
 
   # prepare output list
   output <- list(
@@ -187,7 +198,7 @@ buildCDS <- function(query, ref, fasta) {
   }
 
   # attempt to search for an in-frame stop codon
-  report <- .getCDSstop(queryTx, fasta, output$fiveUTRlength)
+  report <- .getCDSstop(queryTx, fasta, output$fiveUTRlength, pdict_stopcodons)
   output <- utils::modifyList(output, report) # update output
 
   # return if no stop codon is found
@@ -340,7 +351,7 @@ buildCDS <- function(query, ref, fasta) {
   return(output)
 }
 
-.getCDSstop <- function(query, fasta, fiveUTRlength) {
+.getCDSstop <- function(query, fasta, fiveUTRlength, pdict_stopcodons) {
 
   # prepare output list
   output <- list(
@@ -351,10 +362,6 @@ buildCDS <- function(query, ref, fasta) {
   # append query GRanges to start from star codon, and retrieve seq
   queryCDS <- resizeTranscript(query, start = fiveUTRlength)
   queryseq <- unlist(BSgenome::getSeq(fasta, queryCDS))
-
-  # prepare a dict of stop codons for pattern matching
-  list_stopcodons <- Biostrings::DNAStringSet(c("TAA", "TAG", "TGA"))
-  pdict_stopcodons <- Biostrings::PDict(list_stopcodons)
 
   # search for in-frame stop codons
   stopcodons <- Biostrings::matchPDict(pdict_stopcodons, queryseq) %>%
@@ -388,6 +395,10 @@ buildCDS <- function(query, ref, fasta) {
 
   # resize query GRanges to ORF and renew metadata info
   CDSranges <- resizeTranscript(query, fiveUTRlength, (threeUTRlength + 3))
+  if (length(CDSranges) == 0) {
+    return(NULL)
+  }
+  
   CDSranges <- CDSranges %>%
     as.data.frame() %>% 
     dplyr::arrange(ifelse(strand == '-', dplyr::desc(start), start)) %>%
