@@ -66,9 +66,7 @@ buildCDS <- function(query, ref, fasta) {
   q2r <- data.frame('transcript_id' = names(query_exons))
   
   
-  
-  
-  
+  # prepare q2r
   fulloverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
                                              type = 'equal', select = "first")
   startoverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
@@ -76,67 +74,19 @@ buildCDS <- function(query, ref, fasta) {
   anyoverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
                                             type = 'any', select = "arbitrary")
   
-  q2r <- data.frame('transcript_id' = names(query_exons),
-                    'ref_transcript_id' = names(ref_exons)[fulloverlap],
-                    'start_transcript_id' = names(ref_exons)[startoverlap],
-                    'any_transcript_id' = names(ref_exons)[anyoverlap]) %>%
-    dplyr::mutate(coverage = ifelse(!is.na(ref_transcript_id), 1, 0.9)) %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(ref_transcript_id = ifelse(!is.na(ref_transcript_id), ref_transcript_id,
-                                             ifelse(!is.na(start_transcript_id), start_transcript_id,
-                                                    any_transcript_id))) %>%
+  q2r <- data.frame('transcript_id' = rep(names(query_exons), 3),
+                    'ref_transcript_id' = c(names(ref_exons)[fulloverlap],
+                                            names(ref_exons)[startoverlap],
+                                            names(ref_exons)[anyoverlap]),
+                    'coverage' = c(rep(1, length(query_exons)),
+                                   rep(2, length(query_exons)),
+                                   rep(3, length(query_exons)))) %>%
+    dplyr::group_by(transcript_id) %>%
+    dplyr::filter(!is.na(ref_transcript_id)) %>%
+    dplyr::distinct(transcript_id, .keep_all = T) %>%
     dplyr::ungroup()
-    
   
-  
-  %>%
-    dplyr::mutate(ref_transcript_id = names(ref_exons)[fulloverlap]) %>%
-    dplyr::mutate(coverage = ifelse(!is.na(ref_transcript_id), 'full', 'notfull')) %>%
-    dplyr::mutate(ref_transcript_id = ifelse(is.na(ref_transcript_id), 
-                                             names(ref_exons)[startoverlap],
-                                             ref_transcript_id))
-  
-  
-  q2r <- data.frame('transcript_id' = names(query_exons), 
-                    'ref_transcript_id' = names(ref_exons)[fulloverlap],
-                    'coverage' = 'full',
-                    stringsAsFactors = F)
-  
-  
-  
-  
-  fullq2r <- data.frame('transcript_id' = names(query_exons), 
-                    'ref_transcript_id' = names(ref_exons)[fulloverlap],
-                    'coverage' = 'full',
-                    stringsAsFactors = F)
-  
-  remaining_query_exons <- query_exons[!names(query_exons) %in% q2r$transcript_id]
-  startoverlap <- GenomicRanges::findOverlaps(remaining_query_exons, ref_exons, 
-                                              type = 'start', select = "first")
-  startq2r <- data.frame('transcript_id' = names(remaining_query_exons), 
-                    'ref_transcript_id' = names(remaining_query_exons)[startoverlap],
-                    'coverage' = 'start',
-                    stringsAsFactors = F)
-  
-  q2r <- dplyr::bind_rows(q2r, q2r2)
-  
-  
-  remaining_query_exons <- query_exons[!names(query_exons) %in% q2r$transcript_id]
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  # prepare q2r df
-  q2r <- .prepq2r(query, ref, query_exons, 
-                 ref_exons, ref_cds, argnames)
-  
-  
+
   # run buildCDS function
    outCDS <- .getCDSgr(query_exons, ref_cds, fasta, q2r)
    if (is.null(outCDS)) {
