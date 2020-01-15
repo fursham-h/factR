@@ -4,33 +4,29 @@
 \alias{predictNMD}
 \title{Predict sensitivity of mRNA transcripts to NMD}
 \usage{
-predictNMD(
-  exons,
-  cds,
-  NMD_threshold = 50,
-  which = NULL,
-  return = c("all", "NMD")
-)
+predictNMD(x, cds = NULL, NMD_threshold = 50, which = NULL)
 }
 \arguments{
-\item{exons}{GRanges object or GRangesList object containing exons
-for each transcript. To search for NMD-inducing features, transcripts have
-to be coding and thus contain a cds information of the same transcript name}
+\item{x}{Can be a GRanges object containing exon and CDS transcript features in GTF
+format.
 
-\item{cds}{GRanges object or GRangesList object containing coding regions (CDS)
-for each transcript. Object type must match `exons` object type. GRangesList 
-must have names that match names in exons, else transcript will not be analysed}
+Can be a GRangesList object containing exon features for a list of transcripts.
 
-\item{NMD_threshold}{Minimum distance of STOP codon to last exon junction (EJ) which triggers NMD.
+Can be a GRanges object containing exon features for a transcript.}
+
+\item{cds}{If `x` is a GRangesList object, `cds` has to be a GRangesList containing CDS features
+for the list of transcripts in `x`. List names in `x` and `cds` have to match.
+
+If `x` is a GRanges object, `cds` has to be a GRanges containing CDS features
+for the transcript in `x`.}
+
+\item{NMD_threshold}{Minimum distance of stop_codon to last exon junction (EJ) which triggers NMD.
 Default = 50bp}
 
-\item{which}{List containing names of transcripts from `exons` to filter for analysis}
-
-\item{return}{If exons and cds are GRangesList, returns results for all transcripts (defailt) or
-only NMD-sensitive (default) transcripts}
+\item{which}{List containing names of transcripts from `x` to subset for analysis}
 }
 \value{
-List with prediction of NMD sensitivity and statistics:
+Dataframe with prediction of NMD sensitivity and NMD features:
 
 is_NMD: logical value in prediciting transcript sensitivity to NMD
 
@@ -41,7 +37,7 @@ position of STOP codon while negative value indicates downstream position
 num_of_down_EJs: Number of downstream EJs
 
 dist_to_downEJs: Integer value indicating distance of STOP codon to each down
-EJs Values are referenced from last EJ, thus a positive value indicates
+EJs. Values are referenced from last EJ, thus a positive value indicates
 upstream position of STOP codon while negative value indicates downstream
 position together with distances of STOP codon to last EJ
 }
@@ -50,17 +46,12 @@ Predict sensitivity of mRNA transcripts to NMD
 }
 \examples{
 
-### To visualize transcripts
-library(wiggleplotr)
-plotTranscripts(query_exons, query_cds)
-
 ### Examples with GRanges objects
 predictNMD(query_exons$transcript1, query_cds$transcript1) # NMD-insensitive
 predictNMD(query_exons$transcript3, query_cds$transcript3) # NMD-sensitive
 
 ### Examples with GRangesList object
 predictNMD(query_exons, query_cds)
-predictNMD(query_exons, query_cds, return = "NMD")
 predictNMD(query_exons, query_cds, which = c("transcript1", "transcript3"))
 }
 \author{
