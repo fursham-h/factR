@@ -1,18 +1,18 @@
 #' Predict sensitivity of mRNA transcripts to NMD
 #'
-#' @param exons
+#' @param x
 #' GRanges object or GRangesList object containing exons
 #' for each transcript. To search for NMD-inducing features, transcripts have
 #' to be coding and thus contain a cds information of the same transcript name
 #' @param cds
 #' GRanges object or GRangesList object containing coding regions (CDS)
-#' for each transcript. Object type must match `exons` object type. GRangesList 
+#' for each transcript. Object type must match `x` object type. GRangesList 
 #' must have names that match names in exons, else transcript will not be analysed
 #' @param NMD_threshold
 #' Minimum distance of STOP codon to last exon junction (EJ) which triggers NMD.
 #' Default = 50bp
 #' @param which
-#' List containing names of transcripts from `exons` to filter for analysis
+#' List containing names of transcripts from `x` to filter for analysis
 #' @param return
 #' If exons and cds are GRangesList, returns results for all transcripts (defailt) or
 #' only NMD-sensitive (default) transcripts
@@ -49,11 +49,10 @@
 #' predictNMD(query_exons, query_cds)
 #' predictNMD(query_exons, query_cds, return = "NMD")
 #' predictNMD(query_exons, query_cds, which = c("transcript1", "transcript3"))
-predictNMD <- function(exons, cds, NMD_threshold = 50,
-                       which = NULL, return = c("all", "NMD")) {
+predictNMD <- function(x, cds = NULL, NMD_threshold = 50, which = NULL) {
 
   # catch missing args
-  mandargs <- c("exons", "cds")
+  mandargs <- c("x")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
     rlang::abort(paste(
@@ -62,17 +61,21 @@ predictNMD <- function(exons, cds, NMD_threshold = 50,
     ))
   }
   # define global variable
-  is_NMD <- NULL
+  #is_NMD <- NULL
   
   # retrieve input object names
   argnames <- as.character(match.call())[-1]
 
-  # check if exons and cds are GR or GRlist
-  if (all(is(exons) %in% is(cds))) {
+  # check if exons is a gtf or both exons and cds are GR or GRlist
+  if (is_gtf(x)) {
+    exons <- S4Vectors::split(x[x$type == 'exon'], ~transcript_id)
+    cds <- S4Vectors::split(x[x$type == 'CDS'], ~transcript_id)
+  } else if (all(is(x) %in% is(cds))) {
     if (is(exons, "GRanges")) {
-      intype <- "gr"
+      exons <- GRangesList('transcript' = x)
+      cds <- GRangesList('transcript' = cds)
     } else if (is(exons, "GRangesList")) {
-      intype <- "grl"
+      exons <- x
     } else {
       errorobj <- paste(unique(c(is(exons)[1], is(cds)[2])), collapse = ', ')
       rlang::abort(sprintf(
@@ -86,6 +89,7 @@ predictNMD <- function(exons, cds, NMD_threshold = 50,
       argnames[2],cdstype,argnames[1], txtype
     ))
   }
+  
   # catch unmatched seqlevels
   if (GenomeInfoDb::seqlevelsStyle(exons)[1] != GenomeInfoDb::seqlevelsStyle(cds)[1]) {
     rlang::abort(sprintf(
@@ -94,126 +98,68 @@ predictNMD <- function(exons, cds, NMD_threshold = 50,
       argnames[1], argnames[2], argnames[1], argnames[1], argnames[2])
   )}
 
-  # run testNMD_ for single GRanges object and output results
-  if (intype == "gr") {
-    return(testNMD(exons, cds, distance_stop_EJ = NMD_threshold))
+  # subset list for `which` and check if all exons have a cds entry
+  totest <- .prepTotest(exons, cds, which, argnames)
+  
+  # run NMD analysis and return result
+  return(.testNMD(exons[totest], cds[totest], NMD_threshold))
+}
+
+
+
+.testNMD <- function(x, y, threshold) {
+  UTRs <- IRanges::psetdiff(unlist(range(x)), (range(y)))
+  fiveUTR <- lapply(UTRs, function(x){
+    strand <- as.character(strand(x)[1])
+    x <- BiocGenerics::sort(x, decreasing = strand == "-")
+    return(width(x[1,]))
+  })
+  
+  width_to_stopcodon <- unlist(fiveUTR) + sum(width(c(y))) + 3
+  rel_dist_to_stopcodon <- cumsum(width(x)) - width_to_stopcodon
+  
+  out <- lapply(rel_dist_to_stopcodon, function(x){
+    id <- ifelse(!is.null(names(x)), names(x)[1], 'transcript')
+    x <- sort(x, decreasing = T)
+    threeUTR <- x[1]
+    dist_to_last <- x[2]
+    is_NMD <- ifelse(dist_to_last > threshold, T, F)
+    dist_to_eachEJ <- rev(x[-1][x[-1] > 0])
+    
+    return(tibble::tibble('transcript' = id, 
+                          'is_NMD' = is_NMD,
+                          'dist_to_lastEJ' = dist_to_last,
+                          'num_of_downEJ' = length(dist_to_eachEJ),
+                          'dist_to_eachEJ' = paste(dist_to_eachEJ, collapse = ','),
+                          'threeUTRlength' = threeUTR))
+  }) %>% dplyr::bind_rows()
+  return(out)
+}
+
+
+.prepTotest <- function(x, y, which, arg) {
+  totest <- intersect(names(x), names(y)) # prepare vector with names for testing
+  if (length(totest) == 0) {
+    rlang::abort("all transcripts have missing cds info. please ensure exons and cds names match")
   }
-
-  # for GRangesList,
-  if (intype == "grl") {
-    totest <- names(exons) # prepare vector with names for testing
-    if (!is.null(which)) {
-      which_matched <- which[which %in% names(cds)]
-      if (length(which_matched) == 0) {
-        rlang::abort(sprintf("transcript names in `which` is not found in `%s`",
-                             argnames[2]))
-      } else if (length(which_matched) != length(which)) {
-        num_unmatched <- length(which) - length(which_matched)
-        rlang::warn(sprintf(
-          "%s transcripts in `which` is missing from `%s%",
-          num_unmatched, argnames[2]
-        ))
-      }
-
-      totest <- totest[totest %in% which] # subset list if which list is given
-      exons <- exons[names(exons) %in% which]
-    }
-    # check for missing cds and return warnings/errors
-    totest <- totest[totest %in% names(cds)]
+  if (length(totest) < length(x)) {
+    skiptest <- length(x) - length(totest)
+    rlang::warn(sprintf(
+      "%s transcript(s) have missing cds info and was not analyzed",
+      skiptest))
+  }
+  if (!is.null(which)) {
+    totest <- intersect(totest, which)
     if (length(totest) == 0) {
-      rlang::abort("all transcripts have missing cds info. please ensure exons and cds names match")
-    }
-    if (length(totest) < length(exons)) {
-      skiptest <- length(exons) - length(totest)
+      rlang::abort(sprintf("transcript names in `which` is not found in `%s`",
+                           arg[1]))
+    } else if (length(totest) != length(which)) {
+      num_unmatched <- length(which) - length(which_matched)
       rlang::warn(sprintf(
-        "%s transcript(s) have missing cds info and have been skipped",
-        skiptest
+        "%s transcripts in `which` is missing from `%s%`",
+        num_unmatched, arg[1]
       ))
     }
-
-    # running brlapply and testNMD
-    out <- BiocParallel::bplapply(totest, function(x) {
-      report <- list(
-        transcript = x, is_NMD = F, dist_to_lastEJ = 0,
-        num_of_down_EJs = 0, dist_to_downEJs = 0
-      )
-      NMDreport <- .testNMD(exons[[x]], cds[[x]], distance_stop_EJ = NMD_threshold)
-      report <- utils::modifyList(report, NMDreport)
-      return(report)
-    }, BPPARAM = BiocParallel::MulticoreParam()) %>%
-      dplyr::bind_rows() %>%
-      dplyr::filter(if (return[1] == "NMD") is_NMD == T else T)
-    return(out)
   }
+  return(totest)
 }
-
-.testNMD <- function(queryTranscript, queryCDS, distance_stop_EJ = 50) {
-
-  # prepare output list
-  output <- list(
-    is_NMD = as.logical(FALSE),
-    dist_to_lastEJ = as.numeric(0),
-    num_of_down_EJs = as.numeric(0),
-    dist_to_downEJs = as.numeric(0),
-    threeUTRlength = as.numeric(0)
-  )
-
-  # define global variable
-  width <- disttolastEJ <- NULL
-
-  # sort queryCDS, by exon order (just in case)
-  strand <- as.character(BiocGenerics::strand(queryCDS))[1]
-  queryCDS <- BiocGenerics::sort(queryCDS, decreasing = strand == "-")
-  queryTranscript <- BiocGenerics::sort(queryTranscript, decreasing = strand == "-")
-
-  queryCDS <- resizeTranscript(queryCDS, end = -3)
-  
-  # test if query is NMD sensitive
-  #   get distance of last EJC from start of transcript
-  #   disjoin will create a new GRanges that will separate the queryTranscript
-  #   into discernable 5UTR, ORF and 3UTR
-  #   we can then try to use the new GRanges to infer NMD susceptibility
-  lengthtolastEJ <- sum(head(BiocGenerics::width(queryTranscript), -1))
-  disjoint <- BiocGenerics::append(queryCDS, queryTranscript) %>%
-    GenomicRanges::disjoin(with.revmap = T) %>%
-    BiocGenerics::sort(decreasing = strand == "-") %>%
-    as.data.frame() %>%
-    dplyr::mutate(disttolastEJ = lengthtolastEJ - cumsum(width)) %>%
-    dplyr::mutate(threeUTR = dplyr::lead(rev(cumsum(rev(width))), default = 0))
-
-  # retrieve index of last ORF segment and determine if there are
-  # more than 1 exons after stop codon
-  stopcodonindex <- max(which(lengths(disjoint$revmap) == 2))
-  output$dist_to_lastEJ <- disjoint[stopcodonindex, ]$disttolastEJ
-  output$threeUTRlength <- disjoint[stopcodonindex, ]$threeUTR
-
-  # report number of downstream EJ and its distance to PTC
-  output$num_of_down_EJs <- nrow(disjoint) - stopcodonindex - 1
-  downEJCdf <- disjoint %>%
-    dplyr::filter(dplyr::row_number() >= stopcodonindex + 1) %>%
-    dplyr::filter(disttolastEJ >= 0) %>%
-    dplyr::mutate(disttoPTC = cumsum(width))
-  output$dist_to_downEJs <- paste(downEJCdf$disttoPTC, collapse = ",")
-
-  if (output$dist_to_lastEJ > distance_stop_EJ) {
-    # annotated transcript as NMD if dist_to_lastEJ is NMD triggering
-    output$is_NMD <- TRUE
-  }
-  # return output
-  return(output)
-}
-
-
-# 
-# 
-# boundaries <- rev(cumsum(rev(width(query_exons))))
-# UTRs <- psetdiff(unlist(range(query_exons)), (range(query_cds)))
-# threeUTR <- lapply(UTRs, function(x){
-#   return(width(x[2,]))
-# })
-# 
-# width_to_stop <- width(GRangesList(threeUTR)) + sum(width(c(query_cds)))
-# test <- boundaries - width_to_stop
-# 
-# width(psetdiff(unlist(range(query_exons)), (range(query_cds))))
-# width(psetdiff(unlist(range(query_exons)), (range(query_cds)))) + sum(width(query_cds))
