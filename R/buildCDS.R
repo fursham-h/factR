@@ -63,6 +63,10 @@ buildCDS <- function(query, ref, fasta) {
   ref_exons <- S4Vectors::split(ref[ref$type == 'exon'], ~transcript_id)
   ref_exons <- ref_exons[names(ref_exons) %in% names(ref_cds)] 
   
+# idea, remove tx with no cds info
+# improve downstream code
+
+
   # prepare q2r
   fulloverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
                                              type = 'equal', select = "first")
