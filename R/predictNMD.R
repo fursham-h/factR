@@ -202,3 +202,18 @@ predictNMD <- function(exons, cds, NMD_threshold = 50,
   # return output
   return(output)
 }
+
+
+# 
+# 
+# boundaries <- rev(cumsum(rev(width(query_exons))))
+# UTRs <- psetdiff(unlist(range(query_exons)), (range(query_cds)))
+# threeUTR <- lapply(UTRs, function(x){
+#   return(width(x[2,]))
+# })
+# 
+# width_to_stop <- width(GRangesList(threeUTR)) + sum(width(c(query_cds)))
+# test <- boundaries - width_to_stop
+# 
+# width(psetdiff(unlist(range(query_exons)), (range(query_cds))))
+# width(psetdiff(unlist(range(query_exons)), (range(query_cds)))) + sum(width(query_cds))
