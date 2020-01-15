@@ -72,18 +72,21 @@ buildCDS <- function(query, ref, fasta) {
                                             type = 'any', select = "arbitrary")
 
   fullq2r <- data.frame('transcript_id' = names(query_exons),
-                    'ref_transcript_id' = names(ref_exons)[fulloverlap], 
+                        'transcript_index' = 1:length(query_exons),
+                    'ref_transcript_id' = fulloverlap, 
                     stringsAsFactors = F) %>%
     dplyr::filter(!is.na(ref_transcript_id)) %>%
     dplyr::mutate(coverage = 1)
   startq2r <- data.frame('transcript_id' = names(query_exons),
-                        'ref_transcript_id' = names(ref_exons)[startoverlap], 
+                         'transcript_index' = 1:length(query_exons),
+                        'ref_transcript_id' = startoverlap, 
                         stringsAsFactors = F) %>%
     dplyr::filter(!is.na(ref_transcript_id)) %>%
     dplyr::filter(!transcript_id %in% fullq2r$transcript_id) %>%
     dplyr::mutate(coverage = 2)
   anyq2r <- data.frame('transcript_id' = names(query_exons),
-                        'ref_transcript_id' = names(ref_exons)[anyoverlap], 
+                       'transcript_index' = 1:length(query_exons),
+                        'ref_transcript_id' = anyoverlap, 
                        stringsAsFactors = F) %>%
     dplyr::filter(!is.na(ref_transcript_id)) %>%
     dplyr::filter(!transcript_id %in% fullq2r$transcript_id &
@@ -143,16 +146,16 @@ buildCDS <- function(query, ref, fasta) {
       dplyr::mutate(built_from = 'Full coverage')
   }
   
-  # prepare a dict of stop codons for pattern matching
-  list_stopcodons <- Biostrings::DNAStringSet(c("TAA", "TAG", "TGA"))
-  pdict_stopcodons <- Biostrings::PDict(list_stopcodons)
+
 
   # create CDS list for all remaining tx
-  out <- BiocParallel::bpmapply(function(x, y) {
-    CDSreport <- .getthisCDS(query[x], refCDS[y], fasta, pdict_stopcodons) %>%
+  out <- BiocParallel::bpmapply(function(x, y, z) {
+    CDSreport <- .getthisCDS(y, z, fasta) %>%
       as.data.frame()
     return(CDSreport)
-  }, query2ref$transcript_id, query2ref$ref_transcript_id,
+  }, q2r$transcript_id, 
+  query_exons[q2r$transcript_index], 
+  ref_cds[q2r$ref_transcript_id],
   BPPARAM = BiocParallel::MulticoreParam(), SIMPLIFY = F
   ) %>%
     dplyr::bind_rows()
@@ -172,7 +175,7 @@ buildCDS <- function(query, ref, fasta) {
   }
 }
 
-.getthisCDS <- function(query, CDS, fasta, pdict_stopcodons) {
+.getthisCDS <- function(query, CDS, fasta) {
 
   # prepare output list
   output <- list(
@@ -184,9 +187,9 @@ buildCDS <- function(query, ref, fasta) {
   )
   
   # Extract info and sort all GRanges first
-  strand <- as.character(BiocGenerics::strand(query[[1]]))[1]
-  queryTx <- BiocGenerics::sort(query[[1]], decreasing = strand == "-")
-  knownCDS <- BiocGenerics::sort(CDS[[1]], decreasing = strand == "-")
+  strand <- as.character(BiocGenerics::strand(query))[1]
+  queryTx <- BiocGenerics::sort(query, decreasing = strand == "-")
+  knownCDS <- BiocGenerics::sort(CDS, decreasing = strand == "-")
   S4Vectors::mcols(queryTx)$transcript_id <- names(query)
   # attempt to find an aligned start codon
   report <- .getCDSstart(queryTx, knownCDS, fasta)
@@ -198,7 +201,7 @@ buildCDS <- function(query, ref, fasta) {
   }
 
   # attempt to search for an in-frame stop codon
-  report <- .getCDSstop(queryTx, fasta, output$fiveUTRlength, pdict_stopcodons)
+  report <- .getCDSstop(queryTx, fasta, output$fiveUTRlength)
   output <- utils::modifyList(output, report) # update output
 
   # return if no stop codon is found
@@ -351,7 +354,7 @@ buildCDS <- function(query, ref, fasta) {
   return(output)
 }
 
-.getCDSstop <- function(query, fasta, fiveUTRlength, pdict_stopcodons) {
+.getCDSstop <- function(query, fasta, fiveUTRlength) {
 
   # prepare output list
   output <- list(
@@ -362,6 +365,10 @@ buildCDS <- function(query, ref, fasta) {
   # append query GRanges to start from star codon, and retrieve seq
   queryCDS <- resizeTranscript(query, start = fiveUTRlength)
   queryseq <- unlist(BSgenome::getSeq(fasta, queryCDS))
+  
+  # prepare a dict of stop codons for pattern matching
+  list_stopcodons <- Biostrings::DNAStringSet(c("TAA", "TAG", "TGA"))
+  pdict_stopcodons <- Biostrings::PDict(list_stopcodons)
 
   # search for in-frame stop codons
   stopcodons <- Biostrings::matchPDict(pdict_stopcodons, queryseq) %>%
