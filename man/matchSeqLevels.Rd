@@ -2,12 +2,12 @@
 % Please edit documentation in R/matchSeqLevels.R
 \name{matchSeqLevels}
 \alias{matchSeqLevels}
-\title{Match seqnames of input GRanges to reference GRanges}
+\title{Match seqnames of input GRanges to a reference GRanges}
 \usage{
-matchSeqLevels(from, to)
+matchSeqLevels(x, to)
 }
 \arguments{
-\item{from}{GRanges object with seqnames to change}
+\item{x}{GRanges object with seqnames to change}
 
 \item{to}{GRanges object from which seqnames is referenced}
 }
@@ -15,7 +15,7 @@ matchSeqLevels(from, to)
 Corrected input GRanges
 }
 \description{
-Match seqnames of input GRanges to reference GRanges
+Match seqnames of input GRanges to a reference GRanges
 }
 \author{
 Fursham Hamid

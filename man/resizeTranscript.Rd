@@ -4,10 +4,10 @@
 \alias{resizeTranscript}
 \title{Resize 5' and 3' ends of a transcript GenomicRanges}
 \usage{
-resizeTranscript(GRanges, start = 0, end = 0)
+resizeTranscript(x, start = 0, end = 0)
 }
 \arguments{
-\item{GRanges}{GenomicRanges object containing exon coordinates from a transcript}
+\item{x}{GenomicRanges object containing exon coordinates from a transcript}
 
 \item{start}{Length to append from the start of transcript}
 
