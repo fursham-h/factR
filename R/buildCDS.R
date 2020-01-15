@@ -69,7 +69,7 @@ buildCDS <- function(query, ref, fasta) {
   startoverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
                                               type = 'start', select = "first")
   anyoverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
-                                            type = 'any', select = "arbitrary")
+                                            type = 'any', select = "first")
 
   fullq2r <- data.frame('transcript_id' = names(query_exons),
                         'transcript_index' = 1:length(query_exons),
@@ -132,17 +132,17 @@ buildCDS <- function(query, ref, fasta) {
   if (nrow(fullcovs) > 1){
     outCDS <- refCDS %>%
       as.data.frame() %>%
-      dplyr::filter(group_name %in% fullcovs[[2]]) %>%
-      dplyr::select(group_name:strand) %>%
+      dplyr::filter(group %in% fullcovs[[3]]) %>%
+      dplyr::select(group:strand) %>%
       dplyr::mutate(type = "CDS") %>%
-      dplyr::left_join(fullcovs[1:2],
-                       by = c("group_name" = "ref_transcript_id")
+      dplyr::left_join(fullcovs[,c(1,3)],
+                       by = c("group" = "ref_transcript_id")
       ) %>%
       dplyr::group_by(transcript_id) %>%
       dplyr::arrange(ifelse(strand == '-', dplyr::desc(start), start)) %>%
       dplyr::mutate(phase = rev(cumsum(rev(width) %% 3) %% 3)) %>%
       dplyr::ungroup() %>%
-      dplyr::select(-group_name) %>%
+      dplyr::select(seqnames:transcript_id) %>%
       dplyr::mutate(built_from = 'Full coverage')
   }
   
@@ -150,12 +150,14 @@ buildCDS <- function(query, ref, fasta) {
 
   # create CDS list for all remaining tx
   out <- BiocParallel::bpmapply(function(x, y, z) {
-    CDSreport <- .getthisCDS(y, z, fasta) %>%
-      as.data.frame()
+    CDSreport <- .getthisCDS(y, z, fasta)
+    if (!is.null(CDSreport)) {
+      CDSreport$transcript_id <- x
+    }
     return(CDSreport)
-  }, q2r$transcript_id, 
-  query_exons[q2r$transcript_index], 
-  ref_cds[q2r$ref_transcript_id],
+  }, query2ref$transcript_id, 
+  query_exons[query2ref$transcript_index], 
+  ref_cds[query2ref$ref_transcript_id],
   BPPARAM = BiocParallel::MulticoreParam(), SIMPLIFY = F
   ) %>%
     dplyr::bind_rows()
@@ -190,14 +192,14 @@ buildCDS <- function(query, ref, fasta) {
   strand <- as.character(BiocGenerics::strand(query))[1]
   queryTx <- BiocGenerics::sort(query, decreasing = strand == "-")
   knownCDS <- BiocGenerics::sort(CDS, decreasing = strand == "-")
-  S4Vectors::mcols(queryTx)$transcript_id <- names(query)
+  #S4Vectors::mcols(queryTx)$transcript_id <- names(query)
   # attempt to find an aligned start codon
   report <- .getCDSstart(queryTx, knownCDS, fasta)
   output <- utils::modifyList(output, report) # update output
 
   # return if no start codon is found
   if (output$ORF_start == "Not found") {
-    return()
+    return(NULL)
   }
 
   # attempt to search for an in-frame stop codon
@@ -206,7 +208,7 @@ buildCDS <- function(query, ref, fasta) {
 
   # return if no stop codon is found
   if (output$ORF_found == FALSE) {
-    return()
+    return(NULL)
   }
 
   # build new ORF Granges
@@ -312,6 +314,7 @@ buildCDS <- function(query, ref, fasta) {
       } 
     }
   }
+  return(output)
   
   # final chance of assigning CDS, just assign inframeCDS
   #get tailphases on refCDS
@@ -414,7 +417,7 @@ buildCDS <- function(query, ref, fasta) {
       transcript_id = S4Vectors::mcols(query)$transcript_id[1]
     ) %>%
     dplyr::mutate(phase = rev(cumsum(rev(width) %% 3) %% 3)) %>%
-    dplyr::select(seqnames:end, strand, type, phase, transcript_id)
+    dplyr::select(seqnames:end, strand, type, phase)
   CDSranges$built_from <- starttype
   output$ORF_considered <- CDSranges
   return(CDSranges)
