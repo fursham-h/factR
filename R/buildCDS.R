@@ -89,27 +89,23 @@ buildCDS <- function(query, ref, fasta) {
                          'ref_transcript_id' = ncoverlap, 
                          stringsAsFactors = F) %>%
     dplyr::filter(!is.na(ref_transcript_id)) %>%
-    #dplyr::filter(!transcript_id %in% fullq2r$transcript_id) %>%
     dplyr::mutate(coverage = 0)
   startq2r <- data.frame('transcript_id' = names(query_exons),
                          'transcript_index' = 1:length(query_exons),
                         'ref_transcript_id' = startoverlap, 
                         stringsAsFactors = F) %>%
     dplyr::filter(!is.na(ref_transcript_id)) %>%
-    #dplyr::filter(!transcript_id %in% fullq2r$transcript_id & 
-    #              !transcript_id %in% ncq2r$transcript_id) %>%
     dplyr::mutate(coverage = 2)
   anyq2r <- data.frame('transcript_id' = names(query_exons),
                        'transcript_index' = 1:length(query_exons),
                         'ref_transcript_id' = anyoverlap, 
                        stringsAsFactors = F) %>%
     dplyr::filter(!is.na(ref_transcript_id)) %>%
-    #dplyr::filter(!transcript_id %in% fullq2r$transcript_id &
-    #              !transcript_id %in% ncq2r$transcript_id &
-    #              !transcript_id %in% startq2r$transcript_id) %>%
     dplyr::mutate(coverage = 3)
   
-  q2r <- dplyr::bind_rows(fullq2r, ncq2r, startq2r, anyq2r)
+  q2r <- dplyr::bind_rows(fullq2r, ncq2r, startq2r, anyq2r) %>%
+    dplyr::distinct(transcript_id, .keep_all  =T) %>%
+    dplyr::filter(coverage > 0)
   # report unmatched tx
 
 
