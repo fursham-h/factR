@@ -64,6 +64,10 @@ buildCDS <- function(query, ref, fasta) {
   nc_ref_exons <- ref_exons[!names(ref_exons) %in% names(ref_cds)] 
   ref_exons <- ref_exons[names(ref_exons) %in% names(ref_cds)] 
   
+# idea, remove tx with no cds info
+# improve downstream code
+
+
   # prepare q2r
   fulloverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
                                              type = 'equal', select = "first")
