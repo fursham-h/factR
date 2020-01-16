@@ -113,8 +113,7 @@ predictNMD <- function(x, cds = NULL, NMD_threshold = 50, which = NULL) {
     dplyr::mutate(newstart = ifelse(strand == '-', start1 ,start)) %>%
     mutate(newend = ifelse(strand == '-', end ,end1)) %>% 
     dplyr::select(group:seqnames, start = newstart, end = newend, strand) %>% 
-    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T) %>%
-    dplyr::ungroup()
+    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
   
   toStopWidth <- sum(width(GenomicRanges::pintersect(x, toStopRange))) + 3
   EJtoStop <- cumsum(width(x)) - toStopWidth
