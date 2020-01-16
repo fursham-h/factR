@@ -66,7 +66,8 @@ buildCDS <- function(query, ref, fasta) {
   new_query <- query %>%
     as.data.frame() %>%
     dplyr::bind_rows(as.data.frame(filled_query)) %>%
-    dplyr::distinct(transcript_id, start, end)
+    dplyr::distinct(transcript_id, type, start, end, .keep_all = T) %>%
+    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
 
   # makeGRangesList
   query_exons <- S4Vectors::split(query[query$type == 'exon'], ~transcript_id)
