@@ -56,6 +56,17 @@ buildCDS <- function(query, ref, fasta) {
   
   # carry out input checks
   .buildCDSchecks(query, ref, argnames)
+  
+  # fill query with phase info
+  mergemetadata <- IRanges::mergeByOverlaps(query[query$type == 'exon'], 
+                                           ref[ref$type == 'CDS'], type = 'equal')
+  filled_query <- mergemetadata$`query[query$type == "exon"]`
+  filled_query$phase <- mergemetadata$`ref[ref$type == "CDS"]`$phase
+  
+  new_query <- query %>%
+    as.data.frame() %>%
+    dplyr::bind_rows(as.data.frame(filled_query)) %>%
+    dplyr::distinct(transcript_id, start, end)
 
   # makeGRangesList
   query_exons <- S4Vectors::split(query[query$type == 'exon'], ~transcript_id)
@@ -64,49 +75,8 @@ buildCDS <- function(query, ref, fasta) {
   nc_ref_exons <- ref_exons[!names(ref_exons) %in% names(ref_cds)] 
   ref_exons <- ref_exons[names(ref_exons) %in% names(ref_cds)] 
   
-# idea, remove tx with no cds info
-# improve downstream code
-
-
   # prepare q2r
-  fulloverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
-                                             type = 'equal', select = "first")
-  startoverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
-                                              type = 'start', select = "first")
-  anyoverlap <- GenomicRanges::findOverlaps(query_exons, ref_cds, 
-                                            type = 'any', select = "first")
-  ncoverlap <- GenomicRanges::findOverlaps(query_exons, nc_ref_exons, 
-                                           type = 'equal', select = "first")
-
-  fullq2r <- data.frame('transcript_id' = names(query_exons),
-                        'transcript_index' = 1:length(query_exons),
-                    'ref_transcript_id' = fulloverlap, 
-                    stringsAsFactors = F) %>%
-    dplyr::filter(!is.na(ref_transcript_id)) %>%
-    dplyr::mutate(coverage = 1)
-  ncq2r <- data.frame('transcript_id' = names(query_exons),
-                         'transcript_index' = 1:length(query_exons),
-                         'ref_transcript_id' = ncoverlap, 
-                         stringsAsFactors = F) %>%
-    dplyr::filter(!is.na(ref_transcript_id)) %>%
-    dplyr::mutate(coverage = 0)
-  startq2r <- data.frame('transcript_id' = names(query_exons),
-                         'transcript_index' = 1:length(query_exons),
-                        'ref_transcript_id' = startoverlap, 
-                        stringsAsFactors = F) %>%
-    dplyr::filter(!is.na(ref_transcript_id)) %>%
-    dplyr::mutate(coverage = 2)
-  anyq2r <- data.frame('transcript_id' = names(query_exons),
-                       'transcript_index' = 1:length(query_exons),
-                        'ref_transcript_id' = anyoverlap, 
-                       stringsAsFactors = F) %>%
-    dplyr::filter(!is.na(ref_transcript_id)) %>%
-    dplyr::mutate(coverage = 3)
-  
-  q2r <- dplyr::bind_rows(fullq2r, ncq2r, startq2r, anyq2r) %>%
-    dplyr::distinct(transcript_id, .keep_all  =T) %>%
-    dplyr::filter(coverage > 0)
-  # report unmatched tx
+  q2r <- .prepq2r(query_exons, ref_exons, ref_cds, nc_ref_exons)
 
 
   # run buildCDS function
@@ -158,7 +128,6 @@ buildCDS <- function(query, ref, fasta) {
       dplyr::mutate(built_from = 'Full coverage')
   }
   
-
 
   # create CDS list for all remaining tx
   out <- BiocParallel::bpmapply(function(x, y, z) {
@@ -326,7 +295,7 @@ buildCDS <- function(query, ref, fasta) {
       } 
     }
   }
-  return(output)
+  #return(output)
   
   # final chance of assigning CDS, just assign inframeCDS
   #get tailphases on refCDS
@@ -459,77 +428,66 @@ buildCDS <- function(query, ref, fasta) {
     )}
 }
 
-.prepq2r <- function(query, ref, query_exons, ref_exons, ref_cds, argnames) {
+.prepq2r <- function(query_exons, ref_exons, ref_cds, nc_ref_exons) {
+  # prepare q2r
+  fulloverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
+                                             type = 'equal', select = "first")
+  startoverlappos <- GenomicRanges::findOverlaps(range(query_exons), range(ref_exons), 
+                                                 type = 'start', select = "first")
+  startoverlapneg <- GenomicRanges::findOverlaps(range(query_exons), range(ref_exons), 
+                                                 type = 'end', select = "first")
+  anyoverlap <- GenomicRanges::findOverlaps(query_exons, ref_cds, 
+                                            type = 'any', select = "first")
+  ncoverlap <- GenomicRanges::findOverlaps(query_exons, nc_ref_exons, 
+                                           type = 'equal', select = "first")
   
-  # define global variables
-  gene_id <- ref_transcript_id <- coverage <- transcript_id <- NULL
-  # prepare q2r df
-  query_ids = query %>% as.data.frame() %>%
-    dplyr::filter(type == 'exon') %>% 
-    dplyr::select(gene_id, transcript_id) %>%
-    dplyr::distinct()
-  ref_ids = ref %>% as.data.frame() %>%
-    dplyr::filter(type == 'CDS') %>% 
-    dplyr::select(gene_id, ref_transcript_id = transcript_id) %>%
-    dplyr::distinct()
-  q2r <- dplyr::left_join(query_ids, ref_ids, by = 'gene_id') %>%
-    dplyr::select(-gene_id)
+  strandList <- as.character(runValue(strand(query_exons)))
   
-  # remove unmatched
-  totaltx <- length(unique(q2r$transcript_id))
-  unmatchedtx <- q2r %>%
-    dplyr::filter(is.na(ref_transcript_id))
-  if (nrow(q2r) == nrow(unmatchedtx)) {
-    rlang::abort(sprintf(
-      "all gene_ids in `%s` are not found in %s. try running:
-      \t%s <- matchGeneIDs(%s, %s)",
-      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]))
-  } else if (nrow(unmatchedtx) > 0) {
-    q2r <- dplyr::setdiff(q2r, unmatchedtx)
-    rlang::warn(sprintf(
-      "\t%s transcripts have unmatched gene_ids", 
-      nrow(unmatchedtx)))
-  }
+  fullq2r <- data.frame('transcript_id' = names(query_exons),
+                        'transcript_index' = 1:length(query_exons),
+                        'ref_transcript_id' = fulloverlap, 
+                        'strand' = strandList,
+                        stringsAsFactors = F) %>%
+    dplyr::filter(!is.na(ref_transcript_id)) %>%
+    dplyr::mutate(coverage = 1)
+  ncq2r <- data.frame('transcript_id' = names(query_exons),
+                      'transcript_index' = 1:length(query_exons),
+                      'ref_transcript_id' = ncoverlap, 
+                      'strand' = strandList,
+                      stringsAsFactors = F) %>%
+    dplyr::filter(!is.na(ref_transcript_id)) %>%
+    dplyr::mutate(coverage = 0)
+  
+  startq2rpos <- data.frame('transcript_id' = names(query_exons),
+                            'transcript_index' = 1:length(query_exons),
+                            'ref_transcript_id' = startoverlappos, 
+                            'strand' = strandList,
+                            stringsAsFactors = F) %>%
+    dplyr::filter(!is.na(ref_transcript_id) & strand != '-') %>%
+    dplyr::mutate(coverage = 2)
+  startq2rneg <- data.frame('transcript_id' = names(query_exons),
+                            'transcript_index' = 1:length(query_exons),
+                            'ref_transcript_id' = startoverlapneg, 
+                            'strand' = strandList,
+                            stringsAsFactors = F) %>%
+    dplyr::filter(!is.na(ref_transcript_id) & strand == '-') %>%
+    dplyr::mutate(coverage = 2)
   
   
+  anyq2r <- data.frame('transcript_id' = names(query_exons),
+                       'transcript_index' = 1:length(query_exons),
+                       'ref_transcript_id' = anyoverlap, 
+                       'strand' = strandList,
+                       stringsAsFactors = F) %>%
+    dplyr::filter(!is.na(ref_transcript_id)) %>%
+    dplyr::mutate(coverage = 3)
   
-  # simplify q2r if transcript_id and ref_transcript_id has same name
-  q2rident <- q2r %>%
-    dplyr::filter(transcript_id == ref_transcript_id)
-  q2r <- q2r %>% 
-    dplyr::filter(!transcript_id %in% q2rident$transcript_id) %>%
-    dplyr::bind_rows(q2rident)
-    
-    
+  q2r <- dplyr::bind_rows(fullq2r, ncq2r, startq2rpos, startq2rneg, anyq2r) %>%
+    dplyr::distinct(transcript_id, .keep_all  =T) %>%
+    dplyr::filter(coverage > 0)
+  # report unmatched tx
   
-  # calculate coverage values
-  out <- BiocParallel::bpmapply(function(x, y) {
-    covrep <- .calcCoverage (query_exons[[x]], ref_exons[[y]], 'mean')
-    return(covrep)
-  }, q2r$transcript_id, q2r$ref_transcript_id,
-  BPPARAM = BiocParallel::MulticoreParam()
-  )
-  q2r$coverage <- out
-  
-  # select best coevrage
-  q2rcovs <- q2r %>%
-    dplyr::arrange(transcript_id, dplyr::desc(coverage)) %>%
-    dplyr::distinct(transcript_id, .keep_all = T)
-  
-  # check for transcript-pairs with no coverage
-  nocovtx <- q2rcovs %>%
-    dplyr::filter(coverage == 0)
-  if (nrow(q2rcovs) == nrow(nocovtx)){
-    rlang::abort(sprintf(
-      "all transcripts in `%s` have no overlap with transcripts in %s",
-      argnames[1], argnames[2]))
-  } else if (nrow(nocovtx) > 0) {
-    q2rcovs <- dplyr::setdiff(q2rcovs, nocovtx)
-    rlang::warn(sprintf(
-      "\t%s transcripts have no coverage with reference transcripts", 
-      nrow(nocovtx)))
-  }
-  return(q2rcovs)
+  return(q2r)
 }
 
 .calcCoverage <- function(tx1, tx2, over) {
@@ -550,3 +508,60 @@ buildCDS <- function(query, ref, fasta) {
   return(sum(cov_len[cov_val == 2]) / denom)
 }
 
+
+# 
+# # prepare a dict of stop codons for pattern matching
+# list_stopcodons <- Biostrings::DNAStringSet(c("TAA", "TAG", "TGA"))
+# pdict_stopcodons <- Biostrings::PDict(list_stopcodons)
+
+# # testingggg
+# out <- BiocParallel::bpmapply(function(x, y, z) {
+#   
+#   strand = as.character(strand(y)[1])
+#   y <- sort(y, decreasing = strand == '-')
+#   z <- sort(z, decreasing = strand == '-')
+#   z <- resize(z, width = width(z) - z$phase, fix = 'end')
+#   a <- subsetByOverlaps(z, y, type = 'within')
+#   
+#   if (length(a) == 0) {
+#     return(NULL)
+#   }
+#   
+#   starttoend <- dplyr::bind_cols(as.data.frame(range(y)), as.data.frame(range(a[1]))) %>%
+#     dplyr::mutate(newstart = ifelse(strand == '-', start ,start1)) %>%
+#     mutate(newend = ifelse(strand == '-', end1 ,end)) %>% 
+#     dplyr::select(seqnames, start = newstart, end = newend, strand) %>% 
+#     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+#   
+#   starttoend <- GenomicRanges::intersect(y, starttoend)
+#   queryseq <- unlist(BSgenome::getSeq(fasta, starttoend))
+#   
+#   
+#   # search for in-frame stop codons
+#   stopcodons <- Biostrings::matchPDict(pdict_stopcodons, queryseq) %>%
+#     unlist() %>%
+#     as.data.frame() %>%
+#     dplyr::filter(end %% 3 == 0) %>%
+#     dplyr::arrange(start)
+#   
+#   # return if no in-frame stop codons are found
+#   if (nrow(stopcodons) == 0) {
+#     return(NULL)
+#   } 
+#   threeUTRlength <- length(queryseq) - stopcodons[1,2] + 3
+#   cds <- resizeTranscript(starttoend, end = threeUTRlength)
+#   
+#   # return if no in-frame stop codons are found
+#   if (length(cds) == 0) {
+#     return(NULL)
+#   } 
+#   cds$type <- 'CDS'
+#   cds$transcript_id <- x
+#   cds$phase <- rev(cumsum(rev(width(cds)) %% 3) %% 3) 
+#   return(as.data.frame(cds))
+#   
+# }, query2ref$transcript_id, 
+# query_exons[query2ref$transcript_index], 
+# ref_cds[query2ref$ref_transcript_id],
+# BPPARAM = BiocParallel::MulticoreParam(), SIMPLIFY = F
+# ) %>% dplyr::bind_rows()
