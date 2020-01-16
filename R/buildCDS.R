@@ -61,6 +61,7 @@ buildCDS <- function(query, ref, fasta) {
   query_exons <- S4Vectors::split(query[query$type == 'exon'], ~transcript_id)
   ref_cds <- S4Vectors::split(ref[ref$type == 'CDS'], ~transcript_id)
   ref_exons <- S4Vectors::split(ref[ref$type == 'exon'], ~transcript_id)
+  nc_ref_exons <- ref_exons[!names(ref_exons) %in% names(ref_cds)] 
   ref_exons <- ref_exons[names(ref_exons) %in% names(ref_cds)] 
   
   # prepare q2r
@@ -68,8 +69,10 @@ buildCDS <- function(query, ref, fasta) {
                                              type = 'equal', select = "first")
   startoverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
                                               type = 'start', select = "first")
-  anyoverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons, 
+  anyoverlap <- GenomicRanges::findOverlaps(query_exons, ref_cds, 
                                             type = 'any', select = "first")
+  ncoverlap <- GenomicRanges::findOverlaps(query_exons, nc_ref_exons, 
+                                           type = 'equal', select = "first")
 
   fullq2r <- data.frame('transcript_id' = names(query_exons),
                         'transcript_index' = 1:length(query_exons),
@@ -77,23 +80,32 @@ buildCDS <- function(query, ref, fasta) {
                     stringsAsFactors = F) %>%
     dplyr::filter(!is.na(ref_transcript_id)) %>%
     dplyr::mutate(coverage = 1)
+  ncq2r <- data.frame('transcript_id' = names(query_exons),
+                         'transcript_index' = 1:length(query_exons),
+                         'ref_transcript_id' = ncoverlap, 
+                         stringsAsFactors = F) %>%
+    dplyr::filter(!is.na(ref_transcript_id)) %>%
+    #dplyr::filter(!transcript_id %in% fullq2r$transcript_id) %>%
+    dplyr::mutate(coverage = 0)
   startq2r <- data.frame('transcript_id' = names(query_exons),
                          'transcript_index' = 1:length(query_exons),
                         'ref_transcript_id' = startoverlap, 
                         stringsAsFactors = F) %>%
     dplyr::filter(!is.na(ref_transcript_id)) %>%
-    dplyr::filter(!transcript_id %in% fullq2r$transcript_id) %>%
+    #dplyr::filter(!transcript_id %in% fullq2r$transcript_id & 
+    #              !transcript_id %in% ncq2r$transcript_id) %>%
     dplyr::mutate(coverage = 2)
   anyq2r <- data.frame('transcript_id' = names(query_exons),
                        'transcript_index' = 1:length(query_exons),
                         'ref_transcript_id' = anyoverlap, 
                        stringsAsFactors = F) %>%
     dplyr::filter(!is.na(ref_transcript_id)) %>%
-    dplyr::filter(!transcript_id %in% fullq2r$transcript_id &
-                  !transcript_id %in% startq2r$transcript_id) %>%
+    #dplyr::filter(!transcript_id %in% fullq2r$transcript_id &
+    #              !transcript_id %in% ncq2r$transcript_id &
+    #              !transcript_id %in% startq2r$transcript_id) %>%
     dplyr::mutate(coverage = 3)
   
-  q2r <- dplyr::bind_rows(fullq2r, startq2r, anyq2r)
+  q2r <- dplyr::bind_rows(fullq2r, ncq2r, startq2r, anyq2r)
   # report unmatched tx
 
 
