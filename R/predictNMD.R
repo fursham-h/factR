@@ -107,21 +107,19 @@ predictNMD <- function(x, cds = NULL, NMD_threshold = 50, which = NULL) {
 
 
 .testNMD <- function(x, y, threshold) {
-  UTRs <- IRanges::psetdiff(unlist(range(x)), (range(y)))
-  fiveUTR <- lapply(UTRs, function(x){
-    if (length(x) == 0) {
-      return(0)
-    }
-    strand <- as.character(BiocGenerics::strand(x)[1])
-    x <- BiocGenerics::sort(x, decreasing = strand == "-")
-    return(width(x[1,]))
-  })
-
   
-  width_to_stopcodon <- unlist(fiveUTR) + sum(width(c(y))) + 3
-  rel_dist_to_stopcodon <- cumsum(width(x)) - width_to_stopcodon
+  toStopRange <- dplyr::bind_cols(as.data.frame(range(x)), as.data.frame(range(y))) %>% 
+    dplyr::rowwise() %>% 
+    dplyr::mutate(newstart = ifelse(strand == '-', start1 ,start)) %>%
+    mutate(newend = ifelse(strand == '-', end ,end1)) %>% 
+    dplyr::select(group:seqnames, start = newstart, end = newend, strand) %>% 
+    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T) %>%
+    dplyr::ungroup()
   
-  out <- lapply(rel_dist_to_stopcodon, function(x){
+  toStopWidth <- sum(width(GenomicRanges::pintersect(x, toStopRange))) + 3
+  EJtoStop <- cumsum(width(x)) - toStopWidth
+  
+  out <- lapply(EJtoStop, function(x){
     id <- ifelse(!is.null(names(x)), names(x)[1], 'transcript')
     x <- sort(x, decreasing = T)
     threeUTR <- x[1]
