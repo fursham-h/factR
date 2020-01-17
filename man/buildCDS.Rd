@@ -7,10 +7,7 @@
 buildCDS(query, ref, fasta)
 }
 \arguments{
-\item{query}{GRanges object containing query GTF data. Gene_id metadata have to match
-the gene_ids in `ref` in order for the program to create a query-reference 
-transcript pairs. See ?matchGeneIDs to match query gene_id to a reference
-annotation}
+\item{query}{GRanges object containing query GTF data.}
 
 \item{ref}{GRanges object containing reference GTF data.}
 
@@ -21,10 +18,7 @@ GRanges object containing query exon entries and newly-constructed cds
 information
 }
 \description{
-buildCDS will firstly construct a dataframe containing query-reference 
-transcript pairs. In situation where a reference gene expresses more than one
-coding transcript, the program will select a query-reference transcript
-pair with the highest coverage score.
+buildCDS will select the #########
 
 buildCDS will next attempt to construct query CDS information by
 firstly deriving its start_codon as guided by the reference transcript. 

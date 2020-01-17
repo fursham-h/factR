@@ -34,16 +34,14 @@ Dataframe with prediction of NMD sensitivity and NMD features:
 
 is_NMD: logical value in prediciting transcript sensitivity to NMD
 
-dist_to_lastEJ: Integer value indicating distance of STOP codon to last EJ
-Values are referenced from last EJ, thus a positive value indicates upstream
-position of STOP codon while negative value indicates downstream position
+dist_to_lastEJ: Integer value of the number of bases between the first
+base of the stop_codon to the last base of EJ. A positive value indicates that
+the last EJ is downstream of the stop_codon.
 
-num_of_down_EJs: Number of downstream EJs
+num_of_down_EJs: Number of EJs downstream of the stop_codon.
 
-dist_to_downEJs: Integer value indicating distance of STOP codon to each down
-EJs. Values are referenced from last EJ, thus a positive value indicates
-upstream position of STOP codon while negative value indicates downstream
-position together with distances of STOP codon to last EJ
+dist_to_downEJs: Concatenated integer values of the number of bases between 
+the first base of the stop_codon to the last base of each downstream EJs.
 }
 \description{
 Predict sensitivity of mRNA transcripts to NMD

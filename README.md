@@ -1,7 +1,6 @@
 # factR
 
-factR is a robust and easy-to-use R package for post-processing of custom-assembled
-transcripts (GTF/GFF3)
+factR is a robust and easy-to-use R package with tools to post-process custom-assembled transcripts (GTF/GFF3)
 
 ## Features
 * Core features 
@@ -13,7 +12,7 @@ transcripts (GTF/GFF3)
 * Supporting features 
   1. Matches chromosome levels of query GTF/object to a reference annotation
   2. Matches gene_id and gene_names of query GTF to a reference annotation
-  3. Trims start and end of multi-exon GRanges transcript
+  3. Filter or sort each element of a GRangesList object
 
 ## Installation
 ```r

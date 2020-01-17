@@ -30,16 +30,28 @@ library(BSgenome.Mmusculus.UCSC.mm10)
 library(wiggleplotr)
 library(GenomicFeatures)
 library(dplyr)
-library(zeallot)
 ```
 
 # Introduction
 High throughput RNA sequencing experiments have been very useful in the discovery of many new RNA species. Current pipelines that processes these sequencing data usually involve aligning the reads to a genome and assembling contiguous reads into a transcript architectures. With the assembled transcripts, one may quantify the relative number of reads mapped to the list of genes/transcripts and determine differentially expressed gene/transcripts between conditions. However, these assembled transcripts commonly do not contain information on its coding potential and thus inferring its function can be a difficult task.
 
-Here, we develop a program that Functionally Annotates Custom-assembled Transcripts in R (factR). At its core, factR will construct CDS coordinates for assembled transcriptomes with the guide of a reference annotation. With this newly-built coding information, users may utilise factR to query transcripts for protein-coding features as well as NMD-inducing features. 
+Here, we developed a program with tools to Functionally Annotate Custom-assembled Transcripts in R (factR). At its core, factR will construct CDS coordinates for assembled transcriptomes with the guide of a reference annotation. With this newly-built coding information, users may utilise factR to query transcripts for protein-coding features as well as NMD-inducing features. 
 
 
 # Getting started
+
+To run the code examples shown in this vignette, we need to load the following packages:
+```{r load.dep.workflow, eval = FALSE}
+library(factR)
+library(BSgenome.Mmusculus.UCSC.mm10)
+library(wiggleplotr)
+library(GenomicFeatures)
+library(dplyr)
+library(rtracklayer)
+library(AnnotationHub)
+library(Biostrings)
+```
+
 
 ## How to install
 To install factR, open R and type:
@@ -57,24 +69,19 @@ Transcript assembly programs typically outputs a GTF/GFF3 file containing transc
 Query GTF file have to be imported into R and parsed into a GenomicRanges object. 
 To do so, run:
 ```{r load,query, eval = FALSE}
-# import gtf file
-library(rtracklayer)
+# import gtf file using rtracklayer
 query_gtf <- import('path/to/your.gtf')
 ```
 
 ### Reference annotation
 
-
-Reference transcript annotation serves as a guide in the construction of query CDS. We strongly recommend using transcript annotation in GTF/GFF3 format for the workflow. This will facilitate matching of gene families between query and reference. (advanced user? see section....)
-
-Reference GTF annotation can be acquired from the Annotation Hub database in R or downloaded locally from data server website via FTP. For the latter, the GTF file have to be imported into R and parsed into a GenomicRanges object. 
+Reference transcript annotation serves as a guide in the construction of query CDS. We strongly recommend using transcript annotation in GTF/GFF3 format for the workflow. Reference GTF annotation can be acquired from the Annotation Hub database in R or downloaded locally from data server website via FTP. For the latter, the GTF file have to be imported into R and parsed into a GenomicRanges object. 
 
 Here, we will describe three ways to obtain mouse GRCm38 annotation:
 
 1. Gencode annotation from Annotation Hub database
 ```{r load.gencode, eval = FALSE}
 # query database for mouse gencode basic annotation
-library(AnnotationHub)
 ah <- AnnotationHub()
 query(ah, c('Mus musculus', 'gencode', 'gff', 'basic'))
 #> AnnotationHub with 2 records
@@ -105,14 +112,13 @@ ref_gtf <- ah[['AH60127']]
 3. Import locally downloaded GTF annotation into R
 ```{r load.localref, eval = FALSE}
 # import reference gtf file
-library(rtracklayer)
 query_gtf <- import('path/to/reference.gtf')
 ```
 
 
 ### Genomic sequence
 
-Genomic DNA sequence is required for determining open-reading frames and for *in silico* translation of  query transcripts. Here, we describe three ways in obtaining genomic sequence for mouse GRCm38 assembly:
+Genomic DNA sequence is required for determining open-reading frames and for *in silico* translation of  query transcripts. Here, we describe three ways to obtain genomic sequence for mouse GRCm38 assembly:
 
 1. BSgenome sequence object from UCSC
 ```{r load.BSgenome, eval = FALSE}
@@ -125,7 +131,6 @@ Mmusculus <- BSgenome.Mmusculus.UCSC.mm10
 2. TwoBit fasta sequence from Annotation Hub
 ```{r load.fastaAH, eval = FALSE}
 # query database for mouse gencode basic annotation
-library(AnnotationHub)
 ah <- AnnotationHub()
 query(ah, c("Mus musculus", "release-91", 'fasta', 'GRCm38'))
 #> AnnotationHub with 5 records
@@ -151,7 +156,6 @@ Mmusculus <- ah[['AH60492']]
 3. Import local FASTA genome sequence file
 ```{r load.localfasta, eval = FALSE}
 # load package and import fasta file as a DNAStringSet
-library(Biostrings)
 Mmusculus <- readDNAStringSet('path/to/fasta')
 ```
 
@@ -165,23 +169,9 @@ names(Mmusculus) <- str_split(seqlevels(Mmusculus), " ") %>% map_chr(`[`, 1)
 ```
 
 
-# Example workflow
+# Sample datasets
 
-This section will describe the workflow to analyze a sample GTF query.
-
-To run the code examples shown in this workflow, we need to load the following packages:
-```{r load.dep.workflow, eval = FALSE}
-library(factR)
-library(BSgenome.Mmusculus.UCSC.mm10)
-library(wiggleplotr)
-library(GenomicFeatures)
-library(dplyr)
-```
-
-
-## Sample input datasets
-
-### **Query** 
+## **Query** 
 factR package contains a sample assembled GTF imported as a GRanges object. The assembly was constructed from a mouse dataset and contain *transcript* and *exon* descriptions of 4 transcript isoforms from the same parent gene. Transcripts in `query_gtf` have been assigned generic gene_ids and transcript_ids. This is to recapitulate the nomenclature of a typical custom-assembled GTF.
 ```{r checkquery}
 # inspect query object
@@ -193,6 +183,7 @@ unique(query_gtf$transcript_id)
 unique(query_gtf$gene_id)
 ```
 
+
 We can quickly visualize the exon structure of these query transcripts using the *wiggleplotr* package
 ```{r viewquery}
 # prepare a list of exons by transcript
@@ -202,8 +193,8 @@ query_exons <- split(query_gtf[query_gtf$type == 'exon'], ~transcript_id)
 plotTranscripts(query_exons)
 ```
 
-### **Reference** 
-For our reference annotation, we will be using a subset of GRCm38 gencode reference annotation which contain basic transcripts from the same gene family as our query gene. Acquisition of this annotation have been described in section 2.2.2.1.
+## **Reference** 
+For our reference annotation, we will be using a subset of GRCm38 gencode reference annotation which contain basic transcripts from the same gene family as our query gene. 
 ```{r viewref}
 # inspect reference object
 head(ref_gtf)
@@ -214,11 +205,82 @@ unique(ref_gtf$transcript_id)
 unique(ref_gtf$gene_id)
 ```
 
-### **Genome** 
-Lastly, we will be using a GRCm38 genome sequence object from BSgenome
-```{r loadfasta}
-Mmusculus <- BSgenome.Mmusculus.UCSC.mm10
+# Matching chromosome levels
+
+
+
+# Matching gene_id and gene_name metadata
+
+
+
+# Construct query CDS information
+
+To build CDS information on our query data, simply run:
+```{r buildcds}
+new_query_gtf <- buildCDS(query_gtf, ref_gtf, Mmusculus)
 ```
+
+The above function will return a new GRanges object containing exon entries from `query_gtf` and newly-constructed cds entries. We can inspect the contents of the object further.
+```{r checkCDS}
+# check lengths of input and output GRanges
+length(query_gtf)
+
+length(new_query_gtf)
+
+# inspect CDS entries
+head(new_query_gtf[mcols(new_query_gtf)$type == "CDS"])
+```
+
+We can visualize the coding structure of each transcripts using the *wiggleplotr* package:
+```{r viewCDS}
+# get GrangesList of query exons and cds
+query_exons <- split(new_query_gtf[new_query_gtf$type == 'exon'], ~transcript_id)
+query_cds <- split(new_query_gtf[new_query_gtf$type == 'CDS'], ~transcript_id)
+
+plotTranscripts(query_exons, query_cds)
+```
+
+The new query GTF Granges object can be exported as a .gtf file using `rtracklayer`'s export funcition:
+```{r export, eval=FALSE}
+# get GrangesList of query exons and cds
+rtracklayer::export(new_query_gtf, 'path/to/output.gtf', format = 'gtf')
+```
+
+
+# Extracting protein features on coding transcripts
+
+# Predicting NMD-inducing features on coding transcripts
+
+Nonsense-mediated decay (NMD) is an RNA surveillance program which eliminates messenger RNAs containing a premature stop codon. 
+
+To test whether any of our sample transcripts are NMD-sensitive, we can run the `predictNMD` function using the newly-built `new_query_gtf` object as input:
+```{r testnmd1}
+predictNMD(new_query_gtf)
+```
+
+The column containing logical values for `is_NMD` is determined based on whether the `dist_to_lastEJ` value exceed the `NMD_threshold` argument. The `NMD_threshold` value is set to 50(bp) as default, but can be altered based on users' requirement. 
+
+
+
+
+
+The `which` argument accepts a list of transcript names found in query and will return results listed in the argument. This may be useful if you are interested in several transcripts within a big GRangesList object.
+```{r testnmdwhich}
+predictNMD(query_exons, query_cds, which = c('transcript1', 'transcript3'))
+```
+
+
+
+
+
+
+# Session Information
+
+All of the output in this vignette was produced under the following conditions:
+```{r sessioninfo}
+sessionInfo()
+```
+
 
 ## Check and rectify input objects for cross-compatibility
 
@@ -254,37 +316,6 @@ checkInputs(query_gtf, ref_gtf, Mmusculus)
 
 
 ## Construct query CDS
-
-To build CDS information on our query data, simply run:
-```{r buildcds}
-new_query_gtf <- buildCDS(query_gtf, ref_gtf, Mmusculus)
-```
-
-The above function will return a new GRanges object containing exon entries from `query_gtf` and newly-constructed cds entries. We can inspect the contents of the object further.
-```{r checkCDS}
-# check lengths of input and output GRanges
-length(query_gtf)
-
-length(new_query_gtf)
-
-# inspect CDS entries
-head(new_query_gtf[mcols(new_query_gtf)$type == "CDS"])
-```
-
-We can visualize the coding structure of each transcripts using the *wiggleplotr* package:
-```{r viewCDS}
-# get GrangesList of query exons and cds
-query_exons <- split(new_query_gtf[new_query_gtf$type == 'exon'], ~transcript_id)
-query_cds <- split(new_query_gtf[new_query_gtf$type == 'CDS'], ~transcript_id)
-
-plotTranscripts(query_exons, query_cds)
-```
-
-The new query GTF Granges object can be exported as a .gtf file using `rtracklayer`'s export funcition:
-```{r export, eval=FALSE}
-# get GrangesList of query exons and cds
-rtracklayer::export(new_query_gtf, 'path/to/output.gtf', format = 'gtf')
-```
 
 
 ## Extracting protein features on coding transcripts
