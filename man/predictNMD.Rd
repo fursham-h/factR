@@ -4,15 +4,21 @@
 \alias{predictNMD}
 \title{Predict sensitivity of mRNA transcripts to NMD}
 \usage{
-predictNMD(x, cds = NULL, NMD_threshold = 50, which = NULL)
+predictNMD(x, ..., cds = NULL, NMD_threshold = 50)
 }
 \arguments{
 \item{x}{Can be a GRanges object containing exon and CDS transcript features in GTF
 format.
 
 Can be a GRangesList object containing exon features for a list of transcripts.
+If so, `cds` argument have to be provided.
 
-Can be a GRanges object containing exon features for a transcript.}
+Can be a GRanges object containing exon features for a transcript. If so, `cds` 
+argument have to be provided.}
+
+\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
+Variables are metadata information found in `x` and multiple conditions can be 
+provided delimited by comma. Example: transcript_id == "transcript1"}
 
 \item{cds}{If `x` is a GRangesList object, `cds` has to be a GRangesList containing CDS features
 for the list of transcripts in `x`. List names in `x` and `cds` have to match.
@@ -22,8 +28,6 @@ for the transcript in `x`.}
 
 \item{NMD_threshold}{Minimum distance of stop_codon to last exon junction (EJ) which triggers NMD.
 Default = 50bp}
-
-\item{which}{List containing names of transcripts from `x` to subset for analysis}
 }
 \value{
 Dataframe with prediction of NMD sensitivity and NMD features:

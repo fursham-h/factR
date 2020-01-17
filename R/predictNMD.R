@@ -5,8 +5,15 @@
 #' format.
 #' 
 #' Can be a GRangesList object containing exon features for a list of transcripts.
+#' If so, `cds` argument have to be provided.
 #' 
-#' Can be a GRanges object containing exon features for a transcript.
+#' Can be a GRanges object containing exon features for a transcript. If so, `cds` 
+#' argument have to be provided.
+#' 
+#' @param ...
+#' Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
+#' Variables are metadata information found in `x` and multiple conditions can be 
+#' provided delimited by comma. Example: transcript_id == "transcript1"
 #' 
 #' @param cds
 #' If `x` is a GRangesList object, `cds` has to be a GRangesList containing CDS features
@@ -18,24 +25,21 @@
 #' @param NMD_threshold
 #' Minimum distance of stop_codon to last exon junction (EJ) which triggers NMD.
 #' Default = 50bp
-#' @param which
-#' List containing names of transcripts from `x` to subset for analysis
+
 #'
 #' @return
 #' Dataframe with prediction of NMD sensitivity and NMD features:
 #'
 #' is_NMD: logical value in prediciting transcript sensitivity to NMD
 #'
-#' dist_to_lastEJ: Integer value indicating distance of STOP codon to last EJ
-#' Values are referenced from last EJ, thus a positive value indicates upstream
-#' position of STOP codon while negative value indicates downstream position
+#' dist_to_lastEJ: Integer value of the number of bases between the first
+#' base of the stop_codon to the last base of EJ. A positive value indicates that
+#' the last EJ is downstream of the stop_codon.
 #'
-#' num_of_down_EJs: Number of downstream EJs
+#' num_of_down_EJs: Number of EJs downstream of the stop_codon.
 #'
-#' dist_to_downEJs: Integer value indicating distance of STOP codon to each down
-#' EJs. Values are referenced from last EJ, thus a positive value indicates
-#' upstream position of STOP codon while negative value indicates downstream
-#' position together with distances of STOP codon to last EJ
+#' dist_to_downEJs: Concatenated integer values of the number of bases between 
+#' the first base of the stop_codon to the last base of each downstream EJs.
 #' @export
 #' @author Fursham Hamid
 #'
@@ -48,7 +52,7 @@
 #' ### Examples with GRangesList object
 #' predictNMD(query_exons, query_cds)
 #' predictNMD(query_exons, query_cds, which = c("transcript1", "transcript3"))
-predictNMD <- function(x, cds = NULL, NMD_threshold = 50, which = NULL) {
+predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
 
   # catch missing args
   mandargs <- c("x")
@@ -98,7 +102,7 @@ predictNMD <- function(x, cds = NULL, NMD_threshold = 50, which = NULL) {
   )}
 
   # subset list for `which` and check if all exons have a cds entry
-  totest <- .prepTotest(exons, cds, which, argnames)
+  totest <- .prepTotest(exons, cds, argnames, ...)
   
   # run NMD analysis and return result
   return(.testNMD(exons[totest], cds[totest], NMD_threshold))
@@ -107,12 +111,15 @@ predictNMD <- function(x, cds = NULL, NMD_threshold = 50, which = NULL) {
 
 
 .testNMD <- function(x, y, threshold) {
+  out <- tibble::tibble('transcript' = as.character(), 
+                 'is_NMD' = as.logical(),
+                 'dist_to_lastEJ' = as.double(),
+                 'num_of_downEJs' = as.integer(),
+                 'dist_to_downEJs' = as.character(),
+                 'threeUTRlength' = as.double())
   
   # sort all exons by strand first
-  x <- x %>% as.data.frame() %>%
-    dplyr::arrange(ifelse(strand == '-', desc(start), start)) %>%
-    dplyr::select(-group) %>%
-    GenomicRanges::makeGRangesListFromDataFrame(split.field = 'group_name')
+  x <- sorteach(x, exonorder)
 
   toStopRange <- dplyr::bind_cols(as.data.frame(range(x)), as.data.frame(range(y))) %>% 
     dplyr::rowwise() %>% 
@@ -121,10 +128,10 @@ predictNMD <- function(x, cds = NULL, NMD_threshold = 50, which = NULL) {
     dplyr::select(group:seqnames, start = newstart, end = newend, strand) %>% 
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
   
-  toStopWidth <- sum(width(GenomicRanges::pintersect(x, toStopRange))) + 3
+  toStopWidth <- sum(width(GenomicRanges::pintersect(x, toStopRange)))
   EJtoStop <- cumsum(width(x)) - toStopWidth
   
-  out <- lapply(EJtoStop, function(x){
+  out <- dplyr::bind_rows(out, lapply(EJtoStop, function(x){
     id <- ifelse(!is.null(names(x)), names(x)[1], 'transcript')
     x <- sort(x, decreasing = T)
     threeUTR <- x[1]
@@ -132,42 +139,44 @@ predictNMD <- function(x, cds = NULL, NMD_threshold = 50, which = NULL) {
     is_NMD <- ifelse(dist_to_last > threshold, T, F)
     dist_to_eachEJ <- rev(x[-1][x[-1] > 0])
     
+    
+    
     return(tibble::tibble('transcript' = id, 
                           'is_NMD' = is_NMD,
                           'dist_to_lastEJ' = dist_to_last,
                           'num_of_downEJs' = length(dist_to_eachEJ),
                           'dist_to_downEJs' = paste(dist_to_eachEJ, collapse = ','),
                           'threeUTRlength' = threeUTR))
-  }) %>% dplyr::bind_rows()
+  })) 
   return(out)
 }
 
 
-.prepTotest <- function(x, y, which, arg) {
+.prepTotest <- function(x, y, arg, ...) {
   totest <- names(x) # prepare vector with names for testing
-  if (!is.null(which)) {
-    totest <- intersect(totest, which)
+  if (!missing(...)) {
+    
+    totest <- tryCatch(
+      names(filtereach(x, ...)),
+      error = function(e){
+        rlang::abort(sprintf(
+        "Metadata in ... not found in `%s`",
+                                   arg[1]))}
+    )
     if (length(totest) == 0) {
-      rlang::abort(sprintf("transcript names in `which` is not found in `%s`",
-                           arg[1]))
-    } else if (length(totest) != length(which)) {
-      num_unmatched <- length(which) - length(which_matched)
-      rlang::warn(sprintf(
-        "%s transcripts in `which` is missing from `%s%`",
-        num_unmatched, arg[1]
-      ))
-    }
+      return(NULL)
+    } 
   }
   txwithcds <- intersect(totest, names(y)) # subset transcripts with cds info
   if (length(txwithcds) == 0) {
     rlang::abort("all transcripts have missing cds info")
   }
   if (length(txwithcds) < length(totest)) {
-    totest <- txwithcds
-    skiptest <- length(x) - length(totest)
+    skiptest <- length(totest) - length(txwithcds)
     rlang::warn(sprintf(
       "%s transcript(s) have missing cds info and was not analyzed",
       skiptest))
+    totest <- txwithcds
   }
   return(totest)
 }
