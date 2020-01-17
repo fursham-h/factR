@@ -2,11 +2,7 @@
 #'
 #' @description 
 #' 
-#' 
-#' buildCDS will firstly construct a dataframe containing query-reference 
-#' transcript pairs. In situation where a reference gene expresses more than one
-#' coding transcript, the program will select a query-reference transcript
-#' pair with the highest coverage score.
+#' buildCDS will select the #########
 #' 
 #' buildCDS will next attempt to construct query CDS information by
 #' firstly deriving its start_codon as guided by the reference transcript. 
@@ -20,10 +16,7 @@
 #' CDS GRanges entries if successfull.
 #'
 #' @param query 
-#' GRanges object containing query GTF data. Gene_id metadata have to match
-#' the gene_ids in `ref` in order for the program to create a query-reference 
-#' transcript pairs. See ?matchGeneIDs to match query gene_id to a reference
-#' annotation
+#' GRanges object containing query GTF data. 
 #' @param ref 
 #' GRanges object containing reference GTF data.
 #' @param fasta 
@@ -56,18 +49,6 @@ buildCDS <- function(query, ref, fasta) {
   
   # carry out input checks
   .buildCDSchecks(query, ref, argnames)
-  
-  # fill query with phase info
-  mergemetadata <- IRanges::mergeByOverlaps(query[query$type == 'exon'], 
-                                           ref[ref$type == 'CDS'], type = 'equal')
-  filled_query <- mergemetadata$`query[query$type == "exon"]`
-  filled_query$phase <- mergemetadata$`ref[ref$type == "CDS"]`$phase
-  
-  new_query <- query %>%
-    as.data.frame() %>%
-    dplyr::bind_rows(as.data.frame(filled_query)) %>%
-    dplyr::distinct(transcript_id, type, start, end, .keep_all = T) %>%
-    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
 
   # makeGRangesList
   query_exons <- S4Vectors::split(query[query$type == 'exon'], ~transcript_id)
@@ -78,7 +59,6 @@ buildCDS <- function(query, ref, fasta) {
   
   # prepare q2r
   q2r <- .prepq2r(query_exons, ref_exons, ref_cds, nc_ref_exons)
-
 
   # run buildCDS function
    outCDS <- .getCDSgr(query_exons, ref_cds, fasta, q2r)
@@ -226,32 +206,8 @@ buildCDS <- function(query, ref, fasta) {
   
   # if query containg annotated start codon:
   if (startcodon %within% query & length(startcodon) == 1) {
-
-    # this part of the code will calculate the length of 5'UTR
-    #   disjoin will break query GRanges into sub GRanges, based
-    #   on the position of the start codon.
-    #   we can then find length of the upstream/downstream segments
-    #   of the break
-    disjoint <- BiocGenerics::append(query, startcodon) %>%
-      GenomicRanges::disjoin(with.revmap = T) %>%
-      sort(decreasing = strand == "-") %>%
-      as.data.frame() %>%
-      dplyr::mutate(cumsum = cumsum(width))
-
-
-    # retrieve index of segment upstream of start codon and return its cumsumwidth
-    startcodonindex <- min(which(lengths(disjoint$revmap) == 2))
-    if (startcodonindex > 1) {
-      fiveUTRlength <- disjoint[startcodonindex - 1, ]$cumsum
-    } else {
-      fiveUTRlength <- 0
-    }
-
     # update output list
     output$ORF_start <- "Annotated ATG"
-    output$fiveUTRlength <- fiveUTRlength
-
-    return(output)
   }
   # if annotated start is not found, attempt to find upstream-most internal ATG
   else {
@@ -275,65 +231,34 @@ buildCDS <- function(query, ref, fasta) {
 
       # obtain 5'UTR length if query contain any of the inframe ATG
       if (any(inframestartsingranges %within% query)) {
-        firststartgranges <- inframestartsingranges[inframestartsingranges %within% query][1]
-        disjoint <- BiocGenerics::append(query, firststartgranges) %>%
-          GenomicRanges::disjoin(with.revmap = T) %>%
-          sort(decreasing = strand == "-") %>%
-          as.data.frame() %>%
-          dplyr::mutate(cumsum = cumsum(width))
-
-        startcodonindex <- min(which(lengths(disjoint$revmap) == 2))
-        if (startcodonindex > 1) {
-          fiveUTRlength <- disjoint[startcodonindex - 1, ]$cumsum
-        } else {
-          fiveUTRlength <- 0
-        }
-
+        startcodon <- inframestartsingranges[inframestartsingranges %within% query][1]
         output$ORF_start <- "Internal ATG"
-        output$fiveUTRlength <- fiveUTRlength
-
-        return(output)
       } 
     }
   }
-  #return(output)
-  
   # final chance of assigning CDS, just assign inframeCDS
-  #get tailphases on refCDS
-  S4Vectors::mcols(refCDS)$tailphase <- cumsum(width(refCDS) %% 3)%%3
-  
-  combinedgr <- BiocGenerics::append(query, refCDS)
-  disjoint <- combinedgr %>% 
-    GenomicRanges::disjoin(with.revmap = T) %>% 
-    sort(decreasing = strand == "-")
-  revmap <- S4Vectors::mcols(disjoint)$revmap
-  disjoint$phase <- S4Vectors::mcols(combinedgr)$tailphase[unlist(revmap)] %>% 
-    IRanges::relist(revmap)
-  
-  firstcdsindex <- min(which(lengths(disjoint$revmap) == 2))
-  firstscds <- disjoint[firstcdsindex] %>% 
-    as.data.frame() %>% 
-    dplyr::mutate(phase = phase[[1]][2]) %>%
-    dplyr::mutate(fivetrim = (width - phase)%%3)
-  
-  firstcdsrange <- resizeTranscript(disjoint[firstcdsindex], firstscds$fivetrim)
-  disjoint <- BiocGenerics::append(query, firstcdsrange) %>%
-    GenomicRanges::disjoin(with.revmap = T) %>%
-    sort(decreasing = strand == "-") %>%
-    as.data.frame() %>%
-    dplyr::mutate(cumsum = cumsum(width))
-  
-  
-  # retrieve index of segment upstream of start codon and return its cumsumwidth
-  startcodonindex <- min(which(lengths(disjoint$revmap) == 2))
-  if (startcodonindex > 1) {
-    fiveUTRlength <- disjoint[startcodonindex - 1, ]$cumsum
-  } else {
-    fiveUTRlength <- 0
+  if (output$ORF_start == 'Not found') {
+    S4Vectors::mcols(refCDS)$phase <- rev(cumsum(rev(BiocGenerics::width(refCDS)) %% 3) %% 3) 
+    refCDS <- GenomicRanges::resize(refCDS, width = BiocGenerics::width(refCDS) - refCDS$phase, fix = 'end')
+    
+    startcodon <- IRanges::subsetByOverlaps(refCDS, query, type = 'within')
+    if (length(startcodon) == 0) { 
+      return(output)
+    }
+    output$ORF_start <- "Inferred frame"
   }
+  #return(output)
+
+    starttoend <- dplyr::bind_cols(as.data.frame(range(query)), 
+                                   as.data.frame(range(startcodon[1]))) %>%
+      dplyr::mutate(newstart = ifelse(strand == '-', start ,start1)) %>%
+      dplyr::mutate(newend = ifelse(strand == '-', end1 ,end)) %>%
+      dplyr::select(seqnames, start = newstart, end = newend, strand) %>%
+      GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+
+    fiveUTRlength <- sum(width(GenomicRanges::setdiff(query, starttoend)))
   
   # update output list
-  output$ORF_start <- "Inferred frame"
   output$fiveUTRlength <- fiveUTRlength
   
   return(output)
@@ -401,7 +326,7 @@ buildCDS <- function(query, ref, fasta) {
     dplyr::mutate(phase = rev(cumsum(rev(width) %% 3) %% 3)) %>%
     dplyr::select(seqnames:end, strand, type, phase)
   CDSranges$built_from <- starttype
-  output$ORF_considered <- CDSranges
+
   return(CDSranges)
 }
 
@@ -487,82 +412,11 @@ buildCDS <- function(query, ref, fasta) {
     dplyr::distinct(transcript_id, .keep_all  =T) %>%
     dplyr::filter(coverage > 0)
   # report unmatched tx
+  if (nrow(q2r) < length(query_exons)) {
+    nonanalyzed <- length(query_exons) - nrow(q2r)
+    rlang::warn(sprintf(
+      "%s transcripts were not matched to a reference CDS", nonanalyzed))
+  }
   
   return(q2r)
 }
-
-.calcCoverage <- function(tx1, tx2, over) {
-  chrom <- as.character(S4Vectors::runValue(GenomeInfoDb::seqnames(tx1)))
-  cov <- suppressWarnings(GenomicRanges::coverage(c(tx1, tx2)))
-  index <- which(names(cov) == chrom)
-  cov <- cov[[index]]
-  cov_val <- S4Vectors::runValue(cov)
-  cov_len <- S4Vectors::runLength(cov)
-  
-  if (over == "mean") {
-    denom <- sum(BiocGenerics::width(tx1), BiocGenerics::width(tx2)) / 2
-  } else if (over == "query") {
-    denom <- sum(BiocGenerics::width(tx1))
-  } else if (over == "ref") {
-    denom <- sum(BiocGenerics::width(tx2))
-  }
-  return(sum(cov_len[cov_val == 2]) / denom)
-}
-
-
-# 
-# # prepare a dict of stop codons for pattern matching
-# list_stopcodons <- Biostrings::DNAStringSet(c("TAA", "TAG", "TGA"))
-# pdict_stopcodons <- Biostrings::PDict(list_stopcodons)
-
-# # testingggg
-# out <- BiocParallel::bpmapply(function(x, y, z) {
-#   
-#   strand = as.character(strand(y)[1])
-#   y <- sort(y, decreasing = strand == '-')
-#   z <- sort(z, decreasing = strand == '-')
-#   z <- resize(z, width = width(z) - z$phase, fix = 'end')
-#   a <- subsetByOverlaps(z, y, type = 'within')
-#   
-#   if (length(a) == 0) {
-#     return(NULL)
-#   }
-#   
-#   starttoend <- dplyr::bind_cols(as.data.frame(range(y)), as.data.frame(range(a[1]))) %>%
-#     dplyr::mutate(newstart = ifelse(strand == '-', start ,start1)) %>%
-#     mutate(newend = ifelse(strand == '-', end1 ,end)) %>% 
-#     dplyr::select(seqnames, start = newstart, end = newend, strand) %>% 
-#     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
-#   
-#   starttoend <- GenomicRanges::intersect(y, starttoend)
-#   queryseq <- unlist(BSgenome::getSeq(fasta, starttoend))
-#   
-#   
-#   # search for in-frame stop codons
-#   stopcodons <- Biostrings::matchPDict(pdict_stopcodons, queryseq) %>%
-#     unlist() %>%
-#     as.data.frame() %>%
-#     dplyr::filter(end %% 3 == 0) %>%
-#     dplyr::arrange(start)
-#   
-#   # return if no in-frame stop codons are found
-#   if (nrow(stopcodons) == 0) {
-#     return(NULL)
-#   } 
-#   threeUTRlength <- length(queryseq) - stopcodons[1,2] + 3
-#   cds <- resizeTranscript(starttoend, end = threeUTRlength)
-#   
-#   # return if no in-frame stop codons are found
-#   if (length(cds) == 0) {
-#     return(NULL)
-#   } 
-#   cds$type <- 'CDS'
-#   cds$transcript_id <- x
-#   cds$phase <- rev(cumsum(rev(width(cds)) %% 3) %% 3) 
-#   return(as.data.frame(cds))
-#   
-# }, query2ref$transcript_id, 
-# query_exons[query2ref$transcript_index], 
-# ref_cds[query2ref$ref_transcript_id],
-# BPPARAM = BiocParallel::MulticoreParam(), SIMPLIFY = F
-# ) %>% dplyr::bind_rows()
