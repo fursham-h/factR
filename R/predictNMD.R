@@ -108,6 +108,12 @@ predictNMD <- function(x, cds = NULL, NMD_threshold = 50, which = NULL) {
 
 .testNMD <- function(x, y, threshold) {
   
+  # sort all exons by strand first
+  x <- x %>% as.data.frame() %>%
+    dplyr::arrange(ifelse(strand == '-', desc(start), start)) %>%
+    dplyr::select(-group) %>%
+    GenomicRanges::makeGRangesListFromDataFrame(split.field = 'group_name')
+
   toStopRange <- dplyr::bind_cols(as.data.frame(range(x)), as.data.frame(range(y))) %>% 
     dplyr::rowwise() %>% 
     dplyr::mutate(newstart = ifelse(strand == '-', start1 ,start)) %>%
