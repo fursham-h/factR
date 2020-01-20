@@ -185,7 +185,7 @@ unique(query_gtf$gene_id)
 
 Users can quickly visualize the exon structure of these query transcripts using the plotGTFtranscripts tool, which is essentially a convenient wrapper to plot transcripts using the *wiggleplotr* package:
 ```{r viewquery}
-plotGTFTranscripts(query_gtf)
+plotGTFtranscripts(query_gtf)
 ```
 
 ## **Reference** 
@@ -218,7 +218,14 @@ head(matched_query_gtf)
 ```
 Note: `matchSeqLevels` will drop any unmatched seqlevels from query 
 
-# Matching gene_id and gene_name metadata
+`factR` also comes with a function to test if two or more objects have consistent seqlevels. This function returns a logical value of FALSE if input objects have inconsistent seqlevels and recommends a `matchSeqLevels` function to run.
+```{r testseqlevels}
+has_consistentSeqlevels(query_gtf, ref_gtf)
+
+has_consistentSeqlevels(matched_query_gtf, ref_gtf)
+```
+
+# Matching gene metadata
 
 Custom-built GTF annotation may contain generic gene_id and gene_name metadata (e.g. 'MSTRG1'), depending on how it was constructed. Users who wish to fill these metadata using a reference annotation may run the `matchGeneMeta` function:
 ```{r matchgenemeta}
@@ -235,7 +242,7 @@ By default, this function will match query transcripts to reference by overlappi
 
 To build CDS information on our query data, users can simply run:
 ```{r buildcds}
-new_query_gtf <- buildCDS(query_gtf, ref_gtf, Mmusculus)
+new_query_gtf <- buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
 ```
 
 The above function will return a new GRanges object containing exon entries from `query_gtf` with appended cds entries. User can inspect the contents of the object further.
@@ -263,106 +270,6 @@ rtracklayer::export(new_query_gtf, 'path/to/output.gtf', format = 'gtf')
 
 # Extracting protein features on coding transcripts
 
-# Predicting NMD-inducing features on coding transcripts
-
-Coding RNAs harbouring a premature stop codon are potentially eliminated by a process called Nonsense-mediated decay (NMD). Two common features of NMD targets include the upstream position of its stop_codon relative to the last exon-exon junction and the extensive length of its 3'-untranslated region (3'UTR). To report these NMD features and predict if any of the transcripts in the custom annotation are NMD-sensitive, users can run the `predictNMD` tool.
-
-`predictNMD` can accept a GTF GRanges object as input and will only analyze coding transcripts for NMD-features.
-```{r testnmd1}
-predictNMD(new_query_gtf)
-```
-
-`predictNMD` will output a tibble dataframe with report on NMD-inducing feature for each coding transcript. The column `stop_to_lastEJ` describes the relative distance of the stop_codon to the last exon-exon junction (lastEJ) of each transcript. Thus, a positive integer means that the lastEJ is downstream of the stop_codon. `predictNMD` also returns the number of exon-junctions downstream of the stop_codon (`num_of_downEJs`) and the relative distance of the stop_codon to each downstream exon-junctions (`stop_to_downEJs`). `threeUTRlength` describes the length of the 3'-untranslated region for each coding transcript. The column containing logical values for `is_NMD` will return TRUE if the `stop_to_lastEJ` value exceed the NMD triggering threshold which is typically 50 base-pair. Users may set a custom value by overriding the default `NMD_threshold` argument.
-
-Users who wish to analyze certain genes or transcripts in their GTF GRanges for NMD features may provide logical conditions to the `...` argument to subset their GTF input. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
-```{r testnmdfilter}
-predictNMD(new_query_gtf, transcript_id == 'transcript3')
-```
-
-This feature provides user the flexibility to analyze desired genes/transcripts from a large collection of GTF GRanges. Input GTF can be filtered with multiple conditions as long as variable names are found in the input GRanges object. Here are some examples on how this feature can be used on an Ensembl GTF annotation:
-```{r testnmdens, eval = FALSE}
-# retrieve latest GRCm38 annotation from ensembl
-ah <- AnnotationHub()
-mm10_gtf <- ah[['AH60127']]
-
-# predict transcripts from Ptbp1 gene for NMD features
-predictNMD(mm10_gtf, gene_name == 'Ptbp1')
-#># A tibble: 9 x 6
-#>  transcript         stop_to_lastEJ num_of_downEJs stop_to_downEJs threeUTRlength is_NMD
-#>  <chr>                       <dbl>          <int> <chr>                    <dbl> <lgl> 
-#>1 ENSMUST00000057343            364              3 "69,286,364"               644 TRUE  
-#>2 ENSMUST00000095457           -130              0 ""                        1085 FALSE 
-#>3 ENSMUST00000165704           -130              0 ""                        1497 FALSE 
-#>4 ENSMUST00000165724            286              2 "69,286"                   362 TRUE  
-#>5 ENSMUST00000168683           -145              0 ""                           0 FALSE 
-#>6 ENSMUST00000169091            -36              0 ""                           0 FALSE 
-#>7 ENSMUST00000169483            139              1 "139"                      152 TRUE  
-#>8 ENSMUST00000171599            -63              0 ""                           0 FALSE 
-#>9 ENSMUST00000172282           -130              0 ""                        1158 FALSE 
-#>Warning message:
-#>7 transcript(s) have missing cds info and was not analyzed 
-
-# predict several transcripts from Ptbp1 gene for NMD features
-predictNMD(mm10_gtf, gene_name == 'Ptbp1', 
-           transcript_id == c('ENSMUST00000057343', 'ENSMUST00000095457'))
-#># A tibble: 2 x 6
-#>  transcript         stop_to_lastEJ num_of_downEJs stop_to_downEJs threeUTRlength is_NMD
-#>  <chr>                       <dbl>          <int> <chr>                    <dbl> <lgl> 
-#>1 ENSMUST00000057343            364              3 "69,286,364"               644 TRUE  
-#>2 ENSMUST00000095457           -130              0 ""                        1085 FALSE 
-```
-
-
-
-
-
-
-
-# Session Information
-
-All of the output in this vignette was produced under the following conditions:
-```{r sessioninfo}
-sessionInfo()
-```
-
-
-## Check and rectify input objects for cross-compatibility
-
-Before running the core functions of factR, we have to ensure that the mandatory input objects are cross-compatible for the analysis. Two key features that has to be consistent among the inputs include:
-
-1. Chromosome ID (seqlevels). 
-This is required for many downstream analyses, including extraction of transcript sequence and construction of query CDS.
-2. Matched gene_id between query and reference. 
-This is required to pair query transcripts to a reference transcript based on common gene family in order to construct its CDS information.
-
-factR comes with a tool to check the mandatory input files and return recommendations on functions to execute to increase consistency of your query object. To check the input files, run:
-```{r checkinputs}
-checkInputs(query_gtf, ref_gtf, Mmusculus)
-```
-
-As seen from the report above, our `query_gtf` object has inconsistent chromosome levels (seqlevels) and gene_ids. To rectify these inconsistencies, you may follow the functions as recommended.
-```{r matchfuns}
-# matching seqlevels
-query_gtf <- matchSeqLevels(query_gtf, Mmusculus)
-
-head(query_gtf)
-
-# matching gene_id
-query_gtf <- matchGeneIDs(query_gtf, ref_gtf)
-
-head(query_gtf)
-```
-
-After `query_gtf`  have been rectified, we can re-check our inputs:
-```{r recheckinputs}
-checkInputs(query_gtf, ref_gtf, Mmusculus)
-```
-
-
-## Construct query CDS
-
-
-## Extracting protein features on coding transcripts
 
 To extract protein coding features found in our list of coding transcripts, we can run the `extractCDSfeature` function using our `query_cds` and `Mmusculus` objects as input. By default, this tool will query the SuperFamily database for domain features by calling out the `hmmer` function from `bio3d` package. The function will output 3 output fields: 'desc', 'evalue' and 'nincluded'. 
 ```{r testfeature, eval=F}
@@ -398,82 +305,130 @@ extractCDSfeature(query_cds, Mmusculus, which = c('transcript1', 'transcript3'))
 #> 2 transcript2 RNA-binding domain, RBD     2.10e-81               4
 ```
 
-## Predicting NMD-inducing features on coding transcripts
+# Predicting NMD-inducing features on coding transcripts
 
-To test whether any of our sample coding transcripts are targets of NMD, we can run the `predictNMD` function using our `query_exons` and `query_cds` GRangesList as input:
+Coding RNAs harbouring a premature stop codon are potentially eliminated by a process called Nonsense-mediated decay (NMD). Two common features of NMD targets include the upstream position of its stop_codon relative to the last exon-exon junction and the extensive length of its 3'-untranslated region (3'UTR). To report these NMD features and predict if any of the transcripts in the custom annotation are NMD-sensitive, users can run the `predictNMD` tool.
+
+`predictNMD` can accept a GTF GRanges object as input and will only analyze coding transcripts for NMD-features.
 ```{r testnmd1}
-predictNMD(query_exons, query_cds)
+predictNMD(new_query_gtf)
 ```
 
-The column containing logical values for `is_NMD` is determined based on whether the `dist_to_lastEJ` value exceed the `NMDthreshold` argument. The `NMDthreshold` value is set to 50(bp) as default, but can be altered based on users' requirement. The `which` argument accepts a list of transcript names found in query and will return results listed in the argument. This may be useful if you are interested in several transcripts within a big GRangesList object.
-```{r testnmdwhich}
-predictNMD(query_exons, query_cds, which = c('transcript1', 'transcript3'))
+`predictNMD` will output a tibble dataframe with report on NMD-inducing feature for each coding transcript. The column `stop_to_lastEJ` describes the relative distance of the stop_codon to the last exon-exon junction (lastEJ) of each transcript. Thus, a positive integer means that the lastEJ is downstream of the stop_codon. `predictNMD` also returns the number of exon-junctions downstream of the stop_codon (`num_of_downEJs`) and the relative distance of the stop_codon to each downstream exon-junctions (`stop_to_downEJs`). `threeUTRlength` describes the length of the 3'-untranslated region for each coding transcript. The column containing logical values for `is_NMD` will return TRUE if the `stop_to_lastEJ` value exceed the NMD triggering threshold which is typically 50 base-pair. Users may set a custom value by overriding the default `NMD_threshold` argument.
+
+Users who wish to analyze certain genes or transcripts in their GTF GRanges for NMD features may provide logical conditions to the `...` argument to subset their GTF input. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
+```{r testnmdfilter}
+predictNMD(new_query_gtf, transcript_id == 'transcript3')
 ```
 
-## Search coding transcripts for upstream and overlapping ORFs
+This feature provides user the flexibility to analyze desired genes/transcripts from a large collection of GTF GRanges. Input GTF can be filtered with multiple conditions as long as variable names are found in the input GRanges object. Here are some examples on how this feature can be used on an Ensembl GTF annotation:
+```{r testnmdens, eval = FALSE}
+# retrieve latest GRCm38 annotation from ensembl
+ah <- AnnotationHub()
+mm10_gtf <- ah[['AH60127']]
 
-Coding transcripts with long 5' untranslated regions may contain multiple start codons. This may be recognized by ribosomes as an initiating site for translation and create additional upstream open-reading frame or overlapping open-reading frame with the cds. To test for presence of upstream or overlapping ORFs, we can run `searchuORFs` function using `query_exons`, `query_cds` and our fasta `Mmusculus` as inputs.
-```{r testuorfs}
-# test for uORFs
-uORFs <- searchuORFs(query_exons, query_cds, Mmusculus)
+# predict transcripts from Ptbp1 gene for NMD features
+predictNMD(mm10_gtf, gene_name == 'Ptbp1')
+#> # A tibble: 9 x 6
+#>   transcript         stop_to_lastEJ num_of_downEJs stop_to_downEJs threeUTRlength is_NMD
+#>   <chr>                       <dbl>          <int> <chr>                    <dbl> <lgl> 
+#> 1 ENSMUST00000057343            364              3 "69,286,364"               644 TRUE  
+#> 2 ENSMUST00000095457           -130              0 ""                        1085 FALSE 
+#> 3 ENSMUST00000165704           -130              0 ""                        1497 FALSE 
+#> 4 ENSMUST00000165724            286              2 "69,286"                   362 TRUE  
+#> 5 ENSMUST00000168683           -145              0 ""                           0 FALSE 
+#> 6 ENSMUST00000169091            -36              0 ""                           0 FALSE 
+#> 7 ENSMUST00000169483            139              1 "139"                      152 TRUE  
+#> 8 ENSMUST00000171599            -63              0 ""                           0 FALSE 
+#> 9 ENSMUST00000172282           -130              0 ""                        1158 FALSE 
+#> Warning message:
+#> 7 transcript(s) have missing cds info and was not analyzed 
 
-# inspect output
-names(uORFs)
-
-names(uORFs$exons)
-
+# predict several transcripts from Ptbp1 gene for NMD features
+predictNMD(mm10_gtf, gene_name == 'Ptbp1', transcript_id == c('ENSMUST00000057343', 'ENSMUST00000095457'))
+#> # A tibble: 2 x 6
+#>   transcript         stop_to_lastEJ num_of_downEJs stop_to_downEJs threeUTRlength is_NMD
+#>   <chr>                       <dbl>          <int> <chr>                    <dbl> <lgl> 
+#> 1 ENSMUST00000057343            364              3 "69,286,364"               644 TRUE  
+#> 2 ENSMUST00000095457           -130              0 ""                        1085 FALSE 
 ```
 
-`searchuORFs` will return a list object containing a pair of exon and cds information of uORFs found. Each uORF will be named by its type (uORF or uATG), index of the uORF found in the transcript and its parent transcript name. The returned object can be separated into two separate objects zeallot's unpacking feature
-```{r testuorfsunpack}
-# test for uORFs
-c(uORFs_exons, uORFs_cds) %<-% searchuORFs(query_exons, query_cds, Mmusculus)
+<!-- # Search coding transcripts for upstream and overlapping ORFs -->
 
-# inspect output
-names(uORFs_exons)
+<!-- Coding transcripts with long 5' untranslated regions may contain multiple start codons. This may be recognized by ribosomes as an initiating site for translation and create additional upstream open-reading frame or overlapping open-reading frame with the cds. To test for presence of upstream or overlapping ORFs, we can run `searchuORFs` function using `query_exons`, `query_cds` and our fasta `Mmusculus` as inputs. -->
+<!-- ```{r testuorfs} -->
+<!-- # test for uORFs -->
+<!-- uORFs <- searchuORFs(query_exons, query_cds, Mmusculus) -->
 
-names(uORFs_cds)
+<!-- # inspect output -->
+<!-- names(uORFs) -->
 
+<!-- names(uORFs$exons) -->
+
+<!-- ``` -->
+
+<!-- `searchuORFs` will return a list object containing a pair of exon and cds information of uORFs found. Each uORF will be named by its type (uORF or uATG), index of the uORF found in the transcript and its parent transcript name. The returned object can be separated into two separate objects zeallot's unpacking feature -->
+<!-- ```{r testuorfsunpack} -->
+<!-- # test for uORFs -->
+<!-- c(uORFs_exons, uORFs_cds) %<-% searchuORFs(query_exons, query_cds, Mmusculus) -->
+
+<!-- # inspect output -->
+<!-- names(uORFs_exons) -->
+
+<!-- names(uORFs_cds) -->
+
+<!-- ``` -->
+
+<!-- `searchuORFs` can also append the list of uORFs found to the original `query_exons` and `query_cds` lists. -->
+<!-- ```{r testuorfsappend} -->
+<!-- # test for uORFs -->
+<!-- c(newquery_exons, newquery_cds) %<-% searchuORFs(query_exons, query_cds,  -->
+<!--                                               Mmusculus, append = T) -->
+
+<!-- # inspect output -->
+<!-- names(newquery_exons) -->
+
+<!-- names(newquery_cds) -->
+
+<!-- ``` -->
+
+<!-- With the new list of coding transcript, we can retest the list for functional consequence. -->
+<!-- ```{r retestuorf} -->
+<!-- # visualize new list -->
+<!-- plotTranscripts(newquery_exons, newquery_cds) -->
+
+<!-- # retest list for NMD features -->
+<!-- predictNMD(newquery_exons, newquery_cds) -->
+
+<!-- ``` -->
+
+
+<!-- # Compare and classify alternative segments between transcripts -->
+
+<!-- RNA transcripts commonly undergo alternative splicing to give rise to two or more isoforms. Each isoform may contain distinct segments that may ultimately affect the function of its translated protein. To compare and classify alternative segments between two transcripts, we can run the `compareAS` function that comes with factR. -->
+
+<!-- `compareAS` analyzes alternative spliced segments in two modes: pair-wise and intra-list. In pair-wise mode, we have to provide two GRanges objects for comparison. THe function will return a GRanges with segments included/skipped in the first transcript as compared to the second transcript -->
+<!-- ```{r compareAS1} -->
+<!-- # compare transcript1 to transcript2 -->
+<!-- compareAS(query_exons$transcript1, query_exons$transcript2) -->
+
+<!-- ``` -->
+
+<!-- In intralist mode, we can provide a GRangesList object containing exon coordinates for a set of transcripts. If a gene_id attribute is present as a metadata column, the function will group transcripts by its gene family and create transcript pairs for comparsion.  -->
+<!-- ```{r compareAS2} -->
+<!-- # compare transcript1 to transcript2 -->
+<!-- compareAS(query_exons) -->
+
+<!-- ``` -->
+
+
+# Session Information
+
+All of the output in this vignette was produced under the following conditions:
+```{r sessioninfo}
+sessionInfo()
 ```
 
-`searchuORFs` can also append the list of uORFs found to the original `query_exons` and `query_cds` lists.
-```{r testuorfsappend}
-# test for uORFs
-c(newquery_exons, newquery_cds) %<-% searchuORFs(query_exons, query_cds, 
-                                              Mmusculus, append = T)
 
-# inspect output
-names(newquery_exons)
 
-names(newquery_cds)
-
-```
-
-With the new list of coding transcript, we can retest the list for functional consequence.
-```{r retestuorf}
-# visualize new list
-plotTranscripts(newquery_exons, newquery_cds)
-
-# retest list for NMD features
-predictNMD(newquery_exons, newquery_cds)
-
-```
-
-## Compare and classify alternative segments between transcripts
-
-RNA transcripts commonly undergo alternative splicing to give rise to two or more isoforms. Each isoform may contain distinct segments that may ultimately affect the function of its translated protein. To compare and classify alternative segments between two transcripts, we can run the `compareAS` function that comes with factR.
-
-`compareAS` analyzes alternative spliced segments in two modes: pair-wise and intra-list. In pair-wise mode, we have to provide two GRanges objects for comparison. THe function will return a GRanges with segments included/skipped in the first transcript as compared to the second transcript
-```{r compareAS1}
-# compare transcript1 to transcript2
-compareAS(query_exons$transcript1, query_exons$transcript2)
-
-```
-
-In intralist mode, we can provide a GRangesList object containing exon coordinates for a set of transcripts. If a gene_id attribute is present as a metadata column, the function will group transcripts by its gene family and create transcript pairs for comparsion. 
-```{r compareAS2}
-# compare transcript1 to transcript2
-compareAS(query_exons)
-
-```
 

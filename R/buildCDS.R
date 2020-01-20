@@ -48,7 +48,7 @@ buildCDS <- function(query, ref, fasta) {
   argnames <- as.character(match.call())[-1]
   
   # carry out input checks
-  .buildCDSchecks(query, ref, argnames)
+  .buildCDSchecks(query, ref, fasta, argnames)
 
   # makeGRangesList
   query_exons <- S4Vectors::split(query[query$type == 'exon'], ~transcript_id)
@@ -330,7 +330,7 @@ buildCDS <- function(query, ref, fasta) {
   return(CDSranges)
 }
 
-.buildCDSchecks <- function(query, ref, argnames) {
+.buildCDSchecks <- function(query, ref, fasta, argnames) {
   # check inputs are gtf
   if (any(!is_gtf(query, ref))){
     rlang::abort(sprintf(
@@ -346,12 +346,18 @@ buildCDS <- function(query, ref, fasta) {
   }
   
   # catch unmatched seqlevels
-  if (GenomeInfoDb::seqlevelsStyle(query)[1] != GenomeInfoDb::seqlevelsStyle(ref)[1]) {
+  if (suppressWarnings(!has_consistentSeqlevels(query, fasta))) {
     rlang::abort(sprintf(
-      "`%s` and `%s` has unmatched seqlevel styles. try running: 
-      \t\t%s <- matchSeqLevels(%s, %s)",
-      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2])
-    )}
+      "`%s` and `%s` has unmatched seqlevel styles. 
+Try running: %s <- matchSeqLevels(%s, %s)",
+      argnames[1], argnames[3], argnames[1], argnames[1], argnames[3]))
+  }
+  if (suppressWarnings(!has_consistentSeqlevels(ref, fasta))) {
+    rlang::abort(sprintf(
+      "`%s` and `%s` has unmatched seqlevel styles. 
+Try running: %s <- matchSeqLevels(%s, %s)",
+      argnames[2], argnames[3], argnames[2], argnames[2], argnames[3]))
+  }
 }
 
 .prepq2r <- function(query_exons, ref_exons, ref_cds, nc_ref_exons) {

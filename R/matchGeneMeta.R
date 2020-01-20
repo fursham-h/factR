@@ -39,6 +39,8 @@
 matchGeneMeta <- function(query, ref,
                          primary_gene_id = NULL,
                          secondary_gene_id = NULL) {
+  
+
 
   ###################################################################################################################
   # this function will attempt to match gene_ids from input to reference
@@ -62,12 +64,13 @@ matchGeneMeta <- function(query, ref,
   argnames <- as.character(match.call())[-1]
   
   # catch unmatched seqlevels
-  if (GenomeInfoDb::seqlevelsStyle(query)[1] != GenomeInfoDb::seqlevelsStyle(ref)[1]) {
+  if (suppressWarnings(!has_consistentSeqlevels(query, ref))) {
     rlang::abort(sprintf(
-      "`%s` and `%s` has unmatched seqlevel styles. try running: 
-      \t\t%s <- matchSeqLevels(%s, %s)",
-      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2])
-    )}
+      "`%s` and `%s` has unmatched seqlevel styles. 
+Try running: %s <- matchSeqLevels(%s, %s)",
+      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]))
+  }
+  
 
   # prepare a df with a list of gene_ids found in reference
   ref.genelist <- ref %>%

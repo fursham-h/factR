@@ -94,12 +94,9 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
   }
   
   # catch unmatched seqlevels
-  if (GenomeInfoDb::seqlevelsStyle(exons)[1] != GenomeInfoDb::seqlevelsStyle(cds)[1]) {
-    rlang::abort(sprintf(
-      "`%s` and `%s` has unmatched seqlevel styles. try running: 
-      \t\t%s <- matchSeqLevels(%s, %s)",
-      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2])
-  )}
+  if (suppressWarnings(!has_consistentSeqlevels(exons, cds))) {
+    rlang::abort("exons and cds have inconsistent seqlevels")
+  }
 
   # subset list for `which` and check if all exons have a cds entry
   totest <- .prepTotest(exons, cds, argnames, ...)

@@ -26,8 +26,10 @@
 #' @examples
 #' library(BSgenome.Mmusculus.UCSC.mm10)
 #' extractCDSfeature(query_cds, Mmusculus)
-extractCDSfeature <- function(cds, fasta, which = NULL,
-                              hmmer = 'default', ...) {
+extractCDSfeature <- function(cds, fasta, 
+                              hmmer = 'default',
+                              signalHsmm = NULL, 
+                              ...) {
 
   # catch missing args
   mandargs <- c("cds", "fasta")
@@ -39,108 +41,23 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
     ))
   }
   
-  # extract features to test as list and check for supported features
-  features <- c(as.list(environment())['hmmer'], list(...))
-  if (any(!names(features) %in% c('hmmer', 'signalHsmm'))) {
-    features_support <- names(features) %in% c('hmmer', 'signalHsmm')
-    rlang::warn(sprintf('feature(s) `%s` is not supported and its analysis is not run', 
-                    paste(features[!features_support], collapse = ',')))
-    features <- features[features_support]
-  }
-  
-  # check for correct feature column names for return
-  hmmer.header <- c("name","acc","bias","desc","evalue","flags","hindex","ndom",
-                    "nincluded","nregions","nreported","pvalue","score","taxid",
-                    "pdb.id","bitscore","mlog.evalue")
-  if ('default' %in% features$hmmer) {   # convert default into list of headers
-    features$hmmer <- c('desc', 'evalue', 'nincluded',
-                         features$hmmer[features$hmmer != 'default'] 
-                         ) %>% unique()
-  }
-  if (any(!features$hmmer %in% hmmer.header)){
-    fields_support <- features$hmmer %in% hmmer.header
-    rlang::warn(sprintf('`%s` are not supported hmmer reported fields', 
-                    features$hmmer[!fields_support]))
-    if (sum(fields_support) == 0) {
-      features$hmmer <- c('desc', 'evalue', 'nincluded')
-      rlang::warn('returning default hmmer fields')
-    } else {
-      features$hmmer <- features$hmmer[fields_support]
-    }
-  }
-  
-  
+  # get argnames and carry out checks
+  argnames <- as.character(match.call())[-1]
+  cds <- .extractCDSchecks(cds, fasta, argnames)
+  feature <- .featurechecks(hmmer, signalHsmm)
+
   # define global variables
   . <- x <- y<- instop <- nincluded <- desc <- id <- NULL
 
-  # catch unmatched seqlevels
-  if (GenomeInfoDb::seqlevelsStyle(cds) != GenomeInfoDb::seqlevelsStyle(fasta)) {
-    rlang::abort("cds and fasta has unmatched seqlevel styles. try matching using matchSeqLevels function")
-  }
-
-  # catch wrong cds class
-  if (!is(cds, "GRangesList")) {
-    rlang::abort("cds class type is not GRangesList")
-  }
-
-  # subset cds by which
-  if (!is.null(which)) {
-    which_matched <- which[which %in% names(cds)]
-    if (length(which_matched) == 0) {
-      rlang::abort("transcript names in `which` is not found in cds")
-    } else {
-      cds <- cds[names(cds) %in% which]
-    }
-
-    if (length(which_matched) != length(which)) {
-      num_unmatched <- length(which) - length(which_matched)
-      rlang::warn(sprintf(
-        "%s transcript names in `which` is missing from cds names",
-        num_unmatched
-      ))
-    }
-  }
-
-  # sort cds just in case
-  
-  
   # get sequence
-  cdsSeq <- GenomicFeatures::extractTranscriptSeqs(fasta, cds)
-  aaSeq <- suppressWarnings(Biostrings::translate(cdsSeq, if.fuzzy.codon = 'solve')) %>%
-    as.data.frame() %>%
-    tibble::rownames_to_column("id") %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(y = strsplit(x, split = "")) %>%
-    dplyr::mutate(noATG = ifelse(y[[1]] != 'M',T,F)) %>%
-    dplyr::mutate(instop = ifelse('*' %in% y,T,F)) %>% 
-    dplyr::ungroup()
+  aaSeq <- .getSequence(cds, fasta)
   
-  # check for ATG and internal stop_codon, truncate proteins with internal stop codon
-  ## and remove entries without proteins after truncation
-  if (T %in% aaSeq$noATG) {
-    rlang::warn(sprintf("%s cds entries do not start with ATG", sum(aaSeq$noATG)))
-  }
-  if (T %in% aaSeq$instop) {
-    aaSeq <- suppressWarnings(aaSeq %>% 
-      dplyr::rowwise() %>%
-      dplyr::mutate(x = ifelse(instop == T, 
-                               paste(y[1:which(y == '*')-1], collapse = ''),
-                               x)) %>%
-      dplyr::mutate(y = strsplit(x, split = "")) %>%
-        dplyr::ungroup())
-      
-    rlang::warn(sprintf("%s cds entries contain internal stop_codon. These proteins have been truncated", sum(aaSeq$instop)))
-    if ('' %in% aaSeq$x) {
-      rlang::warn(sprintf("After truncation, %s cds have no coding sequences. These entries were not analyzed", sum(aaSeq$x == '')))
-      aaSeq <- aaSeq[aaSeq$x != '',]
-    }
-  }
   
-  # prepare output
+  # prepare output and run analysis
   output <- aaSeq %>% dplyr::select(id)
 
   # run hmmer function if requested
-  if (!is.null(features$hmmer)) {
+  if (!is.null(feature$hmmer)) {
     output <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(y) {
       # account for return errors
       report <- tryCatch(
@@ -164,35 +81,14 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
     
     # subset columns based on requested fields
     output <- output %>% 
-      dplyr::select(id, features$hmmer) %>% 
-      dplyr::rename_at(dplyr::vars(features$hmmer), 
-                       ~ paste0('hmmer.', features$hmmer)) %>%
+      dplyr::select(id, hmmer) %>% 
+      dplyr::rename_at(dplyr::vars(feature$hmmer), 
+                       ~ paste0('hmmer.', feature$hmmer)) %>%
       dplyr::right_join(aaSeq %>% dplyr::select(id), by = 'id')
   }
   
-
-  
   # run signalHsmm function
-  if (!is.null(features$signalHsmm)) {
-    # check for correct field names for return
-    signalHsmm.header <- c("sp_probability","sp_start","sp_end",
-                        "struc","prot","name","str_approx")
-    if ('default' %in% features$signalHsmm) {   # convert default into list of headers
-      features$signalHsmm <- c("sp_probability",
-                            features$signalHsmm[features$signalHsmm != 'default'] 
-      ) %>% unique()
-    }
-    if (any(!features$signalHsmm %in% signalHsmm.header)){
-      fields_support <- features$signalHsmm %in% signalHsmm.header
-      rlang::warn(sprintf('`%s` are not supported signalHsmm reported fields', 
-                      features$signalHsmm[!fields_support]))
-      if (sum(fields_support) == 0) {
-        features$signalHsmm <- "sp_probability"
-        rlang::warn('returning default signalHsmm fields')
-      } else {
-        features$signalHsmm <- features$signalHsmm[fields_support]
-      }
-    }
+  if (!is.null(feature$signalHsmm)) {
     
     # run signalHsmm
     outSP <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(x) {
@@ -207,11 +103,108 @@ extractCDSfeature <- function(cds, fasta, which = NULL,
     
     # combine outSP with output
     output <- outSP %>%
-      dplyr::select(id, features$signalHsmm) %>% 
-      dplyr::rename_at(dplyr::vars(features$signalHsmm), 
-                       ~ paste0('signalHsmm.', features$signalHsmm)) %>%
+      dplyr::select(id, feature$signalHsmm) %>% 
+      dplyr::rename_at(dplyr::vars(feature$signalHsmm), 
+                       ~ paste0('signalHsmm.', feature$signalHsmm)) %>%
       dplyr::left_join(output, ., by = 'id')
   }
   
   return(output)
 }
+
+
+.extractCDSchecks <- function(cds, fasta, argnames) {
+  if (suppressWarnings(!has_consistentSeqlevels(cds, fasta))) {
+    rlang::abort(sprintf(
+      "`%s` and `%s` has unmatched seqlevel styles. 
+Try running: %s <- matchSeqLevels(%s, %s)",
+      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]))
+  }
+  # catch wrong cds class
+  if (is_gtf(cds)) {
+    cds <- S4Vectors::split(cds[cds$type == 'CDS'], ~transcript_id)
+  }
+  
+  if (!is(cds, "GRangesList")) {
+    rlang::abort("cds class type is not GRanges GTF or GRangesList")
+  }
+  return(sorteach(cds, exonorder))
+}
+
+.featurechecks <- function(hmmer, signalHsmm) {
+  # check for correct feature column names for return
+  hmmer.header <- c("name","acc","bias","desc","evalue","flags","hindex","ndom",
+                    "nincluded","nregions","nreported","pvalue","score","taxid",
+                    "pdb.id","bitscore","mlog.evalue")
+  if ('default' %in% hmmer) {   # convert default into list of headers
+    hmmer <- c('desc', 'evalue', 'nincluded',
+               hmmer[hmmer != 'default'] 
+    ) %>% unique()
+  }
+  if (any(!hmmer %in% hmmer.header)){
+    fields_support <- hmmer %in% hmmer.header
+    rlang::warn(sprintf('`%s` are not supported hmmer reported fields', 
+                        hmmer[!fields_support]))
+    if (sum(fields_support) == 0) {
+      hmmer <- c('desc', 'evalue', 'nincluded')
+      rlang::warn('returning default hmmer fields')
+    } else {
+      hmmer <- hmmer[fields_support]
+    }
+  }
+  # check for correct field names for return
+  signalHsmm.header <- c("sp_probability","sp_start","sp_end",
+                         "struc","prot","name","str_approx")
+  if ('default' %in% signalHsmm) {   # convert default into list of headers
+    signalHsmm <- c("sp_probability",
+                    signalHsmm[signalHsmm != 'default'] 
+    ) %>% unique()
+  }
+  if (any(!signalHsmm %in% signalHsmm.header)){
+    fields_support <- signalHsmm %in% signalHsmm.header
+    rlang::warn(sprintf('`%s` are not supported signalHsmm reported fields', 
+                        signalHsmm[!fields_support]))
+    if (sum(fields_support) == 0) {
+      signalHsmm <- "sp_probability"
+      rlang::warn('returning default signalHsmm fields')
+    } else {
+      signalHsmm <- signalHsmm[fields_support]
+    }
+  }
+  return(list(hmmer = hmmer, signalHsmm = signalHsmm))
+}
+
+.getSequence <- function(cds, fasta) {
+  cdsSeq <- GenomicFeatures::extractTranscriptSeqs(fasta, cds)
+  aaSeq <- suppressWarnings(Biostrings::translate(cdsSeq, if.fuzzy.codon = 'solve')) %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column("id") %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(y = strsplit(x, split = "")) %>%
+    dplyr::mutate(noATG = ifelse(y[[1]] != 'M',T,F)) %>%
+    dplyr::mutate(instop = ifelse('*' %in% y,T,F)) %>% 
+    dplyr::ungroup()
+  
+  # check for ATG and internal stop_codon, truncate proteins with internal stop codon
+  ## and remove entries without proteins after truncation
+  if (T %in% aaSeq$noATG) {
+    rlang::warn(sprintf("%s cds entries do not start with ATG", sum(aaSeq$noATG)))
+  }
+  if (T %in% aaSeq$instop) {
+    aaSeq <- suppressWarnings(aaSeq %>% 
+                                dplyr::rowwise() %>%
+                                dplyr::mutate(x = ifelse(instop == T, 
+                                                         paste(y[1:which(y == '*')-1], collapse = ''),
+                                                         x)) %>%
+                                dplyr::mutate(y = strsplit(x, split = "")) %>%
+                                dplyr::ungroup())
+    
+    rlang::warn(sprintf("%s cds entries contain internal stop_codon. These proteins have been truncated", sum(aaSeq$instop)))
+    if ('' %in% aaSeq$x) {
+      rlang::warn(sprintf("After truncation, %s cds have no coding sequences. These entries were not analyzed", sum(aaSeq$x == '')))
+      aaSeq <- aaSeq[aaSeq$x != '',]
+    }
+  }
+  return(aaSeq)
+}
+

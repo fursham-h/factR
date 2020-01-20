@@ -1,3 +1,13 @@
+#' Test for GTF GRanges object
+#'
+#' @param ... One or more objects to test
+#'
+#' @return Logical value as to whether each object is a GTF GRanges
+#' @export
+#' @author Fursham Hamid
+#'
+#' @examples
+#' is_gtf(query_gtf, ref_gtf)
 is_gtf <- function(...) {
   type <- gene_id <- transcript_id <- NULL
   return(unlist(lapply(list(...), function(x){
