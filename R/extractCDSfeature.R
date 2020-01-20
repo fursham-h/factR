@@ -81,7 +81,7 @@ extractCDSfeature <- function(cds, fasta,
     
     # subset columns based on requested fields
     output <- output %>% 
-      dplyr::select(id, hmmer) %>% 
+      dplyr::select(id, features$hmmer) %>% 
       dplyr::rename_at(dplyr::vars(feature$hmmer), 
                        ~ paste0('hmmer.', feature$hmmer)) %>%
       dplyr::right_join(aaSeq %>% dplyr::select(id), by = 'id')
