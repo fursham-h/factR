@@ -2,7 +2,7 @@
 % Please edit documentation in R/matchSeqLevels.R
 \name{matchSeqLevels}
 \alias{matchSeqLevels}
-\title{Match seqnames of input GRanges to a reference GRanges}
+\title{Match seqlevels of input GRanges to reference GRanges or BioString objects}
 \usage{
 matchSeqLevels(x, to)
 }
@@ -15,7 +15,9 @@ matchSeqLevels(x, to)
 Corrected input GRanges
 }
 \description{
-Match seqnames of input GRanges to a reference GRanges
+A convenient wrapper to match seqlevels of a query GRanges object to a reference
+object that contain seqlevels information. Reference can be a GRanges, GRangesList,
+BioString or DNAString object. Seqlevels which fail to match will be dropped.
 }
 \author{
 Fursham Hamid

@@ -1,4 +1,4 @@
-#' Match gene_id from query GTF to a reference
+#' Match gene metadata from query GTF to a reference GTF
 #'
 #' @description
 #' This function will match and correct Gene IDs from a query GTF to a reference
@@ -36,7 +36,7 @@
 #'
 #' @author Fursham Hamid
 
-matchGeneIDs <- function(query, ref,
+matchGeneMeta <- function(query, ref,
                          primary_gene_id = NULL,
                          secondary_gene_id = NULL) {
 
@@ -239,7 +239,7 @@ matchGeneIDs <- function(query, ref,
     #   and match those gene_ids to the reference gene_ids
     #   and change the match_level of matched transcripts
     unmatched_df <- query %>%
-      dplyr::filter(is.na(matched), type == "exon") %>%
+      dplyr::filter(is.na(matched), type == "transcript") %>%
       dplyr::distinct(transcript_id, .keep_all = T) %>%
       dplyr::select(seqnames, start, end, strand, transcript_id)
     unmatched_granges <- GenomicRanges::makeGRangesFromDataFrame(unmatched_df, keep.extra.columns = TRUE)
