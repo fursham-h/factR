@@ -112,11 +112,11 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
 
 .testNMD <- function(x, y, threshold) {
   out <- tibble::tibble('transcript' = as.character(), 
-                 'is_NMD' = as.logical(),
-                 'dist_to_lastEJ' = as.double(),
+                 'stop_to_lastEJ' = as.double(),
                  'num_of_downEJs' = as.integer(),
-                 'dist_to_downEJs' = as.character(),
-                 'threeUTRlength' = as.double())
+                 'stop_to_downEJs' = as.character(),
+                 'threeUTRlength' = as.double(),
+                 'is_NMD' = as.logical())
   
   # sort all exons by strand first
   x <- sorteach(x, exonorder)
@@ -124,7 +124,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
   toStopRange <- dplyr::bind_cols(as.data.frame(range(x)), as.data.frame(range(y))) %>% 
     dplyr::rowwise() %>% 
     dplyr::mutate(newstart = ifelse(strand == '-', start1 ,start)) %>%
-    mutate(newend = ifelse(strand == '-', end ,end1)) %>% 
+    dplyr::mutate(newend = ifelse(strand == '-', end ,end1)) %>% 
     dplyr::select(group:seqnames, start = newstart, end = newend, strand) %>% 
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
   
@@ -142,11 +142,11 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     
     
     return(tibble::tibble('transcript' = id, 
-                          'is_NMD' = is_NMD,
-                          'dist_to_lastEJ' = dist_to_last,
+                          'stop_to_lastEJ' = dist_to_last,
                           'num_of_downEJs' = length(dist_to_eachEJ),
-                          'dist_to_downEJs' = paste(dist_to_eachEJ, collapse = ','),
-                          'threeUTRlength' = threeUTR))
+                          'stop_to_downEJs' = paste(dist_to_eachEJ, collapse = ','),
+                          'threeUTRlength' = threeUTR,
+                          'is_NMD' = is_NMD))
   })) 
   return(out)
 }
