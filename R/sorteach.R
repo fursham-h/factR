@@ -1,9 +1,9 @@
 sorteach <- function(x, ...) {
   stopifnot(is(x, "GRangesList"))
-  expr <- quos(...)
+  expr <- rlang::quos(...)
   if ("~exonorder" %in% as.character(expr)) {
     index <- which('~exonorder' %in% as.character(expr))
-    expr[[index]] <- quo(ifelse(strand == '-', dplyr::desc(start), start))
+    expr[[index]] <- rlang::quo(ifelse(strand == '-', dplyr::desc(start), start))
   }
   return(x %>% as.data.frame() %>%
            dplyr::arrange(!!!expr) %>%
