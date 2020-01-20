@@ -251,15 +251,16 @@ rtracklayer::export(new_query_gtf, 'path/to/output.gtf', format = 'gtf')
 
 # Predicting NMD-inducing features on coding transcripts
 
-Nonsense-mediated decay (NMD) is an RNA surveillance program which eliminates messenger RNAs containing a premature stop codon. 
+Coding RNAs harbouring a premature stop codon are potentially eliminated by a process called Nonsense-mediated decay (NMD). Two common features of NMD targets include the upstream position of its stop codon relative to the last exon-exon junction and the extensive length of its 3'-untranslated region (3'UTR). To predict if any of the transcripts in the custom annotation are NMD-sensitive, users can run the `predictNMD` tool.
 
-To test whether any of our sample transcripts are NMD-sensitive, we can run the `predictNMD` function using the newly-built `new_query_gtf` object as input:
+`predictNMD` can accept a GTF GRanges object as input and will only analyze coding transcripts for NMD-features.
 ```{r testnmd1}
 predictNMD(new_query_gtf)
 ```
 
-The column containing logical values for `is_NMD` is determined based on whether the `dist_to_lastEJ` value exceed the `NMD_threshold` argument. The `NMD_threshold` value is set to 50(bp) as default, but can be altered based on users' requirement. 
+For each coding transcript
 
+The column containing logical values for `is_NMD` is determined based on whether the `dist_to_lastEJ` value exceed the `NMD_threshold` argument. The `NMD_threshold` value is set to 50(bp) as default, but users may set their custom value.
 
 
 
