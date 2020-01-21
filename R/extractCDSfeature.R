@@ -1,38 +1,38 @@
 #' Extract protein features from coding mRNAs
 #'
-#' @param cds
-#' GRanges object or GRangesList object containing coding regions (CDS)
-#' for each transcript.
+#' @param x
+#' Can be a GRanges object containing 'CDS' features in GTF format
+#' 
+#' Can be a GRangesList object containing CDS ranges for each transcript
 #' @param fasta
 #' BSgenome or Biostrings object containing genomic sequence
-#' @param which
-#' List containing names of transcripts from cds to filter for analysis
+#' #' @param ...
+#' Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
+#' Variables are metadata information found in `x` and multiple conditions can be 
+#' provided delimited by comma. Example: transcript_id == "transcript1"
 #' @param hmmer
 #' List of fields to report from hmmer protein domain search. 'default' will
 #' return 'desc', 'evalue' and 'nincluded' columns. See ?bio3d::hmmer for a list
 #' of returned fields. Set argument to NULL to skip hmmer analysis
-#' @param ...
-#' Other features to test and its fields to return. Written as named list with
-#' features as names and list of fields as arguements (eg. signalHsmm = 'default')
-#' Current supported features:
+#' @param signalHsmmm
+#' List of fields to report from signalHsmmm prediction tool. By default, argument
+#' is set to NULL which skips the analysis. Seting argument to 'default' will
+#' return 'sp_probability' columns. See ?signalHsmm::signalHsmm for a list
+#' of returned fields.
 #'
 #' @return
 #' Dataframe containing protein features for each cds entry
-#' Current features tested:
-#' (1) Presence and type of protein domains
-#' (2) Probability of signal peptide sequence
 #' @export
 #'
 #' @examples
 #' library(BSgenome.Mmusculus.UCSC.mm10)
 #' extractCDSfeature(query_cds, Mmusculus)
-extractCDSfeature <- function(cds, fasta, 
+extractCDSfeature <- function(x, fasta, ...,
                               hmmer = 'default',
-                              signalHsmm = NULL, 
-                              ...) {
+                              signalHsmm = NULL) {
 
   # catch missing args
-  mandargs <- c("cds", "fasta")
+  mandargs <- c("x", "fasta")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
     stop(paste(
@@ -43,15 +43,14 @@ extractCDSfeature <- function(cds, fasta,
   
   # get argnames and carry out checks
   argnames <- as.character(match.call())[-1]
-  cds <- .extractCDSchecks(cds, fasta, argnames)
+  cds <- .extractCDSchecks(x, fasta, argnames, ...)
   feature <- .featurechecks(hmmer, signalHsmm)
 
   # define global variables
-  . <- x <- y<- instop <- nincluded <- desc <- id <- NULL
+  # . <- x <- y<- instop <- nincluded <- desc <- id <- NULL
 
   # get sequence
   aaSeq <- .getSequence(cds, fasta)
-  
   
   # prepare output and run analysis
   output <- aaSeq %>% dplyr::select(id)
@@ -81,7 +80,7 @@ extractCDSfeature <- function(cds, fasta,
     
     # subset columns based on requested fields
     output <- output %>% 
-      dplyr::select(id, features$hmmer) %>% 
+      dplyr::select(id, feature$hmmer) %>% 
       dplyr::rename_at(dplyr::vars(feature$hmmer), 
                        ~ paste0('hmmer.', feature$hmmer)) %>%
       dplyr::right_join(aaSeq %>% dplyr::select(id), by = 'id')
@@ -113,7 +112,7 @@ extractCDSfeature <- function(cds, fasta,
 }
 
 
-.extractCDSchecks <- function(cds, fasta, argnames) {
+.extractCDSchecks <- function(cds, fasta, argnames, ...) {
   if (suppressWarnings(!has_consistentSeqlevels(cds, fasta))) {
     rlang::abort(sprintf(
       "`%s` and `%s` has unmatched seqlevel styles. 
@@ -123,11 +122,17 @@ Try running: %s <- matchSeqLevels(%s, %s)",
   # catch wrong cds class
   if (is_gtf(cds)) {
     cds <- S4Vectors::split(cds[cds$type == 'CDS'], ~transcript_id)
+    if (length(cds) == 0) {
+      rlang::abort(sprintf(
+        "`%s` do not contain CDS information", argnames[1]))
+    }
   }
   
   if (!is(cds, "GRangesList")) {
     rlang::abort("cds class type is not GRanges GTF or GRangesList")
   }
+  
+  cds <- filtereach(cds, ...)
   return(sorteach(cds, exonorder))
 }
 
