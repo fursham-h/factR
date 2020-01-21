@@ -1,5 +1,8 @@
 ####### ToDos ####### 
 
+- compareAS- genome-wide annoation, do it fast using disjoint etc
+
+
 - Simplify buildCDS
 - DONE:Remove duplicate transcript_id in query2ref (buildCDS)
 - DONE:BuildCDS remove comparisons with 0 coverage

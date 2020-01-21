@@ -4,29 +4,30 @@
 \alias{extractCDSfeature}
 \title{Extract protein features from coding mRNAs}
 \usage{
-extractCDSfeature(cds, fasta, which = NULL, hmmer = "default", ...)
+extractCDSfeature(x, fasta, ..., hmmer = "default", signalHsmm = NULL)
 }
 \arguments{
-\item{cds}{GRanges object or GRangesList object containing coding regions (CDS)
-for each transcript.}
+\item{x}{Can be a GRanges object containing 'CDS' features in GTF format
 
-\item{fasta}{BSgenome or Biostrings object containing genomic sequence}
+Can be a GRangesList object containing CDS ranges for each transcript}
 
-\item{which}{List containing names of transcripts from cds to filter for analysis}
+\item{fasta}{BSgenome or Biostrings object containing genomic sequence
+#' @param ...
+Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
+Variables are metadata information found in `x` and multiple conditions can be 
+provided delimited by comma. Example: transcript_id == "transcript1"}
 
 \item{hmmer}{List of fields to report from hmmer protein domain search. 'default' will
 return 'desc', 'evalue' and 'nincluded' columns. See ?bio3d::hmmer for a list
 of returned fields. Set argument to NULL to skip hmmer analysis}
 
-\item{...}{Other features to test and its fields to return. Written as named list with
-features as names and list of fields as arguements (eg. signalHsmm = 'default')
-Current supported features:}
+\item{signalHsmmm}{List of fields to report from signalHsmmm prediction tool. By default, argument
+is set to NULL which skips the analysis. Seting argument to 'default' will
+return 'sp_probability' columns. See ?signalHsmm::signalHsmm for a list
+of returned fields.}
 }
 \value{
 Dataframe containing protein features for each cds entry
-Current features tested:
-(1) Presence and type of protein domains
-(2) Probability of signal peptide sequence
 }
 \description{
 Extract protein features from coding mRNAs
