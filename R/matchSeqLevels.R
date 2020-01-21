@@ -1,6 +1,6 @@
 #' Match seqlevels of input GRanges to reference GRanges or BioString objects
-#' 
-#' @description 
+#'
+#' @description
 #' A convenient wrapper to match seqlevels of a query GRanges object to a reference
 #' object that contain seqlevels information. Reference can be a GRanges, GRangesList,
 #' BioString or DNAString object. Seqlevels which fail to match will be dropped.

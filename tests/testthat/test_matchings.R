@@ -1,7 +1,7 @@
 context("Test matching functions")
 
 matched1 <- matchSeqLevels(query_gtf, ref_gtf)
-matched2 <- matchGeneIDs(matched1, ref_gtf)
+matched2 <- matchGeneMeta(matched1, ref_gtf)
 
 test_that("Test the structure of outputs", {
   expect_equal(is(matched1, "GRanges"), TRUE)

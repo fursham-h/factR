@@ -5,7 +5,7 @@
 #' @export
 #' @author Fursham Hamid
 #' @return Logical value as to whether all objects have consistent seqlevels
-#' 
+#'
 #' @importFrom dplyr %>%
 #' @importFrom IRanges %over%
 #' @importFrom IRanges %within%
@@ -18,14 +18,14 @@
 has_consistentSeqlevels <- function(...) {
   dots <- list(...)
   argnames <- as.character(match.call())[-1]
-  
+
   if (length(dots) < 2) {
     rlang::abort("Insufficient input")
   }
-  
+
   consistent <- c()
-  for (i in seq(1, length(dots)-1)) {
-    for (j in seq(i+1, length(dots))) {
+  for (i in seq(1, length(dots) - 1)) {
+    for (j in seq(i + 1, length(dots))) {
       if (identical(dots[[i]], dots[[j]])) {
         next
       }
@@ -33,12 +33,11 @@ has_consistentSeqlevels <- function(...) {
       consistent <- c(consistent, test)
       if (!test) {
         rlang::warn(sprintf(
-          "Try running: %s <- matchSeqLevels(%s, %s)", argnames[i], argnames[i], argnames[j]))
+          "Try running: %s <- matchSeqLevels(%s, %s)", argnames[i], argnames[i], argnames[j]
+        ))
         break
       }
-      
     }
   }
   return(all(consistent))
 }
-  

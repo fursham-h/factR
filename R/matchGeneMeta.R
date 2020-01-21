@@ -37,9 +37,9 @@
 #' @author Fursham Hamid
 
 matchGeneMeta <- function(query, ref,
-                         primary_gene_id = NULL,
-                         secondary_gene_id = NULL) {
-  
+                          primary_gene_id = NULL,
+                          secondary_gene_id = NULL) {
+
 
 
   ###################################################################################################################
@@ -62,15 +62,16 @@ matchGeneMeta <- function(query, ref,
 
   # retrieve input object names
   argnames <- as.character(match.call())[-1]
-  
+
   # catch unmatched seqlevels
   if (suppressWarnings(!has_consistentSeqlevels(query, ref))) {
     rlang::abort(sprintf(
       "`%s` and `%s` has unmatched seqlevel styles. 
 Try running: %s <- matchSeqLevels(%s, %s)",
-      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]))
+      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]
+    ))
   }
-  
+
 
   # prepare a df with a list of gene_ids found in reference
   ref.genelist <- ref %>%

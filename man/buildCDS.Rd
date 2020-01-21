@@ -21,7 +21,7 @@ information
 buildCDS will select the #########
 
 buildCDS will next attempt to construct query CDS information by
-firstly deriving its start_codon as guided by the reference transcript. 
+firstly deriving its start_codon as guided by the reference transcript.
 This is done in three successive stages:
 (1) search transcript for a start_codon as annotated in reference
 (2) if above fails, search for an internal ATG codon as annotated in reference
@@ -30,11 +30,6 @@ This is done in three successive stages:
 After the start_codon/coding frame have been established, the program
 will search for an in-frame stop_codon for each transcript and return its
 CDS GRanges entries if successfull.
-}
-\examples{
-library(BSgenome.Mmusculus.UCSC.mm10)
-buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
-
 }
 \author{
 Fursham Hamid

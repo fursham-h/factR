@@ -13,11 +13,11 @@ format.
 Can be a GRangesList object containing exon features for a list of transcripts.
 If so, `cds` argument have to be provided.
 
-Can be a GRanges object containing exon features for a transcript. If so, `cds` 
+Can be a GRanges object containing exon features for a transcript. If so, `cds`
 argument have to be provided.}
 
 \item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
-Variables are metadata information found in `x` and multiple conditions can be 
+Variables are metadata information found in `x` and multiple conditions can be
 provided delimited by comma. Example: transcript_id == "transcript1"}
 
 \item{cds}{If `x` is a GRangesList object, `cds` has to be a GRangesList containing CDS features
@@ -40,21 +40,11 @@ the last EJ is downstream of the stop_codon.
 
 num_of_down_EJs: Number of EJs downstream of the stop_codon.
 
-dist_to_downEJs: Concatenated integer values of the number of bases between 
+dist_to_downEJs: Concatenated integer values of the number of bases between
 the first base of the stop_codon to the last base of each downstream EJs.
 }
 \description{
 Predict sensitivity of mRNA transcripts to NMD
-}
-\examples{
-
-### Examples with GRanges objects
-predictNMD(query_exons$transcript1, query_cds$transcript1) # NMD-insensitive
-predictNMD(query_exons$transcript3, query_cds$transcript3) # NMD-sensitive
-
-### Examples with GRangesList object
-predictNMD(query_exons, query_cds)
-predictNMD(query_exons, query_cds, which = c("transcript1", "transcript3"))
 }
 \author{
 Fursham Hamid

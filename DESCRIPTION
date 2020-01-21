@@ -24,7 +24,8 @@ Imports:
     S4Vectors,
     data.table,
     rlang,
-    tibble
+    tibble,
+    wiggleplotr
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -33,7 +34,6 @@ RoxygenNote: 7.0.2
 Suggests: 
     BSgenome.Mmusculus.UCSC.mm10,
     testthat,
-    wiggleplotr,
     knitr,
     rmarkdown,
     zeallot

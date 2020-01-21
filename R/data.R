@@ -91,31 +91,3 @@
 #' }
 #' @source \url{https://www.gencodegenes.org/}
 "ref_cds"
-
-#' Dataframe containing a list of matched query and reference IDs
-#'
-#' Dataframe with 2 columns, each containing a list of transcript_id from
-#' query_gtf and ref_gtf dataset respectively
-#'
-#' @format A dataframe with 8 rows
-#' \describe{
-#'   \item{transcript_id}{List of transcript_id from query_gtf}
-#'   \item{ref_transcript_id}{List of transcript_id from ref_gtf}
-#'   ...
-#' }
-"q2r"
-
-#' Dataframe containing a list of matched query and reference IDs with coverage values
-#'
-#' Dataframe with 3 columns containing a list of transcript_id from
-#' query_gtf, a list of matched ref_transcript_id and the percent coverage between
-#' query and reference transcripts
-#'
-#' @format A dataframe with 8 rows
-#' \describe{
-#'   \item{transcript_id}{List of transcript_id from query_gtf}
-#'   \item{ref_transcript_id}{List of transcript_id from ref_gtf}
-#'   \item{coverage}{List of percent coverage values between query and ref transcripts}
-#'   ...
-#' }
-"q2rcovs"

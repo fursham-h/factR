@@ -10,7 +10,7 @@ plotGTFtranscripts(x, ..., rescale_introns = F)
 \item{x}{GRanges object containing transcript annotation in GTF format}
 
 \item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
-Variables are metadata information found in `x` and multiple conditions can be 
+Variables are metadata information found in `x` and multiple conditions can be
 provided delimited by comma. Example: transcript_id == "transcript1"}
 
 \item{rescale_introns}{Specifies if the introns should be scaled to fixed length or not. (default: FALSE)}
@@ -19,11 +19,11 @@ provided delimited by comma. Example: transcript_id == "transcript1"}
 ggplot2 object
 }
 \description{
-A wrapper around the plotTranscripts function. See the documentation for (\code{\link[wiggleplotr]{plotTranscripts}}) 
+A wrapper around the plotTranscripts function. See the documentation for (\code{\link[wiggleplotr]{plotTranscripts}})
 for more information.
 }
 \examples{
 plotGTFtranscripts(query_gtf)
-plotGTFtranscripts(query_gtf, transcript_id == 'transcript1')
+plotGTFtranscripts(query_gtf, transcript_id == "transcript1")
 plotGTFtranscripts(ref_gtf)
 }
