@@ -1,3 +1,22 @@
+#' Annotate alternative-spliced segments from a GTF annotation
+#'
+#' @param x
+#' GRanges object containing transcript features in GTF format
+#'
+#' @param as.data.frame
+#' If TRUE, function will return a dataframe instead of GRanges GTF object
+#' (default = FALSE)
+#'
+#' @param append
+#' If TRUE, function will append the alternative-spliced segments to x and return
+#' a new GTF GRanges object
+#'
+#' @return
+#' GRanges object or data-frame containing alternative-spliced segments found in x
+#'
+#' @export
+#' @author Fursham Hamid
+
 annotateAS <- function(x, as.data.frame = FALSE, append = FALSE) {
   # catch missing args
   mandargs <- c("x")
@@ -8,18 +27,20 @@ annotateAS <- function(x, as.data.frame = FALSE, append = FALSE) {
       paste(setdiff(mandargs, passed), collapse = ", ")
     ))
   }
-  
+
+  seqnames <- gene_id <- transcript_id <- coord <- AStype <- NULL
+
   # retrieve input object names and carry out checks
   argnames <- as.character(match.call())[-1]
   .ASchecks(x, argnames)
-  
+
   # run Alternative splicing annotation function
-  annotatedAS <- .runAS(x[x$type == 'exon'])
-  
+  annotatedAS <- .runAS(x[x$type == "exon"])
+
   # return
   if (as.data.frame) {
     return(annotatedAS %>% as.data.frame() %>%
-      dplyr::mutate(coord = paste0(seqnames, ':', start, '-', end)) %>%
+      dplyr::mutate(coord = paste0(seqnames, ":", start, "-", end)) %>%
       dplyr::select(gene_id, transcript_id, coord, AStype))
   } else if (append) {
     return(c(x, annotatedAS))
@@ -28,38 +49,29 @@ annotateAS <- function(x, as.data.frame = FALSE, append = FALSE) {
   }
 }
 
-#' Compare and classify alternative spliced segments
+#' Compare and classify alternative spliced segments between two or more transcripts
 #'
-#' @param exons
-#' In pair-wise mode: GRanges object containing exons for a particular transcript.
+#' @param x
+#' Can be a GRangesList object containing exons for each transcripts (Intralist mode)
 #'
-#' In intra-list mode: GRangesList bject containing exons for each transcripts.
-#' Transcripts will be paired and compared based on its gene family or groups.
-#' In order to do so, object has to contain gene_id attribute. Alternatively, user
-#' may provide a dataframe with a list of transcripts and its groupings as a `groupings`
-#' argument. See `groupings`.
+#' Can be a GRanges object containing exons for a transcript (Pair-wise mode). If so,
+#' at least one GRanges object is to be provided in `...` for comparison
+#'
 #' @param ...
-#' In pair-wise mode, argument is a GRanges object containing exons for a
-#' particular transcript as a comparison to `exons`
-#' @param groupings
-#' Dataframe describing the groupings of the transcripts in `exons`. Ideally, Transcripts should be
-#' grouped by gene families. Therefore, first column in the dataframe is a list of gene_id or
-#' gene_names and the second column is the names of transcripts in `exons` which fall into
-#' the gene groupings. This argument is optional if gene_id metadata is present in `exons`
-#'
+#' In pair-wise mode, argument is one or more GRanges object containing exons for a
+#' particular transcript to compare with `x`
+
 #'
 #' @return
-#' In pairwise mode: a GRangesList object with included and skipped segments in `exons`
-#' as compared to ...
+#' GRangesList object containing alternatively-spliced segments for each transcript
+#' in comparison.
 #'
-#' In intralist mode: a dataframe with coordinates and information of alternative segments
-#' between every transcripts in its groupings.
+#' @author Fursham Hamid
 #' @export
-#'
-compareAS <- function(exons, ...) {
-  
+compareAS <- function(x, ...) {
+
   # catch missing args
-  mandargs <- c("exons")
+  mandargs <- c("x")
   passed <- names(as.list(match.call())[-1])
   if (any(!mandargs %in% passed)) {
     rlang::abort(paste(
@@ -68,22 +80,20 @@ compareAS <- function(exons, ...) {
     ))
   }
   # define global variables
-  tx.id <- index.y <- index.x <- tx.id.x <- tx.id.y <- NULL
-  Gene <- seqnames <- compare.to <- coord <- strand <- NULL
-  . <- AS.type <- AS.direction <- NULL
-  
+  group_name <- transcript_id <- group <- NULL
+
   argnames <- as.character(match.call())[-1]
-  
-  if (is(exons, "GRanges")) {
-    if (!'transcript_id' %in% names(S4Vectors::mcols(exons))) {
-      exons$transcript_id <- 'transcript0'
-    } 
-    exons <- S4Vectors::split(exons, ~transcript_id)
+
+  if (is(x, "GRanges")) {
+    if (!"transcript_id" %in% names(S4Vectors::mcols(x))) {
+      x$transcript_id <- "transcript0"
+    }
+    x <- S4Vectors::split(x, ~transcript_id)
   }
-  if (!is(exons, "GRangesList")) {
-    rlang::abort()
+  if (!is(x, "GRangesList")) {
+    rlang::abort(sprintf("%s is not a GRanges or GRangesList object", argnames[1]))
   }
-  
+
   # if a second GRanges object is given, carry out pairwise comparison
   if (length(list(...)) > 0) {
     # multiple comparisons not supported. can be a feature in the future
@@ -92,34 +102,43 @@ compareAS <- function(exons, ...) {
     #   rlang::warn("Multiple comparisons is not yet supported in pair-wise mode. First item in ... used")
     # }
     dots <- list(...)
-    newdots <- dots[unlist(lapply(dots, function(x){is(x,"GRanges")}))]
-    
+    newdots <- dots[unlist(lapply(dots, function(x) {
+      is(x, "GRanges")
+    }))]
+
     if (length(newdots) == 0) {
       # return warning and proceed to intra-list mode
+      rlang::warn("No GRanges object found in `...`. Comparing AS in intra-list mode")
     } else {
       if (length(newdots) < length(dots)) {
         # return warning for elements which are not GRanges
+        notGR <- length(dots) - length(newdots)
+        rlang::warn("Non GRanges object in `...` were removed")
       }
       newdots <- as(newdots, "GRangesList")
-      
+
       newdotsmeta <- newdots %>% as.data.frame()
-      if (!'transcript_id' %in% names(newdotsmeta)) {
-        names(newdots) <- paste0('transcript', as.character(c(1:length(newdots))))
+      if (!"transcript_id" %in% names(newdotsmeta)) {
+        names(newdots) <- paste0("transcript", as.character(c(1:length(newdots))))
+        newdots <- mutateeach(newdots, transcript_id = group_name)
       } else {
         newdots <- newdots %>%
           as.data.frame() %>%
-          dplyr::mutate(transcript_id = ifelse(is.na(transcript_id), paste0('transcript',group), transcript_id)) %>%
+          dplyr::mutate(transcript_id = ifelse(is.na(transcript_id), paste0("transcript", group), transcript_id)) %>%
           dplyr::mutate(group_name = transcript_id) %>%
           dplyr::select(-group) %>%
-          GenomicRanges::makeGRangesListFromDataFrame(split.field = 'group_name', keep.extra.columns = T)
+          GenomicRanges::makeGRangesListFromDataFrame(split.field = "group_name", keep.extra.columns = T)
       }
     }
-    exons <- c(exons, newdots)
+    x <- c(x, newdots)
+    if (length(x) == 1) {
+      rlang::abort("Insufficient transcripts for comparison")
+    }
   }
-  if (!'gene_id' %in% names(S4Vectors::mcols(unlist(exons)))) {
-    exons <- mutateeach(exons, gene_id = 'NA')
+  if (!"gene_id" %in% names(S4Vectors::mcols(unlist(x)))) {
+    x <- mutateeach(x, gene_id = "NA")
   }
-  return(S4Vectors::split(.runAS(exons), ~transcript_id))
+  return(S4Vectors::split(.runAS(x), ~transcript_id))
 }
 
 
@@ -136,46 +155,51 @@ compareAS <- function(exons, ...) {
 
 
 .runAS <- function(x) {
-  
-  x <- x %>% as.data.frame() %>%
+  transcript_id <- pos <- seqnames <- strand <- gene_id <- NULL
+  first.X.start <- second.start <- first.X.end <- second.end <- NULL
+  first.pos <- AStype <- first.X.strand <- NULL
+
+  x <- x %>%
+    as.data.frame() %>%
     dplyr::group_by(transcript_id) %>%
     dplyr::arrange(start) %>%
-    dplyr::mutate(pos = dplyr::row_number()) %>% 
-    dplyr::mutate(pos = ifelse(pos == 1, 'First', pos)) %>%
-    dplyr::mutate(pos = ifelse(pos == dplyr::n(), 'Last', pos)) %>%
+    dplyr::mutate(pos = dplyr::row_number()) %>%
+    dplyr::mutate(pos = ifelse(pos == 1, "First", pos)) %>%
+    dplyr::mutate(pos = ifelse(pos == dplyr::n(), "Last", pos)) %>%
     dplyr::select(seqnames, start, end, strand, gene_id, transcript_id, pos) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
-  
+
   # get reduced intron boundaries
   exonsbytx <- S4Vectors::split(x, ~transcript_id)
   intronsbytx <- GenomicRanges::psetdiff(unlist(range(exonsbytx)), exonsbytx)
   intronsreduced <- GenomicRanges::reduce(unlist(GenomicRanges::psetdiff(unlist(range(exonsbytx)), exonsbytx)))
-  
+
   # get exons that overlap with reduced introns
   altexons <- IRanges::findOverlapPairs(x, intronsreduced)
-  
+
   # annotate AS exons
-  altannotate <- altexons %>% as.data.frame() %>%
-    dplyr::mutate(AStype = 'CE') %>%
-    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & !first.pos %in% c('First','Last'), 'SD', AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & !first.pos %in% c('First','Last'), 'SA', AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & first.pos %in% c('First','Last'), 'Te', AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & first.pos %in% c('First','Last'), 'Ts', AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end > second.end, 'RI', AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end < second.end & first.pos == 'First', 'FE', AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end < second.end & first.pos == 'Last', 'LE', AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.strand == '-', chartr("DAFLes", "ADLFse", AStype), AStype))
-  
+  altannotate <- altexons %>%
+    as.data.frame() %>%
+    dplyr::mutate(AStype = "CE") %>%
+    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & !first.pos %in% c("First", "Last"), "SD", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & !first.pos %in% c("First", "Last"), "SA", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & first.pos %in% c("First", "Last"), "Te", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & first.pos %in% c("First", "Last"), "Ts", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end > second.end, "RI", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end < second.end & first.pos == "First", "FE", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end < second.end & first.pos == "Last", "LE", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.strand == "-", chartr("DAFLes", "ADLFse", AStype), AStype))
+
   # get segments that fall within intron and annotate that segment
   altexons <- GenomicRanges::pintersect(altexons)
   if (length(altexons) == 0) {
     altexons$pos <- altexons$hit <- NULL
     return(altexons)
   } else {
-    altexons$type <- 'AS'
+    altexons$type <- "AS"
     altexons$AStype <- toupper(altannotate$AStype)
     altexons$pos <- altexons$hit <- NULL
-    
+
     return(altexons)
   }
 }

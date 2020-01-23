@@ -10,7 +10,7 @@ is_gtf(...)
 \item{...}{One or more objects to test}
 }
 \value{
-Logical value as to whether each object is a GTF GRanges
+Logical values as to whether each object is a GTF GRanges
 }
 \description{
 Test for GTF GRanges object

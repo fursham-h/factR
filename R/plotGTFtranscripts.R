@@ -9,7 +9,7 @@
 #' @param ...
 #' Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
 #' Variables are metadata information found in `x` and multiple conditions can be
-#' provided delimited by comma. Example: transcript_id == "transcript1"
+#' provided delimited by comma. Example: gene_name == "Ptbp1"
 #'
 #' @param rescale_introns
 #' Specifies if the introns should be scaled to fixed length or not. (default: FALSE)
@@ -65,6 +65,9 @@ plotGTFtranscripts <- function(x, ..., rescale_introns = F) {
   # gene_metadata <- x %>% as.data.frame() %>%
   #   dplyr::select(transcript_id, gene_name, strand)
   #
+
+  # Need to have a check for plotting multiple genes.....
+
   # Fetch gene exons and cdss
   exons <- S4Vectors::split(x[x$type == "exon"], ~transcript_id)
   cdss <- S4Vectors::split(x[x$type == "CDS"], ~transcript_id)
@@ -78,19 +81,19 @@ plotGTFtranscripts <- function(x, ..., rescale_introns = F) {
     cdss = cdss,
     rescale_introns = rescale_introns
   )
-  
+
   # if (length(as) > 0) {
   #   transcript_rank = data.frame('transcript_id' = names(exons), stringsAsFactors = F) %>%
-  #     dplyr::mutate(transcript_rank = dplyr::row_number()) 
-  #   AS_df <- as %>% 
-  #     as.data.frame() %>% 
+  #     dplyr::mutate(transcript_rank = dplyr::row_number())
+  #   AS_df <- as %>%
+  #     as.data.frame() %>%
   #     dplyr::rowwise() %>%
   #     dplyr::mutate(center = mean(c(start, end))) %>%
   #     dplyr::select(transcript_id = group_name, center, width, AStype) %>%
-  #     dplyr::left_join(transcript_rank, by = "transcript_id") 
-  #   plot <- plot + geom_text(aes_(x = ~center, 
-  #                         y = ~transcript_rank, 
-  #                         label = ~AStype), 
+  #     dplyr::left_join(transcript_rank, by = "transcript_id")
+  #   plot <- plot + geom_text(aes_(x = ~center,
+  #                         y = ~transcript_rank,
+  #                         label = ~AStype),
   #                    data = AS_df, hjust = 'middle', vjust = 'top', size = 3)
   # }
   plot

@@ -78,7 +78,7 @@ buildCDS <- function(query, ref, fasta) {
 
   # define global variables
   coverage <- group_name <- strand <- width <- transcript_id <- NULL
-  group <- seqnames <- NULL
+  group <- seqnames <- phase <- NULL
 
   # get total query tx and prepare output
   totaltx <- nrow(query2ref)

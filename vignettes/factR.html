@@ -10,7 +10,7 @@
 
 <meta name="author" content="Fursham Hamid" />
 
-<meta name="date" content="2020-01-21" />
+<meta name="date" content="2020-01-23" />
 
 <title>Using factR</title>
 
@@ -118,7 +118,8 @@ $(document).ready(function () {
       <li><a href="#construct-query-cds-information"><span class="toc-section-number">6</span> Construct query CDS information</a></li>
       <li><a href="#extracting-protein-features-on-coding-transcripts"><span class="toc-section-number">7</span> Extracting protein features on coding transcripts</a></li>
       <li><a href="#predicting-nmd-inducing-features-on-coding-transcripts"><span class="toc-section-number">8</span> Predicting NMD-inducing features on coding transcripts</a></li>
-      <li><a href="#session-information"><span class="toc-section-number">9</span> Session Information</a></li>
+      <li><a href="#annotating-alternatively-spliced-segments-in-transcript-annotation"><span class="toc-section-number">9</span> Annotating alternatively-spliced segments in transcript annotation</a></li>
+      <li><a href="#session-information"><span class="toc-section-number">10</span> Session Information</a></li>
       </ul>
     </div>
 </div>
@@ -368,14 +369,14 @@ matched_query_gtf &lt;-<span class="st"> </span><span class="kw">matchGeneMeta</
 <span class="co"># inspect CDS entries</span>
 <span class="kw">head</span>(new_query_gtf[<span class="kw">mcols</span>(new_query_gtf)<span class="op">$</span>type <span class="op">==</span><span class="st"> &quot;CDS&quot;</span>])
 <span class="co">#&gt; GRanges object with 6 ranges and 8 metadata columns:</span>
-<span class="co">#&gt;       seqnames            ranges strand |     type transcript_id     gene_id old_gene_id match_level   gene_name    built_from     phase</span>
-<span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;factor&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;   &lt;numeric&gt; &lt;character&gt;   &lt;character&gt; &lt;numeric&gt;</span>
-<span class="co">#&gt;   [1]    chr10 79854714-79854721      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt; Full coverage      &lt;NA&gt;</span>
-<span class="co">#&gt;   [2]    chr10 79856504-79856534      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt; Full coverage      &lt;NA&gt;</span>
-<span class="co">#&gt;   [3]    chr10 79858752-79858824      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt; Full coverage      &lt;NA&gt;</span>
-<span class="co">#&gt;   [4]    chr10 79858952-79859271      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt; Full coverage      &lt;NA&gt;</span>
-<span class="co">#&gt;   [5]    chr10 79859352-79859522      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt; Full coverage      &lt;NA&gt;</span>
-<span class="co">#&gt;   [6]    chr10 79859602-79859712      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt; Full coverage      &lt;NA&gt;</span>
+<span class="co">#&gt;       seqnames            ranges strand |     type transcript_id     gene_id old_gene_id match_level   gene_name     phase    built_from</span>
+<span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;factor&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;   &lt;numeric&gt; &lt;character&gt; &lt;numeric&gt;   &lt;character&gt;</span>
+<span class="co">#&gt;   [1]    chr10 79854714-79854721      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         0 Full coverage</span>
+<span class="co">#&gt;   [2]    chr10 79856504-79856534      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         1 Full coverage</span>
+<span class="co">#&gt;   [3]    chr10 79858752-79858824      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         0 Full coverage</span>
+<span class="co">#&gt;   [4]    chr10 79858952-79859271      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         2 Full coverage</span>
+<span class="co">#&gt;   [5]    chr10 79859352-79859522      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         0 Full coverage</span>
+<span class="co">#&gt;   [6]    chr10 79859602-79859712      + |      CDS   transcript1        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         0 Full coverage</span>
 <span class="co">#&gt;   -------</span>
 <span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre></div>
 <p>User can visualize the coding structure of each transcripts using the plotGTFtranscripts tool, which is essentially a convenient wrapper to plot transcripts using the <em>wiggleplotr</em> package:</p>
@@ -468,6 +469,109 @@ mm10_gtf &lt;-<span class="st"> </span>ah[[<span class="st">'AH60127'</span>]]
 <span class="co">#&gt;   &lt;chr&gt;                       &lt;dbl&gt;          &lt;int&gt; &lt;chr&gt;                    &lt;dbl&gt; &lt;lgl&gt; </span>
 <span class="co">#&gt; 1 ENSMUST00000057343            364              3 &quot;69,286,364&quot;               644 TRUE  </span>
 <span class="co">#&gt; 2 ENSMUST00000095457           -130              0 &quot;&quot;                        1085 FALSE </span></code></pre></div>
+</div>
+<div id="annotating-alternatively-spliced-segments-in-transcript-annotation" class="section level1">
+<h1><span class="header-section-number">9</span> Annotating alternatively-spliced segments in transcript annotation</h1>
+<p>Alternative splicing is an ubiquitous post-transcriptional process that regulates the inclusion of exon segments. This results in the expression of two or more transcript isoforms in a gene family. Depending on the boundaries and position of the exon, alternative segments can be classified into at least one of eight classes; Casette Exon, First Exon, Last Exon, Spliced Donor, Spliced Acceptor, Retained Intron, Termination Start and Termination End.</p>
+<p>To find and annotate alternative-spliced segments within a GTF file, users can simply run <code>annotateAS</code>. This function accepts any GTF GRanges object with exon features and will return a GRanges object containing annotated alternative segments in a similar GTF format</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">annotateAS</span>(new_query_gtf)
+<span class="co">#&gt; GRanges object with 7 ranges and 4 metadata columns:</span>
+<span class="co">#&gt;       seqnames            ranges strand |               gene_id transcript_id        type      AStype</span>
+<span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="co">#&gt;   [1]    chr10 79858952-79859071      + | ENSMUSG00000006498.14   transcript1          AS          SA</span>
+<span class="co">#&gt;   [2]    chr10 79858952-79859071      + | ENSMUSG00000006498.14   transcript2          AS          SA</span>
+<span class="co">#&gt;   [3]    chr10 79858952-79859071      + | ENSMUSG00000006498.14   transcript3          AS          SA</span>
+<span class="co">#&gt;   [4]    chr10 79860117-79860194      + | ENSMUSG00000006498.14   transcript1          AS          CE</span>
+<span class="co">#&gt;   [5]    chr10 79862014-79862047      + | ENSMUSG00000006498.14   transcript1          AS          CE</span>
+<span class="co">#&gt;   [6]    chr10 79862014-79862047      + | ENSMUSG00000006498.14   transcript2          AS          CE</span>
+<span class="co">#&gt;   [7]    chr10 79862014-79862047      + | ENSMUSG00000006498.14   transcript4          AS          CE</span>
+<span class="co">#&gt;   -------</span>
+<span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre></div>
+<p><code>annotateAS</code> can analyze an entire transcript annotation accurately and rapidly.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># retrieve latest GRCm38 annotation from ensembl</span>
+ah &lt;-<span class="st"> </span><span class="kw">AnnotationHub</span>()
+mm10_gtf &lt;-<span class="st"> </span>ah[[<span class="st">'AH60127'</span>]]
+
+<span class="co"># annotate GRCm38 transcriptome</span>
+<span class="kw">system.time</span>({mm10_AS &lt;-<span class="st"> </span><span class="kw">annotateAS</span>(mm10_gtf)})
+<span class="co">#&gt;    user  system elapsed </span>
+<span class="co">#&gt;  21.352   0.076  21.427 </span>
+
+<span class="co"># inspect output</span>
+mm10_AS
+<span class="co">#&gt; GRanges object with 193519 ranges and 4 metadata columns:</span>
+<span class="co">#&gt;              seqnames              ranges strand |            gene_id      transcript_id        type      AStype</span>
+<span class="co">#&gt;                 &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; |        &lt;character&gt;        &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="co">#&gt;        [1] JH584294.1           3094-3166      + | ENSMUSG00000093828 ENSMUST00000177905          AS          FE</span>
+<span class="co">#&gt;        [2] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000096791          AS          CE</span>
+<span class="co">#&gt;        [3] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000071277          AS          CE</span>
+<span class="co">#&gt;        [4] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000179115          AS          CE</span>
+<span class="co">#&gt;        [5] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000178970          AS          CE</span>
+<span class="co">#&gt;        ...        ...                 ...    ... .                ...                ...         ...         ...</span>
+<span class="co">#&gt;   [193515]          1 195169702-195169801      - | ENSMUSG00000026616 ENSMUST00000210219          AS          CE</span>
+<span class="co">#&gt;   [193516]          1 195169702-195169801      - | ENSMUSG00000026616 ENSMUST00000043104          AS          CE</span>
+<span class="co">#&gt;   [193517]          1 195170645-195171170      - | ENSMUSG00000026616 ENSMUST00000195722          AS          LE</span>
+<span class="co">#&gt;   [193518]          1 195170991-195171170      - | ENSMUSG00000026616 ENSMUST00000210219          AS          CE</span>
+<span class="co">#&gt;   [193519]          1 195170991-195171168      - | ENSMUSG00000026616 ENSMUST00000043104          AS          FE</span>
+<span class="co">#&gt;   -------</span>
+<span class="co">#&gt;   seqinfo: 45 sequences from an unspecified genome; no seqlengths</span></code></pre></div>
+<p>Users who wish to compare alternative segments between two or more transcripts can run the <code>compareAS</code> function. In contrast to <code>annotateAS</code>, this function accepts two or more GRanges object, each containing exon features for a particular transcript. Alternatively, users can provide the list of transcript exon features as a GRangesList object</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># convert GTF GRanges into GRangesList of exons by transcript</span>
+txlist &lt;-<span class="st"> </span><span class="kw">split</span>(query_gtf[query_gtf<span class="op">$</span>type <span class="op">==</span><span class="st"> 'exon'</span>], <span class="op">~</span>transcript_id)
+<span class="kw">names</span>(txlist)
+<span class="co">#&gt; [1] &quot;transcript1&quot; &quot;transcript2&quot; &quot;transcript3&quot; &quot;transcript4&quot;</span>
+
+<span class="co"># Pair-wise transcript comparison</span>
+tx1 &lt;-<span class="st"> </span>txlist[[<span class="dv">1</span>]]
+tx2 &lt;-<span class="st"> </span>txlist[[<span class="dv">3</span>]]
+<span class="kw">compareAS</span>(tx1, tx2)
+<span class="co">#&gt; GRangesList object of length 1:</span>
+<span class="co">#&gt; $transcript1</span>
+<span class="co">#&gt; GRanges object with 2 ranges and 4 metadata columns:</span>
+<span class="co">#&gt;       seqnames            ranges strand |     gene_id transcript_id        type      AStype</span>
+<span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="co">#&gt;   [1]       10 79860117-79860194      + |       GeneA   transcript1          AS          CE</span>
+<span class="co">#&gt;   [2]       10 79862014-79862047      + |       GeneA   transcript1          AS          CE</span>
+<span class="co">#&gt;   -------</span>
+<span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+
+<span class="co"># Intralist comparison</span>
+<span class="kw">compareAS</span>(txlist)
+<span class="co">#&gt; GRangesList object of length 4:</span>
+<span class="co">#&gt; $transcript1</span>
+<span class="co">#&gt; GRanges object with 3 ranges and 4 metadata columns:</span>
+<span class="co">#&gt;       seqnames            ranges strand |     gene_id transcript_id        type      AStype</span>
+<span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="co">#&gt;   [1]       10 79858952-79859071      + |       GeneA   transcript1          AS          SA</span>
+<span class="co">#&gt;   [2]       10 79860117-79860194      + |       GeneA   transcript1          AS          CE</span>
+<span class="co">#&gt;   [3]       10 79862014-79862047      + |       GeneA   transcript1          AS          CE</span>
+<span class="co">#&gt;   -------</span>
+<span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $transcript2</span>
+<span class="co">#&gt; GRanges object with 2 ranges and 4 metadata columns:</span>
+<span class="co">#&gt;       seqnames            ranges strand |     gene_id transcript_id        type      AStype</span>
+<span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="co">#&gt;   [1]       10 79858952-79859071      + |       GeneA   transcript2          AS          SA</span>
+<span class="co">#&gt;   [2]       10 79862014-79862047      + |       GeneA   transcript2          AS          CE</span>
+<span class="co">#&gt;   -------</span>
+<span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $transcript3</span>
+<span class="co">#&gt; GRanges object with 1 range and 4 metadata columns:</span>
+<span class="co">#&gt;       seqnames            ranges strand |     gene_id transcript_id        type      AStype</span>
+<span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="co">#&gt;   [1]       10 79858952-79859071      + |       GeneA   transcript3          AS          SA</span>
+<span class="co">#&gt;   -------</span>
+<span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $transcript4</span>
+<span class="co">#&gt; GRanges object with 1 range and 4 metadata columns:</span>
+<span class="co">#&gt;       seqnames            ranges strand |     gene_id transcript_id        type      AStype</span>
+<span class="co">#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="co">#&gt;   [1]       10 79862014-79862047      + |       GeneA   transcript4          AS          CE</span>
+<span class="co">#&gt;   -------</span>
+<span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre></div>
 <!-- # Search coding transcripts for upstream and overlapping ORFs -->
 <!-- Coding transcripts with long 5' untranslated regions may contain multiple start codons. This may be recognized by ribosomes as an initiating site for translation and create additional upstream open-reading frame or overlapping open-reading frame with the cds. To test for presence of upstream or overlapping ORFs, we can run `searchuORFs` function using `query_exons`, `query_cds` and our fasta `Mmusculus` as inputs. -->
 <!-- ```{r testuorfs} -->
@@ -501,21 +605,9 @@ mm10_gtf &lt;-<span class="st"> </span>ah[[<span class="st">'AH60127'</span>]]
 <!-- # retest list for NMD features -->
 <!-- predictNMD(newquery_exons, newquery_cds) -->
 <!-- ``` -->
-<!-- # Compare and classify alternative segments between transcripts -->
-<!-- RNA transcripts commonly undergo alternative splicing to give rise to two or more isoforms. Each isoform may contain distinct segments that may ultimately affect the function of its translated protein. To compare and classify alternative segments between two transcripts, we can run the `compareAS` function that comes with factR. -->
-<!-- `compareAS` analyzes alternative spliced segments in two modes: pair-wise and intra-list. In pair-wise mode, we have to provide two GRanges objects for comparison. THe function will return a GRanges with segments included/skipped in the first transcript as compared to the second transcript -->
-<!-- ```{r compareAS1} -->
-<!-- # compare transcript1 to transcript2 -->
-<!-- compareAS(query_exons$transcript1, query_exons$transcript2) -->
-<!-- ``` -->
-<!-- In intralist mode, we can provide a GRangesList object containing exon coordinates for a set of transcripts. If a gene_id attribute is present as a metadata column, the function will group transcripts by its gene family and create transcript pairs for comparsion.  -->
-<!-- ```{r compareAS2} -->
-<!-- # compare transcript1 to transcript2 -->
-<!-- compareAS(query_exons) -->
-<!-- ``` -->
 </div>
 <div id="session-information" class="section level1">
-<h1><span class="header-section-number">9</span> Session Information</h1>
+<h1><span class="header-section-number">10</span> Session Information</h1>
 <p>All of the output in this vignette was produced under the following conditions:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()
 <span class="co">#&gt; R version 3.6.2 (2019-12-12)</span>
@@ -531,31 +623,31 @@ mm10_gtf &lt;-<span class="st"> </span>ah[[<span class="st">'AH60127'</span>]]
 <span class="co">#&gt;  [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                  LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; attached base packages:</span>
-<span class="co">#&gt; [1] stats4    parallel  stats     graphics  grDevices utils     datasets  methods   base     </span>
+<span class="co">#&gt; [1] parallel  stats4    stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
 <span class="co">#&gt;  [1] dplyr_0.8.3                        GenomicFeatures_1.38.0             AnnotationDbi_1.48.0               Biobase_2.46.0                     wiggleplotr_1.10.1                </span>
-<span class="co">#&gt;  [6] factR_0.0.0.9000                   BSgenome.Mmusculus.UCSC.mm10_1.4.0 AnnotationHub_2.18.0               BiocFileCache_1.10.2               dbplyr_1.4.2                      </span>
-<span class="co">#&gt; [11] testthat_2.3.1                     BSgenome_1.54.0                    rtracklayer_1.46.0                 Biostrings_2.54.0                  XVector_0.26.0                    </span>
+<span class="co">#&gt;  [6] AnnotationHub_2.18.0               BiocFileCache_1.10.2               dbplyr_1.4.2                       factR_0.0.0.9000                   BSgenome.Mmusculus.UCSC.mm10_1.4.0</span>
+<span class="co">#&gt; [11] BSgenome_1.54.0                    rtracklayer_1.46.0                 Biostrings_2.54.0                  XVector_0.26.0                     testthat_2.3.1                    </span>
 <span class="co">#&gt; [16] GenomicRanges_1.38.0               GenomeInfoDb_1.22.0                IRanges_2.20.1                     S4Vectors_0.24.1                   BiocGenerics_0.32.0               </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
 <span class="co">#&gt;  [1] backports_1.1.5               plyr_1.8.5                    lazyeval_0.2.2                BiocParallel_1.20.1           usethis_1.5.1                </span>
-<span class="co">#&gt;  [6] ggplot2_3.2.1                 digest_0.6.23                 htmltools_0.4.0               fansi_0.4.0                   magrittr_1.5                 </span>
+<span class="co">#&gt;  [6] ggplot2_3.2.1                 digest_0.6.23                 htmltools_0.4.0               fansi_0.4.1                   magrittr_1.5                 </span>
 <span class="co">#&gt; [11] memoise_1.1.0                 remotes_2.1.0                 matrixStats_0.55.0            askpass_1.1                   rmdformats_0.3.6             </span>
-<span class="co">#&gt; [16] prettyunits_1.0.2             colorspace_1.4-1              blob_1.2.0                    rappdirs_0.3.1                xfun_0.11                    </span>
-<span class="co">#&gt; [21] callr_3.4.0                   crayon_1.3.4                  RCurl_1.95-4.12               roxygen2_7.0.2                zeallot_0.1.0                </span>
+<span class="co">#&gt; [16] prettyunits_1.1.0             colorspace_1.4-1              blob_1.2.1                    rappdirs_0.3.1                xfun_0.11                    </span>
+<span class="co">#&gt; [21] callr_3.4.0                   crayon_1.3.4                  RCurl_1.98-1.1                roxygen2_7.0.2                zeallot_0.1.0                </span>
 <span class="co">#&gt; [26] glue_1.3.1                    gtable_0.3.0                  zlibbioc_1.32.0               seqinr_3.6-1                  DelayedArray_0.12.1          </span>
-<span class="co">#&gt; [31] pkgbuild_1.0.6                scales_1.1.0                  DBI_1.1.0                     bio3d_2.4-0                   Rcpp_1.0.3                   </span>
-<span class="co">#&gt; [36] xtable_1.8-4                  progress_1.2.2                bit_1.1-14                    httr_1.4.1                    ellipsis_0.3.0               </span>
-<span class="co">#&gt; [41] pkgconfig_2.0.3               XML_3.98-1.20                 farver_2.0.1                  utf8_1.1.4                    tidyselect_0.2.5             </span>
-<span class="co">#&gt; [46] labeling_0.3                  rlang_0.4.2                   reshape2_1.4.3                later_1.0.0                   munsell_0.5.0                </span>
-<span class="co">#&gt; [51] BiocVersion_3.10.1            tools_3.6.2                   cli_2.0.0                     RSQLite_2.1.5                 ade4_1.7-13                  </span>
-<span class="co">#&gt; [56] devtools_2.2.1                evaluate_0.14                 stringr_1.4.0                 fastmap_1.0.1                 yaml_2.2.0                   </span>
-<span class="co">#&gt; [61] processx_3.4.1                knitr_1.26                    bit64_0.9-7                   fs_1.3.1                      purrr_0.3.3                  </span>
-<span class="co">#&gt; [66] mime_0.8                      xml2_1.2.2                    biomaRt_2.42.0                compiler_3.6.2                rstudioapi_0.10              </span>
-<span class="co">#&gt; [71] curl_4.3                      interactiveDisplayBase_1.24.0 tibble_2.1.3                  stringi_1.4.3                 ps_1.3.0                     </span>
-<span class="co">#&gt;  [ reached getOption(&quot;max.print&quot;) -- omitted 30 entries ]</span></code></pre></div>
+<span class="co">#&gt; [31] pkgbuild_1.0.6                scales_1.1.0                  DBI_1.1.0                     bio3d_2.4-1                   Rcpp_1.0.3                   </span>
+<span class="co">#&gt; [36] xtable_1.8-4                  progress_1.2.2                bit_1.1-15.1                  xopen_1.0.0                   httr_1.4.1                   </span>
+<span class="co">#&gt; [41] ellipsis_0.3.0                pkgconfig_2.0.3               XML_3.99-0.3                  farver_2.0.3                  utf8_1.1.4                   </span>
+<span class="co">#&gt; [46] tidyselect_0.2.5              labeling_0.3                  rlang_0.4.2                   reshape2_1.4.3                later_1.0.0                  </span>
+<span class="co">#&gt; [51] munsell_0.5.0                 BiocVersion_3.10.1            tools_3.6.2                   cli_2.0.1                     RSQLite_2.2.0                </span>
+<span class="co">#&gt; [56] ade4_1.7-13                   devtools_2.2.1                evaluate_0.14                 stringr_1.4.0                 fastmap_1.0.1                </span>
+<span class="co">#&gt; [61] yaml_2.2.0                    processx_3.4.1                knitr_1.26                    bit64_0.9-7                   fs_1.3.1                     </span>
+<span class="co">#&gt; [66] purrr_0.3.3                   mime_0.8                      xml2_1.2.2                    biomaRt_2.42.0                compiler_3.6.2               </span>
+<span class="co">#&gt; [71] rstudioapi_0.10               curl_4.3                      interactiveDisplayBase_1.24.0 tibble_2.1.3                  stringi_1.4.5                </span>
+<span class="co">#&gt;  [ reached getOption(&quot;max.print&quot;) -- omitted 32 entries ]</span></code></pre></div>
 </div>
 </div>
 
@@ -564,7 +656,7 @@ mm10_gtf &lt;-<span class="st"> </span>ah[[<span class="st">'AH60127'</span>]]
 
 <div id="postamble" data-toggle="wy-nav-shift" class="status">
 <p class="author"><span class="glyphicon glyphicon-user"></span> Fursham Hamid</p>
-<p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-01-21</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-01-23</p>
 </div>
 
 

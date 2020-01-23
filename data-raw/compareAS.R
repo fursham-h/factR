@@ -43,11 +43,11 @@ compareAS <- function(exons, ..., groupings = NULL) {
   . <- AS.type <- AS.direction <- NULL
 
   argnames <- as.character(match.call())[-1]
-  
+
   if (is(exons, "GRanges")) {
-    if (!'transcript_id' %in% names(S4Vectors::mcols(exons))) {
-      exons$transcript_id <- 'transcript0'
-    } 
+    if (!"transcript_id" %in% names(S4Vectors::mcols(exons))) {
+      exons$transcript_id <- "transcript0"
+    }
     exons <- S4Vectors::split(exons, ~transcript_id)
   }
   if (!is(exons, "GRangesList")) {
@@ -62,8 +62,10 @@ compareAS <- function(exons, ..., groupings = NULL) {
     #   rlang::warn("Multiple comparisons is not yet supported in pair-wise mode. First item in ... used")
     # }
     dots <- list(...)
-    newdots <- dots[unlist(lapply(dots, function(x){is(x,"GRanges")}))]
-    
+    newdots <- dots[unlist(lapply(dots, function(x) {
+      is(x, "GRanges")
+    }))]
+
     if (length(newdots) == 0) {
       # return warning and proceed to intra-list mode
     } else {
@@ -71,17 +73,17 @@ compareAS <- function(exons, ..., groupings = NULL) {
         # return warning for elements which are not GRanges
       }
       newdots <- as(newdots, "GRangesList")
-      
+
       newdotsmeta <- newdots %>% as.data.frame()
-      if (!'transcript_id' %in% names(newdotsmeta)) {
-        names(newdots) <- paste0('transcript', as.character(c(1:length(newdots))))
+      if (!"transcript_id" %in% names(newdotsmeta)) {
+        names(newdots) <- paste0("transcript", as.character(c(1:length(newdots))))
       } else {
         newdots <- newdots %>%
           as.data.frame() %>%
-          dplyr::mutate(transcript_id = ifelse(is.na(transcript_id), paste0('transcript',group), transcript_id)) %>%
+          dplyr::mutate(transcript_id = ifelse(is.na(transcript_id), paste0("transcript", group), transcript_id)) %>%
           dplyr::mutate(group_name = transcript_id) %>%
           dplyr::select(-group) %>%
-          GenomicRanges::makeGRangesListFromDataFrame(split.field = 'group_name', keep.extra.columns = T)
+          GenomicRanges::makeGRangesListFromDataFrame(split.field = "group_name", keep.extra.columns = T)
       }
     }
     exons <- c(exons, newdots)
@@ -89,11 +91,11 @@ compareAS <- function(exons, ..., groupings = NULL) {
 
   return(.runAS(exons))
 }
-  
-  
-  
-#     
-# 
+
+
+
+#
+#
 #     tx2 <- list(...)[[1]]
 #     if (!is(tx2, "GRanges")) {
 #       # escape out and carry out intra-list comparisons
@@ -118,13 +120,13 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #           ))
 #         }
 #       }
-# 
+#
 #       return(getAS_(exons, tx2))
 #     }
 #   }
-# 
+#
 #   # run intraList comparison
-# 
+#
 #   # check for exons object type
 #   if (is(exons, "GRanges")) {
 #     rlang::abort(sprintf(
@@ -132,7 +134,7 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #       argnames[[1]]
 #     ))
 #   }
-# 
+#
 #   # check for >1 items in list
 #   if (length(exons) == 1) {
 #     rlang::abort(sprintf(
@@ -140,13 +142,13 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #       argnames[[1]]
 #     ))
 #   }
-# 
+#
 #   # prepare comparison df based on groupings/metadata
 #   if (!is.null(groupings)) {
 #     # get header names and prepare comparisons
 #     groupname <- names(groupings)[1]
 #     names(groupings) <- c(groupname, "tx.id")
-# 
+#
 #     if (any(!groupings[[2]] %in% names(exons))) {
 #       missing <- sum(!groupings[[2]] %in% names(exons))
 #       groupings <- groupings %>%
@@ -160,7 +162,7 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #       groupings <- dplyr::distinct(groupings)
 #       rlang::warn(sprintf("Duplicate ids in `%s` were removed", tail(argnames, 1)))
 #     }
-# 
+#
 #     groupings <- groupings %>%
 #       dplyr::group_by(!!as.symbol(groupname)) %>%
 #       dplyr::mutate(index = dplyr::row_number()) %>%
@@ -172,9 +174,9 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #   } else {
 #     # check for metadata. error out if missing gene_id metadata
 #     if (is.null(unlist(exons)$gene_id)) {
-#       msg <- "Unable to create comparison list as `gene_id` attribute is missing from `%s`. 
+#       msg <- "Unable to create comparison list as `gene_id` attribute is missing from `%s`.
 #       Please provide `groupings` df"
-# 
+#
 #       rlang::abort(sprintf(msg, argnames[[1]]))
 #     } else {
 #       tmp.exons <- unlist(exons)
@@ -190,7 +192,7 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #     }
 #   }
 #   # run getAS analysis based on comparisons
-# 
+#
 #   # create CDS list for all remaining tx
 #   out <- BiocParallel::bpmapply(function(x, y) {
 #     ASreport <- getAS_(exons[[x]], exons[[y]]) %>%
@@ -215,7 +217,7 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #   out <- groupings %>%
 #     dplyr::select(tx.id, compare.to) %>%
 #     dplyr::left_join(out, by = c("tx.id", "compare.to"))
-# 
+#
 #   # add mirror analysis
 #   out <- out %>%
 #     dplyr::select(tx.id = compare.to, compare.to = tx.id, coord:AS.direction) %>%
@@ -230,40 +232,40 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #       tx.id, compare.to,
 #       ifelse(strand == "-", dplyr::desc(coord), coord)
 #     )
-# 
+#
 #   return(out)
 # }
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
 # getAS_ <- function(tx1, tx2) {
-# 
+#
 #   # define global variables
 #   revmap <- type <- upcoord <- downcoord <- downdiff <- NULL
 #   AS.type <- updiff <- countersource <- sourcedown <- NULL
 #   sourceup <- seqnames <- NULL
-# 
+#
 #   # get information on transcripts
 #   tx1index <- c(1:length(tx1))
 #   tx2index <- c((length(tx1) + 1):(length(tx1) + length(tx2)))
 #   strand <- BiocGenerics::strand(tx1)[1] %>% as.character()
-# 
+#
 #   # combine transcripts and disjoin
 #   disjoint <- suppressWarnings(BiocGenerics::append(tx1, tx2) %>%
 #     GenomicRanges::disjoin(with.revmap = T))
-# 
+#
 #   # return if tx do not have common segments
 #   if (length(disjoint) == tail(tx2index, 1)) {
 #     return(NULL)
 #   }
-# 
+#
 #   # annotate position of alt segments
 #   disjoint <- disjoint %>%
 #     as.data.frame() %>%
 #     dplyr::mutate(type = ifelse(lengths(revmap) == 2, "cons", "alt"))
-# 
+#
 #   # return NULL GRanges if there is no alternative segments
 #   if (!"alt" %in% disjoint$type) {
 #     return(NULL)
@@ -272,12 +274,12 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #   if (constartindex > 1) {
 #     disjoint[1:constartindex - 1, ]$type <- "up"
 #   }
-# 
+#
 #   conslastindex <- max(which(disjoint$type == "cons"))
 #   if (conslastindex < nrow(disjoint)) {
 #     disjoint[(conslastindex + 1):nrow(disjoint), ]$type <- "down"
 #   }
-# 
+#
 #   # prepare dataframe for classifcation
 #   disjoint <- disjoint %>%
 #     dplyr::mutate(source = ifelse(type != "cons" & revmap %in% tx1index, 1, 0)) %>%
@@ -286,7 +288,7 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #     dplyr::mutate(sourcedown = dplyr::lag(source, default = 0), sourceup = dplyr::lead(source, default = 0)) %>%
 #     dplyr::mutate(upcoord = dplyr::lag(end, default = .data$start[1]), downcoord = dplyr::lead(start, default = .data$end[dplyr::n()])) %>%
 #     dplyr::mutate(updiff = start - upcoord, downdiff = downcoord - end)
-# 
+#
 #   # classify AS based on features
 #   disjoint <- disjoint %>%
 #     dplyr::filter(type != "cons") %>%
@@ -300,14 +302,14 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #     dplyr::mutate(AS.type = ifelse(type == "alt" & updiff > 1 & downdiff == 1, "SA", AS.type)) %>%
 #     dplyr::mutate(AS.type = ifelse(type == "alt" & updiff > 1 & downdiff > 1 & (countersource %in% c(sourcedown, sourceup)), "ME", AS.type)) %>%
 #     dplyr::mutate(AS.type = ifelse(type == "alt" & updiff > 1 & downdiff > 1 & (!countersource %in% c(sourcedown, sourceup)), "CE", AS.type))
-# 
+#
 #   # convert from alternative first exon to alternative (e.g.) if Ranges is on the neg strand
 #   if (strand == "-") {
 #     disjoint <- disjoint %>%
 #       dplyr::mutate(AS.type = chartr("DAFLtspa", "ADLFpats", AS.type)) %>%
 #       dplyr::arrange(dplyr::desc(start))
 #   }
-# 
+#
 #   # convert cases depending on whether segment is found in tx1 or tx2
 #   # return as GRanges
 #   disjoint <- disjoint %>%
@@ -317,7 +319,5 @@ compareAS <- function(exons, ..., groupings = NULL) {
 #     GenomicRanges::makeGRangesListFromDataFrame(split.field = "source", keep.extra.columns = T)
 #   return(disjoint)
 # }
-# 
-# 
-
-
+#
+#

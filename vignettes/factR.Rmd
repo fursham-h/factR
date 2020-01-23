@@ -363,6 +363,70 @@ predictNMD(mm10_gtf, gene_name == 'Ptbp1', transcript_id == c('ENSMUST0000005734
 #> 2 ENSMUST00000095457           -130              0 ""                        1085 FALSE 
 ```
 
+
+# Annotating alternatively-spliced segments in transcript annotation
+
+Alternative splicing is an ubiquitous post-transcriptional process that regulates the inclusion of exon segments. This results in the expression of two or more transcript isoforms in a gene family. Depending on the boundaries and position of the exon, alternative segments can be classified into at least one of eight classes; Casette Exon, First Exon, Last Exon, Spliced Donor, Spliced Acceptor, Retained Intron, Termination Start and Termination End. 
+
+To find and annotate alternative-spliced segments within a GTF file, users can simply run `annotateAS`. This function accepts any GTF GRanges object with exon features and will return a GRanges object containing annotated alternative segments in a similar GTF format
+```{r annotateAS}
+annotateAS(new_query_gtf)
+```
+
+
+`annotateAS` can analyze an entire transcript annotation accurately and rapidly.
+```{r annotateASmm10, eval = FALSE}
+# retrieve latest GRCm38 annotation from ensembl
+ah <- AnnotationHub()
+mm10_gtf <- ah[['AH60127']]
+
+# annotate GRCm38 transcriptome
+system.time({mm10_AS <- annotateAS(mm10_gtf)})
+#>    user  system elapsed 
+#>  21.352   0.076  21.427 
+
+# inspect output
+mm10_AS
+#> GRanges object with 193519 ranges and 4 metadata columns:
+#>              seqnames              ranges strand |            gene_id      transcript_id        type      AStype
+#>                 <Rle>           <IRanges>  <Rle> |        <character>        <character> <character> <character>
+#>        [1] JH584294.1           3094-3166      + | ENSMUSG00000093828 ENSMUST00000177905          AS          FE
+#>        [2] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000096791          AS          CE
+#>        [3] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000071277          AS          CE
+#>        [4] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000179115          AS          CE
+#>        [5] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000178970          AS          CE
+#>        ...        ...                 ...    ... .                ...                ...         ...         ...
+#>   [193515]          1 195169702-195169801      - | ENSMUSG00000026616 ENSMUST00000210219          AS          CE
+#>   [193516]          1 195169702-195169801      - | ENSMUSG00000026616 ENSMUST00000043104          AS          CE
+#>   [193517]          1 195170645-195171170      - | ENSMUSG00000026616 ENSMUST00000195722          AS          LE
+#>   [193518]          1 195170991-195171170      - | ENSMUSG00000026616 ENSMUST00000210219          AS          CE
+#>   [193519]          1 195170991-195171168      - | ENSMUSG00000026616 ENSMUST00000043104          AS          FE
+#>   -------
+#>   seqinfo: 45 sequences from an unspecified genome; no seqlengths
+```
+
+
+
+Users who wish to compare alternative segments between two or more transcripts can run the `compareAS` function. In contrast to `annotateAS`, this function accepts two or more GRanges object, each containing exon features for a particular transcript. Alternatively, users can provide the list of transcript exon features as a GRangesList object
+```{r compareAS}
+# convert GTF GRanges into GRangesList of exons by transcript
+txlist <- split(query_gtf[query_gtf$type == 'exon'], ~transcript_id)
+names(txlist)
+
+# Pair-wise transcript comparison
+tx1 <- txlist[[1]]
+tx2 <- txlist[[3]]
+compareAS(tx1, tx2)
+
+# Intralist comparison
+compareAS(txlist)
+
+
+```
+
+
+
+
 <!-- # Search coding transcripts for upstream and overlapping ORFs -->
 
 <!-- Coding transcripts with long 5' untranslated regions may contain multiple start codons. This may be recognized by ribosomes as an initiating site for translation and create additional upstream open-reading frame or overlapping open-reading frame with the cds. To test for presence of upstream or overlapping ORFs, we can run `searchuORFs` function using `query_exons`, `query_cds` and our fasta `Mmusculus` as inputs. -->
@@ -412,24 +476,6 @@ predictNMD(mm10_gtf, gene_name == 'Ptbp1', transcript_id == c('ENSMUST0000005734
 
 <!-- ``` -->
 
-
-<!-- # Compare and classify alternative segments between transcripts -->
-
-<!-- RNA transcripts commonly undergo alternative splicing to give rise to two or more isoforms. Each isoform may contain distinct segments that may ultimately affect the function of its translated protein. To compare and classify alternative segments between two transcripts, we can run the `compareAS` function that comes with factR. -->
-
-<!-- `compareAS` analyzes alternative spliced segments in two modes: pair-wise and intra-list. In pair-wise mode, we have to provide two GRanges objects for comparison. THe function will return a GRanges with segments included/skipped in the first transcript as compared to the second transcript -->
-<!-- ```{r compareAS1} -->
-<!-- # compare transcript1 to transcript2 -->
-<!-- compareAS(query_exons$transcript1, query_exons$transcript2) -->
-
-<!-- ``` -->
-
-<!-- In intralist mode, we can provide a GRangesList object containing exon coordinates for a set of transcripts. If a gene_id attribute is present as a metadata column, the function will group transcripts by its gene family and create transcript pairs for comparsion.  -->
-<!-- ```{r compareAS2} -->
-<!-- # compare transcript1 to transcript2 -->
-<!-- compareAS(query_exons) -->
-
-<!-- ``` -->
 
 
 # Session Information

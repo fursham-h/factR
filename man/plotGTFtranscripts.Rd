@@ -11,7 +11,7 @@ plotGTFtranscripts(x, ..., rescale_introns = F)
 
 \item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
 Variables are metadata information found in `x` and multiple conditions can be
-provided delimited by comma. Example: transcript_id == "transcript1"}
+provided delimited by comma. Example: gene_name == "Ptbp1"}
 
 \item{rescale_introns}{Specifies if the introns should be scaled to fixed length or not. (default: FALSE)}
 }
