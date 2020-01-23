@@ -103,7 +103,7 @@ buildCDS <- function(query, ref, fasta) {
       dplyr::arrange(ifelse(strand == "-", dplyr::desc(start), start)) %>%
       dplyr::mutate(phase = rev(cumsum(rev(width) %% 3) %% 3)) %>%
       dplyr::ungroup() %>%
-      dplyr::select(seqnames:transcript_id) %>%
+      dplyr::select(seqnames:phase) %>%
       dplyr::mutate(built_from = "Full coverage")
   }
 
