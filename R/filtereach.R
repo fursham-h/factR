@@ -1,4 +1,3 @@
-
 filtereach <- function(x, ...) {
   group <- NULL
   stopifnot(is(x, "GRangesList"))

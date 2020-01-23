@@ -20,7 +20,7 @@ annotateAS <- function(x, as.data.frame = FALSE, append = FALSE) {
   if (as.data.frame) {
     return(annotatedAS %>% as.data.frame() %>%
       dplyr::mutate(coord = paste0(seqnames, ':', start, '-', end)) %>%
-      dplyr::select(transcript_id, coord, AStype))
+      dplyr::select(gene_id, transcript_id, coord, AStype))
   } else if (append) {
     return(c(x, annotatedAS))
   } else {
@@ -116,7 +116,9 @@ compareAS <- function(exons, ...) {
     }
     exons <- c(exons, newdots)
   }
-
+  if (!'gene_id' %in% names(S4Vectors::mcols(unlist(exons)))) {
+    exons <- mutateeach(exons, gene_id = 'NA')
+  }
   return(S4Vectors::split(.runAS(exons), ~transcript_id))
 }
 
@@ -141,7 +143,7 @@ compareAS <- function(exons, ...) {
     dplyr::mutate(pos = dplyr::row_number()) %>% 
     dplyr::mutate(pos = ifelse(pos == 1, 'First', pos)) %>%
     dplyr::mutate(pos = ifelse(pos == dplyr::n(), 'Last', pos)) %>%
-    dplyr::select(seqnames, start, end, strand, transcript_id, pos) %>%
+    dplyr::select(seqnames, start, end, strand, gene_id, transcript_id, pos) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
   
   # get reduced intron boundaries
@@ -157,12 +159,12 @@ compareAS <- function(exons, ...) {
     dplyr::mutate(AStype = 'CE') %>%
     dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & !first.pos %in% c('First','Last'), 'SD', AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & !first.pos %in% c('First','Last'), 'SA', AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & first.pos %in% c('First','Last'), 'LE', AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & first.pos %in% c('First','Last'), 'FE', AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & first.pos %in% c('First','Last'), 'Te', AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & first.pos %in% c('First','Last'), 'Ts', AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end > second.end, 'RI', AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end < second.end & first.pos == 'First', 'FE', AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end < second.end & first.pos == 'Last', 'LE', AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.strand == '-', chartr("DAFL", "ADLF", AStype), AStype))
+    dplyr::mutate(AStype = ifelse(first.X.strand == '-', chartr("DAFLes", "ADLFse", AStype), AStype))
   
   # get segments that fall within intron and annotate that segment
   altexons <- GenomicRanges::pintersect(altexons)
@@ -171,7 +173,7 @@ compareAS <- function(exons, ...) {
     return(altexons)
   } else {
     altexons$type <- 'AS'
-    altexons$AStype <- altannotate$AStype
+    altexons$AStype <- toupper(altannotate$AStype)
     altexons$pos <- altexons$hit <- NULL
     
     return(altexons)
