@@ -86,7 +86,8 @@ compareAS <- function(exons, ..., groupings = NULL) {
     }
     exons <- c(exons, newdots)
   }
-  return(.annotate(exons))
+
+  return(.runAS(exons))
 }
   
   
