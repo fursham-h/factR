@@ -18,7 +18,7 @@
 #'
 matchSeqLevels <- function(x, to) {
   suppressWarnings(
-    if (any(!seqlevelsStyle(x) %in% seqlevelsStyle(to))) {
+    if (any(!GenomeInfoDb::seqlevels(x) %in% GenomeInfoDb::seqlevels(to))){
       newStyle <- mapSeqlevels(seqlevels(x), (seqlevelsStyle(to)[1]))
       newStyle <- newStyle[!is.na(newStyle)]
       x <- renameSeqlevels(x, newStyle)
