@@ -1,6 +1,6 @@
 # factR
 
-factR is a robust and easy-to-use R package with tools to post-process custom-assembled transcripts (GTF/GFF3)
+factR is a robust and easy-to-use R package with tools to process custom-assembled transcripts (GTF)
 
 ## Features
 * Core features 
@@ -30,7 +30,7 @@ devtools::install_github("fursham-h/factR")
     * Import of genomic fasta file
 
 ## Getting started
-See [vignette](https://htmlpreview.github.io/?https://github.com/fursham-h/factR/blob/master/vignettes/factR.html) for full instructions on how to make the most of your assembled transcripts
+See [vignette](https://htmlpreview.github.io/?https://github.com/fursham-h/factR/blob/master/vignettes/factR.html) for full instructions on how to get started
 
 ## Acknowledgements
 * [Kaur Alasoo](https://github.com/kauralasoo)

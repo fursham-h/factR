@@ -21,6 +21,49 @@ GRanges object or data-frame containing alternative-spliced segments found in x
 \description{
 Annotate alternative-spliced segments from a GTF annotation
 }
+\examples{
+
+## ---------------------------------------------------------------------
+## EXAMPLE USING TOY DATASET
+## ---------------------------------------------------------------------
+require(GenomicRanges)
+
+## Create toy GRanges GTF object
+gr <- GRanges("chr1", IRanges(start = c(1, 101, 1, 51, 101), width=c(20,20,20,10,20)), '+', 
+              type = 'exon', gene_id = 'geneA', 
+              transcript_id = Rle(c('transcript1', 'transcript2'), lengths = c(2,3)))
+              
+## Annotate alternative segments
+annotateAS(gr)
+
+## ---------------------------------------------------------------------
+## EXAMPLE USING SAMPLE DATASET
+## ---------------------------------------------------------------------
+## Using GTF GRanges as input
+annotateAS(query_gtf)
+
+## Output as dataframe
+annotateAS(query_gtf, as.data.frame = TRUE)
+
+## Append AS info to input
+annotateAS(query_gtf, append = TRUE)
+
+## ---------------------------------------------------------------------
+## EXAMPLE USING TRANSCRIPT ANNOTATION DATABASE
+## ---------------------------------------------------------------------
+\dontrun{
+library(AnnotationHub)
+
+## Retrieve GRCm38 trancript annotation
+ah <- AnnotationHub()
+GRCm38_gtf <- ah[['AH60127']]
+
+## Run tool on specific gene family
+annotateAS(GRCm38_gtf)
+
+}
+
+}
 \author{
 Fursham Hamid
 }

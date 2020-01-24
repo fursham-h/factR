@@ -22,6 +22,39 @@ in comparison.
 \description{
 Compare and classify alternative spliced segments between two or more transcripts
 }
+\examples{
+## ---------------------------------------------------------------------
+## EXAMPLE USING TOY DATASET
+## ---------------------------------------------------------------------
+require(GenomicRanges)
+
+## Create toy GRanges GTF object
+gr1 <- GRanges("chr1", IRanges(start = c(1,101), width=c(20,20)), '+')
+gr2 <- GRanges("chr1", IRanges(start = c(1,51,101), width=c(20,10,20)), '+')
+
+## Pairwise comparison between GRanges object
+compareAS(gr1, gr2)
+
+## Multiple comparisons can be done by providing more GRanges input
+gr3 <- GRanges("chr1", IRanges(start = c(1,91), width=c(20,30)), '+')
+compareAS(gr1, gr2, gr3)
+
+## GRangesList containing exons per transcript can be given as input
+grl <- GRangesList(list(gr1,gr2,gr3))
+compareAS(grl)
+
+
+## ---------------------------------------------------------------------
+## EXAMPLE USING SAMPLE DATASET
+## ---------------------------------------------------------------------
+## Using GRangesList as input
+compareAS(query_exons)
+
+## Compare AS between individual GRanges object
+compareAS(query_exons[[1]], query_exons[[3]])
+
+
+}
 \author{
 Fursham Hamid
 }

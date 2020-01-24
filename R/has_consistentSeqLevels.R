@@ -15,6 +15,29 @@
 #' @importFrom stats dist end start
 #' @importFrom utils head tail
 #' @importFrom rlang .data
+#' 
+#' @examples 
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING TOY DATASET
+#' ## ---------------------------------------------------------------------
+#' require(GenomicRanges)
+#' 
+#' ## Create toy GTF objects
+#' gr1 <- GRanges("1", IRanges(start = c(1,101), width=c(20,20)), '+')
+#' gr2 <- GRanges("chr1", IRanges(start = c(1,101), width=c(20,20)), '+')
+#' 
+#' ## Test for seqlevels consistency
+#' has_consistentSeqlevels(gr1, gr2)
+#' 
+#' ## Input can be Biostrings object with seqlevels
+#' x0 <- c("CTCACCAGTAT", "TGTCAGTCGA")
+#' dna <- Biostrings::DNAStringSet(x0)
+#' seqlevels(dna) <- c("chr1", "chr2")
+#' 
+#' ## Test for seqlevels consistency
+#' has_consistentSeqlevels(gr1, dna)
+#' has_consistentSeqlevels(gr2, dna)
+#' 
 has_consistentSeqlevels <- function(...) {
   dots <- list(...)
   argnames <- as.character(match.call())[-1]

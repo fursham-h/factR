@@ -17,12 +17,26 @@
 #'
 #' query_gtf data which have been corrected for its seqlevels and gene_ids
 #'
-#' @format A GRanges object with 56 ranges and 3 metadata columns:
+#' @format A GRanges object with 56 ranges and 6 metadata columns:
 #' \describe{
 #'   \item{element}{Exon start and end coordinates from 4 transcripts}
 #'   ...
 #' }
 "matched_query_gtf"
+
+#' Query data containing CDS information
+#'
+#' matched_query_gtf data that has undergone buildCDS function and containing
+#' CDS features
+#'
+#' @format A GRanges object with 105 ranges and 8 metadata columns:
+#' \describe{
+#'   \item{element}{Exon start and end coordinates from 4 transcripts}
+#'   \item{element}{CDS start and end coordinates from 4 transcripts}
+#'   ...
+#' }
+"new_query_gtf"
+
 
 #' Exons from 4 transcripts entries of the same gene
 #'

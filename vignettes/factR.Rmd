@@ -26,16 +26,17 @@ knitr::opts_knit$set(width=75)
 ```{r silentload, include=FALSE}
 #Silent load all dependencies for vignette
 library(factR)
+library(AnnotationHub)
+library(Biostrings)
 library(BSgenome.Mmusculus.UCSC.mm10)
-library(wiggleplotr)
 library(GenomicFeatures)
-library(dplyr)
+library(rtracklayer)
 ```
 
 # Introduction
-High throughput RNA sequencing experiments have been very useful in the discovery of many new RNA species. Current pipelines that processes these sequencing data usually involve aligning the reads to a genome and assembling contiguous reads into a transcript architectures. With the assembled transcripts, one may quantify the relative number of reads mapped to the list of genes/transcripts and determine differentially expressed gene/transcripts between conditions. However, these assembled transcripts commonly do not contain information on its coding potential and thus inferring its function can be a difficult task.
+High throughput RNA sequencing experiments have allowed the discovery of many new RNA species. Current bioinformatic pipelines typically involve aligning these sequencing reads to the genome and assembling contiguous reads into transcript architectures. This will output full descriptions of transcript and exon coordinates in Gene Transfer Format (GTF). Further analyses including differential transcript expression can be performed with these custom-assembled transcript information. Despite having rich details on transcript architectures, these custom-assembled transcripts lack functional information including coding potential. 
 
-Here, we developed a program with tools to Functionally Annotate Custom-assembled Transcripts in R (factR). At its core, factR will construct CDS coordinates for assembled transcriptomes with the guide of a reference annotation. With this newly-built coding information, users may utilise factR to query transcripts for protein-coding features as well as NMD-inducing features. 
+To this end, we developed a program with tools to Functionally Annotate Custom-assembled Transcripts in R (*factR*). At its core, *factR* will construct CDS features for assembled transcriptomes using a reference annotation as guide. With this newly-built coding information, we may then query transcripts for protein domain features, for nonsense-mediated decay inducing features and for upstream open-reading frames. *factR* also contain tools to annotate alternative segments between transcripts, to auto-fill gene metadata and other tools to visualize particular transcript families from a GTF file.
 
 
 # Getting started
@@ -43,18 +44,16 @@ Here, we developed a program with tools to Functionally Annotate Custom-assemble
 To run the code examples shown in this vignette, we need to load the following packages:
 ```{r load.dep.workflow, eval = FALSE}
 library(factR)
-library(BSgenome.Mmusculus.UCSC.mm10)
-library(wiggleplotr)
-library(GenomicFeatures)
-library(dplyr)
-library(rtracklayer)
 library(AnnotationHub)
 library(Biostrings)
+library(BSgenome.Mmusculus.UCSC.mm10)
+library(GenomicFeatures)
+library(rtracklayer)
 ```
 
 
 ## How to install
-To install factR, open R and type:
+To install *factR*, open R and type:
 ```{r install.factR, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("fursham-h/factR")
@@ -64,7 +63,7 @@ devtools::install_github("fursham-h/factR")
 
 ### Query transcript assembly
 
-Transcript assembly programs typically outputs a GTF/GFF3 file containing transcript and exon coordinates, as well as attributes for each entry. It is mandatory that your assembly contain *gene_id* and *transcript_id* attributes.
+Transcript assembly programs typically outputs a GTF file containing transcript and exon coordinates, as well as attributes for each entry. It is mandatory that your assembly contain **gene_id** and **transcript_id** attributes.
 
 Query GTF file have to be imported into R and parsed into a GenomicRanges object. 
 To do so, run:
@@ -118,7 +117,7 @@ query_gtf <- import('path/to/reference.gtf')
 
 ### Genomic sequence
 
-Genomic DNA sequence is required for determining open-reading frames and for *in silico* translation of  query transcripts. Here, we describe three ways to obtain genomic sequence for mouse GRCm38 assembly:
+Genomic DNA sequence is required for determining open-reading frames and for *in silico* translation of query transcripts. Here, we describe three ways to obtain genomic sequence for mouse GRCm38 assembly:
 
 1. BSgenome sequence object from UCSC
 ```{r load.BSgenome, eval = FALSE}
@@ -171,8 +170,8 @@ names(Mmusculus) <- str_split(seqlevels(Mmusculus), " ") %>% map_chr(`[`, 1)
 
 # Sample datasets
 
-## **Query** 
-factR package contains a sample assembled GTF imported as a GRanges object. The assembly was constructed from a mouse dataset and contain *transcript* and *exon* descriptions of 4 transcript isoforms from the same parent gene. Transcripts in `query_gtf` have been assigned generic gene_ids and transcript_ids. This is to recapitulate the nomenclature of a typical custom-assembled GTF.
+## Query 
+*factR* package contains a sample assembled GTF imported as a GRanges object. The assembly was constructed from a mouse dataset and contain **transcript** and **exon** descriptions of 4 transcript isoforms from the same parent gene. Transcripts in **query_gtf** have been assigned generic **gene_ids** and **transcript_ids**. This is to recapitulate the nomenclature of a typical custom-assembled GTF.
 ```{r checkquery}
 # inspect query object
 head(query_gtf)
@@ -183,12 +182,12 @@ unique(query_gtf$transcript_id)
 unique(query_gtf$gene_id)
 ```
 
-Users can quickly visualize the exon structure of these query transcripts using the plotGTFtranscripts tool, which is essentially a convenient wrapper to plot transcripts using the *wiggleplotr* package:
+Users can quickly visualize the exon structure of these query transcripts using the `plotGTFtranscripts` tool, which is essentially a convenient wrapper to plot transcripts using the *wiggleplotr* package:
 ```{r viewquery}
 plotGTFtranscripts(query_gtf)
 ```
 
-## **Reference** 
+## Reference
 For our reference annotation, we will be using a subset of GRCm38 gencode reference annotation which contain basic transcripts from the same gene family as our query gene. 
 ```{r viewref}
 # inspect reference object
@@ -202,14 +201,14 @@ unique(ref_gtf$gene_id)
 
 # Matching chromosome IDs
 
-Different genomic objects may have different chromosome IDs (aka seqlevels), depending on its source. Users may have a custom GTF with "Ensembl"-style seqlevels but wish to use a gencode reference annotation which contain "UCSC"-style seqlevels. The sample `query_gtf` and `ref_gtf` objects presents this exact predicament:
+Different genomic objects may have different chromosome IDs (aka seqlevels), depending on its source. Users may have a custom GTF with "Ensembl"-style seqlevels but wish to use a gencode reference annotation which contain "UCSC"-style seqlevels. The sample **query_gtf** and **ref_gtf** objects presents this exact predicament:
 ```{r inspectobjects}
 seqlevelsStyle(query_gtf)
 
 seqlevelsStyle(ref_gtf)
 ```
 
-`factR` contain a tool to effectively match the seqlevels of a query GRanges object to any reference object with seqlevel information:
+*factR* contain a tool to effectively match the seqlevels of a query GRanges object to any reference object with seqlevel information:
 ```{r matchseqlvls}
 # matching seqlevels
 matched_query_gtf <- matchSeqLevels(query_gtf, Mmusculus)
@@ -218,7 +217,7 @@ head(matched_query_gtf)
 ```
 Note: `matchSeqLevels` will drop any unmatched seqlevels from query 
 
-`factR` also comes with a function to test if two or more objects have consistent seqlevels. This function returns a logical value of FALSE if input objects have inconsistent seqlevels and recommends a `matchSeqLevels` function to run.
+*factR* also comes with the function `has_consistentSeqlevels` to test if two or more objects have consistent seqlevels. This function returns a logical value of FALSE if input objects have inconsistent seqlevels and recommends a `matchSeqLevels` function to run.
 ```{r testseqlevels}
 has_consistentSeqlevels(query_gtf, ref_gtf)
 
@@ -227,15 +226,15 @@ has_consistentSeqlevels(matched_query_gtf, ref_gtf)
 
 # Matching gene metadata
 
-Custom-built GTF annotation may contain generic gene_id and gene_name metadata (e.g. 'MSTRG1'), depending on how it was constructed. Users who wish to fill these metadata using a reference annotation may run the `matchGeneMeta` function:
+Custom-built GTF annotation may contain generic **gene_id** and **gene_name** metadata (e.g. 'MSTRG1'), depending on how it was constructed. Users who wish to fill these metadata using a reference annotation may run the `matchGeneMeta` function:
 ```{r matchgenemeta}
-# matching seqlevels
+# matching gene metadata
 matched_query_gtf <- matchGeneMeta(matched_query_gtf, ref_gtf)
 
 head(matched_query_gtf)
 ```
 
-By default, this function will match query transcripts to reference by overlapping coordinates. Users may improve the accuracy of this matching function by providing values to `primary_gene_id` and `secondary_gene_id` arguments. See ?matchGeneMeta for detailed description.
+By default, this function will match query transcripts to reference by overlapping coordinates. Users may improve the accuracy of this matching function by providing values to **primary_gene_id** and **secondary_gene_id** arguments. See ?matchGeneMeta for detailed description.
 
 
 # Construct query CDS information
@@ -245,7 +244,7 @@ To build CDS information on our query data, users can simply run:
 new_query_gtf <- buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
 ```
 
-The above function will return a new GRanges object containing exon entries from `query_gtf` with appended cds entries. User can inspect the contents of the object further.
+The above function will return a new GRanges object containing exon entries from **query_gtf** with appended cds entries. User can inspect the contents of the object further.
 ```{r checkCDS}
 # check lengths of input and output GRanges
 length(query_gtf)
@@ -256,12 +255,12 @@ length(new_query_gtf)
 head(new_query_gtf[mcols(new_query_gtf)$type == "CDS"])
 ```
 
-User can visualize the coding structure of each transcripts using the plotGTFtranscripts tool, which is essentially a convenient wrapper to plot transcripts using the *wiggleplotr* package:
+User can visualize the coding structure of each transcripts using the `plotGTFtranscripts` tool, which is essentially a convenient wrapper to plot transcripts using the *wiggleplotr* package:
 ```{r viewCDS}
 plotGTFtranscripts(new_query_gtf)
 ```
 
-The new query GTF Granges object can be exported as a .gtf file using `rtracklayer`'s export funcition:
+The new query GTF Granges object can be exported as a .gtf file using *rtracklayer*'s export funcition:
 ```{r export, eval=FALSE}
 # get GrangesList of query exons and cds
 rtracklayer::export(new_query_gtf, 'path/to/output.gtf', format = 'gtf')
@@ -270,7 +269,7 @@ rtracklayer::export(new_query_gtf, 'path/to/output.gtf', format = 'gtf')
 
 # Extracting protein features on coding transcripts
 
-Upon construction of coding segments on transcripts, users may be interested in determining the functional domains which is encoded within the coding sequence. To this end, users can utilize the `extractCDSfeature` function. This tool accepts a GTF GRanges object containing CDS information as input, together with a genome sequence object. After checking the translated protein sequence, `extractCDSfeature` will query the SuperFamily database for domain features by calling out the `hmmer` function from `bio3d` package. The function will output 3 output fields: 'desc', 'evalue' and 'nincluded'. 
+Upon construction of coding segments on transcripts, users may be interested in determining the functional domains which is encoded within the coding sequence. To this end, users can utilize the `extractCDSfeature` function. This tool accepts a GTF GRanges object containing CDS information as input, together with a genome sequence object. After checking the translated protein sequence, `extractCDSfeature` will query the SuperFamily database for domain features by calling out the `hmmer` function from *bio3d* package. The function will output 3 output fields: **desc**, **evalue** and **nincluded**. 
 ```{r testfeature, eval=F}
 extractCDSfeature(new_query_gtf, Mmusculus)
 #> # A tibble: 4 x 4
@@ -294,7 +293,7 @@ extractCDSfeature(new_query_gtf, Mmusculus, hmmer = c('default', 'bitscore', 'pv
 #> 4 transcript4 RNA-binding domain, RBD     1.20e-72               4           239         -175.
 ```
 
-This tool also currently support the identification of signal peptide by running the `signalHsmm` function from the `signalHsmm` package. This feature is not run by default, but can be initiated by setting the argument `signalHsmm` to 'default' or any one of the supported output fields. Users can skip testing of any of these featyres by setting the `hmmer` or `signalHsmm` arguments to NULL
+This tool also currently support the identification of signal peptide by running the `signalHsmm` function from the *signalHsmm* package. This feature is not run by default, but can be initiated by setting the argument for **signalHsmm** to 'default' or any one of the supported output fields. Users can skip testing of any of these featyres by setting the **hmmer** or **signalHsmm** arguments to NULL
 ```{r testfeature3, eval=F}
 extractCDSfeature(new_query_gtf, Mmusculus, hmmer = NULL, signalHsmm = 'default')
 #> # A tibble: 4 x 2
@@ -307,7 +306,7 @@ extractCDSfeature(new_query_gtf, Mmusculus, hmmer = NULL, signalHsmm = 'default'
 ```
 
 
-In order to extract the domain features, `extractCDSfeature` will attempt to submit the protein coding sequence to the SuperFamily database and return a summary of the domain structure. As this process is done over HTTP, the speed of this function is greatly dependent on the server and on the number of CDS in your list. This process can be sped up by subsetting the list of transcripts for analysis by providing logical conditions to the `...` argument. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
+In order to extract the domain features, `extractCDSfeature` will attempt to submit the protein coding sequence to the SuperFamily database and return a summary of the domain structure. As this process is done over HTTP, the speed of this function is greatly dependent on the server and on the number of CDS in your list. This process can be sped up by subsetting the list of transcripts for analysis by providing logical conditions to the **...** argument. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
 ```{r testfeaturewhich, eval=F}
 #> extractCDSfeature(new_query_gtf, Mmusculus, transcript_id %in% c('transcript1', 'transcript3'))
 #>            id              hmmer.desc hmmer.evalue hmmer.nincluded
@@ -324,7 +323,7 @@ Coding RNAs harbouring a premature stop codon are potentially eliminated by a pr
 predictNMD(new_query_gtf)
 ```
 
-`predictNMD` will output a tibble dataframe with report on NMD-inducing feature for each coding transcript. The column `stop_to_lastEJ` describes the relative distance of the stop_codon to the last exon-exon junction (lastEJ) of each transcript. Thus, a positive integer means that the lastEJ is downstream of the stop_codon. `predictNMD` also returns the number of exon-junctions downstream of the stop_codon (`num_of_downEJs`) and the relative distance of the stop_codon to each downstream exon-junctions (`stop_to_downEJs`). `threeUTRlength` describes the length of the 3'-untranslated region for each coding transcript. The column containing logical values for `is_NMD` will return TRUE if the `stop_to_lastEJ` value exceed the NMD triggering threshold which is typically 50 base-pair. Users may set a custom value by overriding the default `NMD_threshold` argument.
+`predictNMD` will output a tibble dataframe with report on NMD-inducing feature for each coding transcript. The column **stop_to_lastEJ** describes the relative distance of the stop_codon to the last exon-exon junction (lastEJ) of each transcript. Thus, a positive integer means that the lastEJ is downstream of the stop_codon. `predictNMD` also returns the number of exon-junctions downstream of the stop_codon (**num_of_downEJs**) and the relative distance of the stop_codon to each downstream exon-junctions (**stop_to_downEJs**). **threeUTRlength** describes the length of the 3'-untranslated region for each coding transcript. The column containing logical values for **is_NMD** will return TRUE if the **stop_to_lastEJ** value exceed the NMD triggering threshold which is typically 50 base-pair. Users may set a custom value by overriding the default **NMD_threshold** argument.
 
 Users who wish to analyze certain genes or transcripts in their GTF GRanges for NMD features may provide logical conditions to the `...` argument to subset their GTF input. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
 ```{r testnmdfilter}
@@ -404,7 +403,6 @@ mm10_AS
 #>   -------
 #>   seqinfo: 45 sequences from an unspecified genome; no seqlengths
 ```
-
 
 
 Users who wish to compare alternative segments between two or more transcripts can run the `compareAS` function. In contrast to `annotateAS`, this function accepts two or more GRanges object, each containing exon features for a particular transcript. Alternatively, users can provide the list of transcript exon features as a GRangesList object

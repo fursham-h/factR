@@ -73,7 +73,6 @@ predictNMD(query_exons[[3]], cds = query_cds[[3]])
 ## EXAMPLE USING TRANSCRIPT ANNOTATION DATABASE
 ## ---------------------------------------------------------------------
 \dontrun{
-## NOT RUN
 library(AnnotationHub)
 
 ## Retrieve GRCm38 trancript annotation
@@ -83,7 +82,6 @@ GRCm38_gtf <- ah[['AH60127']]
 ## Run tool on specific gene family
 predictNMD(GRCm38_gtf, gene_name == 'Ptbp1')
 
-## NOT RUN
 }
 
 }

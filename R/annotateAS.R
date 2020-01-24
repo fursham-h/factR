@@ -16,6 +16,49 @@
 #'
 #' @export
 #' @author Fursham Hamid
+#' 
+#' @examples 
+#' 
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING TOY DATASET
+#' ## ---------------------------------------------------------------------
+#' require(GenomicRanges)
+#' 
+#' ## Create toy GRanges GTF object
+#' gr <- GRanges("chr1", IRanges(start = c(1, 101, 1, 51, 101), width=c(20,20,20,10,20)), '+', 
+#'               type = 'exon', gene_id = 'geneA', 
+#'               transcript_id = Rle(c('transcript1', 'transcript2'), lengths = c(2,3)))
+#'               
+#' ## Annotate alternative segments
+#' annotateAS(gr)
+#' 
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING SAMPLE DATASET
+#' ## ---------------------------------------------------------------------
+#' ## Using GTF GRanges as input
+#' annotateAS(query_gtf)
+#' 
+#' ## Output as dataframe
+#' annotateAS(query_gtf, as.data.frame = TRUE)
+#' 
+#' ## Append AS info to input
+#' annotateAS(query_gtf, append = TRUE)
+#' 
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING TRANSCRIPT ANNOTATION DATABASE
+#' ## ---------------------------------------------------------------------
+#' \dontrun{
+#' library(AnnotationHub)
+#' 
+#' ## Retrieve GRCm38 trancript annotation
+#' ah <- AnnotationHub()
+#' GRCm38_gtf <- ah[['AH60127']]
+#' 
+#' ## Run tool on specific gene family
+#' annotateAS(GRCm38_gtf)
+#' 
+#' }
+#' 
 
 annotateAS <- function(x, as.data.frame = FALSE, append = FALSE) {
   # catch missing args
@@ -68,6 +111,39 @@ annotateAS <- function(x, as.data.frame = FALSE, append = FALSE) {
 #'
 #' @author Fursham Hamid
 #' @export
+#' 
+#' @examples 
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING TOY DATASET
+#' ## ---------------------------------------------------------------------
+#' require(GenomicRanges)
+#' 
+#' ## Create toy GRanges GTF object
+#' gr1 <- GRanges("chr1", IRanges(start = c(1,101), width=c(20,20)), '+')
+#' gr2 <- GRanges("chr1", IRanges(start = c(1,51,101), width=c(20,10,20)), '+')
+#' 
+#' ## Pairwise comparison between GRanges object
+#' compareAS(gr1, gr2)
+#' 
+#' ## Multiple comparisons can be done by providing more GRanges input
+#' gr3 <- GRanges("chr1", IRanges(start = c(1,91), width=c(20,30)), '+')
+#' compareAS(gr1, gr2, gr3)
+#' 
+#' ## GRangesList containing exons per transcript can be given as input
+#' grl <- GRangesList(list(gr1,gr2,gr3))
+#' compareAS(grl)
+#' 
+#' 
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING SAMPLE DATASET
+#' ## ---------------------------------------------------------------------
+#' ## Using GRangesList as input
+#' compareAS(query_exons)
+#' 
+#' ## Compare AS between individual GRanges object
+#' compareAS(query_exons[[1]], query_exons[[3]])
+#' 
+#' 
 compareAS <- function(x, ...) {
 
   # catch missing args
@@ -85,10 +161,7 @@ compareAS <- function(x, ...) {
   argnames <- as.character(match.call())[-1]
 
   if (is(x, "GRanges")) {
-    if (!"transcript_id" %in% names(S4Vectors::mcols(x))) {
-      x$transcript_id <- "transcript0"
-    }
-    x <- S4Vectors::split(x, ~transcript_id)
+    x <- GenomicRanges::GRangesList(list(x))
   }
   if (!is(x, "GRangesList")) {
     rlang::abort(sprintf("%s is not a GRanges or GRangesList object", argnames[1]))
@@ -117,27 +190,35 @@ compareAS <- function(x, ...) {
       }
       newdots <- as(newdots, "GRangesList")
 
-      newdotsmeta <- newdots %>% as.data.frame()
-      if (!"transcript_id" %in% names(newdotsmeta)) {
-        names(newdots) <- paste0("transcript", as.character(c(1:length(newdots))))
-        newdots <- mutateeach(newdots, transcript_id = group_name)
-      } else {
-        newdots <- newdots %>%
-          as.data.frame() %>%
-          dplyr::mutate(transcript_id = ifelse(is.na(transcript_id), paste0("transcript", group), transcript_id)) %>%
-          dplyr::mutate(group_name = transcript_id) %>%
-          dplyr::select(-group) %>%
-          GenomicRanges::makeGRangesListFromDataFrame(split.field = "group_name", keep.extra.columns = T)
-      }
+      # newdotsmeta <- newdots %>% as.data.frame()
+      # if (!"transcript_id" %in% names(newdotsmeta)) {
+      #   names(newdots) <- paste0("transcript", as.character(c(1:length(newdots))))
+      #   newdots <- mutateeach(newdots, transcript_id = group_name)
+      # } else {
+      #   newdots <- newdots %>%
+      #     as.data.frame() %>%
+      #     dplyr::mutate(transcript_id = ifelse(is.na(transcript_id), paste0("transcript", group), transcript_id)) %>%
+      #     dplyr::mutate(group_name = transcript_id) %>%
+      #     dplyr::select(-group) %>%
+      #     GenomicRanges::makeGRangesListFromDataFrame(split.field = "group_name", keep.extra.columns = T)
+      # }
     }
     x <- c(x, newdots)
-    if (length(x) == 1) {
-      rlang::abort("Insufficient transcripts for comparison")
-    }
   }
+  
+  # check metadata before running AS
+  if (length(x) == 1) {
+    rlang::abort("Insufficient transcripts for comparison")
+  }
+  if (!"transcript_id" %in% names(S4Vectors::mcols(unlist(x)))) {
+    x <- mutateeach(x, group_name = group, transcript_id = NA)
+  }
+  x <- mutateeach(x, transcript_id = ifelse(is.na(transcript_id), group, transcript_id),
+                  group_name = transcript_id)
   if (!"gene_id" %in% names(S4Vectors::mcols(unlist(x)))) {
     x <- mutateeach(x, gene_id = "NA")
   }
+  
   return(S4Vectors::split(.runAS(x), ~transcript_id))
 }
 
@@ -181,10 +262,10 @@ compareAS <- function(x, ...) {
   altannotate <- altexons %>%
     as.data.frame() %>%
     dplyr::mutate(AStype = "CE") %>%
-    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & !first.pos %in% c("First", "Last"), "SD", AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & !first.pos %in% c("First", "Last"), "SA", AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & first.pos %in% c("First", "Last"), "Te", AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & first.pos %in% c("First", "Last"), "Ts", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end, "SD", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end, "SA", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & first.pos == "Last", "Te", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & first.pos == "First", "Ts", AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end > second.end, "RI", AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end < second.end & first.pos == "First", "FE", AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end < second.end & first.pos == "Last", "LE", AStype)) %>%

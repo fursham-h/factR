@@ -32,9 +32,11 @@ LazyData: true
 ByteCompile: true
 RoxygenNote: 7.0.2
 Suggests: 
+    AnnotationHub,
     BSgenome.Mmusculus.UCSC.mm10,
     testthat,
     knitr,
     rmarkdown,
-    zeallot
+    zeallot,
+    rmdformats
 VignetteBuilder: knitr

@@ -161,8 +161,8 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     dplyr::select(group:seqnames, start = newstart, end = newend, strand) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
 
-  toStopWidth <- sum(width(GenomicRanges::pintersect(x, toStopRange)))
-  EJtoStop <- cumsum(width(x)) - toStopWidth
+  toStopWidth <- sum(BiocGenerics::width(GenomicRanges::pintersect(x, toStopRange)))
+  EJtoStop <- cumsum(BiocGenerics::width(x)) - toStopWidth
 
   out <- dplyr::bind_rows(out, lapply(EJtoStop, function(x) {
     id <- ifelse(!is.null(names(x)), names(x)[1], "transcript")

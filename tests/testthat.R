@@ -1,5 +1,6 @@
 library(testthat)
 library(factR)
-library("BSgenome.Mmusculus.UCSC.mm10")
+require("BSgenome.Mmusculus.UCSC.mm10")
+require("AnnotationHub")
 
 test_check("factR")
