@@ -25,24 +25,61 @@
 #' @param NMD_threshold
 #' Minimum distance of stop_codon to last exon junction (EJ) which triggers NMD.
 #' Default = 50bp
-
 #'
 #' @return
 #' Dataframe with prediction of NMD sensitivity and NMD features:
 #'
 #' is_NMD: logical value in prediciting transcript sensitivity to NMD
 #'
-#' dist_to_lastEJ: Integer value of the number of bases between the first
+#' stop_to_lastEJ: Integer value of the number of bases between the first
 #' base of the stop_codon to the last base of EJ. A positive value indicates that
 #' the last EJ is downstream of the stop_codon.
 #'
 #' num_of_down_EJs: Number of EJs downstream of the stop_codon.
 #'
-#' dist_to_downEJs: Concatenated integer values of the number of bases between
+#' stop_to_downEJs: Concatenated integer values of the number of bases between
 #' the first base of the stop_codon to the last base of each downstream EJs.
 #' @export
 #' @author Fursham Hamid
 #'
+#' @examples 
+#' 
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING SAMPLE DATASET
+#' ## ---------------------------------------------------------------------
+#' ## Using GTF GRanges as input
+#' predictNMD(new_query_gtf)
+#' 
+#' ### Transcripts for analysis can be subsetted using logical conditions
+#' predictNMD(new_query_gtf, transcript_id == 'transcript1')
+#' predictNMD(new_query_gtf, transcript_id %in% c('transcript1', 'transcript3'))
+#' 
+#' 
+#' ## Using exon and CDS GRangesLists as input
+#' predictNMD(query_exons, cds = query_cds)
+#' predictNMD(query_exons, cds = query_cds, transcript_id == 'transcript3')
+#' 
+#' 
+#' ## Using exon and CDS GRanges as input
+#' predictNMD(query_exons[[3]], cds = query_cds[[3]])
+#' 
+#' 
+#' 
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING TRANSCRIPT ANNOTATION DATABASE
+#' ## ---------------------------------------------------------------------
+#' \dontrun{
+#' library(AnnotationHub)
+#' 
+#' ## Retrieve GRCm38 trancript annotation
+#' ah <- AnnotationHub()
+#' GRCm38_gtf <- ah[['AH60127']]
+#' 
+#' ## Run tool on specific gene family
+#' predictNMD(GRCm38_gtf, gene_name == 'Ptbp1')
+#' 
+#' }
+#' 
 predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
 
   # catch missing args

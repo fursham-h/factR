@@ -10,7 +10,7 @@ sorteach(x, ...)
 \item{x}{GRangesList object}
 
 \item{...}{Comma separated list of unquoted variable names to sort by. Variables are names of metadata columns
-found in GRangesList object. Use desc() to sort a variable in descending order. 
+found in GRangesList object. Use desc() to sort a variable in descending order.
 Input can be `exonorder` to sort each element in exon order}
 }
 \value{

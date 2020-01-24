@@ -9,7 +9,7 @@ mutateeach(x, ...)
 \arguments{
 \item{x}{GRangesList object}
 
-\item{...}{Name-value pairs of expressions. The name of each argument will be the name 
+\item{...}{Name-value pairs of expressions. The name of each argument will be the name
 of a new metadata column, and the value will be its corresponding value.}
 }
 \value{

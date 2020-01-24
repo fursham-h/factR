@@ -9,7 +9,7 @@ annotateAS(x, as.data.frame = FALSE, append = FALSE)
 \arguments{
 \item{x}{GRanges object containing transcript features in GTF format}
 
-\item{as.data.frame}{If TRUE, function will return a dataframe instead of GRanges GTF object 
+\item{as.data.frame}{If TRUE, function will return a dataframe instead of GRanges GTF object
 (default = FALSE)}
 
 \item{append}{If TRUE, function will append the alternative-spliced segments to x and return
