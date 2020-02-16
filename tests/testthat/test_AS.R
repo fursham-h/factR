@@ -3,7 +3,7 @@ context("Test alternative splicing function")
 # setup GRanges
 gr1 <- GenomicRanges::GRanges(
   seqnames = "1", strand = rep("+", 5),
-  ranges = IRanges(
+  ranges = IRanges::IRanges(
     start = c(1, 401, 801, 1001, 1301),
     end = c(100, 500, 900, 1100, 1400)
   ),
