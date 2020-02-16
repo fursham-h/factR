@@ -173,7 +173,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
           strsplit(gene_id, split = "\\.")[[1]][1], NA
         )) %>%
         dplyr::filter(!is.na(appended_ens_id)) %>%
-        dplyr::select(appended_ens_id, basic_gene_id = gene_id, matched)
+        dplyr::select(appended_ens_id, basic_gene_id = gene_id, matched1 = matched)
 
       # core of the function.
       #   this function will append ENSEMBL style primary_gene_ids to remove suffixes
@@ -185,7 +185,6 @@ Try running: %s <- matchSeqLevels(%s, %s)",
           strsplit(get(primary_gene_id), split = "\\.")[[1]][1],
           as.character(NA)
         )) %>%
-        dplyr::select(-matched) %>%
         dplyr::left_join(ref.genelist.2) %>%
         dplyr::mutate(!!primary_gene_id := ifelse(!is.na(basic_gene_id),
           basic_gene_id,
@@ -195,7 +194,11 @@ Try running: %s <- matchSeqLevels(%s, %s)",
           match_level + 2,
           match_level
         )) %>%
-        dplyr::select(-appended_ens_id, -basic_gene_id) %>%
+          dplyr::mutate(matched = ifelse(!is.na(basic_gene_id),
+                                             matched1,
+                                             matched
+          )) %>%
+        dplyr::select(-appended_ens_id, -basic_gene_id, -matched1) %>%
         dplyr::ungroup())
 
       # count number of non-standard ids after matching
