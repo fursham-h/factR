@@ -69,7 +69,12 @@ buildCDS <- function(query, ref, fasta) {
     "Out of %s transcripts in `%s`, %s transcript CDSs were built",
     length(query_exons), argnames[1], successtx
   ))
-  return(c(query, outCDS))
+  out <- c(query, outCDS) %>% as.data.frame() %>%
+    dplyr::group_by(transcript_id) %>%
+    tidyr::fill(seqnames:built_from, -transcript_id) %>%
+    dplyr::ungroup() %>%
+    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+  return(out)
 }
 
 
