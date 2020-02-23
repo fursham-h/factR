@@ -297,20 +297,25 @@ Try running: %s <- matchSeqLevels(%s, %s)",
       as.data.frame() %>%
       dplyr::select(gene_id, ref_gene_name = gene_name) %>%
       dplyr::distinct()
+    
+    query <- query %>%
+      dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
+      dplyr::mutate(gene_name = ref_gene_name) %>%
+      dplyr::select(-ref_gene_name)
 
-    if ("gene_name" %in% names(query)) {
-      query <- query %>%
-        dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
-        dplyr::mutate(gene_name = ifelse(match_level != 5 & is.na(gene_name),
-          ref_gene_name, gene_name
-        )) %>%
-        dplyr::select(-ref_gene_name)
-    } else {
-      query <- query %>%
-        dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
-        dplyr::mutate(gene_name = ref_gene_name) %>%
-        dplyr::select(-ref_gene_name)
-    }
+    # if ("gene_name" %in% names(query)) {
+    #   query <- query %>%
+    #     dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
+    #     dplyr::mutate(gene_name = ifelse(match_level != 5 & is.na(gene_name),
+    #       ref_gene_name, gene_name
+    #     )) %>%
+    #     dplyr::select(-ref_gene_name)
+    # } else {
+    #   query <- query %>%
+    #     dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
+    #     dplyr::mutate(gene_name = ref_gene_name) %>%
+    #     dplyr::select(-ref_gene_name)
+    # }
   }
 
   # report pre-testing analysis and return query
