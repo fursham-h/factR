@@ -239,6 +239,11 @@ compareAS <- function(x, ...) {
   transcript_id <- pos <- seqnames <- strand <- gene_id <- NULL
   first.X.start <- second.start <- first.X.end <- second.end <- NULL
   first.pos <- AStype <- first.X.strand <- NULL
+  
+  # Add gene_name column if absent
+  if (!"gene_name" %in% names(S4Vectors::mcols(x))) {
+    x$gene_name <- x$gene_id
+  }
 
   x <- x %>%
     as.data.frame() %>%
@@ -247,7 +252,7 @@ compareAS <- function(x, ...) {
     dplyr::mutate(pos = dplyr::row_number()) %>%
     dplyr::mutate(pos = ifelse(pos == 1, "First", pos)) %>%
     dplyr::mutate(pos = ifelse(pos == dplyr::n(), "Last", pos)) %>%
-    dplyr::select(seqnames, start, end, strand, gene_id, transcript_id, pos) %>%
+    dplyr::select(seqnames, start, end, strand, gene_id, gene_name, transcript_id, pos) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
 
   # get reduced intron boundaries
