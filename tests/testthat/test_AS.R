@@ -8,7 +8,8 @@ gr1 <- GenomicRanges::GRanges(
     end = c(100, 500, 900, 1100, 1400)
   ),
   transcript_id = "transcript1",
-  gene_id = "geneA"
+  gene_id = "geneA",
+  gene_name = "gene001"
 )
 gr2 <- GenomicRanges::GRanges(
   seqnames = "1", strand = rep("+", 6),
@@ -17,7 +18,8 @@ gr2 <- GenomicRanges::GRanges(
     end = c(300, 500, 700, 920, 1100, 1250)
   ),
   transcript_id = "transcript2",
-  gene_id = "geneA"
+  gene_id = "geneA",
+  gene_name = "gene001"
 )
 gr3 <- GenomicRanges::GRanges(
   seqnames = "1", strand = rep("+", 2),
@@ -26,7 +28,8 @@ gr3 <- GenomicRanges::GRanges(
     end = c(500, 1150)
   ),
   transcript_id = "transcript3",
-  gene_id = "geneA"
+  gene_id = "geneA", 
+  gene_name = "gene001"
 )
 grcomb1 <- c(gr1, gr2, gr3)
 

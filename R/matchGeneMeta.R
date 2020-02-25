@@ -57,7 +57,7 @@ matchGeneMeta <- function(query, ref,
   ###################################################################################################################
 
   # define global variables
-  gene_id <- transcript_id <- matched <- match_level <- appended_ens_id <- NULL
+  matched1 <-gene_id <- transcript_id <- matched <- match_level <- appended_ens_id <- NULL
   basic_gene_id <- type <- seqnames <- strand <- gene_name <- ref_gene_name <- NULL
 
   # retrieve input object names

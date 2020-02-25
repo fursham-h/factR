@@ -88,6 +88,9 @@ Try running: %s <- matchSeqLevels(%s, %s)",
 
 .runbuildCDS <- function(query, ref, fasta, argnames) {
   
+  transcript_id <- gene_id <- gene_name <- type <- width <- strand <- NULL
+  phase <- tailphase <- coverage <- group <- seanames <- seqnames <- NULL
+  
   # Add gene_name column if absent
   if (!"gene_name" %in% names(S4Vectors::mcols(query))) {
     query$gene_name <- query$gene_id
@@ -176,6 +179,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
 
 .pairq2r <- function(query_exons, ref_exons, nc_ref_exons, codons_gr){
   
+  ref_transcript_id <- strand <- transcript_id <- coverage <- NULL
 
   # obtain a vector of strands for each transcript
   strandList <- as.character(S4Vectors::runValue(BiocGenerics::strand(query_exons)))
@@ -235,6 +239,9 @@ Try running: %s <- matchSeqLevels(%s, %s)",
 
 .getCDS <- function(order_query, order_ref, fasta) {
   
+  strand <- start1 <- end1 <- group <- seqnames <- newstart <- newend <- NULL
+  stoppos <- width <- seqnames <- strand <- type <- transcript_id <- phase <- NULL
+  
   startToend <- dplyr::bind_cols(as.data.frame(range(order_query)), as.data.frame(order_ref)) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(newstart = ifelse(strand == "-", start, start1)) %>%
@@ -248,7 +255,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
   list_stopcodons <- Biostrings::DNAStringSet(c("TAA", "TAG", "TGA"))
   pdict_stopcodons <- Biostrings::PDict(list_stopcodons)
   
-  CDSstop <- lapply(seq, function(x){
+  CDSstop <- BiocParallel::bplapply(seq, function(x){
     stopcodons <- Biostrings::matchPDict(pdict_stopcodons, x) %>%
       unlist() %>%
       as.data.frame() %>%
@@ -263,12 +270,12 @@ Try running: %s <- matchSeqLevels(%s, %s)",
       # retrieve 3UTR length and update output file
       return(stopcodons[1,1])
     }
-  })
+  },BPPARAM = BiocParallel::MulticoreParam())
   
-  stopdf <- tibble::tibble(width = width(seq), stoppos = unlist(CDSstop)) %>%
+  stopdf <- tibble::tibble(width = BiocGenerics::width(seq), stoppos = unlist(CDSstop)) %>%
     dplyr::mutate(threeUTR = ifelse(stoppos > 0, width - stoppos, NA))
   
-  outCDS <- mapply(function(x,y){
+  outCDS <- BiocParallel::bpmapply(function(x, y) {
     if(!is.na(y)) {
       x <- resizeTranscript(x, start = 0, end = y)
       x$type = "CDS"
@@ -280,8 +287,10 @@ Try running: %s <- matchSeqLevels(%s, %s)",
       return(NULL)
     }
     
-  }, startToendexons, stopdf$threeUTR, SIMPLIFY = F) %>%
-    dplyr::bind_rows()
+  }, startToendexons, stopdf$threeUTR,
+  BPPARAM = BiocParallel::MulticoreParam(), SIMPLIFY = F
+  ) %>% dplyr::bind_rows()
+  
   
   if (nrow(outCDS) == 0) {
     return(NULL)

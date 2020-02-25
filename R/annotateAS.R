@@ -76,6 +76,11 @@ annotateAS <- function(x, as.data.frame = FALSE, append = FALSE) {
   # retrieve input object names and carry out checks
   argnames <- as.character(match.call())[-1]
   .ASchecks(x, argnames)
+  
+  # Add gene_name column if absent
+  if (!"gene_name" %in% names(S4Vectors::mcols(x))) {
+    x$gene_name <- x$gene_id
+  }
 
   # run Alternative splicing annotation function
   annotatedAS <- .runAS(x[x$type == "exon"])
@@ -156,7 +161,7 @@ compareAS <- function(x, ...) {
     ))
   }
   # define global variables
-  group_name <- transcript_id <- group <- NULL
+  group_name <- transcript_id <- group <- gene_id <- NULL
 
   argnames <- as.character(match.call())[-1]
 
@@ -218,6 +223,9 @@ compareAS <- function(x, ...) {
   if (!"gene_id" %in% names(S4Vectors::mcols(unlist(x)))) {
     x <- mutateeach(x, gene_id = "NA")
   }
+  if (!"gene_name" %in% names(S4Vectors::mcols(x))) {
+    x <- mutateeach(x, gene_name = gene_id)
+  }
   
   return(S4Vectors::split(.runAS(x), ~transcript_id))
 }
@@ -238,13 +246,8 @@ compareAS <- function(x, ...) {
 .runAS <- function(x) {
   transcript_id <- pos <- seqnames <- strand <- gene_id <- NULL
   first.X.start <- second.start <- first.X.end <- second.end <- NULL
-  first.pos <- AStype <- first.X.strand <- NULL
+  first.pos <- AStype <- first.X.strand <- gene_name <- NULL
   
-  # Add gene_name column if absent
-  if (!"gene_name" %in% names(S4Vectors::mcols(x))) {
-    x$gene_name <- x$gene_id
-  }
-
   x <- x %>%
     as.data.frame() %>%
     dplyr::group_by(transcript_id) %>%
