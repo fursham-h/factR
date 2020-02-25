@@ -17,6 +17,7 @@
 #' @importFrom GenomeInfoDb renameSeqlevels
 #'
 matchSeqLevels <- function(x, to) {
+  nseqlevelsbefore <- length(GenomeInfoDb::seqlevels(x))
   suppressWarnings(
     if (any(!GenomeInfoDb::seqlevels(x) %in% GenomeInfoDb::seqlevels(to))) {
       # attempt to match style first
@@ -30,5 +31,9 @@ matchSeqLevels <- function(x, to) {
       }
     }
   )
+  if (length(GenomeInfoDb::seqlevels(x)) < nseqlevelsbefore) {
+    nseqlevelsafter <- nseqlevelsbefore - length(GenomeInfoDb::seqlevels(x))
+    rlang::warn(sprintf("%s seqlevels were dropped", nseqlevelsafter))
+  }
   return(x)
 }

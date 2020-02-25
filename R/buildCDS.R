@@ -45,8 +45,11 @@ buildCDS <- function(query, ref, fasta) {
 
   # carry out input checks
   .checkObjects(query, ref, fasta, argnames)
+  
+  # run core building function
   builtCDS <- .runbuildCDS(query, ref, fasta, argnames)
   
+  # return appended CDS info
   return(c(query,builtCDS))
 }
 
@@ -85,7 +88,16 @@ Try running: %s <- matchSeqLevels(%s, %s)",
 
 .runbuildCDS <- function(query, ref, fasta, argnames) {
   
+  # Add gene_name column if absent
+  if (!"gene_name" %in% names(S4Vectors::mcols(query))) {
+    query$gene_name <- query$gene_id
+  }
+  
+  # extract important information
   totaltx <- query$transcript_id %>% unique() %>% length()
+  genelist <- query %>% as.data.frame() %>%
+    dplyr::select(transcript_id, gene_id, gene_name) %>%
+    dplyr::distinct()
   
   # Create lists of cds and exons
   query_exons <- S4Vectors::split(query[query$type == "exon"], ~transcript_id)
@@ -107,10 +119,10 @@ Try running: %s <- matchSeqLevels(%s, %s)",
     GenomicRanges::makeGRangesFromDataFrame() %>% unique()
   codons_gr <- IRanges::subsetByOverlaps(codons_gr, query_exons, type = "within")
   
+  # run pairing of query to reference
   q2r <- .pairq2r(query_exons, ref_exons, nc_ref_exons, codons_gr)
   
-  # split analysis
-  # assign fullcovs
+  # split q2r pairs into full covs and the rest
   fullcovs <- q2r %>%
     dplyr::filter(coverage == 1)
   q2r <- dplyr::setdiff(q2r, fullcovs)
@@ -132,7 +144,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
       dplyr::select(seqnames:phase)
   }
   
-  #
+  # prepare vector for remaining comparisons
   order_query <- query_exons[q2r$transcript_index]
   order_ref <- codons_gr[q2r$ref_transcript_id]
   
@@ -144,17 +156,17 @@ Try running: %s <- matchSeqLevels(%s, %s)",
     restoutCDS <- NULL
   }
   
+  # combine all CDSs
   outCDS <- suppressWarnings(dplyr::bind_rows(fulloutCDS, restoutCDS) %>%
-                               dplyr::arrange(transcript_id, ifelse(strand == "-", dplyr::desc(start), start)))
+                               dplyr::arrange(transcript_id, ifelse(strand == "-", dplyr::desc(start), start)) %>%
+                               dplyr::left_join(genelist, by = "transcript_id"))
   
+  # print out stats and return appended GRanges GTF
   if (nrow(outCDS) > 0) {
     successtx <- outCDS$transcript_id %>% unique() %>% length()
   } else {
     successtx <- 0
   }
-  
-
-  # print out stats and return appended GRanges GTF
   message(sprintf(
     "Out of %s transcripts in `%s`, %s transcript CDSs were built",
     totaltx, argnames[1], successtx
@@ -165,15 +177,14 @@ Try running: %s <- matchSeqLevels(%s, %s)",
 .pairq2r <- function(query_exons, ref_exons, nc_ref_exons, codons_gr){
   
 
+  # obtain a vector of strands for each transcript
   strandList <- as.character(S4Vectors::runValue(BiocGenerics::strand(query_exons)))
   
   # prepare q2r
   fulloverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons,
-                                             type = "equal", select = "first"
-  )
+                                             type = "equal", select = "first")
   ncoverlap <- GenomicRanges::findOverlaps(query_exons, nc_ref_exons,
-                                           type = "equal", select = "first"
-  )
+                                           type = "equal", select = "first")
   overlappos <- GenomicRanges::findOverlaps(query_exons, codons_gr, select = "first")
   overlapneg <- GenomicRanges::findOverlaps(query_exons, codons_gr, select = "last")
 
@@ -263,7 +274,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
       x$type = "CDS"
       S4Vectors::mcols(x)$phase <- rev(cumsum(rev(BiocGenerics::width(x)) %% 3) %% 3)
       x <- x %>% as.data.frame() %>%
-        dplyr::select(seqnames, start, end, strand, type, gene_id, gene_name, transcript_id, phase)
+        dplyr::select(seqnames, start, end, strand, type,transcript_id, phase)
       return(x)
     } else {
       return(NULL)
