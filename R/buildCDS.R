@@ -100,7 +100,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
   totaltx <- query$transcript_id %>% unique() %>% length()
   genelist <- query %>% as.data.frame() %>%
     dplyr::select(transcript_id, gene_id, gene_name) %>%
-    dplyr::distinct()
+    dplyr::distinct(transcript_id, .keep_all = T)
   
   # Create lists of cds and exons
   query_exons <- S4Vectors::split(query[query$type == "exon"], ~transcript_id)
@@ -249,7 +249,8 @@ Try running: %s <- matchSeqLevels(%s, %s)",
     dplyr::select(group:seqnames, start = newstart, end = newend, strand) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
   
-  startToendexons <- GenomicRanges::pintersect(order_query, startToend, drop.nohit.ranges=T)
+  startToendexons <- GenomicRanges::pintersect(order_query, startToend, drop.nohit.ranges=T) %>%
+    sorteach(exonorder)
   seq <- GenomicFeatures::extractTranscriptSeqs(fasta, startToendexons)
   # prepare a dict of stop codons for pattern matching
   list_stopcodons <- Biostrings::DNAStringSet(c("TAA", "TAG", "TGA"))
