@@ -23,9 +23,7 @@
 #' @return
 #' Dataframe containing protein features for each cds entry
 #' @export
-extractCDSfeature <- function(x, fasta, ...,
-                              hmmer = "default",
-                              signalHsmm = NULL) {
+getCDSfeature <- function(x, fasta, ..., plot = T) {
 
   # catch missing args
   mandargs <- c("x", "fasta")
@@ -40,7 +38,7 @@ extractCDSfeature <- function(x, fasta, ...,
   # get argnames and carry out checks
   argnames <- as.character(match.call())[-1]
   cds <- .extractCDSchecks(x, fasta, argnames, ...)
-  feature <- .featurechecks(hmmer, signalHsmm)
+  #feature <- .featurechecks(hmmer, signalHsmm)
 
   # define global variables
   . <- id <- NULL
@@ -52,65 +50,73 @@ extractCDSfeature <- function(x, fasta, ...,
   output <- aaSeq %>% dplyr::select(id)
 
   # run hmmer function if requested
-  if (!is.null(feature$hmmer)) {
+  url <- paste("https://www.ebi.ac.uk/Tools/hmmer/search/hmmscan")
+  url.opts <- list(httpheader = "Expect:", httpheader = "Accept:text/xml", 
+                   verbose = F, followlocation = TRUE)
+  #if (!is.null(feature$hmmer)) {
     output <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(y) {
       # account for return errors
       report <- tryCatch(
-        bio3d::hmmer(aaSeq[y, ]$x,
-          type = "hmmscan",
-          verbose = F, db = "superfamily"
-        ),
+        .getdomains(url, curl.opts, aaSeq[y, ]$x, aaSeq[y,]$id, nchar(aaSeq[y, ]$x), y),
         error = function(e) NULL
       )
 
       if (is.null(report)) {
         return(NULL)
       } else {
-        report <- report$hit.tbl %>%
-          dplyr::mutate(id = aaSeq[y, ]$id)
-
         return(report)
       }
     }, BPPARAM = BiocParallel::MulticoreParam()) %>%
       dplyr::bind_rows()
+    
+    plot.out <- draw_canvas(output) %>% 
+      draw_chains(output) %>% 
+      draw_domains(output, label_domains = F) +
+      theme_bw() + # white background
+      theme(panel.grid.minor=element_blank(), 
+            panel.grid.major=element_blank()) +
+      theme(axis.ticks = element_blank(), 
+            axis.text.y = element_blank()) +
+      theme(panel.border = element_blank())
+    
+    if (plot) {
+      plot.out
+    }
 
     # subset columns based on requested fields
-    output <- output %>%
-      dplyr::select(id, feature$hmmer) %>%
-      dplyr::rename_at(
-        dplyr::vars(feature$hmmer),
-        ~ paste0("hmmer.", feature$hmmer)
-      ) %>%
+    table.out <- output %>%
+      dplyr::select(id = entryName, description, eval, begin, end) %>%
+      dplyr::filter(type == "DOMAIN") %>%
       dplyr::right_join(aaSeq %>% dplyr::select(id), by = "id")
-  }
+  #}
 
   # run signalHsmm function
-  if (!is.null(feature$signalHsmm)) {
+  # if (!is.null(feature$signalHsmm)) {
+  # 
+  #   # run signalHsmm
+  #   outSP <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(x) {
+  #     report <- signalHsmm::run_signalHsmm(aaSeq[x, ]$y)[[1]]
+  #     report$struc <- paste(report$struc, collapse = "")
+  #     report$prot <- paste(report$prot, collapse = "")
+  # 
+  #     report <- report %>%
+  #       unlist() %>%
+  #       dplyr::bind_rows() %>%
+  #       dplyr::mutate(id = aaSeq[x, ]$id)
+  #     return(report)
+  #   }, BPPARAM = BiocParallel::MulticoreParam()) %>% dplyr::bind_rows()
+  # 
+  #   # combine outSP with output
+  #   output <- outSP %>%
+  #     dplyr::select(id, feature$signalHsmm) %>%
+  #     dplyr::rename_at(
+  #       dplyr::vars(feature$signalHsmm),
+  #       ~ paste0("signalHsmm.", feature$signalHsmm)
+  #     ) %>%
+  #     dplyr::left_join(output, ., by = "id")
+  # }
 
-    # run signalHsmm
-    outSP <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(x) {
-      report <- signalHsmm::run_signalHsmm(aaSeq[x, ]$y)[[1]]
-      report$struc <- paste(report$struc, collapse = "")
-      report$prot <- paste(report$prot, collapse = "")
-
-      report <- report %>%
-        unlist() %>%
-        dplyr::bind_rows() %>%
-        dplyr::mutate(id = aaSeq[x, ]$id)
-      return(report)
-    }, BPPARAM = BiocParallel::MulticoreParam()) %>% dplyr::bind_rows()
-
-    # combine outSP with output
-    output <- outSP %>%
-      dplyr::select(id, feature$signalHsmm) %>%
-      dplyr::rename_at(
-        dplyr::vars(feature$signalHsmm),
-        ~ paste0("signalHsmm.", feature$signalHsmm)
-      ) %>%
-      dplyr::left_join(output, ., by = "id")
-  }
-
-  return(output)
+  return(table.out)
 }
 
 
@@ -230,4 +236,23 @@ Try running: %s <- matchSeqLevels(%s, %s)",
     }
   }
   return(aaSeq)
+}
+
+
+
+.getdomains <- function(url, curl.opts, seq, id, length, n) {
+  hmm <- RCurl::postForm(url, hmmdb = "superfamily", seqdb = NULL, 
+                         seq = seq, style = "POST", .opts = curl.opts, .contentEncodeFun = RCurl::curlPercentEncode, 
+                         .checkParams = TRUE)
+  xml <- XML::xmlParse(hmm)
+  family <- XML::xpathSApply(xml, "///family", XML::xpathSApply,  "@*")
+  segment <- XML::xpathSApply(xml, "///segments", XML::xpathSApply, "@*")
+  data <- rbind(family, segment)
+  data <- as.data.frame(t(data), stringsAsFactors = FALSE) %>%
+    dplyr::mutate(type = "DOMAIN", begin = as.numeric(start), end = as.numeric(end)) %>%
+    dplyr::select(type, description = famdesc, eval = fameval, begin, end) %>%
+    dplyr::bind_rows(tibble::tibble(type = "CHAIN", description = id, begin = 1, end = length)) %>%
+    dplyr::mutate(entryName = id) %>%
+    dplyr::mutate(order = n)
+  return(data)
 }
