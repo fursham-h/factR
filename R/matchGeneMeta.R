@@ -83,6 +83,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
   # convert input GRanges object to dataframe for parsing and adding meta information
   query <- query %>%
     as.data.frame() %>%
+    dplyr::filter(type != "gene") %>%
     dplyr::mutate(old_gene_id = gene_id, match_level = 0) %>%
     dplyr::left_join(ref.genelist, by = "gene_id")
 
@@ -250,9 +251,11 @@ Try running: %s <- matchSeqLevels(%s, %s)",
       dplyr::distinct(transcript_id, .keep_all = T) %>%
       dplyr::select(seqnames, start, end, strand, transcript_id)
     unmatched_granges <- GenomicRanges::makeGRangesFromDataFrame(unmatched_df, keep.extra.columns = TRUE)
-
+    
     matched_df <- IRanges::mergeByOverlaps(unmatched_granges, ref) %>%
       as.data.frame() %>%
+      dplyr::mutate(offset = abs(unmatched_granges.end - ref.end) + abs(unmatched_granges.start - ref.start)) %>% 
+      dplyr::arrange(offset) %>% 
       dplyr::select(transcript_id, basic_gene_id = gene_id) %>%
       dplyr::distinct(transcript_id, .keep_all = TRUE)
 
@@ -268,7 +271,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
         match_level
       )) %>%
       dplyr::select(-basic_gene_id) %>%
-      dplyr::left_join(ref.genelist))
+      dplyr::left_join(ref.genelist)) 
 
     # count number of unmatched ids after matching
     countsafter <- query %>%
