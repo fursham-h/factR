@@ -216,7 +216,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
     codons_gr <-  resize(codons_gr, width = width(codons_gr)-startMatch$start,fix = "end")
     codons_gr <-  resize(codons_gr, width = 3,fix = "start")
     
-    firstATGoverlap <- GenomicRanges::findOverlaps(nonexact, codons_gr, select = "first")
+    firstATGoverlap <- GenomicRanges::findOverlaps(nonexact, codons_gr, minoverlap = 3, select = "first")
     firstATGq2r <- data.frame(
       "transcript_id" = names(nonexact),
       "ref_transcript_index" = firstATGoverlap,
@@ -255,6 +255,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
     sorteach(exonorder)
   seq <- GenomicFeatures::extractTranscriptSeqs(fasta, startToendexons)
 
+  # search for in-frame stop codon and return a df of its position in startToendexons
   CDSstop <- lapply(c("TAG","TGA","TAA"), function(x){
          a = Biostrings::vmatchPattern(x, seq)
          as.data.frame(a)}) %>% bind_rows() %>%
@@ -265,11 +266,12 @@ Try running: %s <- matchSeqLevels(%s, %s)",
     dplyr::distinct(group, .keep_all = T) %>%
     dplyr::mutate(start = start - 1)
   
+  # prepare df with 3UTR length (if any) for each transcript
   stopdf <- tibble::tibble(group = 1:length(seq), width = BiocGenerics::width(seq)) %>%
     dplyr::left_join(CDSstop, by = "group") %>%
     dplyr::mutate(threeUTR = ifelse(!is.na(start), (width - start), width))
   
-    
+  # resize 3' end of transcript to just before stop codon and prepare output
   outCDS <- resizeTranscript(startToendexons, start = 0, end = stopdf$threeUTR)
   outCDS <- outCDS %>% as.data.frame() %>%
     dplyr::mutate(type = "CDS") %>%
@@ -278,25 +280,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
     dplyr::ungroup() %>%
     dplyr::select(seqnames, start, end, strand, type,transcript_id, phase)
   
-    
-  
-  # outCDS <- BiocParallel::bpmapply(function(x, y) {
-  #   if(!is.na(y)) {
-  #     x <- resizeTranscript(x, start = 0, end = y)
-  #     if (length(x) > 0) {
-  #       x$type = "CDS"
-  #       S4Vectors::mcols(x)$phase <- rev(cumsum(rev(BiocGenerics::width(x)) %% 3) %% 3)
-  #       x <- x %>% as.data.frame() %>%
-  #         dplyr::select(seqnames, start, end, strand, type,transcript_id, phase)
-  #       return(x)
-  #     } 
-  #   }
-  #   return(NULL)
-  # }, startToendexons, stopdf$threeUTR,
-  # BPPARAM = BiocParallel::MulticoreParam(), SIMPLIFY = F
-  # ) %>% dplyr::bind_rows()
-  
-  
+
   if (nrow(outCDS) == 0) {
     return(NULL)
   } else {
