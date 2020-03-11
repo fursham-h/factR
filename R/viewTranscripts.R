@@ -18,10 +18,10 @@
 #' @export
 #'
 #' @examples
-#' plotGTFtranscripts(query_gtf)
-#' plotGTFtranscripts(query_gtf, transcript_id == "transcript1")
-#' plotGTFtranscripts(ref_gtf)
-plotGTFtranscripts <- function(x, ..., rescale_introns = F) {
+#' viewTranscripts(query_gtf)
+#' viewTranscripts(query_gtf, transcript_id == "transcript1")
+#' viewTranscripts(ref_gtf)
+viewTranscripts <- function(x, ..., rescale_introns = F) {
 
   # catch missing args
   mandargs <- c("x")
@@ -62,10 +62,6 @@ plotGTFtranscripts <- function(x, ..., rescale_introns = F) {
     }
   }
 
-  # gene_metadata <- x %>% as.data.frame() %>%
-  #   dplyr::select(transcript_id, gene_name, strand)
-  #
-
   # Need to have a check for plotting multiple genes.....
 
   # Fetch gene exons and cdss
@@ -81,20 +77,5 @@ plotGTFtranscripts <- function(x, ..., rescale_introns = F) {
     cdss = cdss,
     rescale_introns = rescale_introns
   )
-
-  # if (length(as) > 0) {
-  #   transcript_rank = data.frame('transcript_id' = names(exons), stringsAsFactors = F) %>%
-  #     dplyr::mutate(transcript_rank = dplyr::row_number())
-  #   AS_df <- as %>%
-  #     as.data.frame() %>%
-  #     dplyr::rowwise() %>%
-  #     dplyr::mutate(center = mean(c(start, end))) %>%
-  #     dplyr::select(transcript_id = group_name, center, width, AStype) %>%
-  #     dplyr::left_join(transcript_rank, by = "transcript_id")
-  #   plot <- plot + geom_text(aes_(x = ~center,
-  #                         y = ~transcript_rank,
-  #                         label = ~AStype),
-  #                    data = AS_df, hjust = 'middle', vjust = 'top', size = 3)
-  # }
   plot
 }

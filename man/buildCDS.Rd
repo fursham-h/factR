@@ -18,18 +18,11 @@ GRanges object containing query exon entries and newly-constructed cds
 information
 }
 \description{
-buildCDS will select the #########
-
-buildCDS will next attempt to construct query CDS information by
-firstly deriving its start_codon as guided by the reference transcript.
-This is done in three successive stages:
-(1) search transcript for a start_codon as annotated in reference
-(2) if above fails, search for an internal ATG codon as annotated in reference
-(3) if above fails, align the frame of query to reference
-
-After the start_codon/coding frame have been established, the program
-will search for an in-frame stop_codon for each transcript and return its
-CDS GRanges entries if successfull.
+buildCDS will firstly attempt to find identical query and reference transcript
+pairs. If a query is paired to a coding reference transcript, it will be assigned
+the reference CDS. For unpaired query transcripts, buildCDS will assign the 
+upstream-most, annotated ATG codon (if any) as its translation start and search
+for an in-frame stop codon.
 }
 \author{
 Fursham Hamid

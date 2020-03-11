@@ -16,7 +16,7 @@
 #' @importFrom GenomeInfoDb seqlevels
 #' @importFrom GenomeInfoDb renameSeqlevels
 #'
-matchSeqLevels <- function(x, to) {
+matchChromosomes <- function(x, to) {
   nseqlevelsbefore <- length(GenomeInfoDb::seqlevels(x))
   suppressWarnings(
     if (any(!GenomeInfoDb::seqlevels(x) %in% GenomeInfoDb::seqlevels(to))) {

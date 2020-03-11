@@ -46,12 +46,12 @@ test_that("Test .runAS functionality", {
 })
 
 test_that("Test annotateAS robustness", {
-  expect_error(annotateAS(data.frame("id" = "test")))
-  expect_error(annotateAS(query_exons))
+  expect_error(labelSplicedSegment(data.frame("id" = "test")))
+  expect_error(labelSplicedSegment(query_exons))
 })
 
 test_that("Test compareAS robustness", {
-  expect_error(compareAS(data.frame("id" = "test")))
-  expect_warning(compareAS(query_exons[[1]], query_exons[[3]], data.frame("id" = "test")))
-  expect_warning(compareAS(query_exons, data.frame("id" = "test")))
+  expect_error(compareSplicedSegment(data.frame("id" = "test")))
+  expect_warning(compareSplicedSegment(query_exons[[1]], query_exons[[3]], data.frame("id" = "test")))
+  expect_warning(compareSplicedSegment(query_exons, data.frame("id" = "test")))
 })

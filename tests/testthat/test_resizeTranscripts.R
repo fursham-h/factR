@@ -1,4 +1,4 @@
-context("Test resizeTranscript function")
+context("Test trimTranscripts function")
 
 # setup GRanges
 gr1 <- GenomicRanges::GRanges(
@@ -17,13 +17,13 @@ gr2 <- GenomicRanges::GRanges(
 )
 grl <- GenomicRanges::GRangesList(gr1=gr1,gr2=gr2)
 
-out1 <- resizeTranscript(gr1, 20, 80)
-out2 <- resizeTranscript(gr2, 20, 80)
-out3 <- resizeTranscript(gr1, 110, 150)
-out4 <- resizeTranscript(gr2, 110, 150)
+out1 <- trimTranscripts(gr1, 20, 80)
+out2 <- trimTranscripts(gr2, 20, 80)
+out3 <- trimTranscripts(gr1, 110, 150)
+out4 <- trimTranscripts(gr2, 110, 150)
 
-out5 <- resizeTranscript(grl, 20, 80)
-out6 <- resizeTranscript(grl, c(20,110))
+out5 <- trimTranscripts(grl, 20, 80)
+out6 <- trimTranscripts(grl, c(20,110))
 
 
 test_that("Test sample output", {

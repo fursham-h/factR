@@ -151,7 +151,7 @@ getuORFuATG_ <- function(txlist, cdslist, fasta, size) {
 
   # test for uORF on 5'UTR
   # get sequence of 5'UTR
-  fiveUTRGRanges <- resizeTranscript(tx, end = txwidth - fiveUTRlength)
+  fiveUTRGRanges <- trimTranscripts(tx, end = txwidth - fiveUTRlength)
   list_startstopcodons <- Biostrings::DNAStringSet(c("ATG", "TAA", "TAG", "TGA"))
   pdict_startstopcodons <- Biostrings::PDict(list_startstopcodons)
 
@@ -212,7 +212,7 @@ getuORFuATG_ <- function(txlist, cdslist, fasta, size) {
     function(x, y, z, a) {
       start <- x - 1
       end <- length(fiveUTRseq) - y
-      thisGR <- resizeTranscript(fiveUTRGRanges, start, end)
+      thisGR <- trimTranscripts(fiveUTRGRanges, start, end)
       S4Vectors::mcols(thisGR)$type <- "CDS"
       S4Vectors::mcols(thisGR)$frame <- a
       S4Vectors::mcols(thisGR)$phase <- rev(cumsum(rev(BiocGenerics::width(thisGR)) %% 3) %% 3)

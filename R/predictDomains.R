@@ -1,4 +1,4 @@
-#' Extract protein features from coding mRNAs
+#' Get protein domains from coding mRNAs
 #'
 #' @param x
 #' Can be a GRanges object containing 'CDS' features in GTF format
@@ -10,20 +10,13 @@
 #' Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
 #' Variables are metadata information found in `x` and multiple conditions can be
 #' provided delimited by comma. Example: transcript_id == "transcript1"
-#' @param hmmer
-#' List of fields to report from hmmer protein domain search. 'default' will
-#' return 'desc', 'evalue' and 'nincluded' columns. See ?bio3d::hmmer for a list
-#' of returned fields. Set argument to NULL to skip hmmer analysis
-#' @param signalHsmm
-#' List of fields to report from signalHsmmm prediction tool. By default, argument
-#' is set to NULL which skips the analysis. Seting argument to 'default' will
-#' return 'sp_probability' columns. See ?signalHsmm::signalHsmm for a list
-#' of returned fields.
+#' @param plot
+#' Boolean argument to plot out protein domains
 #'
 #' @return
 #' Dataframe containing protein features for each cds entry
 #' @export
-getCDSfeature <- function(x, fasta, ..., plot = T) {
+predictDomains <- function(x, fasta, ..., plot = TRUE) {
 
   # catch missing args
   mandargs <- c("x", "fasta")
@@ -46,77 +39,13 @@ getCDSfeature <- function(x, fasta, ..., plot = T) {
   # get sequence
   aaSeq <- .getSequence(cds, fasta)
 
-  # prepare output and run analysis
-  output <- aaSeq %>% dplyr::select(id)
-
-  # run hmmer function if requested
-  url <- paste("https://www.ebi.ac.uk/Tools/hmmer/search/hmmscan")
-  url.opts <- list(httpheader = "Expect:", httpheader = "Accept:text/xml", 
-                   verbose = F, followlocation = TRUE)
-  #if (!is.null(feature$hmmer)) {
-    output <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(y) {
-      # account for return errors
-      report <- tryCatch(
-        .getdomains(url, curl.opts, aaSeq[y, ]$x, aaSeq[y,]$id, nchar(aaSeq[y, ]$x), y),
-        error = function(e) NULL
-      )
-
-      if (is.null(report)) {
-        return(NULL)
-      } else {
-        return(report)
-      }
-    }, BPPARAM = BiocParallel::MulticoreParam()) %>%
-      dplyr::bind_rows()
-    
-    plot.out <- draw_canvas(output) %>% 
-      draw_chains(output) %>% 
-      draw_domains(output, label_domains = F) +
-      theme_bw() + # white background
-      theme(panel.grid.minor=element_blank(), 
-            panel.grid.major=element_blank()) +
-      theme(axis.ticks = element_blank(), 
-            axis.text.y = element_blank()) +
-      theme(panel.border = element_blank())
-    
-    if (plot) {
-      plot.out
-    }
-
-    # subset columns based on requested fields
-    table.out <- output %>%
-      dplyr::select(id = entryName, description, eval, begin, end) %>%
-      dplyr::filter(type == "DOMAIN") %>%
-      dplyr::right_join(aaSeq %>% dplyr::select(id), by = "id")
-  #}
-
-  # run signalHsmm function
-  # if (!is.null(feature$signalHsmm)) {
+  # # prepare output and run analysis
+  # output <- aaSeq %>% dplyr::select(id)
   # 
-  #   # run signalHsmm
-  #   outSP <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(x) {
-  #     report <- signalHsmm::run_signalHsmm(aaSeq[x, ]$y)[[1]]
-  #     report$struc <- paste(report$struc, collapse = "")
-  #     report$prot <- paste(report$prot, collapse = "")
-  # 
-  #     report <- report %>%
-  #       unlist() %>%
-  #       dplyr::bind_rows() %>%
-  #       dplyr::mutate(id = aaSeq[x, ]$id)
-  #     return(report)
-  #   }, BPPARAM = BiocParallel::MulticoreParam()) %>% dplyr::bind_rows()
-  # 
-  #   # combine outSP with output
-  #   output <- outSP %>%
-  #     dplyr::select(id, feature$signalHsmm) %>%
-  #     dplyr::rename_at(
-  #       dplyr::vars(feature$signalHsmm),
-  #       ~ paste0("signalHsmm.", feature$signalHsmm)
-  #     ) %>%
-  #     dplyr::left_join(output, ., by = "id")
-  # }
-
-  return(table.out)
+  
+  output_table <- .runDomainSearch(aaSeq, plot)
+  
+  return(output_table)
 }
 
 
@@ -127,7 +56,7 @@ getCDSfeature <- function(x, fasta, ..., plot = T) {
   if (suppressWarnings(!has_consistentSeqlevels(cds, fasta))) {
     rlang::abort(sprintf(
       "`%s` and `%s` has unmatched seqlevel styles. 
-Try running: %s <- matchSeqLevels(%s, %s)",
+Try running: %s <- matchChromosomes(%s, %s)",
       argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]
     ))
   }
@@ -241,6 +170,8 @@ Try running: %s <- matchSeqLevels(%s, %s)",
 
 
 .getdomains <- function(url, curl.opts, seq, id, length, n) {
+  type <- famdesc <- fameval <- begin <- NULL
+  
   hmm <- RCurl::postForm(url, hmmdb = "superfamily", seqdb = NULL, 
                          seq = seq, style = "POST", .opts = curl.opts, .contentEncodeFun = RCurl::curlPercentEncode, 
                          .checkParams = TRUE)
@@ -255,4 +186,49 @@ Try running: %s <- matchSeqLevels(%s, %s)",
     dplyr::mutate(entryName = id) %>%
     dplyr::mutate(order = n)
   return(data)
+}
+
+.runDomainSearch <- function(aaSeq, plot) {
+  
+  type <- entryName <- description <- begin <- id <- NULL
+  
+  # prepare URL
+  url <- paste("https://www.ebi.ac.uk/Tools/hmmer/search/hmmscan")
+  url.opts <- list(httpheader = "Expect:", httpheader = "Accept:text/xml", 
+                   verbose = F, followlocation = TRUE)
+
+  # run search for each protein sequence
+  output <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(y) {
+    # account for return errors
+    report <- tryCatch(
+      .getdomains(url, url.opts, aaSeq[y, ]$x, aaSeq[y,]$id, nchar(aaSeq[y, ]$x), y),
+      error = function(e) NULL
+    )
+    
+    if (is.null(report)) {
+      return(NULL)
+    } else {
+      return(report)
+    }
+  }, BPPARAM = BiocParallel::MulticoreParam()) %>%
+    dplyr::bind_rows()
+  
+  # plot protein domains if requested
+  if (plot) {
+    print(drawProteins::draw_canvas(output) %>%
+      drawProteins::draw_chains(output) %>%
+      drawProteins::draw_domains(output, label_domains = F) +
+      ggplot2::theme_bw() + # white background
+      ggplot2::theme(panel.grid.minor=ggplot2::element_blank(),
+            panel.grid.major=ggplot2::element_blank()) +
+      ggplot2::theme(axis.ticks = ggplot2::element_blank(),
+            axis.text.y = ggplot2::element_blank()) +
+      ggplot2::theme(panel.border = ggplot2::element_blank()))
+  }
+  
+  # prepare output table
+  table.out <- output %>%
+    dplyr::filter(type == "DOMAIN") %>%
+    dplyr::select(transcript = entryName, description, eval, begin, end) %>%
+    dplyr::right_join(aaSeq %>% dplyr::select(transcript = id), by = "transcript")
 }

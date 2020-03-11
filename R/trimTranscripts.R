@@ -1,10 +1,19 @@
 #' Resize 5' and 3' ends of a transcript GenomicRanges
 #'
-#' @param x GenomicRanges object containing exon coordinates from a transcript
-#' @param start Length to append from the start of transcript
-#' @param end Length to append from the end of transcript
+#' @param x 
+#' GRanges or GRangesList object containing exon coordinates for each transcript
+#' @param start 
+#' Number of bases to trim from the start of transcript. Providing a negative value will
+#' extend the transcript instead. If `x` is a GRanges object,
+#' `start` is a single integer. If `x` is a GRangesList, `start` can be a single 
+#' integer or a list of integers of the same length as `x`
+#' @param end 
+#' Number of bases to trim from the end of transcript. Providing a negative value will
+#' extend the transcript instead. If `x` is a GRanges object,
+#' `end` is a single integer. If `x` is a GRangesList, `end` can be a single 
+#' integer or a list of integers of the same length as `x`
 #'
-#' @return Appended GenomicRanges object
+#' @return Trimmed GenomicRanges object
 #' @export
 #' @author Fursham Hamid
 #'
@@ -18,12 +27,13 @@
 #'   )
 #' )
 #'
-#' resizeTranscript(gr1, 20, 80)
-#' resizeTranscript(gr1, 110, 150)
-resizeTranscript <- function(x, start = 0, end = 0) {
+#' trimTranscripts(gr1, 20, 80)
+#' trimTranscripts(gr1, 110, 150)
+trimTranscripts <- function(x, start = 0, end = 0) {
 
   # define global variables
   width <- tmp.fwdcumsum <- tmp.revcumsum <- tmp.end <- tmp.start <- NULL
+  strand <- group <- tmp.headlength <- tmp.taillength <- group_name <- NULL
   
   # check inputs
   if (is(x, "GRanges")) {

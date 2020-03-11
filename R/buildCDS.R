@@ -2,18 +2,11 @@
 #'
 #' @description
 #'
-#' buildCDS will select the #########
-#'
-#' buildCDS will next attempt to construct query CDS information by
-#' firstly deriving its start_codon as guided by the reference transcript.
-#' This is done in three successive stages:
-#' (1) search transcript for a start_codon as annotated in reference
-#' (2) if above fails, search for an internal ATG codon as annotated in reference
-#' (3) if above fails, align the frame of query to reference
-#'
-#' After the start_codon/coding frame have been established, the program
-#' will search for an in-frame stop_codon for each transcript and return its
-#' CDS GRanges entries if successfull.
+#' buildCDS will firstly attempt to find identical query and reference transcript
+#' pairs. If a query is paired to a coding reference transcript, it will be assigned
+#' the reference CDS. For unpaired query transcripts, buildCDS will assign the 
+#' upstream-most, annotated ATG codon (if any) as its translation start and search
+#' for an in-frame stop codon. 
 #'
 #' @param query
 #' GRanges object containing query GTF data.
@@ -73,14 +66,14 @@ buildCDS <- function(query, ref, fasta) {
   if (suppressWarnings(!has_consistentSeqlevels(query, fasta))) {
     rlang::abort(sprintf(
       "`%s` and `%s` has unmatched seqlevel styles. 
-Try running: %s <- matchSeqLevels(%s, %s)",
+Try running: %s <- matchChromosomes(%s, %s)",
       argnames[1], argnames[3], argnames[1], argnames[1], argnames[3]
     ))
   }
   if (suppressWarnings(!has_consistentSeqlevels(ref, fasta))) {
     rlang::abort(sprintf(
       "`%s` and `%s` has unmatched seqlevel styles. 
-Try running: %s <- matchSeqLevels(%s, %s)",
+Try running: %s <- matchChromosomes(%s, %s)",
       argnames[2], argnames[3], argnames[2], argnames[2], argnames[3]
     ))
   }
@@ -90,6 +83,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
   
   transcript_id <- gene_id <- gene_name <- type <- width <- strand <- NULL
   phase <- tailphase <- coverage <- group <- seanames <- seqnames <- NULL
+  group_name <- NULL
   
   # Add gene_name column if absent
   if (!"gene_name" %in% names(S4Vectors::mcols(query))) {
@@ -168,6 +162,8 @@ Try running: %s <- matchSeqLevels(%s, %s)",
 .pairq2r <- function(query_exons, ref_cds, ref_exons, ref, fasta){
   
   ref_transcript_id <- strand <- transcript_id <- coverage <- NULL
+  ref_transcript_index <- type <- width <- phase <- tailphase <- NULL
+  group <- resize <- width <- NULL
 
   # search for exact query and ref matches
   fulloverlap <- GenomicRanges::findOverlaps(query_exons, ref_exons,
@@ -236,6 +232,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
   
   strand <- start1 <- end1 <- group <- seqnames <- newstart <- newend <- NULL
   stoppos <- width <- seqnames <- strand <- type <- transcript_id <- phase <- NULL
+  newstrand <- exonorder <- NULL
   
   # get range from ATG to end of transcript
   startToend <- dplyr::bind_cols(as.data.frame(range(order_query)), as.data.frame(order_ref)) %>%
@@ -258,7 +255,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
   # search for in-frame stop codon and return a df of its position in startToendexons
   CDSstop <- lapply(c("TAG","TGA","TAA"), function(x){
          a = Biostrings::vmatchPattern(x, seq)
-         as.data.frame(a)}) %>% bind_rows() %>%
+         as.data.frame(a)}) %>% dplyr::bind_rows() %>%
     dplyr::group_by(group) %>%
     dplyr::filter(end %% 3 == 0) %>%
     dplyr::arrange(start) %>%
@@ -272,7 +269,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
     dplyr::mutate(threeUTR = ifelse(!is.na(start), (width - start), width))
   
   # resize 3' end of transcript to just before stop codon and prepare output
-  outCDS <- resizeTranscript(startToendexons, start = 0, end = stopdf$threeUTR)
+  outCDS <- trimTranscripts(startToendexons, start = 0, end = stopdf$threeUTR)
   outCDS <- outCDS %>% as.data.frame() %>%
     dplyr::mutate(type = "CDS") %>%
     dplyr::group_by(group) %>%

@@ -36,7 +36,7 @@
 #'
 #' @author Fursham Hamid
 
-matchGeneMeta <- function(query, ref,
+matchGeneInfo <- function(query, ref,
                           primary_gene_id = NULL,
                           secondary_gene_id = NULL) {
 
@@ -59,6 +59,7 @@ matchGeneMeta <- function(query, ref,
   # define global variables
   matched1 <-gene_id <- transcript_id <- matched <- match_level <- appended_ens_id <- NULL
   basic_gene_id <- type <- seqnames <- strand <- gene_name <- ref_gene_name <- NULL
+  unmatched_granges.end <- ref.end <- unmatched_granges.start <- ref.start <- offset <- NULL
 
   # retrieve input object names
   argnames <- as.character(match.call())[-1]

@@ -1,4 +1,4 @@
-#' Annotate alternative-spliced segments from a GTF annotation
+#' Label alternative-spliced segments from a GTF annotation
 #'
 #' @param x
 #' GRanges object containing transcript features in GTF format
@@ -9,7 +9,7 @@
 #'
 #' @param append
 #' If TRUE, function will append the alternative-spliced segments to x and return
-#' a new GTF GRanges object
+#' a new GTF GRanges object (default = TRUE)
 #'
 #' @return
 #' GRanges object or data-frame containing alternative-spliced segments found in x
@@ -30,19 +30,19 @@
 #'               transcript_id = Rle(c('transcript1', 'transcript2'), lengths = c(2,3)))
 #'               
 #' ## Annotate alternative segments
-#' annotateAS(gr)
+#' labelSplicedSegment(gr)
 #' 
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING SAMPLE DATASET
 #' ## ---------------------------------------------------------------------
 #' ## Using GTF GRanges as input
-#' annotateAS(query_gtf)
+#' labelSplicedSegment(query_gtf)
 #' 
 #' ## Output as dataframe
-#' annotateAS(query_gtf, as.data.frame = TRUE)
+#' labelSplicedSegment(query_gtf, as.data.frame = TRUE)
 #' 
 #' ## Append AS info to input
-#' annotateAS(query_gtf, append = TRUE)
+#' labelSplicedSegment(query_gtf, append = TRUE)
 #' 
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING TRANSCRIPT ANNOTATION DATABASE
@@ -55,12 +55,12 @@
 #' GRCm38_gtf <- ah[['AH60127']]
 #' 
 #' ## Run tool on specific gene family
-#' annotateAS(GRCm38_gtf)
+#' labelSplicedSegment(GRCm38_gtf)
 #' 
 #' }
 #' 
 
-annotateAS <- function(x, as.data.frame = FALSE, append = FALSE) {
+labelSplicedSegment <- function(x, as.data.frame = FALSE, append = FALSE) {
   # catch missing args
   mandargs <- c("x")
   passed <- names(as.list(match.call())[-1])
@@ -108,7 +108,6 @@ annotateAS <- function(x, as.data.frame = FALSE, append = FALSE) {
 #' @param ...
 #' In pair-wise mode, argument is one or more GRanges object containing exons for a
 #' particular transcript to compare with `x`
-
 #'
 #' @return
 #' GRangesList object containing alternatively-spliced segments for each transcript
@@ -128,28 +127,28 @@ annotateAS <- function(x, as.data.frame = FALSE, append = FALSE) {
 #' gr2 <- GRanges("chr1", IRanges(start = c(1,51,101), width=c(20,10,20)), '+')
 #' 
 #' ## Pairwise comparison between GRanges object
-#' compareAS(gr1, gr2)
+#' compareSplicedSegment(gr1, gr2)
 #' 
 #' ## Multiple comparisons can be done by providing more GRanges input
 #' gr3 <- GRanges("chr1", IRanges(start = c(1,91), width=c(20,30)), '+')
-#' compareAS(gr1, gr2, gr3)
+#' compareSplicedSegment(gr1, gr2, gr3)
 #' 
 #' ## GRangesList containing exons per transcript can be given as input
 #' grl <- GRangesList(list(gr1,gr2,gr3))
-#' compareAS(grl)
+#' compareSplicedSegment(grl)
 #' 
 #' 
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING SAMPLE DATASET
 #' ## ---------------------------------------------------------------------
 #' ## Using GRangesList as input
-#' compareAS(query_exons)
+#' compareSplicedSegment(query_exons)
 #' 
 #' ## Compare AS between individual GRanges object
-#' compareAS(query_exons[[1]], query_exons[[3]])
+#' compareSplicedSegment(query_exons[[1]], query_exons[[3]])
 #' 
 #' 
-compareAS <- function(x, ...) {
+compareSplicedSegment <- function(x, ...) {
 
   # catch missing args
   mandargs <- c("x")
@@ -244,10 +243,12 @@ compareAS <- function(x, ...) {
 
 
 .runAS <- function(x) {
+  # define global variables
   transcript_id <- pos <- seqnames <- strand <- gene_id <- NULL
   first.X.start <- second.start <- first.X.end <- second.end <- NULL
   first.pos <- AStype <- first.X.strand <- gene_name <- NULL
   
+  # order exons by chromosome coord and label position
   x <- x %>%
     as.data.frame() %>%
     dplyr::group_by(transcript_id) %>%

@@ -182,9 +182,9 @@ unique(query_gtf$transcript_id)
 unique(query_gtf$gene_id)
 ```
 
-Users can quickly visualize the exon structure of these query transcripts using the `plotGTFtranscripts` tool, which is essentially a convenient wrapper to plot transcripts using the *wiggleplotr* package:
+Users can quickly visualize the exon structure of these query transcripts using the `viewTranscripts` tool, which is essentially a convenient wrapper to plot transcripts using the *wiggleplotr* package:
 ```{r viewquery}
-plotGTFtranscripts(query_gtf)
+viewTranscripts(query_gtf)
 ```
 
 ## Reference
@@ -211,11 +211,11 @@ seqlevelsStyle(ref_gtf)
 *factR* contain a tool to effectively match the seqlevels of a query GRanges object to any reference object with seqlevel information:
 ```{r matchseqlvls}
 # matching seqlevels
-matched_query_gtf <- matchSeqLevels(query_gtf, Mmusculus)
+matched_query_gtf <- matchChromosomes(query_gtf, Mmusculus)
 
 head(matched_query_gtf)
 ```
-Note: `matchSeqLevels` will drop any unmatched seqlevels from query 
+Note: `matchChromosomes` will drop any unmatched seqlevels from query 
 
 *factR* also comes with the function `has_consistentSeqlevels` to test if two or more objects have consistent seqlevels. This function returns a logical value of FALSE if input objects have inconsistent seqlevels and recommends a `matchSeqLevels` function to run.
 ```{r testseqlevels}
@@ -226,10 +226,10 @@ has_consistentSeqlevels(matched_query_gtf, ref_gtf)
 
 # Matching gene metadata
 
-Custom-built GTF annotation may contain generic **gene_id** and **gene_name** metadata (e.g. 'MSTRG1'), depending on how it was constructed. Users who wish to fill these metadata using a reference annotation may run the `matchGeneMeta` function:
+Custom-built GTF annotation may contain generic **gene_id** and **gene_name** metadata (e.g. 'MSTRG1'), depending on how it was constructed. Users who wish to fill these metadata using a reference annotation may run the `matchGeneInfo` function:
 ```{r matchgenemeta}
 # matching gene metadata
-matched_query_gtf <- matchGeneMeta(matched_query_gtf, ref_gtf)
+matched_query_gtf <- matchGeneInfo(matched_query_gtf, ref_gtf)
 
 head(matched_query_gtf)
 ```
@@ -255,9 +255,9 @@ length(new_query_gtf)
 head(new_query_gtf[mcols(new_query_gtf)$type == "CDS"])
 ```
 
-User can visualize the coding structure of each transcripts using the `plotGTFtranscripts` tool, which is essentially a convenient wrapper to plot transcripts using the *wiggleplotr* package:
+User can visualize the coding structure of each transcripts using the `viewTranscripts` tool:
 ```{r viewCDS}
-plotGTFtranscripts(new_query_gtf)
+viewTranscripts(new_query_gtf)
 ```
 
 The new query GTF Granges object can be exported as a .gtf file using *rtracklayer*'s export funcition:
@@ -267,51 +267,24 @@ rtracklayer::export(new_query_gtf, 'path/to/output.gtf', format = 'gtf')
 ```
 
 
-# Extracting protein features on coding transcripts
+# Predicting protein domains from coding transcripts
 
-Upon construction of coding segments on transcripts, users may be interested in determining the functional domains which is encoded within the coding sequence. To this end, users can utilize the `extractCDSfeature` function. This tool accepts a GTF GRanges object containing CDS information as input, together with a genome sequence object. After checking the translated protein sequence, `extractCDSfeature` will query the SuperFamily database for domain features by calling out the `hmmer` function from *bio3d* package. The function will output 3 output fields: **desc**, **evalue** and **nincluded**. 
-```{r testfeature, eval=F}
-extractCDSfeature(new_query_gtf, Mmusculus)
-#> # A tibble: 4 x 4
-#>   id          hmmer.desc              hmmer.evalue hmmer.nincluded
-#>   <chr>       <chr>                          <dbl>           <dbl>
-#> 1 transcript1 RNA-binding domain, RBD     2.80e-81               4
-#> 2 transcript2 RNA-binding domain, RBD     2.10e-81               4
-#> 3 transcript3 RNA-binding domain, RBD     1.30e-43               2
-#> 4 transcript4 RNA-binding domain, RBD     1.20e-72               4
-```
-
-More fields from the `hmmer` function can be requested by providing a list of output fields to the hmmer argument:
-```{r testfeature2, eval=F}
-extractCDSfeature(new_query_gtf, Mmusculus, hmmer = c('default', 'bitscore', 'pvalue'))
-#> # A tibble: 4 x 6
-#>   id          hmmer.desc              hmmer.evalue hmmer.nincluded hmmer.bitscore hmmer.pvalue
-#>   <chr>       <chr>                          <dbl>           <dbl>          <dbl>        <dbl>
-#> 1 transcript1 RNA-binding domain, RBD     2.80e-81               4           266.        -195.
-#> 2 transcript2 RNA-binding domain, RBD     2.10e-81               4           267.        -195.
-#> 3 transcript3 RNA-binding domain, RBD     1.30e-43               2           146.        -108.
-#> 4 transcript4 RNA-binding domain, RBD     1.20e-72               4           239         -175.
-```
-
-This tool also currently support the identification of signal peptide by running the `signalHsmm` function from the *signalHsmm* package. This feature is not run by default, but can be initiated by setting the argument for **signalHsmm** to 'default' or any one of the supported output fields. Users can skip testing of any of these featyres by setting the **hmmer** or **signalHsmm** arguments to NULL
-```{r testfeature3, eval=F}
-extractCDSfeature(new_query_gtf, Mmusculus, hmmer = NULL, signalHsmm = 'default')
-#> # A tibble: 4 x 2
-#>   id          signalHsmm.sp_probability
-#>   <chr>       <chr>                    
-#> 1 transcript1 0.000574583738246925     
-#> 2 transcript2 0.000574583738246925     
-#> 3 transcript3 0.000574583738246925     
-#> 4 transcript4 0.000574583738246925     
+Upon construction of coding segments on transcripts, users may be interested in determining the functional domains which is encoded within the coding sequence. To this end, users can utilize the `predictDomains` function. This tool accepts a GTF GRanges object containing CDS information as input, together with a genome sequence object. After checking the translated protein sequence, `predictDomains` will query the SuperFamily database for domain features and plot its domain architecture:
+```{r testfeature}
+domains <- predictDomains(new_query_gtf, Mmusculus)
 ```
 
 
-In order to extract the domain features, `extractCDSfeature` will attempt to submit the protein coding sequence to the SuperFamily database and return a summary of the domain structure. As this process is done over HTTP, the speed of this function is greatly dependent on the server and on the number of CDS in your list. This process can be sped up by subsetting the list of transcripts for analysis by providing logical conditions to the **...** argument. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
+In order to extract the domain features, `predictDomains` will attempt to submit the protein coding sequence to the SuperFamily database and return a summary of the domain structure. As this process is done over HTTP, the speed of this function is greatly dependent on the server and on the number of CDS in your list. This process can be sped up by subsetting the list of transcripts for analysis by providing logical conditions to the **...** argument. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
 ```{r testfeaturewhich, eval=F}
-#> extractCDSfeature(new_query_gtf, Mmusculus, transcript_id %in% c('transcript1', 'transcript3'))
-#>            id              hmmer.desc hmmer.evalue hmmer.nincluded
-#> 1 transcript1 RNA-binding domain, RBD      2.7e-81               4
-#> 2 transcript3 RNA-binding domain, RBD      1.3e-43               2
+predictDomains(new_query_gtf, Mmusculus, transcript_id %in% c('transcript1', 'transcript3'))
+#>    transcript   description     eval begin end
+#> 1 transcript1 Canonical RBD 4.96e-06    46 143
+#> 2 transcript1 Canonical RBD 1.39e-05   357 446
+#> 3 transcript1 Canonical RBD 1.28e-06   177 281
+#> 4 transcript1 Canonical RBD 9.32e-06   469 553
+#> 5 transcript3 Canonical RBD 4.96e-06    46 143
+#> 6 transcript3 Canonical RBD 1.28e-06   177 281
 ```
 
 # Predicting NMD-inducing features on coding transcripts
@@ -367,9 +340,9 @@ predictNMD(mm10_gtf, gene_name == 'Ptbp1', transcript_id == c('ENSMUST0000005734
 
 Alternative splicing is an ubiquitous post-transcriptional process that regulates the inclusion of exon segments. This results in the expression of two or more transcript isoforms in a gene family. Depending on the boundaries and position of the exon, alternative segments can be classified into at least one of eight classes; Casette Exon, First Exon, Last Exon, Spliced Donor, Spliced Acceptor, Retained Intron, Termination Start and Termination End. 
 
-To find and annotate alternative-spliced segments within a GTF file, users can simply run `annotateAS`. This function accepts any GTF GRanges object with exon features and will return a GRanges object containing annotated alternative segments in a similar GTF format
+To find and annotate alternative-spliced segments within a GTF file, users can simply run `labelSplicedSegment`. This function accepts any GTF GRanges object with exon features and will return a GRanges object containing annotated alternative segments in a similar GTF format
 ```{r annotateAS}
-annotateAS(new_query_gtf)
+labelSplicedSegment(new_query_gtf)
 ```
 
 
@@ -380,7 +353,7 @@ ah <- AnnotationHub()
 mm10_gtf <- ah[['AH60127']]
 
 # annotate GRCm38 transcriptome
-system.time({mm10_AS <- annotateAS(mm10_gtf)})
+system.time({mm10_AS <- labelSplicedSegment(mm10_gtf)})
 #>    user  system elapsed 
 #>  21.352   0.076  21.427 
 
@@ -405,7 +378,7 @@ mm10_AS
 ```
 
 
-Users who wish to compare alternative segments between two or more transcripts can run the `compareAS` function. In contrast to `annotateAS`, this function accepts two or more GRanges object, each containing exon features for a particular transcript. Alternatively, users can provide the list of transcript exon features as a GRangesList object
+Users who wish to compare alternative segments between two or more transcripts can run the `compareSplicedSegment` function. In contrast to `labelSplicedSegment`, this function accepts two or more GRanges object, each containing exon features for a particular transcript. Alternatively, users can provide the list of transcript exon features as a GRangesList object
 ```{r compareAS}
 # convert GTF GRanges into GRangesList of exons by transcript
 txlist <- split(query_gtf[query_gtf$type == 'exon'], ~transcript_id)
@@ -414,10 +387,10 @@ names(txlist)
 # Pair-wise transcript comparison
 tx1 <- txlist[[1]]
 tx2 <- txlist[[3]]
-compareAS(tx1, tx2)
+compareSplicedSegment(tx1, tx2)
 
 # Intralist comparison
-compareAS(txlist)
+compareSplicedSegment(txlist)
 
 
 ```

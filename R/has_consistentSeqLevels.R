@@ -12,7 +12,7 @@
 #' @importFrom data.table :=
 #' @importFrom graphics frame
 #' @importFrom methods as is new slot slotNames
-#' @importFrom stats dist end start
+#' @importFrom stats dist end start offset
 #' @importFrom utils head tail
 #' @importFrom rlang .data
 #' 
