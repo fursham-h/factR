@@ -99,14 +99,14 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
 
   # check if exons is a gtf or both exons and cds are GR or GRlist
   if (is_gtf(x)) {
-    exons <- S4Vectors::split(x[x$type == "exon"], ~transcript_id)
+    exons <- sorteach(S4Vectors::split(x[x$type == "exon"], ~transcript_id), exonorder)
     cds <- S4Vectors::split(x[x$type == "CDS"], ~transcript_id)
   } else if (all(is(x) %in% is(cds))) {
     if (is(x, "GRanges")) {
-      exons <- GenomicRanges::GRangesList("transcript" = x)
+      exons <- sorteach(GenomicRanges::GRangesList("transcript" = x), exonorder)
       cds <- GenomicRanges::GRangesList("transcript" = cds)
     } else if (is(x, "GRangesList")) {
-      exons <- x
+      exons <- sorteach(x, exonorder)
     } else {
       errorobj <- paste(unique(c(is(x)[1], is(cds)[2])), collapse = ", ")
       rlang::abort(sprintf(
@@ -150,9 +150,6 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     "threeUTRlength" = as.double(),
     "is_NMD" = as.logical()
   )
-
-  # sort all exons by strand first
-  x <- sorteach(x, exonorder)
 
   toStopRange <- dplyr::bind_cols(as.data.frame(range(x)), as.data.frame(range(y))) %>%
     dplyr::rowwise() %>%
