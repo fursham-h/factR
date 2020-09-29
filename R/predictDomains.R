@@ -31,7 +31,7 @@ predictDomains <- function(x, fasta, ..., plot = TRUE) {
   # get argnames and carry out checks
   argnames <- as.character(match.call())[-1]
   cds <- .extractCDSchecks(x, fasta, argnames, ...)
-  #feature <- .featurechecks(hmmer, signalHsmm)
+  # feature <- .featurechecks(hmmer, signalHsmm)
 
   # define global variables
   . <- id <- NULL
@@ -41,10 +41,10 @@ predictDomains <- function(x, fasta, ..., plot = TRUE) {
 
   # # prepare output and run analysis
   # output <- aaSeq %>% dplyr::select(id)
-  # 
-  
+  #
+
   output_table <- .runDomainSearch(aaSeq, plot)
-  
+
   return(output_table)
 }
 
@@ -171,12 +171,14 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
 .getdomains <- function(url, curl.opts, seq, id, length, n) {
   type <- famdesc <- fameval <- begin <- NULL
-  
-  hmm <- RCurl::postForm(url, hmmdb = "superfamily", seqdb = NULL, 
-                         seq = seq, style = "POST", .opts = curl.opts, .contentEncodeFun = RCurl::curlPercentEncode, 
-                         .checkParams = TRUE)
+
+  hmm <- RCurl::postForm(url,
+    hmmdb = "superfamily", seqdb = NULL,
+    seq = seq, style = "POST", .opts = curl.opts, .contentEncodeFun = RCurl::curlPercentEncode,
+    .checkParams = TRUE
+  )
   xml <- XML::xmlParse(hmm)
-  family <- XML::xpathSApply(xml, "///family", XML::xpathSApply,  "@*")
+  family <- XML::xpathSApply(xml, "///family", XML::xpathSApply, "@*")
   segment <- XML::xpathSApply(xml, "///segments", XML::xpathSApply, "@*")
   data <- rbind(family, segment)
   data <- as.data.frame(t(data), stringsAsFactors = FALSE) %>%
@@ -189,22 +191,23 @@ Try running: %s <- matchChromosomes(%s, %s)",
 }
 
 .runDomainSearch <- function(aaSeq, plot) {
-  
   type <- entryName <- description <- begin <- id <- NULL
-  
+
   # prepare URL
   url <- paste("https://www.ebi.ac.uk/Tools/hmmer/search/hmmscan")
-  url.opts <- list(httpheader = "Expect:", httpheader = "Accept:text/xml", 
-                   verbose = F, followlocation = TRUE)
+  url.opts <- list(
+    httpheader = "Expect:", httpheader = "Accept:text/xml",
+    verbose = F, followlocation = TRUE
+  )
 
   # run search for each protein sequence
   output <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(y) {
     # account for return errors
     report <- tryCatch(
-      .getdomains(url, url.opts, aaSeq[y, ]$x, aaSeq[y,]$id, nchar(aaSeq[y, ]$x), y),
+      .getdomains(url, url.opts, aaSeq[y, ]$x, aaSeq[y, ]$id, nchar(aaSeq[y, ]$x), y),
       error = function(e) NULL
     )
-    
+
     if (is.null(report)) {
       return(NULL)
     } else {
@@ -212,20 +215,24 @@ Try running: %s <- matchChromosomes(%s, %s)",
     }
   }, BPPARAM = BiocParallel::MulticoreParam()) %>%
     dplyr::bind_rows()
-  
+
   # plot protein domains if requested
   if (plot) {
     print(drawProteins::draw_canvas(output) %>%
       drawProteins::draw_chains(output) %>%
       drawProteins::draw_domains(output, label_domains = F) +
       ggplot2::theme_bw() + # white background
-      ggplot2::theme(panel.grid.minor=ggplot2::element_blank(),
-            panel.grid.major=ggplot2::element_blank()) +
-      ggplot2::theme(axis.ticks = ggplot2::element_blank(),
-            axis.text.y = ggplot2::element_blank()) +
+      ggplot2::theme(
+        panel.grid.minor = ggplot2::element_blank(),
+        panel.grid.major = ggplot2::element_blank()
+      ) +
+      ggplot2::theme(
+        axis.ticks = ggplot2::element_blank(),
+        axis.text.y = ggplot2::element_blank()
+      ) +
       ggplot2::theme(panel.border = ggplot2::element_blank()))
   }
-  
+
   # prepare output table
   table.out <- output %>%
     dplyr::filter(type == "DOMAIN") %>%
