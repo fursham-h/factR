@@ -5,8 +5,8 @@ factR is a robust and easy-to-use R package with tools to process custom-assembl
 ## Features
 * Core features 
   1. Constructs coding (CDS) information for each transcript entry using a reference annotation as guide
-  2. Analyzes coding transcripts for protein-coding features
-  3. Scans coding transcripts for NMD-inducing features
+  2. Predict protein domains on coding transcripts
+  3. Predict sensitivity of coding transcripts to NMD
   4. Reanalyzes coding transcripts for upstream and overlapping ORFs
   5. Compare and classify alternative segments between transcripts
 * Supporting features 
