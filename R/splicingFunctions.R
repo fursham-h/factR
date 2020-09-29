@@ -16,50 +16,49 @@
 #'
 #' @export
 #' @author Fursham Hamid
-#' 
-#' @examples 
-#' 
+#'
+#' @examples
+#'
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING TOY DATASET
 #' ## ---------------------------------------------------------------------
 #' require(GenomicRanges)
-#' 
+#'
 #' ## Create toy GRanges GTF object
-#' gr <- GRanges("chr1", IRanges(start = c(1, 101, 1, 51, 101), width=c(20,20,20,10,20)), '+', 
-#'               type = 'exon', gene_id = 'geneA', 
-#'               transcript_id = Rle(c('transcript1', 'transcript2'), lengths = c(2,3)))
-#'               
+#' gr <- GRanges("chr1", IRanges(start = c(1, 101, 1, 51, 101), width = c(20, 20, 20, 10, 20)), "+",
+#'   type = "exon", gene_id = "geneA",
+#'   transcript_id = Rle(c("transcript1", "transcript2"), lengths = c(2, 3))
+#' )
+#'
 #' ## Annotate alternative segments
 #' labelSplicedSegment(gr)
-#' 
+#'
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING SAMPLE DATASET
 #' ## ---------------------------------------------------------------------
 #' ## Using GTF GRanges as input
 #' labelSplicedSegment(query_gtf)
-#' 
+#'
 #' ## Output as dataframe
 #' labelSplicedSegment(query_gtf, as.data.frame = TRUE)
-#' 
+#'
 #' ## Append AS info to input
 #' labelSplicedSegment(query_gtf, append = TRUE)
-#' 
+#'
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING TRANSCRIPT ANNOTATION DATABASE
 #' ## ---------------------------------------------------------------------
 #' \dontrun{
 #' library(AnnotationHub)
-#' 
+#'
 #' ## Retrieve GRCm38 trancript annotation
 #' ah <- AnnotationHub()
-#' GRCm38_gtf <- ah[['AH60127']]
-#' 
+#' GRCm38_gtf <- ah[["AH60127"]]
+#'
 #' ## Run tool on specific gene family
 #' labelSplicedSegment(GRCm38_gtf)
-#' 
 #' }
-#' 
-
+#'
 labelSplicedSegment <- function(x, as.data.frame = FALSE, append = FALSE) {
   # catch missing args
   mandargs <- c("x")
@@ -76,7 +75,7 @@ labelSplicedSegment <- function(x, as.data.frame = FALSE, append = FALSE) {
   # retrieve input object names and carry out checks
   argnames <- as.character(match.call())[-1]
   .ASchecks(x, argnames)
-  
+
   # Add gene_name column if absent
   if (!"gene_name" %in% names(S4Vectors::mcols(x))) {
     x$gene_name <- x$gene_id
@@ -115,39 +114,37 @@ labelSplicedSegment <- function(x, as.data.frame = FALSE, append = FALSE) {
 #'
 #' @author Fursham Hamid
 #' @export
-#' 
-#' @examples 
+#'
+#' @examples
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING TOY DATASET
 #' ## ---------------------------------------------------------------------
 #' require(GenomicRanges)
-#' 
+#'
 #' ## Create toy GRanges GTF object
-#' gr1 <- GRanges("chr1", IRanges(start = c(1,101), width=c(20,20)), '+')
-#' gr2 <- GRanges("chr1", IRanges(start = c(1,51,101), width=c(20,10,20)), '+')
-#' 
+#' gr1 <- GRanges("chr1", IRanges(start = c(1, 101), width = c(20, 20)), "+")
+#' gr2 <- GRanges("chr1", IRanges(start = c(1, 51, 101), width = c(20, 10, 20)), "+")
+#'
 #' ## Pairwise comparison between GRanges object
 #' compareSplicedSegment(gr1, gr2)
-#' 
+#'
 #' ## Multiple comparisons can be done by providing more GRanges input
-#' gr3 <- GRanges("chr1", IRanges(start = c(1,91), width=c(20,30)), '+')
+#' gr3 <- GRanges("chr1", IRanges(start = c(1, 91), width = c(20, 30)), "+")
 #' compareSplicedSegment(gr1, gr2, gr3)
-#' 
+#'
 #' ## GRangesList containing exons per transcript can be given as input
-#' grl <- GRangesList(list(gr1,gr2,gr3))
+#' grl <- GRangesList(list(gr1, gr2, gr3))
 #' compareSplicedSegment(grl)
-#' 
-#' 
+#'
+#'
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING SAMPLE DATASET
 #' ## ---------------------------------------------------------------------
 #' ## Using GRangesList as input
 #' compareSplicedSegment(query_exons)
-#' 
+#'
 #' ## Compare AS between individual GRanges object
 #' compareSplicedSegment(query_exons[[1]], query_exons[[3]])
-#' 
-#' 
 compareSplicedSegment <- function(x, ...) {
 
   # catch missing args
@@ -209,7 +206,7 @@ compareSplicedSegment <- function(x, ...) {
     }
     x <- c(x, newdots)
   }
-  
+
   # check metadata before running AS
   if (length(x) == 1) {
     rlang::abort("Insufficient transcripts for comparison")
@@ -217,15 +214,17 @@ compareSplicedSegment <- function(x, ...) {
   if (!"transcript_id" %in% names(S4Vectors::mcols(unlist(x)))) {
     x <- mutateeach(x, group_name = group, transcript_id = NA)
   }
-  x <- mutateeach(x, transcript_id = ifelse(is.na(transcript_id), group, transcript_id),
-                  group_name = transcript_id)
+  x <- mutateeach(x,
+    transcript_id = ifelse(is.na(transcript_id), group, transcript_id),
+    group_name = transcript_id
+  )
   if (!"gene_id" %in% names(S4Vectors::mcols(unlist(x)))) {
     x <- mutateeach(x, gene_id = "NA")
   }
   if (!"gene_name" %in% names(S4Vectors::mcols(x))) {
     x <- mutateeach(x, gene_name = gene_id)
   }
-  
+
   return(S4Vectors::split(.runAS(x), ~transcript_id))
 }
 
@@ -258,11 +257,17 @@ compareSplicedSegment <- function(x, ...) {
     dplyr::mutate(pos = ifelse(pos == dplyr::n(), "Last", pos)) %>%
     dplyr::select(seqnames, start, end, strand, gene_id, gene_name, transcript_id, pos) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+  
+  # get gene sizes
+  genewidths <- unlist(range(S4Vectors::split(x, ~gene_id)))
+  t2g <- x %>% as.data.frame() %>% 
+    dplyr::select(gene_id, transcript_id) %>% 
+    dplyr::distinct()
 
   # get reduced intron boundaries
   exonsbytx <- S4Vectors::split(x, ~transcript_id)
-  intronsbytx <- GenomicRanges::psetdiff(unlist(range(exonsbytx)), exonsbytx)
-  intronsreduced <- GenomicRanges::reduce(unlist(GenomicRanges::psetdiff(unlist(range(exonsbytx)), exonsbytx)))
+  intronsbytx <- GenomicRanges::psetdiff(BiocGenerics::unlist(range(exonsbytx)), exonsbytx)
+  intronsreduced <- GenomicRanges::reduce(unlist(GenomicRanges::psetdiff(genewidths[t2g$gene_id], exonsbytx[t2g$transcript_id])))
 
   # get exons that overlap with reduced introns
   altexons <- IRanges::findOverlapPairs(x, intronsreduced)
@@ -273,11 +278,11 @@ compareSplicedSegment <- function(x, ...) {
     dplyr::mutate(AStype = "CE") %>%
     dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end, "SD", AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end, "SA", AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end & first.pos == "Last", "Te", AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end & first.pos == "First", "Ts", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end <= second.end & first.pos == "Last", "Te", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start >= second.start & first.X.end > second.end & first.pos == "First", "Ts", AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end > second.end, "RI", AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end < second.end & first.pos == "First", "FE", AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end < second.end & first.pos == "Last", "LE", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start >= second.start & first.X.end < second.end & first.pos == "First", "FE", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end <= second.end & first.pos == "Last", "LE", AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.strand == "-", chartr("DAFLes", "ADLFse", AStype), AStype))
 
   # get segments that fall within intron and annotate that segment
