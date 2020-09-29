@@ -15,29 +15,28 @@
 #' @importFrom stats dist end start offset
 #' @importFrom utils head tail
 #' @importFrom rlang .data
-#' 
-#' @examples 
+#'
+#' @examples
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING TOY DATASET
 #' ## ---------------------------------------------------------------------
 #' require(GenomicRanges)
-#' 
+#'
 #' ## Create toy GTF objects
-#' gr1 <- GRanges("1", IRanges(start = c(1,101), width=c(20,20)), '+')
-#' gr2 <- GRanges("chr1", IRanges(start = c(1,101), width=c(20,20)), '+')
-#' 
+#' gr1 <- GRanges("1", IRanges(start = c(1, 101), width = c(20, 20)), "+")
+#' gr2 <- GRanges("chr1", IRanges(start = c(1, 101), width = c(20, 20)), "+")
+#'
 #' ## Test for seqlevels consistency
 #' has_consistentSeqlevels(gr1, gr2)
-#' 
+#'
 #' ## Input can be Biostrings object with seqlevels
 #' x0 <- c("CTCACCAGTAT", "TGTCAGTCGA")
 #' dna <- Biostrings::DNAStringSet(x0)
 #' seqlevels(dna) <- c("chr1", "chr2")
-#' 
+#'
 #' ## Test for seqlevels consistency
 #' has_consistentSeqlevels(gr1, dna)
 #' has_consistentSeqlevels(gr2, dna)
-#' 
 has_consistentSeqlevels <- function(...) {
   dots <- list(...)
   argnames <- as.character(match.call())[-1]
@@ -56,7 +55,7 @@ has_consistentSeqlevels <- function(...) {
       consistent <- c(consistent, test)
       if (!test) {
         rlang::warn(sprintf(
-          "Try running: %s <- matchSeqLevels(%s, %s)", argnames[i], argnames[i], argnames[j]
+          "Try running: %s <- matchChromosomes(%s, %s)", argnames[i], argnames[i], argnames[j]
         ))
         break
       }
