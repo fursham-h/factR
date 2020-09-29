@@ -13,7 +13,7 @@ gr1 <- GenomicRanges::GRanges(
 )
 gr2 <- GenomicRanges::GRanges(
   seqnames = "1", strand = rep("+", 6),
-  ranges = IRanges(
+  ranges = IRanges::IRanges(
     start = c(201, 401, 601, 801, 981, 1201),
     end = c(300, 500, 700, 920, 1100, 1250)
   ),
@@ -23,7 +23,7 @@ gr2 <- GenomicRanges::GRanges(
 )
 gr3 <- GenomicRanges::GRanges(
   seqnames = "1", strand = rep("+", 2),
-  ranges = IRanges(
+  ranges = IRanges::IRanges(
     start = c(350, 801),
     end = c(500, 1150)
   ),
