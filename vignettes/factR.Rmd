@@ -76,9 +76,9 @@ query_gtf <- import('path/to/your.gtf')
 
 Reference transcript annotation serves as a guide in the construction of query CDS. We strongly recommend using transcript annotation in GTF/GFF3 format for the workflow. Reference GTF annotation can be acquired from the Annotation Hub database in R or downloaded locally from data server website via FTP. For the latter, the GTF file have to be imported into R and parsed into a GenomicRanges object. 
 
-Here, we will describe three ways to obtain mouse GRCm38 annotation:
+Here, we will describe three ways to obtain mouse annotation:
 
-1. Gencode annotation from Annotation Hub database
+1. vM6 Gencode basic annotation from Annotation Hub database
 ```{r load.gencode, eval = FALSE}
 # query database for mouse gencode basic annotation
 ah <- AnnotationHub()
@@ -100,7 +100,7 @@ query(ah, c('Mus musculus', 'gencode', 'gff', 'basic'))
 ref_gtf <- ah[['AH49547']]
 ```
 
-2. Ensembl annotation from Annotation Hub database
+2. GRCm38 Ensembl annotation from Annotation Hub database
 ```{r load.ensembl, eval = FALSE}
 # Load annotation hub and query database for ensembl annotation as in method 1 above.
 
@@ -127,7 +127,7 @@ library(BSgenome.Mmusculus.UCSC.mm10)
 Mmusculus <- BSgenome.Mmusculus.UCSC.mm10
 ```
 
-2. TwoBit fasta sequence from Annotation Hub
+2. TwoBit fasta sequence (Ensembl) from Annotation Hub
 ```{r load.fastaAH, eval = FALSE}
 # query database for mouse gencode basic annotation
 ah <- AnnotationHub()
@@ -188,7 +188,7 @@ viewTranscripts(query_gtf)
 ```
 
 ## Reference
-For our reference annotation, we will be using a subset of GRCm38 gencode reference annotation which contain basic transcripts from the same gene family as our query gene. 
+For our reference annotation, we will be using a subset of vM6 gencode reference annotation which contain basic transcripts from the same gene family as our query gene. 
 ```{r viewref}
 # inspect reference object
 head(ref_gtf)
@@ -217,7 +217,7 @@ head(matched_query_gtf)
 ```
 Note: `matchChromosomes` will drop any unmatched seqlevels from query 
 
-*factR* also comes with the function `has_consistentSeqlevels` to test if two or more objects have consistent seqlevels. This function returns a logical value of FALSE if input objects have inconsistent seqlevels and recommends a `matchSeqLevels` function to run.
+*factR* also comes with the function `has_consistentSeqlevels` to test if two or more objects have consistent seqlevels. This function returns a logical value of FALSE if input objects have inconsistent seqlevels and recommends a `matchChromosomes` function to run.
 ```{r testseqlevels}
 has_consistentSeqlevels(query_gtf, ref_gtf)
 
@@ -234,7 +234,7 @@ matched_query_gtf <- matchGeneInfo(matched_query_gtf, ref_gtf)
 head(matched_query_gtf)
 ```
 
-By default, this function will match query transcripts to reference by overlapping coordinates. Users may improve the accuracy of this matching function by providing values to **primary_gene_id** and **secondary_gene_id** arguments. See ?matchGeneMeta for detailed description.
+By default, this function will match query transcripts to reference by overlapping coordinates. Users may improve the accuracy of this matching function by providing inputs to **primary_gene_id** and **secondary_gene_id** arguments. See ?matchGeneMeta for detailed description.
 
 
 # Construct query CDS information
@@ -252,7 +252,7 @@ length(query_gtf)
 length(new_query_gtf)
 
 # inspect CDS entries
-head(new_query_gtf[mcols(new_query_gtf)$type == "CDS"])
+head(new_query_gtf[new_query_gtf$type == "CDS"])
 ```
 
 User can visualize the coding structure of each transcripts using the `viewTranscripts` tool:
@@ -391,8 +391,6 @@ compareSplicedSegment(tx1, tx2)
 
 # Intralist comparison
 compareSplicedSegment(txlist)
-
-
 ```
 
 
