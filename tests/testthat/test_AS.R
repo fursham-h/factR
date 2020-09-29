@@ -28,7 +28,7 @@ gr3 <- GenomicRanges::GRanges(
     end = c(500, 1150)
   ),
   transcript_id = "transcript3",
-  gene_id = "geneA", 
+  gene_id = "geneA",
   gene_name = "gene001"
 )
 grcomb1 <- c(gr1, gr2, gr3)
@@ -36,9 +36,9 @@ grcomb1 <- c(gr1, gr2, gr3)
 
 test_that("Test .runAS functionality", {
   out <- .runAS(grcomb1)
-  expect_equal(out$AStype, c("FE", "TS", "CE", "SD", "RI", "TE", "SA", "LE"))
-  expect_equal(GenomicRanges::start(out), c(201, 350, 601, 901, 901, 1101, 981, 1201))
-  expect_equal(GenomicRanges::width(out), c(100, 51, 100, 20, 100, 50, 20, 50))
+  expect_equal(out$AStype, c("FE","FE", "TS", "CE", "SD", "RI", "TE", "SA", "LE", "LE"))
+  expect_equal(GenomicRanges::start(out), c(1,201, 350, 601, 901, 901, 1101, 981, 1201,1301))
+  expect_equal(GenomicRanges::width(out), c(100, 100, 51, 100, 20, 100, 50, 20, 50, 100))
 
   GenomicRanges::strand(grcomb1) <- "-"
   out <- .runAS(grcomb1)
