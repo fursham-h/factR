@@ -249,17 +249,17 @@ Try running: %s <- matchChromosomes(%s, %s)",
   newstrand <- exonorder <- NULL
 
   # get range from ATG to end of transcript
-  startToend <- dplyr::bind_cols(as.data.frame(range(order_query)), as.data.frame(order_ref)) %>%
+  startToend <- suppressMessages(dplyr::bind_cols(as.data.frame(range(order_query)), as.data.frame(order_ref)) %>%
     dplyr::rowwise() %>%
-    dplyr::mutate(newstart = ifelse(strand == "-", start, start1)) %>%
-    dplyr::mutate(newend = ifelse(strand == "-", end1, end)) %>%
+    dplyr::mutate(newstart = list(ifelse(strand...7 == "-", start...4, start...9))) %>%
+    dplyr::mutate(newend = list(ifelse(strand...7 == "-", end...10, end...5))) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(strand = as.character(strand)) %>%
+    dplyr::mutate(strand = as.character(strand...7)) %>%
     dplyr::mutate(newstrand = strand) %>%
-    dplyr::mutate(newstrand = ifelse(strand == "-" & newend > end, "+", newstrand)) %>%
-    dplyr::mutate(newstrand = ifelse(strand != "-" & newstart < start, "-", newstrand)) %>%
-    dplyr::select(group:seqnames, start = newstart, end = newend, strand = newstrand) %>%
-    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+    dplyr::mutate(newstrand = ifelse(strand == "-" & newend > end...5, "+", newstrand)) %>%
+    dplyr::mutate(newstrand = ifelse(strand != "-" & newstart < start...4, "-", newstrand)) %>%
+    dplyr::select(group, group_name, seqnames=seqnames...3, start = newstart, end = newend, strand = newstrand) %>%
+    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T))
 
   # get exon coordinates and sequence from ATG to end of transcript
   startToendexons <- GenomicRanges::pintersect(order_query, startToend, drop.nohit.ranges = T) %>%

@@ -150,16 +150,36 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     "is_NMD" = as.logical()
   )
 
-  toStopRange <- dplyr::bind_cols(as.data.frame(range(x)), as.data.frame(range(y))) %>%
+  toStopRange <- suppressMessages(dplyr::bind_cols(as.data.frame(range(x)), as.data.frame(range(y))) %>%
     dplyr::rowwise() %>%
-    dplyr::mutate(newstart = ifelse(strand == "-", start1, start)) %>%
-    dplyr::mutate(newend = ifelse(strand == "-", end, end1)) %>%
-    dplyr::select(group:seqnames, start = newstart, end = newend, strand) %>%
-    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+    dplyr::mutate(newstart = ifelse(strand...7 == "-", start...11, start...4)) %>%
+    dplyr::mutate(newend = ifelse(strand...7 == "-", end...5, end...12)) %>%
+    dplyr::select(group = group...1, group_name = group_name...2, seqnames = seqnames...3, start = newstart, end = newend, strand = strand...7) %>%
+    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T))
 
   toStopWidth <- sum(BiocGenerics::width(GenomicRanges::pintersect(x, toStopRange)))
   EJtoStop <- cumsum(BiocGenerics::width(x)) - toStopWidth
 
+  newdf <- lapply(EJtoStop, function(x) {
+    id <- ifelse(!is.null(names(x)), names(x)[1], "transcript")
+    x <- sort(x, decreasing = T)
+    threeUTR <- x[1]
+    dist_to_last <- x[2]
+    is_NMD <- ifelse(dist_to_last > threshold, T, F)
+    dist_to_eachEJ <- rev(x[-1][x[-1] > 0])
+    
+    
+    
+    return(tibble::tibble(
+      "transcript" = id,
+      "stop_to_lastEJ" = dist_to_last,
+      "num_of_downEJs" = length(dist_to_eachEJ),
+      "stop_to_downEJs" = paste(dist_to_eachEJ, collapse = ","),
+      "threeUTRlength" = threeUTR,
+      "is_NMD" = is_NMD
+    ))
+  })
+  
   out <- dplyr::bind_rows(out, lapply(EJtoStop, function(x) {
     id <- ifelse(!is.null(names(x)), names(x)[1], "transcript")
     x <- sort(x, decreasing = T)
@@ -178,7 +198,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
       "threeUTRlength" = threeUTR,
       "is_NMD" = is_NMD
     ))
-  }))
+  }) %>% bind_rows())
   return(out)
 }
 
