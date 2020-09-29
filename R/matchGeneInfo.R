@@ -57,7 +57,7 @@ matchGeneInfo <- function(query, ref,
   ###################################################################################################################
 
   # define global variables
-  matched1 <-gene_id <- transcript_id <- matched <- match_level <- appended_ens_id <- NULL
+  matched1 <- gene_id <- transcript_id <- matched <- match_level <- appended_ens_id <- NULL
   basic_gene_id <- type <- seqnames <- strand <- gene_name <- ref_gene_name <- NULL
   unmatched_granges.end <- ref.end <- unmatched_granges.start <- ref.start <- offset <- NULL
 
@@ -68,7 +68,7 @@ matchGeneInfo <- function(query, ref,
   if (suppressWarnings(!has_consistentSeqlevels(query, ref))) {
     rlang::abort(sprintf(
       "`%s` and `%s` has unmatched seqlevel styles. 
-Try running: %s <- matchSeqLevels(%s, %s)",
+Try running: %s <- matchChromosomes(%s, %s)",
       argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]
     ))
   }
@@ -196,10 +196,10 @@ Try running: %s <- matchSeqLevels(%s, %s)",
           match_level + 2,
           match_level
         )) %>%
-          dplyr::mutate(matched = ifelse(!is.na(basic_gene_id),
-                                             matched1,
-                                             matched
-          )) %>%
+        dplyr::mutate(matched = ifelse(!is.na(basic_gene_id),
+          matched1,
+          matched
+        )) %>%
         dplyr::select(-appended_ens_id, -basic_gene_id, -matched1) %>%
         dplyr::ungroup())
 
@@ -252,11 +252,11 @@ Try running: %s <- matchSeqLevels(%s, %s)",
       dplyr::distinct(transcript_id, .keep_all = T) %>%
       dplyr::select(seqnames, start, end, strand, transcript_id)
     unmatched_granges <- GenomicRanges::makeGRangesFromDataFrame(unmatched_df, keep.extra.columns = TRUE)
-    
+
     matched_df <- IRanges::mergeByOverlaps(unmatched_granges, ref) %>%
       as.data.frame() %>%
-      dplyr::mutate(offset = abs(unmatched_granges.end - ref.end) + abs(unmatched_granges.start - ref.start)) %>% 
-      dplyr::arrange(offset) %>% 
+      dplyr::mutate(offset = abs(unmatched_granges.end - ref.end) + abs(unmatched_granges.start - ref.start)) %>%
+      dplyr::arrange(offset) %>%
       dplyr::select(transcript_id, basic_gene_id = gene_id) %>%
       dplyr::distinct(transcript_id, .keep_all = TRUE)
 
@@ -272,7 +272,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
         match_level
       )) %>%
       dplyr::select(-basic_gene_id) %>%
-      dplyr::left_join(ref.genelist)) 
+      dplyr::left_join(ref.genelist))
 
     # count number of unmatched ids after matching
     countsafter <- query %>%
@@ -301,7 +301,7 @@ Try running: %s <- matchSeqLevels(%s, %s)",
       as.data.frame() %>%
       dplyr::select(gene_id, ref_gene_name = gene_name) %>%
       dplyr::distinct()
-    
+
     query <- query %>%
       dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
       dplyr::mutate(gene_name = ref_gene_name) %>%
