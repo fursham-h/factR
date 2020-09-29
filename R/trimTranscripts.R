@@ -1,16 +1,16 @@
 #' Resize 5' and 3' ends of a transcript GenomicRanges
 #'
-#' @param x 
+#' @param x
 #' GRanges or GRangesList object containing exon coordinates for each transcript
-#' @param start 
+#' @param start
 #' Number of bases to trim from the start of transcript. Providing a negative value will
 #' extend the transcript instead. If `x` is a GRanges object,
-#' `start` is a single integer. If `x` is a GRangesList, `start` can be a single 
+#' `start` is a single integer. If `x` is a GRangesList, `start` can be a single
 #' integer or a list of integers of the same length as `x`
-#' @param end 
+#' @param end
 #' Number of bases to trim from the end of transcript. Providing a negative value will
 #' extend the transcript instead. If `x` is a GRanges object,
-#' `end` is a single integer. If `x` is a GRangesList, `end` can be a single 
+#' `end` is a single integer. If `x` is a GRangesList, `end` can be a single
 #' integer or a list of integers of the same length as `x`
 #'
 #' @return Trimmed GenomicRanges object
@@ -34,7 +34,7 @@ trimTranscripts <- function(x, start = 0, end = 0) {
   # define global variables
   width <- tmp.fwdcumsum <- tmp.revcumsum <- tmp.end <- tmp.start <- NULL
   strand <- group <- tmp.headlength <- tmp.taillength <- group_name <- NULL
-  
+
   # check inputs
   if (is(x, "GRanges")) {
     type <- "GR"
@@ -44,26 +44,26 @@ trimTranscripts <- function(x, start = 0, end = 0) {
   } else {
     rlang::abort("x is not of class GRanges or GRangesList")
   }
-  if (length(start) ==1) {
+  if (length(start) == 1) {
     start <- rep(start, length(x))
-  } else if(length(start) != length(x)){
+  } else if (length(start) != length(x)) {
     startlen <- length(start)
     xlen <- length(x)
     rlang::abort(sprintf("Length of `start` (%s) is not equal to `x` (%s)", startlen, xlen))
   }
-  if (length(end) ==1) {
+  if (length(end) == 1) {
     end <- rep(end, length(x))
-  } else if(length(end) != length(x)){
+  } else if (length(end) != length(x)) {
     endlen <- length(end)
     xlen <- length(x)
     rlang::abort(sprintf("Length of `end` (%s) is not equal to `x` (%s)", endlen, xlen))
   }
-  
+
   # return if appending length is longer than transcript
   if (any(sum(BiocGenerics::width(x)) < (start + end))) {
     rlang::abort("Appending length is larger than size of transcript")
   }
-  
+
 
   # retrieve strand information
   strandList <- as.character(S4Vectors::runValue(BiocGenerics::strand(x)))
@@ -78,9 +78,9 @@ trimTranscripts <- function(x, start = 0, end = 0) {
   trim_df <- trim_df %>%
     dplyr::mutate(tmp.headlength = ifelse(strand == "-", end, start)) %>%
     dplyr::mutate(tmp.taillength = ifelse(strand == "-", start, end)) %>%
-    dplyr::select(-strand,-start, -end)
-  
-  
+    dplyr::select(-strand, -start, -end)
+
+
   x <- x %>%
     as.data.frame() %>%
     dplyr::bind_cols(trim_df) %>%
@@ -100,16 +100,20 @@ trimTranscripts <- function(x, start = 0, end = 0) {
     dplyr::arrange(ifelse(strand == "-", dplyr::desc(start), start)) %>%
     dplyr::select(-dplyr::starts_with("tmp.")) %>%
     dplyr::ungroup()
-  
+
   # format output
   if (type == "GR") {
-    x <- x %>% dplyr::select(-group, -group_name) %>%
+    x <- x %>%
+      dplyr::select(-group, -group_name) %>%
       GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
   } else if (type == "GRlist") {
-    x <- x %>% dplyr::select(-group) %>%
-      GenomicRanges::makeGRangesListFromDataFrame(keep.extra.columns = T, 
-                                                  split.field = "group_name")
+    x <- x %>%
+      dplyr::select(-group) %>%
+      GenomicRanges::makeGRangesListFromDataFrame(
+        keep.extra.columns = T,
+        split.field = "group_name"
+      )
   }
-  
+
   return(x)
 }
