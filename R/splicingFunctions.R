@@ -256,6 +256,10 @@ compareSplicedSegment <- function(x, ...) {
     dplyr::mutate(pos = ifelse(pos == 1, "First", pos)) %>%
     dplyr::mutate(pos = ifelse(pos == dplyr::n(), "Last", pos)) %>%
     dplyr::select(seqnames, start, end, strand, gene_id, gene_name, transcript_id, pos) %>%
+    dplyr::group_by(gene_id) %>%
+    dplyr::arrange(start, end) %>%
+    dplyr::mutate(termini = dplyr::row_number()) %>%
+    dplyr::mutate(termini = ifelse(termini == 1 | termini == dplyr::n(), T, F)) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
   
   # get gene sizes
@@ -267,19 +271,20 @@ compareSplicedSegment <- function(x, ...) {
   # get reduced intron boundaries
   exonsbytx <- S4Vectors::split(x, ~transcript_id)
   intronsbytx <- GenomicRanges::psetdiff(BiocGenerics::unlist(range(exonsbytx)), exonsbytx)
-  intronsreduced <- GenomicRanges::reduce(unlist(GenomicRanges::psetdiff(genewidths[t2g$gene_id], exonsbytx[t2g$transcript_id])))
+  intronsreduced <- GenomicRanges::reduce(unlist(GenomicRanges::psetdiff(unlist(range(exonsbytx)), exonsbytx)))
+  #intronsreduced <- GenomicRanges::reduce(unlist(GenomicRanges::psetdiff(genewidths[t2g$gene_id], exonsbytx[t2g$transcript_id])))
 
   # get exons that overlap with reduced introns
   altexons <- IRanges::findOverlapPairs(x, intronsreduced)
 
-  # annotate AS exons
+  # annotate internal AS exons
   altannotate <- altexons %>%
     as.data.frame() %>%
     dplyr::mutate(AStype = "CE") %>%
     dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end < second.end, "SD", AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end > second.end, "SA", AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end <= second.end & first.pos == "Last", "Te", AStype)) %>%
-    dplyr::mutate(AStype = ifelse(first.X.start >= second.start & first.X.end > second.end & first.pos == "First", "Ts", AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end <= second.end & first.pos == "Last", NA, AStype)) %>%
+    dplyr::mutate(AStype = ifelse(first.X.start >= second.start & first.X.end > second.end & first.pos == "First", NA, AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start < second.start & first.X.end > second.end, "RI", AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start >= second.start & first.X.end < second.end & first.pos == "First", "FE", AStype)) %>%
     dplyr::mutate(AStype = ifelse(first.X.start > second.start & first.X.end <= second.end & first.pos == "Last", "LE", AStype)) %>%
@@ -288,13 +293,31 @@ compareSplicedSegment <- function(x, ...) {
   # get segments that fall within intron and annotate that segment
   altexons <- GenomicRanges::pintersect(altexons)
   if (length(altexons) == 0) {
-    altexons$pos <- altexons$hit <- NULL
+    altexons$pos <- altexons$hit <- altexons$termini <- NULL
     return(altexons)
   } else {
     altexons$type <- "AS"
     altexons$AStype <- toupper(altannotate$AStype)
-    altexons$pos <- altexons$hit <- NULL
-
-    return(altexons)
+    altexons <- altexons[!is.na(altexons$AStype)]
+    
+    
+    # get distal FE and LE coordinates
+    distalFE <- x %>% 
+      as.data.frame() %>% 
+      dplyr::filter(gene_id %in% altannotate[altannotate$AStype == "FE",]$first.gene_id, pos == ifelse(strand == "-", "Last","First"), termini) %>% 
+      dplyr::mutate(type = "AS", AStype = "FE") %>% 
+      GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+    
+    distalLE <- x %>% 
+      as.data.frame() %>% 
+      filter(gene_id %in% altannotate[altannotate$AStype == "LE",]$first.gene_id, pos == ifelse(strand == "-", "First","Last"), termini) %>% 
+      dplyr::mutate(type = "AS", AStype = "LE") %>% 
+      GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+      
+    # append FE and LE coordinates and remove unwanted meta columns
+    altexons <- c(altexons,distalFE,distalLE)
+    altexons$pos <- altexons$hit <- altexons$termini <- NULL
+    
+    return(BiocGenerics::sort(altexons))
   }
 }
