@@ -31,18 +31,52 @@ gr3 <- GenomicRanges::GRanges(
   gene_id = "geneA",
   gene_name = "gene001"
 )
+
+gr4 <- GenomicRanges::GRanges(
+  seqnames = "1", strand = rep("+", 2),
+  ranges = IRanges::IRanges(
+    start = c(525, 725),
+    end = c(550, 750)
+  ),
+  transcript_id = "transcript4",
+  gene_id = "geneA",
+  gene_name = "gene001"
+)
+
+gr5 <- GenomicRanges::GRanges(
+  seqnames = "1", strand = rep("+", 4),
+  ranges = IRanges::IRanges(
+    start = c(450, 801, 1001, 1301),
+    end = c(500,  900, 1100, 1380)
+  ),
+  transcript_id = "transcript5",
+  gene_id = "geneA",
+  gene_name = "gene001"
+)
+
+gr6 <- GenomicRanges::GRanges(
+  seqnames = "1", strand = rep("+", 3),
+  ranges = IRanges::IRanges(
+    start = c(10, 401,  801),
+    end = c(100, 500,  850)
+  ),
+  transcript_id = "transcript6",
+  gene_id = "geneA",
+  gene_name = "gene001"
+)
+
 grcomb1 <- c(gr1, gr2, gr3)
 
 
 test_that("Test .runAS functionality", {
   out <- .runAS(grcomb1)
-  expect_equal(out$AStype, c("FE","FE", "TS", "CE", "SD", "RI", "TE", "SA", "LE", "LE"))
-  expect_equal(GenomicRanges::start(out), c(1,201, 350, 601, 901, 901, 1101, 981, 1201,1301))
-  expect_equal(GenomicRanges::width(out), c(100, 100, 51, 100, 20, 100, 50, 20, 50, 100))
+  expect_equal(out$AStype, c("FE","FE", "CE", "SD", "RI", "SA", "LE", "LE"))
+  expect_equal(GenomicRanges::start(out), c(1,201, 601, 901, 901, 981, 1201,1301))
+  expect_equal(GenomicRanges::width(out), c(100, 100, 100, 20, 100, 20, 50, 100))
 
   GenomicRanges::strand(grcomb1) <- "-"
   out <- .runAS(grcomb1)
-  expect_equal(out$AStype, c("LE", "TE", "CE", "SA", "RI", "TS", "SD", "FE"))
+  expect_equal(out$AStype, c("LE","LE", "CE", "SA", "RI", "SD", "FE","FE"))
 })
 
 test_that("Test annotateAS robustness", {
