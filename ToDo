@@ -2,3 +2,5 @@
 
 - set maximal plot in viewTranscripts and predictDomains
 - simplify output of predictNMD
+- convert AnnotaitonHub to be a key dependency
+- Bump up to 4.0.x
