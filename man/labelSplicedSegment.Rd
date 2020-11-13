@@ -29,10 +29,11 @@ Label alternative-spliced segments from a GTF annotation
 require(GenomicRanges)
 
 ## Create toy GRanges GTF object
-gr <- GRanges("chr1", IRanges(start = c(1, 101, 1, 51, 101), width=c(20,20,20,10,20)), '+', 
-              type = 'exon', gene_id = 'geneA', 
-              transcript_id = Rle(c('transcript1', 'transcript2'), lengths = c(2,3)))
-              
+gr <- GRanges("chr1", IRanges(start = c(1, 101, 1, 51, 101), width = c(20, 20, 20, 10, 20)), "+",
+  type = "exon", gene_id = "geneA",
+  transcript_id = Rle(c("transcript1", "transcript2"), lengths = c(2, 3))
+)
+
 ## Annotate alternative segments
 labelSplicedSegment(gr)
 
@@ -56,11 +57,10 @@ library(AnnotationHub)
 
 ## Retrieve GRCm38 trancript annotation
 ah <- AnnotationHub()
-GRCm38_gtf <- ah[['AH60127']]
+GRCm38_gtf <- ah[["AH60127"]]
 
 ## Run tool on specific gene family
 labelSplicedSegment(GRCm38_gtf)
-
 }
 
 }

@@ -4,12 +4,14 @@
 \name{new_query_gtf}
 \alias{new_query_gtf}
 \title{Query data containing CDS information}
-\format{A GRanges object with 105 ranges and 8 metadata columns:
+\format{
+A GRanges object with 105 ranges and 8 metadata columns:
 \describe{
   \item{element}{Exon start and end coordinates from 4 transcripts}
   \item{element}{CDS start and end coordinates from 4 transcripts}
   ...
-}}
+}
+}
 \usage{
 new_query_gtf
 }

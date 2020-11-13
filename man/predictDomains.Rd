@@ -17,7 +17,7 @@ Can be a GRangesList object containing CDS ranges for each transcript}
 Variables are metadata information found in `x` and multiple conditions can be
 provided delimited by comma. Example: transcript_id == "transcript1"}
 
-\item{plot}{Boolean argument to plot out protein domains}
+\item{plot}{Boolean argument to plot out protein domains. Only first 20 proteins will be plotted}
 }
 \value{
 Dataframe containing protein features for each cds entry
