@@ -1,6 +1,6 @@
 ####### ToDos ####### 
 
-- set maximal plot in viewTranscripts and predictDomains
+- (done) set maximal plot in viewTranscripts and predictDomains
 - simplify output of predictNMD
-- convert AnnotaitonHub to be a key dependency
-- Bump up to 4.0.x
+- (done) convert AnnotaitonHub to be a key dependency
+- (done) Bump up to 4.0.x
