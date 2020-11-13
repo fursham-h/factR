@@ -11,7 +11,7 @@
 #' Variables are metadata information found in `x` and multiple conditions can be
 #' provided delimited by comma. Example: transcript_id == "transcript1"
 #' @param plot
-#' Boolean argument to plot out protein domains
+#' Boolean argument to plot out protein domains. Only first 20 proteins will be plotted
 #'
 #' @return
 #' Dataframe containing protein features for each cds entry
@@ -218,9 +218,15 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
   # plot protein domains if requested
   if (plot) {
-    print(drawProteins::draw_canvas(output) %>%
-      drawProteins::draw_chains(output) %>%
-      drawProteins::draw_domains(output, label_domains = F) +
+    datatoplot <- output
+    if (max(datatoplot$order) > 20) {
+      datatoplot <- datatoplot[datatoplot$order <= 20,]
+      rlang::warn("Plotting only first 20 proteins")
+    }
+    
+    print(drawProteins::draw_canvas(datatoplot) %>%
+      drawProteins::draw_chains(datatoplot) %>%
+      drawProteins::draw_domains(datatoplot, label_domains = F) +
       ggplot2::theme_bw() + # white background
       ggplot2::theme(
         panel.grid.minor = ggplot2::element_blank(),
