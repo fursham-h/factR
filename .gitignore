@@ -13,3 +13,5 @@ R/._buildCDS.R
 R/._predictDomains.R
 R/._predictNMD.R
 R/._splicingFunctions.R
+doc
+Meta

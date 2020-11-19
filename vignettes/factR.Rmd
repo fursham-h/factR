@@ -41,25 +41,31 @@ To this end, we developed a program with tools to Functionally Annotate Custom-a
 
 # Getting started
 
-To run the code examples shown in this vignette, we need to load the following packages:
-```{r load.dep.workflow, eval = FALSE}
-library(factR)
-library(AnnotationHub)
-library(Biostrings)
-library(BSgenome.Mmusculus.UCSC.mm10)
-library(GenomicFeatures)
-library(rtracklayer)
-```
-
-
-## How to install
+## How to install and load *factR* and other dependencies
 To install *factR*, open R and type:
 ```{r install.factR, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("fursham-h/factR")
 ```
 
-## What you need
+The above installation will also install packages needed to run *factR*. In addition, you would need to install the following genome sequence for this workflow:
+```{r install.others, eval = FALSE}
+BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
+```
+
+Next, we need to load the following packages:
+```{r load.dep.workflow, eval = FALSE}
+library(factR)
+library(AnnotationHub)
+library(BSgenome.Mmusculus.UCSC.mm10)
+library(Biostrings)
+library(GenomicFeatures)
+library(rtracklayer)
+library(purrr)
+library(stringr)
+```
+
+## What inputs you need
 
 ### Query transcript assembly
 
@@ -111,7 +117,7 @@ ref_gtf <- ah[['AH60127']]
 3. Import locally downloaded GTF annotation into R
 ```{r load.localref, eval = FALSE}
 # import reference gtf file
-query_gtf <- import('path/to/reference.gtf')
+ref_gtf <- import('path/to/reference.gtf')
 ```
 
 
@@ -120,10 +126,8 @@ query_gtf <- import('path/to/reference.gtf')
 Genomic DNA sequence is required for determining open-reading frames and for *in silico* translation of query transcripts. Here, we describe three ways to obtain genomic sequence for mouse GRCm38 assembly:
 
 1. BSgenome sequence object from UCSC
+The package *BSgenome.Mmusculus.UCSC.mm10* contains genome sequence for mouse mm10.
 ```{r load.BSgenome, eval = FALSE}
-# install GRCm38 sequence object and rename for convenience
-BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
-library(BSgenome.Mmusculus.UCSC.mm10)
 Mmusculus <- BSgenome.Mmusculus.UCSC.mm10
 ```
 
@@ -162,8 +166,6 @@ Note: when using DNA FASTA from Ensembl, do check header lines for entry names. 
 
 ```{r convert.fastaheader, eval = FALSE}
 # load package and import fasta file as a DNAStringSet
-library(purrr)
-library(stringr)
 names(Mmusculus) <- str_split(seqlevels(Mmusculus), " ") %>% map_chr(`[`, 1)
 ```
 
@@ -236,6 +238,21 @@ head(matched_query_gtf)
 
 By default, this function will match query transcripts to reference by overlapping coordinates. Users may improve the accuracy of this matching function by providing inputs to **primary_gene_id** and **secondary_gene_id** arguments. See ?matchGeneMeta for detailed description.
 
+# Extract newly-discovered transcripts from query transcriptome
+
+
+Very often, custom-assembled transcriptomes contain *de novo* isoforms. It is useful to subset the dataset for these newly-discovered transcripts to streamline downstream steps. To perform this, run:
+```{r subsettranscripts}
+subsetted_query_gtf <- subsetNewTranscripts(matched_query_gtf, ref_gtf)
+
+# inspect length of subsetted object
+length(subsetted_query_gtf)
+
+length(matched_query_gtf)
+
+# list de novo transcripts
+unique(subsetted_query_gtf$transcript_id)
+```
 
 # Construct query CDS information
 
@@ -247,7 +264,7 @@ new_query_gtf <- buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
 The above function will return a new GRanges object containing exon entries from **query_gtf** with appended cds entries. User can inspect the contents of the object further.
 ```{r checkCDS}
 # check lengths of input and output GRanges
-length(query_gtf)
+length(matched_query_gtf)
 
 length(new_query_gtf)
 
@@ -267,7 +284,7 @@ rtracklayer::export(new_query_gtf, 'path/to/output.gtf', format = 'gtf')
 ```
 
 
-# Predicting protein domains from coding transcripts
+# Predicting protein domain structure
 
 Upon construction of coding segments on transcripts, users may be interested in determining the functional domains which is encoded within the coding sequence. To this end, users can utilize the `predictDomains` function. This tool accepts a GTF GRanges object containing CDS information as input, together with a genome sequence object. After checking the translated protein sequence, `predictDomains` will query the SuperFamily database for domain features and plot its domain architecture:
 ```{r testfeature}
@@ -277,7 +294,8 @@ domains <- predictDomains(new_query_gtf, Mmusculus)
 
 In order to extract the domain features, `predictDomains` will attempt to submit the protein coding sequence to the SuperFamily database and return a summary of the domain structure. As this process is done over HTTP, the speed of this function is greatly dependent on the server and on the number of CDS in your list. This process can be sped up by subsetting the list of transcripts for analysis by providing logical conditions to the **...** argument. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
 ```{r testfeaturewhich, eval=F}
-predictDomains(new_query_gtf, Mmusculus, transcript_id %in% c('transcript1', 'transcript3'))
+pd <- predictDomains(new_query_gtf, Mmusculus, transcript_id %in% c('transcript1', 'transcript3'))
+pd
 #>    transcript   description     eval begin end
 #> 1 transcript1 Canonical RBD 4.96e-06    46 143
 #> 2 transcript1 Canonical RBD 1.39e-05   357 446
@@ -287,20 +305,40 @@ predictDomains(new_query_gtf, Mmusculus, transcript_id %in% c('transcript1', 'tr
 #> 6 transcript3 Canonical RBD 1.28e-06   177 281
 ```
 
-# Predicting NMD-inducing features on coding transcripts
+
+Alternatively, users may reduce the number of transcripts for the query by subsetting the input GTF for *de novo* transcripts.
+```{r subsetandtest, eval=F}
+subsetted_new_query_gtf <- subsetNewTranscripts(new_query_gtf, ref_gtf)
+pd_subset <- predictDomains(subsetted_new_query_gtf, Mmusculus)
+pd_subset
+
+#>    transcript   description     eval begin end
+#> 1 transcript3 Canonical RBD 4.96e-06    46 143
+#> 2 transcript3 Canonical RBD 1.28e-06   177 281
+#> 3 transcript4 Canonical RBD 1.39e-05   291 380
+#> 4 transcript4 Canonical RBD 1.28e-06   137 241
+#> 5 transcript4 Canonical RBD 8.52e-05    39  95
+#> 6 transcript4 Canonical RBD 8.32e-06   403 487
+```
+
+
+
+
+# Predicting transcript sensitivity to nonsense-mediated decay
 
 Coding RNAs harbouring a premature stop codon are potentially eliminated by a process called Nonsense-mediated decay (NMD). Two common features of NMD targets include the upstream position of its stop_codon relative to the last exon-exon junction and the extensive length of its 3'-untranslated region (3'UTR). To report these NMD features and predict if any of the transcripts in the custom annotation are NMD-sensitive, users can run the `predictNMD` tool.
 
 `predictNMD` can accept a GTF GRanges object as input and will only analyze coding transcripts for NMD-features.
 ```{r testnmd1}
-predictNMD(new_query_gtf)
+pn <- predictNMD(new_query_gtf)
 ```
 
-`predictNMD` will output a tibble dataframe with report on NMD-inducing feature for each coding transcript. The column **stop_to_lastEJ** describes the relative distance of the stop_codon to the last exon-exon junction (lastEJ) of each transcript. Thus, a positive integer means that the lastEJ is downstream of the stop_codon. `predictNMD` also returns the number of exon-junctions downstream of the stop_codon (**num_of_downEJs**) and the relative distance of the stop_codon to each downstream exon-junctions (**stop_to_downEJs**). **threeUTRlength** describes the length of the 3'-untranslated region for each coding transcript. The column containing logical values for **is_NMD** will return TRUE if the **stop_to_lastEJ** value exceed the NMD triggering threshold which is typically 50 base-pair. Users may set a custom value by overriding the default **NMD_threshold** argument.
+`predictNMD` will output a tibble dataframe with report on NMD-inducing feature for each coding transcript. The column **stop_to_lastEJ** describes the relative distance of the stop_codon to the last exon-exon junction (lastEJ) of each transcript. Thus, a positive integer means that the lastEJ is downstream of the stop_codon. `predictNMD` also returns the number of exon-junctions downstream of the stop_codon (**num_of_downEJs**). **`3'UTR_length`** describes the length of the 3'-untranslated region for each coding transcript. The column containing logical values for **is_NMD** will return TRUE if the **stop_to_lastEJ** value exceed the NMD triggering threshold which is typically 50 base-pair. Users may set a custom value by overriding the default **NMD_threshold** argument.
 
 Users who wish to analyze certain genes or transcripts in their GTF GRanges for NMD features may provide logical conditions to the `...` argument to subset their GTF input. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
 ```{r testnmdfilter}
-predictNMD(new_query_gtf, transcript_id == 'transcript3')
+pn <- predictNMD(new_query_gtf, transcript_id == 'transcript3')
+pn
 ```
 
 This feature provides user the flexibility to analyze desired genes/transcripts from a large collection of GTF GRanges. Input GTF can be filtered with multiple conditions as long as variable names are found in the input GRanges object. Here are some examples on how this feature can be used on an Ensembl GTF annotation:
@@ -310,7 +348,8 @@ ah <- AnnotationHub()
 mm10_gtf <- ah[['AH60127']]
 
 # predict transcripts from Ptbp1 gene for NMD features
-predictNMD(mm10_gtf, gene_name == 'Ptbp1')
+pn_Ptbp1 <- predictNMD(mm10_gtf, gene_name == 'Ptbp1')
+pn_Ptbp1
 #> # A tibble: 9 x 6
 #>   transcript         stop_to_lastEJ num_of_downEJs stop_to_downEJs threeUTRlength is_NMD
 #>   <chr>                       <dbl>          <int> <chr>                    <dbl> <lgl> 
@@ -327,7 +366,8 @@ predictNMD(mm10_gtf, gene_name == 'Ptbp1')
 #> 7 transcript(s) have missing cds info and was not analyzed 
 
 # predict several transcripts from Ptbp1 gene for NMD features
-predictNMD(mm10_gtf, gene_name == 'Ptbp1', transcript_id == c('ENSMUST00000057343', 'ENSMUST00000095457'))
+pn_Ptbp1_transcripts <- predictNMD(mm10_gtf, gene_name == 'Ptbp1', transcript_id == c('ENSMUST00000057343', 'ENSMUST00000095457'))
+pn_Ptbp1_transcripts
 #> # A tibble: 2 x 6
 #>   transcript         stop_to_lastEJ num_of_downEJs stop_to_downEJs threeUTRlength is_NMD
 #>   <chr>                       <dbl>          <int> <chr>                    <dbl> <lgl> 
@@ -336,62 +376,62 @@ predictNMD(mm10_gtf, gene_name == 'Ptbp1', transcript_id == c('ENSMUST0000005734
 ```
 
 
-# Annotating alternatively-spliced segments in transcript annotation
+<!-- # Annotating alternatively-spliced segments in transcript annotation -->
 
-Alternative splicing is an ubiquitous post-transcriptional process that regulates the inclusion of exon segments. This results in the expression of two or more transcript isoforms in a gene family. Depending on the boundaries and position of the exon, alternative segments can be classified into at least one of eight classes; Casette Exon, First Exon, Last Exon, Spliced Donor, Spliced Acceptor, Retained Intron, Termination Start and Termination End. 
+<!-- Alternative splicing is an ubiquitous post-transcriptional process that regulates the inclusion of exon segments. This results in the expression of two or more transcript isoforms in a gene family. Depending on the boundaries and position of the exon, alternative segments can be classified into at least one of eight classes; Casette Exon, First Exon, Last Exon, Spliced Donor, Spliced Acceptor, Retained Intron, Termination Start and Termination End.  -->
 
-To find and annotate alternative-spliced segments within a GTF file, users can simply run `labelSplicedSegment`. This function accepts any GTF GRanges object with exon features and will return a GRanges object containing annotated alternative segments in a similar GTF format
-```{r annotateAS}
-labelSplicedSegment(new_query_gtf)
-```
-
-
-`annotateAS` can analyze an entire transcript annotation accurately and rapidly.
-```{r annotateASmm10, eval = FALSE}
-# retrieve latest GRCm38 annotation from ensembl
-ah <- AnnotationHub()
-mm10_gtf <- ah[['AH60127']]
-
-# annotate GRCm38 transcriptome
-system.time({mm10_AS <- labelSplicedSegment(mm10_gtf)})
-#>    user  system elapsed 
-#>  21.352   0.076  21.427 
-
-# inspect output
-mm10_AS
-#> GRanges object with 193519 ranges and 4 metadata columns:
-#>              seqnames              ranges strand |            gene_id      transcript_id        type      AStype
-#>                 <Rle>           <IRanges>  <Rle> |        <character>        <character> <character> <character>
-#>        [1] JH584294.1           3094-3166      + | ENSMUSG00000093828 ENSMUST00000177905          AS          FE
-#>        [2] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000096791          AS          CE
-#>        [3] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000071277          AS          CE
-#>        [4] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000179115          AS          CE
-#>        [5] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000178970          AS          CE
-#>        ...        ...                 ...    ... .                ...                ...         ...         ...
-#>   [193515]          1 195169702-195169801      - | ENSMUSG00000026616 ENSMUST00000210219          AS          CE
-#>   [193516]          1 195169702-195169801      - | ENSMUSG00000026616 ENSMUST00000043104          AS          CE
-#>   [193517]          1 195170645-195171170      - | ENSMUSG00000026616 ENSMUST00000195722          AS          LE
-#>   [193518]          1 195170991-195171170      - | ENSMUSG00000026616 ENSMUST00000210219          AS          CE
-#>   [193519]          1 195170991-195171168      - | ENSMUSG00000026616 ENSMUST00000043104          AS          FE
-#>   -------
-#>   seqinfo: 45 sequences from an unspecified genome; no seqlengths
-```
+<!-- To find and annotate alternative-spliced segments within a GTF file, users can simply run `labelSplicedSegment`. This function accepts any GTF GRanges object with exon features and will return a GRanges object containing annotated alternative segments in a similar GTF format -->
+<!-- ```{r annotateAS} -->
+<!-- labelSplicedSegment(new_query_gtf) -->
+<!-- ``` -->
 
 
-Users who wish to compare alternative segments between two or more transcripts can run the `compareSplicedSegment` function. In contrast to `labelSplicedSegment`, this function accepts two or more GRanges object, each containing exon features for a particular transcript. Alternatively, users can provide the list of transcript exon features as a GRangesList object
-```{r compareAS}
-# convert GTF GRanges into GRangesList of exons by transcript
-txlist <- split(query_gtf[query_gtf$type == 'exon'], ~transcript_id)
-names(txlist)
+<!-- `annotateAS` can analyze an entire transcript annotation accurately and rapidly. -->
+<!-- ```{r annotateASmm10, eval = FALSE} -->
+<!-- # retrieve latest GRCm38 annotation from ensembl -->
+<!-- ah <- AnnotationHub() -->
+<!-- mm10_gtf <- ah[['AH60127']] -->
 
-# Pair-wise transcript comparison
-tx1 <- txlist[[1]]
-tx2 <- txlist[[3]]
-compareSplicedSegment(tx1, tx2)
+<!-- # annotate GRCm38 transcriptome -->
+<!-- system.time({mm10_AS <- labelSplicedSegment(mm10_gtf)}) -->
+<!-- #>    user  system elapsed  -->
+<!-- #>  21.352   0.076  21.427  -->
 
-# Intralist comparison
-compareSplicedSegment(txlist)
-```
+<!-- # inspect output -->
+<!-- mm10_AS -->
+<!-- #> GRanges object with 193519 ranges and 4 metadata columns: -->
+<!-- #>              seqnames              ranges strand |            gene_id      transcript_id        type      AStype -->
+<!-- #>                 <Rle>           <IRanges>  <Rle> |        <character>        <character> <character> <character> -->
+<!-- #>        [1] JH584294.1           3094-3166      + | ENSMUSG00000093828 ENSMUST00000177905          AS          FE -->
+<!-- #>        [2] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000096791          AS          CE -->
+<!-- #>        [3] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000071277          AS          CE -->
+<!-- #>        [4] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000179115          AS          CE -->
+<!-- #>        [5] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000178970          AS          CE -->
+<!-- #>        ...        ...                 ...    ... .                ...                ...         ...         ... -->
+<!-- #>   [193515]          1 195169702-195169801      - | ENSMUSG00000026616 ENSMUST00000210219          AS          CE -->
+<!-- #>   [193516]          1 195169702-195169801      - | ENSMUSG00000026616 ENSMUST00000043104          AS          CE -->
+<!-- #>   [193517]          1 195170645-195171170      - | ENSMUSG00000026616 ENSMUST00000195722          AS          LE -->
+<!-- #>   [193518]          1 195170991-195171170      - | ENSMUSG00000026616 ENSMUST00000210219          AS          CE -->
+<!-- #>   [193519]          1 195170991-195171168      - | ENSMUSG00000026616 ENSMUST00000043104          AS          FE -->
+<!-- #>   ------- -->
+<!-- #>   seqinfo: 45 sequences from an unspecified genome; no seqlengths -->
+<!-- ``` -->
+
+
+<!-- Users who wish to compare alternative segments between two or more transcripts can run the `compareSplicedSegment` function. In contrast to `labelSplicedSegment`, this function accepts two or more GRanges object, each containing exon features for a particular transcript. Alternatively, users can provide the list of transcript exon features as a GRangesList object -->
+<!-- ```{r compareAS} -->
+<!-- # convert GTF GRanges into GRangesList of exons by transcript -->
+<!-- txlist <- split(query_gtf[query_gtf$type == 'exon'], ~transcript_id) -->
+<!-- names(txlist) -->
+
+<!-- # Pair-wise transcript comparison -->
+<!-- tx1 <- txlist[[1]] -->
+<!-- tx2 <- txlist[[3]] -->
+<!-- compareSplicedSegment(tx1, tx2) -->
+
+<!-- # Intralist comparison -->
+<!-- compareSplicedSegment(txlist) -->
+<!-- ``` -->
 
 
 
