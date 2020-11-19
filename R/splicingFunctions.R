@@ -310,7 +310,7 @@ compareSplicedSegment <- function(x, ...) {
     
     distalLE <- x %>% 
       as.data.frame() %>% 
-      filter(gene_id %in% altannotate[altannotate$AStype == "LE",]$first.gene_id, pos == ifelse(strand == "-", "First","Last"), termini) %>% 
+      dplyr::filter(gene_id %in% altannotate[altannotate$AStype == "LE",]$first.gene_id, pos == ifelse(strand == "-", "First","Last"), termini) %>% 
       dplyr::mutate(type = "AS", AStype = "LE") %>% 
       GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
       
