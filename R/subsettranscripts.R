@@ -1,3 +1,23 @@
+#' Subset GTF GRanges object for de novo transcripts
+#' 
+#' @description
+#' subsetNewTranscripts will compare query and reference GTF GRanges and return
+#' transcripts which are only found in query (de novo).
+#' 
+#' 
+#' @param query 
+#' GRanges object containing query GTF data.
+#' @param ref 
+#' GRanges object containing reference GTF data.
+#'
+#' @return
+#' GRanges object containing exon coordinates from transcripts which are only
+#' found in query.
+#' 
+#' @export
+#'
+#' @examples
+#' subsetNewTranscripts(matched_query_gtf, ref_gtf)
 subsetNewTranscripts <- function(query, ref) {
   
   # catch missing args
