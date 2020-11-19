@@ -10,7 +10,7 @@ output:
 vignette: >
   %\VignetteIndexEntry{factR}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+#  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, echo=FALSE, cache=FALSE}
