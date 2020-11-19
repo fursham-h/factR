@@ -198,7 +198,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
       "3'UTR_length" = threeUTR,
       "is_NMD" = is_NMD
     ))
-  }) %>% bind_rows())
+  }) %>% dplyr::bind_rows())
   return(out)
 }
 
