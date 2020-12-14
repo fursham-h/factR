@@ -72,5 +72,5 @@ Try running: %s <- matchChromosomes(%s, %s)",
   )
   
   # return transcripts that are not found in reference
-  return(query[!query$transcript_id %in% names(query_exons)[fulloverlap]])
+  return(query[!query$transcript_id %in% names(query_exons)[!is.na(fulloverlap)]])
 }
