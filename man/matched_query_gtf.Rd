@@ -4,11 +4,13 @@
 \name{matched_query_gtf}
 \alias{matched_query_gtf}
 \title{Seqlevels and gene_id matched query data}
-\format{A GRanges object with 56 ranges and 6 metadata columns:
+\format{
+A GRanges object with 56 ranges and 6 metadata columns:
 \describe{
   \item{element}{Exon start and end coordinates from 4 transcripts}
   ...
-}}
+}
+}
 \usage{
 matched_query_gtf
 }

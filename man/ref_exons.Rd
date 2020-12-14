@@ -4,11 +4,13 @@
 \name{ref_exons}
 \alias{ref_exons}
 \title{Exons from 2 reference transcripts entries of the same gene}
-\format{A GRangesList object with 2 elements:
+\format{
+A GRangesList object with 2 elements:
 \describe{
   \item{element}{Exon start and end coordinates of each transcript}
   ...
-}}
+}
+}
 \source{
 \url{https://www.gencodegenes.org/}
 }

@@ -22,8 +22,8 @@ Test consistency in seqlevels across objects
 require(GenomicRanges)
 
 ## Create toy GTF objects
-gr1 <- GRanges("1", IRanges(start = c(1,101), width=c(20,20)), '+')
-gr2 <- GRanges("chr1", IRanges(start = c(1,101), width=c(20,20)), '+')
+gr1 <- GRanges("1", IRanges(start = c(1, 101), width = c(20, 20)), "+")
+gr2 <- GRanges("chr1", IRanges(start = c(1, 101), width = c(20, 20)), "+")
 
 ## Test for seqlevels consistency
 has_consistentSeqlevels(gr1, gr2)
@@ -36,7 +36,6 @@ seqlevels(dna) <- c("chr1", "chr2")
 ## Test for seqlevels consistency
 has_consistentSeqlevels(gr1, dna)
 has_consistentSeqlevels(gr2, dna)
-
 }
 \author{
 Fursham Hamid

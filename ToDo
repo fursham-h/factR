@@ -1,20 +1,6 @@
 ####### ToDos ####### 
 
-- compareAS- genome-wide annoation, do it fast using disjoint etc
-
-
-- Simplify buildCDS
-- DONE:Remove duplicate transcript_id in query2ref (buildCDS)
-- DONE:BuildCDS remove comparisons with 0 coverage
-- Look through README and vignettes
-- Add in stop_codon features in CDS
-  
-- AS ... accept multiple comparisons.... (in fture)
-
-
-- Differential AS and domain comparison
-- Simplify variable names
-- Run BiocCheck
-
-- Check PROSITE
-- argument to return searchUORFs (not necessary)
+- (done) set maximal plot in viewTranscripts and predictDomains
+- simplify output of predictNMD
+- (done) convert AnnotaitonHub to be a key dependency
+- (done) Bump up to 4.0.x

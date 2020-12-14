@@ -4,11 +4,13 @@
 \name{query_cds}
 \alias{query_cds}
 \title{CDS from 4 transcripts entries of the same gene}
-\format{A GRangesList object with 4 elements:
+\format{
+A GRangesList object with 4 elements:
 \describe{
   \item{element}{CDS start and end coordinates of each transcript}
   ...
-}}
+}
+}
 \source{
 \url{http://www.ensembl.org/}
 }

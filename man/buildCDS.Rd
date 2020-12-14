@@ -20,7 +20,7 @@ information
 \description{
 buildCDS will firstly attempt to find identical query and reference transcript
 pairs. If a query is paired to a coding reference transcript, it will be assigned
-the reference CDS. For unpaired query transcripts, buildCDS will assign the 
+the reference CDS. For unpaired query transcripts, buildCDS will assign the
 upstream-most, annotated ATG codon (if any) as its translation start and search
 for an in-frame stop codon.
 }

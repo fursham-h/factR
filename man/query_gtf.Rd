@@ -4,11 +4,13 @@
 \name{query_gtf}
 \alias{query_gtf}
 \title{Imported GTF file containing 4 transcript entries of the same gene}
-\format{A GRanges object with 56 ranges and 3 metadata columns:
+\format{
+A GRanges object with 56 ranges and 3 metadata columns:
 \describe{
   \item{element}{Exon start and end coordinates from 4 transcripts}
   ...
-}}
+}
+}
 \source{
 \url{http://www.ensembl.org/}
 }

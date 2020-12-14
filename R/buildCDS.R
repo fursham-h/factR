@@ -143,6 +143,13 @@ Try running: %s <- matchChromosomes(%s, %s)",
   } else {
     restoutCDS <- NULL
   }
+  
+  # get number of newly-found CDSs
+  if (!is.null(restoutCDS)) {
+    newCDS <- length(unique(restoutCDS$transcript_id))
+  } else {
+    newCDS <- "none"
+  }
 
   # combine all CDSs
   outCDS <- suppressWarnings(dplyr::bind_rows(fulloutCDS, restoutCDS))
@@ -166,8 +173,9 @@ Try running: %s <- matchChromosomes(%s, %s)",
     successtx <- 0
   }
   message(sprintf(
-    "Out of %s transcripts in `%s`, %s transcript CDSs were built",
-    totaltx, argnames[1], successtx
+    "Out of %s transcripts in `%s`, %s transcript CDSs were built
+    Of which, %s are newly-discovered CDSs",
+    totaltx, argnames[1], successtx, newCDS
   ))
   return(GenomicRanges::makeGRangesFromDataFrame(outCDS, keep.extra.columns = T))
 }

@@ -55,13 +55,13 @@ Predict sensitivity of mRNA transcripts to NMD
 predictNMD(new_query_gtf)
 
 ### Transcripts for analysis can be subsetted using logical conditions
-predictNMD(new_query_gtf, transcript_id == 'transcript1')
-predictNMD(new_query_gtf, transcript_id \%in\% c('transcript1', 'transcript3'))
+predictNMD(new_query_gtf, transcript_id == "transcript1")
+predictNMD(new_query_gtf, transcript_id \%in\% c("transcript1", "transcript3"))
 
 
 ## Using exon and CDS GRangesLists as input
 predictNMD(query_exons, cds = query_cds)
-predictNMD(query_exons, cds = query_cds, transcript_id == 'transcript3')
+predictNMD(query_exons, cds = query_cds, transcript_id == "transcript3")
 
 
 ## Using exon and CDS GRanges as input
@@ -77,11 +77,10 @@ library(AnnotationHub)
 
 ## Retrieve GRCm38 trancript annotation
 ah <- AnnotationHub()
-GRCm38_gtf <- ah[['AH60127']]
+GRCm38_gtf <- ah[["AH60127"]]
 
 ## Run tool on specific gene family
-predictNMD(GRCm38_gtf, gene_name == 'Ptbp1')
-
+predictNMD(GRCm38_gtf, gene_name == "Ptbp1")
 }
 
 }

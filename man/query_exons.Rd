@@ -4,11 +4,13 @@
 \name{query_exons}
 \alias{query_exons}
 \title{Exons from 4 transcripts entries of the same gene}
-\format{A GRangesList object with 4 elements:
+\format{
+A GRangesList object with 4 elements:
 \describe{
   \item{element}{Exon start and end coordinates of each transcript}
   ...
-}}
+}
+}
 \source{
 \url{http://www.ensembl.org/}
 }

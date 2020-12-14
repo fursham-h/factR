@@ -3,40 +3,40 @@ Title: What the Package Does (one line, title case)
 Version: 0.0.0.9000
 Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
-Depends: R (>= 3.6.0)
+Depends: R (>= 4.0.3)
 biocViews:
 Imports:
-    BiocGenerics (>= 0.32),
-    Biostrings (>= 2.54),
-    BSgenome (>= 1.54),
-    dplyr,
+    AnnotationHub (>= 2.22),
+    BiocGenerics (>= 0.36),
+    Biostrings (>= 2.58),
+    BSgenome (>= 1.58),
+    dplyr (>= 1.0),
     GenomicFeatures (>= 1.38),
     GenomeInfoDb (>= 1.22),
-    GenomicRanges (>= 1.38),
-    IRanges (>= 2.20),
+    GenomicRanges (>= 1.42),
+    IRanges (>= 2.24),
     purrr (>= 0.3),
-    rtracklayer (>= 1.46), 
-    tidyr (>= 1.0), 
+    rtracklayer (>= 1.50), 
+    tidyr (>= 1.1), 
     bio3d  (>= 2.4), 
     signalHsmm (>= 1.5),
-    methods,
+    methods (>= 4.0),
     BiocParallel  (>= 1.20),
-    S4Vectors,
-    data.table,
-    rlang,
-    tibble,
-    wiggleplotr,
-    RCurl,
-    XML,
-    drawProteins,
-    ggplot2
+    S4Vectors (>= 0.28),
+    data.table (>= 1.13),
+    rlang (>= 0.4),
+    tibble (>= 3.0),
+    wiggleplotr (>= 1.14),
+    RCurl (>= 1.98),
+    XML (>= 3.99),
+    drawProteins (>= 1.10),
+    ggplot2 (>= 3.3)
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Suggests: 
-    AnnotationHub,
     BSgenome.Mmusculus.UCSC.mm10,
     testthat,
     knitr,

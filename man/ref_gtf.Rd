@@ -4,11 +4,13 @@
 \name{ref_gtf}
 \alias{ref_gtf}
 \title{Imported GTF file containing 2 reference transcript entries of the same gene}
-\format{A GRanges object with 64 ranges and 5 metadata columns:
+\format{
+A GRanges object with 64 ranges and 5 metadata columns:
 \describe{
   \item{element}{Exon start and end coordinates from 2 reference transcripts}
   ...
-}}
+}
+}
 \source{
 \url{https://www.gencodegenes.org/}
 }

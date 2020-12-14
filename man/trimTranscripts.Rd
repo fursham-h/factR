@@ -11,12 +11,12 @@ trimTranscripts(x, start = 0, end = 0)
 
 \item{start}{Number of bases to trim from the start of transcript. Providing a negative value will
 extend the transcript instead. If `x` is a GRanges object,
-`start` is a single integer. If `x` is a GRangesList, `start` can be a single 
+`start` is a single integer. If `x` is a GRangesList, `start` can be a single
 integer or a list of integers of the same length as `x`}
 
 \item{end}{Number of bases to trim from the end of transcript. Providing a negative value will
 extend the transcript instead. If `x` is a GRanges object,
-`end` is a single integer. If `x` is a GRangesList, `end` can be a single 
+`end` is a single integer. If `x` is a GRangesList, `end` can be a single
 integer or a list of integers of the same length as `x`}
 }
 \value{

@@ -145,8 +145,8 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     "transcript" = as.character(),
     "stop_to_lastEJ" = as.double(),
     "num_of_downEJs" = as.integer(),
-    "stop_to_downEJs" = as.character(),
-    "threeUTRlength" = as.double(),
+    #"stop_to_downEJs" = as.character(),
+    "3'UTR_length" = as.double(),
     "is_NMD" = as.logical()
   )
 
@@ -174,8 +174,8 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
       "transcript" = id,
       "stop_to_lastEJ" = dist_to_last,
       "num_of_downEJs" = length(dist_to_eachEJ),
-      "stop_to_downEJs" = paste(dist_to_eachEJ, collapse = ","),
-      "threeUTRlength" = threeUTR,
+      #"stop_to_downEJs" = paste(dist_to_eachEJ, collapse = ","),
+      "3'UTR_length" = threeUTR,
       "is_NMD" = is_NMD
     ))
   })
@@ -194,8 +194,8 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
       "transcript" = id,
       "stop_to_lastEJ" = dist_to_last,
       "num_of_downEJs" = length(dist_to_eachEJ),
-      "stop_to_downEJs" = paste(dist_to_eachEJ, collapse = ","),
-      "threeUTRlength" = threeUTR,
+      #"stop_to_downEJs" = paste(dist_to_eachEJ, collapse = ","),
+      "3'UTR_length" = threeUTR,
       "is_NMD" = is_NMD
     ))
   }) %>% dplyr::bind_rows())
