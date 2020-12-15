@@ -19,16 +19,16 @@
 matchChromosomes <- function(x, to) {
   nseqlevelsbefore <- length(GenomeInfoDb::seqlevels(x))
   suppressWarnings(
-    if (any(!GenomeInfoDb::seqlevels(x) %in% GenomeInfoDb::seqlevels(to))) {
+    if (!has_consistentSeqlevels(x, to)) {
       # attempt to match style first
       newStyle <- mapSeqlevels(seqlevels(x), (seqlevelsStyle(to)[1]))
       newStyle <- newStyle[!is.na(newStyle)]
       x <- renameSeqlevels(x, newStyle)
 
-      # prune if there are remaining unmatched levels
-      if (any(!GenomeInfoDb::seqlevels(x) %in% GenomeInfoDb::seqlevels(to))) {
-        GenomeInfoDb::seqlevels(x, pruning.mode = "tidy") <- as.vector(newStyle)
-      }
+      # # prune if there are remaining unmatched levels
+      # if (any(!GenomeInfoDb::seqlevels(x) %in% GenomeInfoDb::seqlevels(to))) {
+      #   GenomeInfoDb::seqlevels(x, pruning.mode = "tidy") <- as.vector(newStyle)
+      # }
     }
   )
   if (length(GenomeInfoDb::seqlevels(x)) < nseqlevelsbefore) {
