@@ -35,5 +35,6 @@ matchChromosomes <- function(x, to) {
     nseqlevelsafter <- nseqlevelsbefore - length(GenomeInfoDb::seqlevels(x))
     rlang::warn(sprintf("%s seqlevels were dropped", nseqlevelsafter))
   }
+  msg <- has_consistentSeqlevels(x, to)
   return(x)
 }
