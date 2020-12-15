@@ -1,23 +1,21 @@
 #' Subset GTF GRanges object for de novo transcripts
 #' 
 #' @description
-#' subsetNewTranscripts will compare query and reference GTF GRanges and by
-#' default, return query transcripts with different exon structures from 
-#' transcripts in reference. In addition, query GTF can be further filtered
-#' by removing transcripts of the same name (by.names = TRUE) and of same CDS info
-#' (by.CDS = TRUE) as reference transcripts
+#' subsetNewTranscripts will compare query and reference GTF GRanges and return 
+#' query transcripts with different exon structures from reference transcripts. 
+#' Transcriptome assemblers may sometime extend 5' and 3' ends of known transcripts
+#' based on experimental data. These annotated transcripts can be removed by inputting
+#' "intron" to the refine.by argument. This will further compare and remove transcripts 
+#' of identical intron structures. Alternatively, transcripts with unique CDS coordinates
+#' can be selected by inputting "cds" to the refine.by argument.
 #' 
 #' 
 #' @param query 
 #' GRanges object containing query GTF data.
 #' @param ref 
 #' GRanges object containing reference GTF data.
-#' @param by.names
-#' Whether to remove query transcripts with same name as reference transcripts. 
-#' Default: FALSE
-#' @param by.CDS
-#' Whether to remove query transcripts with CDS structure as reference transcripts.
-#' Default: FALSE
+#' @param refine.by
+#' 
 #' 
 #' 
 #' 
@@ -28,7 +26,7 @@
 #'
 #' @examples
 #' subsetNewTranscripts(matched_query_gtf, ref_gtf)
-subsetNewTranscripts <- function(query, ref, by.names = FALSE, by.CDS = FALSE) {
+subsetNewTranscripts <- function(query, ref, refine.by = c("none", "intron", "cds")) {
   
   # catch missing args
   mandargs <- c("query", "ref")
@@ -47,7 +45,7 @@ subsetNewTranscripts <- function(query, ref, by.names = FALSE, by.CDS = FALSE) {
   .checkinputs(query, ref, argnames)
   
   # run subsetting and return new transcripts
-  return(.subsetTranscripts(query, ref, by.names, by.CDS))
+  return(.subsetTranscripts(query, ref, refine.by[1]))
 }
 
 .checkinputs <- function(query, ref, argnames) {
@@ -72,9 +70,9 @@ Try running: %s <- matchChromosomes(%s, %s)",
   }
 }
 
-.subsetTranscripts <- function(query, ref, by.names, by.CDS){
+.subsetTranscripts <- function(query, ref, by){
   
-  # Default filtering, by exon coordinates
+  # Filter transcripts by identical exon structure:
   # create exons by transcripts
   query_exons <- S4Vectors::split(query[query$type == "exon"], ~transcript_id)
   ref_exons <- S4Vectors::split(ref[ref$type == "exon"], ~transcript_id)
@@ -87,22 +85,36 @@ Try running: %s <- matchChromosomes(%s, %s)",
   # return transcripts that are not found in reference
   query <- query[!query$transcript_id %in% names(query_exons)[!is.na(fulloverlap)]]
   
-  # Optional fitering, by name and CDS coordinates
-  if (by.names) {
-    query <- query[!query$transcript_id %in% ref$transcript_id]
+  # Refine list By identical introns:
+  if(by == "intron"){
+    #create exons by transcripts
+    query_exons <- S4Vectors::split(query[query$type == "exon"], ~transcript_id)
+    ref_exons <- S4Vectors::split(ref[ref$type == "exon"], ~transcript_id)
+    
+    # convert exon coord to intron coord
+    query_introns <- GenomicRanges::psetdiff(BiocGenerics::unlist(range(query_exons)), query_exons)
+    ref_introns <- GenomicRanges::psetdiff(BiocGenerics::unlist(range(ref_exons)), ref_exons)
+    
+    # search for exact query and ref matches
+    fulloverlap_intron <- GenomicRanges::findOverlaps(query_introns, ref_introns,
+                                                      type = "equal", select = "first")
+    # return transcripts that are not found in reference
+    query <- query[!query$transcript_id %in% names(query_exons)[!is.na(fulloverlap_intron)]]
   }
-  if (by.CDS) {
-    # create exons by transcripts
+  
+  # Refine list By identical CDS:
+  else if (by == "cds"){
+    # create CDS by transcripts
     query_CDS <- S4Vectors::split(query[query$type == "CDS"], ~transcript_id)
     ref_CDS <- S4Vectors::split(ref[ref$type == "CDS"], ~transcript_id)
     
     # search for exact query and ref matches
     fullCDSoverlap <- GenomicRanges::findOverlaps(query_CDS, ref_CDS,
-                                               type = "equal", select = "first")
+                                                  type = "equal", select = "first")
     
-    # return transcripts that are not found in reference
+    # return coding transcripts that are not found in reference
+    query <- query[query$transcript_id %in% names(query_CDS)]
     query <- query[!query$transcript_id %in% names(query_CDS)[!is.na(fullCDSoverlap)]]
   }
-  
   return(query)
 }
