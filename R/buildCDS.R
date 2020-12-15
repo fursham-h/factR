@@ -144,40 +144,33 @@ Try running: %s <- matchChromosomes(%s, %s)",
     restoutCDS <- NULL
   }
   
-  # get number of newly-found CDSs
-  if (!is.null(restoutCDS)) {
-    newCDS <- length(unique(restoutCDS$transcript_id))
-  } else {
-    newCDS <- "none"
-  }
+  # # get number of newly-found CDSs
+  # if (!is.null(restoutCDS)) {
+  #   newCDS <- length(unique(restoutCDS$transcript_id))
+  # } else {
+  #   newCDS <- "none"
+  # }
 
-  # combine all CDSs
+  # combine all CDSs and print out stats
   outCDS <- suppressWarnings(dplyr::bind_rows(fulloutCDS, restoutCDS))
   if(nrow(outCDS) > 0){
     outCDS <- outCDS %>%
       dplyr::arrange(transcript_id, ifelse(strand == "-", dplyr::desc(start), start)) %>%
       dplyr::left_join(genelist, by = "transcript_id")
+    
+    successtx <- length(unique(outCDS$transcript_id)) 
+    message(sprintf(
+      "Out of %s transcripts in `%s`, %s transcript CDSs were built",
+      totaltx, argnames[1], successtx
+    ))
+    return(GenomicRanges::makeGRangesFromDataFrame(outCDS, keep.extra.columns = T))
   } else {
+    message(sprintf(
+      "Out of %s transcripts in `%s`, none transcript CDSs were built",
+      totaltx, argnames[1]
+    ))
     return(NULL)
   }
-                             
-                             
-                             
-
-  # print out stats and return appended GRanges GTF
-  if (nrow(outCDS) > 0) {
-    successtx <- outCDS$transcript_id %>%
-      unique() %>%
-      length()
-  } else {
-    successtx <- 0
-  }
-  message(sprintf(
-    "Out of %s transcripts in `%s`, %s transcript CDSs were built
-    Of which, %s are newly-discovered CDSs",
-    totaltx, argnames[1], successtx, newCDS
-  ))
-  return(GenomicRanges::makeGRangesFromDataFrame(outCDS, keep.extra.columns = T))
 }
 
 .pairq2r <- function(query_exons, ref_cds, ref_exons, ref, fasta) {
