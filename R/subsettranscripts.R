@@ -47,7 +47,7 @@ subsetNewTranscripts <- function(query, ref, by.names = FALSE, by.CDS = FALSE) {
   .checkinputs(query, ref, argnames)
   
   # run subsetting and return new transcripts
-  return(.subsetTranscripts(query, ref))
+  return(.subsetTranscripts(query, ref, by.names, by.CDS))
 }
 
 .checkinputs <- function(query, ref, argnames) {
@@ -67,6 +67,8 @@ subsetNewTranscripts <- function(query, ref, by.names = FALSE, by.CDS = FALSE) {
 Try running: %s <- matchChromosomes(%s, %s)",
       argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]
     ))
+  } else {
+    outmsg <- has_consistentSeqlevels(query,ref)
   }
 }
 
