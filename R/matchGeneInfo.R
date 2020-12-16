@@ -71,6 +71,8 @@ matchGeneInfo <- function(query, ref,
 Try running: %s <- matchChromosomes(%s, %s)",
       argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]
     ))
+  } else {
+    outmsg <- has_consistentSeqlevels(query,ref)
   }
 
 

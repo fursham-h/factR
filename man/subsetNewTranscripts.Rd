@@ -4,20 +4,28 @@
 \alias{subsetNewTranscripts}
 \title{Subset GTF GRanges object for de novo transcripts}
 \usage{
-subsetNewTranscripts(query, ref)
+subsetNewTranscripts(query, ref, by.names = FALSE, by.CDS = FALSE)
 }
 \arguments{
 \item{query}{GRanges object containing query GTF data.}
 
 \item{ref}{GRanges object containing reference GTF data.}
+
+\item{by.names}{Whether to remove query transcripts with same name as reference transcripts. 
+Default: FALSE}
+
+\item{by.CDS}{Whether to remove query transcripts with CDS structure as reference transcripts.
+Default: FALSE}
 }
 \value{
-GRanges object containing exon coordinates from transcripts which are only
-found in query.
+Filtered GRanges GTF object
 }
 \description{
-subsetNewTranscripts will compare query and reference GTF GRanges and return
-transcripts which are only found in query (de novo).
+subsetNewTranscripts will compare query and reference GTF GRanges and by
+default, return query transcripts with different exon structures from 
+transcripts in reference. In addition, query GTF can be further filtered
+by removing transcripts of the same name (by.names = TRUE) and of same CDS info
+(by.CDS = TRUE) as reference transcripts
 }
 \examples{
 subsetNewTranscripts(matched_query_gtf, ref_gtf)
