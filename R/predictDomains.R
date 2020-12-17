@@ -214,7 +214,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
       return(report)
     }
   }, BPPARAM = BiocParallel::MulticoreParam()) %>%
-    dplyr::bind_rows()
+    dplyr::bind_rows() %>% 
+    dplyr::filter(!is.na(description))
 
   # plot protein domains if requested
   if (plot) {
