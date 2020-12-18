@@ -185,8 +185,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
     dplyr::mutate(type = "DOMAIN", begin = as.numeric(start), end = as.numeric(end)) %>%
     dplyr::select(type, description = famdesc, eval = fameval, begin, end) %>%
     dplyr::bind_rows(tibble::tibble(type = "CHAIN", description = id, begin = 1, end = length)) %>%
-    dplyr::mutate(entryName = id) %>%
-    dplyr::mutate(order = n)
+    dplyr::mutate(entryName = id)
+    #dplyr::mutate(order = n)
   return(data)
 }
 
@@ -219,7 +219,12 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
   # plot protein domains if requested
   if (plot) {
-    datatoplot <- output
+    datatoplot <- output %>% 
+      dplyr::left_join(
+        output %>% 
+          dplyr::select(entryName) %>% 
+          dplyr::distinct() %>% 
+          dplyr::mutate(order = dplyr::row_number()), by = "entryName")
     if (max(datatoplot$order) > 20) {
       datatoplot <- datatoplot[datatoplot$order <= 20,]
       rlang::warn("Plotting only first 20 proteins")
