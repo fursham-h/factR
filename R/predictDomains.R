@@ -248,6 +248,6 @@ Try running: %s <- matchChromosomes(%s, %s)",
   # prepare output table
   table.out <- output %>%
     dplyr::filter(type == "DOMAIN") %>%
-    dplyr::select(transcript = entryName, description, eval, begin, end)
-    #dplyr::right_join(aaSeq %>% dplyr::select(transcript = id), by = "transcript")
+    dplyr::select(transcript = entryName, description, eval, begin, end) %>%
+    dplyr::right_join(aaSeq %>% dplyr::select(transcript = id), by = "transcript")
 }
