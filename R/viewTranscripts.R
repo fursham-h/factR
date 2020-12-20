@@ -81,7 +81,7 @@ viewTranscripts <- function(x, ..., rescale_introns = F) {
   # main plot function
   plot <- wiggleplotr::plotTranscripts(
     exons = exons,
-    cdss = cdss,
+    cdss = cdss[names(cdss) %in% names(exons)],
     rescale_introns = rescale_introns
   )
   plot
