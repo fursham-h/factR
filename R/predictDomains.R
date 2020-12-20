@@ -75,6 +75,9 @@ Try running: %s <- matchChromosomes(%s, %s)",
   }
 
   cds <- filtereach(cds, ...)
+  if(length(cds) == 0){
+    rlang::abort("No CDS to display")
+  }
   return(sorteach(cds, exonorder))
 }
 
@@ -180,7 +183,18 @@ Try running: %s <- matchChromosomes(%s, %s)",
   xml <- XML::xmlParse(hmm)
   family <- XML::xpathSApply(xml, "///family", XML::xpathSApply, "@*")
   segment <- XML::xpathSApply(xml, "///segments", XML::xpathSApply, "@*")
-  data <- rbind(family, segment)
+  
+  if(ncol(family) != ncol(segment)){
+    ndomains <- XML::xpathSApply(xml, "///domains", XML::xpathSApply, "count(segments)")
+    family2 <- suppressMessages(lapply(seq_along(ndomains), function(x){
+      return(family[,rep(x, each = ndomains[x])])
+    }) %>% dplyr::bind_cols() %>% as.matrix())
+    rownames(family2) <- rownames(family)
+    data <- rbind(family2, segment)
+  } else {
+    data <- rbind(family, segment)
+  }
+  
   data <- as.data.frame(t(data), stringsAsFactors = FALSE) %>%
     dplyr::mutate(type = "DOMAIN", begin = as.numeric(start), end = as.numeric(end)) %>%
     dplyr::select(type, description = famdesc, eval = fameval, begin, end) %>%
@@ -245,8 +259,12 @@ Try running: %s <- matchChromosomes(%s, %s)",
   }
 
   # prepare output table
-  table.out <- output %>%
-    dplyr::filter(type == "DOMAIN") %>%
-    dplyr::select(transcript = entryName, description, eval, begin, end)
+  if ("DOMAIN" %in% output$type){
+    table.out <- output %>%
+      dplyr::filter(type == "DOMAIN") %>%
+      dplyr::select(transcript = entryName, description, eval, begin, end)
     #dplyr::right_join(aaSeq %>% dplyr::select(transcript = id), by = "transcript")
+  } else {
+    return(NULL)
+  }
 }
