@@ -184,7 +184,6 @@ Try running: %s <- matchChromosomes(%s, %s)",
   data <- as.data.frame(t(data), stringsAsFactors = FALSE) %>%
     dplyr::mutate(type = "DOMAIN", begin = as.numeric(start), end = as.numeric(end)) %>%
     dplyr::select(type, description = famdesc, eval = fameval, begin, end) %>%
-    dplyr::bind_rows(tibble::tibble(type = "CHAIN", description = id, begin = 1, end = length)) %>%
     dplyr::mutate(entryName = id)
     #dplyr::mutate(order = n)
   return(data)
@@ -209,13 +208,13 @@ Try running: %s <- matchChromosomes(%s, %s)",
     )
 
     if (is.null(report)) {
-      return(NULL)
+      return(tibble::tibble(type = "CHAIN", description = aaSeq[y, ]$id, begin = 1, end = nchar(aaSeq[y, ]$x), entryName = aaSeq[y, ]$id))
     } else {
-      return(report)
+      return(dplyr::bind_rows(report,
+                              tibble::tibble(type = "CHAIN", description = aaSeq[y, ]$id, begin = 1, end = nchar(aaSeq[y, ]$x), entryName = aaSeq[y, ]$id)))
     }
   }, BPPARAM = BiocParallel::MulticoreParam()) %>%
-    dplyr::bind_rows() %>% 
-    dplyr::filter(!is.na(description))
+    dplyr::bind_rows()
 
   # plot protein domains if requested
   if (plot) {
@@ -248,6 +247,6 @@ Try running: %s <- matchChromosomes(%s, %s)",
   # prepare output table
   table.out <- output %>%
     dplyr::filter(type == "DOMAIN") %>%
-    dplyr::select(transcript = entryName, description, eval, begin, end) %>%
-    dplyr::right_join(aaSeq %>% dplyr::select(transcript = id), by = "transcript")
+    dplyr::select(transcript = entryName, description, eval, begin, end)
+    #dplyr::right_join(aaSeq %>% dplyr::select(transcript = id), by = "transcript")
 }
