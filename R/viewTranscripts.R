@@ -71,9 +71,9 @@ viewTranscripts <- function(x, ..., rescale_introns = F) {
   if (length(cdss) == 0) {
     cdss <- NULL
   }
-  
+
   # Control check for number of plotted transcripts
-  if (length(exons) > 25){
+  if (length(exons) > 25) {
     exons <- exons[1:25]
     rlang::warn("Plotting only first 25 transcripts")
   }
@@ -81,7 +81,7 @@ viewTranscripts <- function(x, ..., rescale_introns = F) {
   # main plot function
   plot <- wiggleplotr::plotTranscripts(
     exons = exons,
-    cdss = cdss,
+    cdss = cdss[names(cdss) %in% names(exons)],
     rescale_introns = rescale_introns
   )
   plot

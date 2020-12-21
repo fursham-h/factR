@@ -91,7 +91,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     ))
   }
   # define global variable
-  # is_NMD <- NULL
+  exonorder <- NULL
 
   # retrieve input object names
   argnames <- as.character(match.call())[-1]
@@ -140,12 +140,14 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
   # define global variables
   exonorder <- strand <- start1 <- end1 <- group <- NULL
   seqnames <- newstart <- newend <- width <- NULL
+  strand...7 <- start...1 <- start...4 <- end...5 <- end...12 <- NULL
+  group...1 <- group_name...2 <- seqnames...3 <- NULL
 
   out <- tibble::tibble(
     "transcript" = as.character(),
     "stop_to_lastEJ" = as.double(),
     "num_of_downEJs" = as.integer(),
-    #"stop_to_downEJs" = as.character(),
+    # "stop_to_downEJs" = as.character(),
     "3'UTR_length" = as.double(),
     "is_NMD" = as.logical()
   )
@@ -167,19 +169,19 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     dist_to_last <- x[2]
     is_NMD <- ifelse(dist_to_last > threshold, T, F)
     dist_to_eachEJ <- rev(x[-1][x[-1] > 0])
-    
-    
-    
+
+
+
     return(tibble::tibble(
       "transcript" = id,
       "stop_to_lastEJ" = dist_to_last,
       "num_of_downEJs" = length(dist_to_eachEJ),
-      #"stop_to_downEJs" = paste(dist_to_eachEJ, collapse = ","),
+      # "stop_to_downEJs" = paste(dist_to_eachEJ, collapse = ","),
       "3'UTR_length" = threeUTR,
       "is_NMD" = is_NMD
     ))
   })
-  
+
   out <- dplyr::bind_rows(out, lapply(EJtoStop, function(x) {
     id <- ifelse(!is.null(names(x)), names(x)[1], "transcript")
     x <- sort(x, decreasing = T)
@@ -194,7 +196,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
       "transcript" = id,
       "stop_to_lastEJ" = dist_to_last,
       "num_of_downEJs" = length(dist_to_eachEJ),
-      #"stop_to_downEJs" = paste(dist_to_eachEJ, collapse = ","),
+      # "stop_to_downEJs" = paste(dist_to_eachEJ, collapse = ","),
       "3'UTR_length" = threeUTR,
       "is_NMD" = is_NMD
     ))

@@ -245,8 +245,8 @@ compareSplicedSegment <- function(x, ...) {
   # define global variables
   transcript_id <- pos <- seqnames <- strand <- gene_id <- NULL
   first.X.start <- second.start <- first.X.end <- second.end <- NULL
-  first.pos <- AStype <- first.X.strand <- gene_name <- NULL
-  
+  first.pos <- AStype <- first.X.strand <- gene_name <- termini <- NULL
+
   # order exons by chromosome coord and label position
   x <- x %>%
     as.data.frame() %>%
@@ -261,18 +261,19 @@ compareSplicedSegment <- function(x, ...) {
     dplyr::mutate(termini = dplyr::row_number()) %>%
     dplyr::mutate(termini = ifelse(termini == 1 | termini == dplyr::n(), T, F)) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
-  
+
   # get gene sizes
   genewidths <- unlist(range(S4Vectors::split(x, ~gene_id)))
-  t2g <- x %>% as.data.frame() %>% 
-    dplyr::select(gene_id, transcript_id) %>% 
+  t2g <- x %>%
+    as.data.frame() %>%
+    dplyr::select(gene_id, transcript_id) %>%
     dplyr::distinct()
 
   # get reduced intron boundaries
   exonsbytx <- S4Vectors::split(x, ~transcript_id)
   intronsbytx <- GenomicRanges::psetdiff(BiocGenerics::unlist(range(exonsbytx)), exonsbytx)
   intronsreduced <- GenomicRanges::reduce(unlist(GenomicRanges::psetdiff(unlist(range(exonsbytx)), exonsbytx)))
-  #intronsreduced <- GenomicRanges::reduce(unlist(GenomicRanges::psetdiff(genewidths[t2g$gene_id], exonsbytx[t2g$transcript_id])))
+  # intronsreduced <- GenomicRanges::reduce(unlist(GenomicRanges::psetdiff(genewidths[t2g$gene_id], exonsbytx[t2g$transcript_id])))
 
   # get exons that overlap with reduced introns
   altexons <- IRanges::findOverlapPairs(x, intronsreduced)
@@ -299,25 +300,25 @@ compareSplicedSegment <- function(x, ...) {
     altexons$type <- "AS"
     altexons$AStype <- toupper(altannotate$AStype)
     altexons <- altexons[!is.na(altexons$AStype)]
-    
-    
+
+
     # get distal FE and LE coordinates
-    distalFE <- x %>% 
-      as.data.frame() %>% 
-      dplyr::filter(gene_id %in% altannotate[altannotate$AStype == "FE",]$first.gene_id, pos == ifelse(strand == "-", "Last","First"), termini) %>% 
-      dplyr::mutate(type = "AS", AStype = "FE") %>% 
+    distalFE <- x %>%
+      as.data.frame() %>%
+      dplyr::filter(gene_id %in% altannotate[altannotate$AStype == "FE", ]$first.gene_id, pos == ifelse(strand == "-", "Last", "First"), termini) %>%
+      dplyr::mutate(type = "AS", AStype = "FE") %>%
       GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
-    
-    distalLE <- x %>% 
-      as.data.frame() %>% 
-      dplyr::filter(gene_id %in% altannotate[altannotate$AStype == "LE",]$first.gene_id, pos == ifelse(strand == "-", "First","Last"), termini) %>% 
-      dplyr::mutate(type = "AS", AStype = "LE") %>% 
+
+    distalLE <- x %>%
+      as.data.frame() %>%
+      dplyr::filter(gene_id %in% altannotate[altannotate$AStype == "LE", ]$first.gene_id, pos == ifelse(strand == "-", "First", "Last"), termini) %>%
+      dplyr::mutate(type = "AS", AStype = "LE") %>%
       GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
-      
+
     # append FE and LE coordinates and remove unwanted meta columns
-    altexons <- c(altexons,distalFE,distalLE)
+    altexons <- c(altexons, distalFE, distalLE)
     altexons$pos <- altexons$hit <- altexons$termini <- NULL
-    
+
     return(BiocGenerics::sort(altexons))
   }
 }
