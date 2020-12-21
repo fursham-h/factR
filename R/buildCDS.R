@@ -143,7 +143,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
   } else {
     restoutCDS <- NULL
   }
-  
+
   # # get number of newly-found CDSs
   # if (!is.null(restoutCDS)) {
   #   newCDS <- length(unique(restoutCDS$transcript_id))
@@ -153,12 +153,12 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
   # combine all CDSs and print out stats
   outCDS <- suppressWarnings(dplyr::bind_rows(fulloutCDS, restoutCDS))
-  if(nrow(outCDS) > 0){
+  if (nrow(outCDS) > 0) {
     outCDS <- outCDS %>%
       dplyr::arrange(transcript_id, ifelse(strand == "-", dplyr::desc(start), start)) %>%
       dplyr::left_join(genelist, by = "transcript_id")
-    
-    successtx <- length(unique(outCDS$transcript_id)) 
+
+    successtx <- length(unique(outCDS$transcript_id))
     message(sprintf(
       "Out of %s transcripts in `%s`, %s transcript CDSs were built",
       totaltx, argnames[1], successtx
@@ -259,7 +259,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     dplyr::mutate(newstrand = strand) %>%
     dplyr::mutate(newstrand = ifelse(strand == "-" & newend > end...5, "+", newstrand)) %>%
     dplyr::mutate(newstrand = ifelse(strand != "-" & newstart < start...4, "-", newstrand)) %>%
-    dplyr::select(group, group_name, seqnames=seqnames...3, start = newstart, end = newend, strand = newstrand) %>%
+    dplyr::select(group, group_name, seqnames = seqnames...3, start = newstart, end = newend, strand = newstrand) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T))
 
   # get exon coordinates and sequence from ATG to end of transcript

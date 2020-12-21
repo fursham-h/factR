@@ -10,7 +10,7 @@ test_that("Test .testNMD", {
   expect_equal(out$is_NMD, T)
   expect_equal(out$stop_to_lastEJ, 364)
   expect_equal(out$`3'UTR_length`, 644)
-  #expect_equal(out$stop_to_downEJs, "69,286,364")
+  # expect_equal(out$stop_to_downEJs, "69,286,364")
 })
 
 test_that("Test proper input arguments", {
@@ -23,7 +23,7 @@ test_that("Test the structure of outputs", {
   out1 <- predictNMD(query_exons, cds = query_cds)
   expect_equal(names(out1), c(
     "transcript", "stop_to_lastEJ",
-    "num_of_downEJs", 
+    "num_of_downEJs",
     "3'UTR_length", "is_NMD"
   ))
   expect_equal(nrow(out1), 4)
