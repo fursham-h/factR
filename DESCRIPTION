@@ -3,7 +3,7 @@ Title: Functional Annotation of Custom Transcriptomes
 Version: 0.0.0.9000
 Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
-Depends: R (>= 4.0.3)
+Depends: R (>= 4.0)
 biocViews:
 Imports:
     AnnotationHub (>= 2.22),
@@ -18,8 +18,6 @@ Imports:
     purrr (>= 0.3),
     rtracklayer (>= 1.50), 
     tidyr (>= 1.1), 
-    bio3d  (>= 2.4), 
-    signalHsmm (>= 1.5),
     methods (>= 4.0),
     BiocParallel  (>= 1.20),
     S4Vectors (>= 0.28),
@@ -42,5 +40,7 @@ Suggests:
     knitr,
     rmarkdown,
     zeallot,
-    rmdformats
+    rmdformats,
+    bio3d  (>= 2.4), 
+    signalHsmm (>= 1.5)
 VignetteBuilder: knitr
