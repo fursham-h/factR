@@ -245,7 +245,7 @@ compareSplicedSegment <- function(x, ...) {
   # define global variables
   transcript_id <- pos <- seqnames <- strand <- gene_id <- NULL
   first.X.start <- second.start <- first.X.end <- second.end <- NULL
-  first.pos <- AStype <- first.X.strand <- gene_name <- NULL
+  first.pos <- AStype <- first.X.strand <- gene_name <- termini <- NULL
 
   # order exons by chromosome coord and label position
   x <- x %>%

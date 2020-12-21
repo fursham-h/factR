@@ -91,7 +91,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     ))
   }
   # define global variable
-  # is_NMD <- NULL
+  exonorder <- NULL
 
   # retrieve input object names
   argnames <- as.character(match.call())[-1]
@@ -140,6 +140,8 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
   # define global variables
   exonorder <- strand <- start1 <- end1 <- group <- NULL
   seqnames <- newstart <- newend <- width <- NULL
+  strand...7 <- start...1 <- start...4 <- end...5 <- end...12 <- NULL
+  group...1 <- group_name...2 <- seqnames...3 <- NULL
 
   out <- tibble::tibble(
     "transcript" = as.character(),

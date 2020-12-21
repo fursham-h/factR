@@ -248,6 +248,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
   strand <- start1 <- end1 <- group <- seqnames <- newstart <- newend <- NULL
   stoppos <- width <- seqnames <- strand <- type <- transcript_id <- phase <- NULL
   newstrand <- exonorder <- NULL
+  strand...7 <- start...4 <- start...9 <- end...10 <- end...5 <- NULL
+  group_name <- seqnames...3 <- NULL
 
   # get range from ATG to end of transcript
   startToend <- suppressMessages(dplyr::bind_cols(as.data.frame(range(order_query)), as.data.frame(order_ref)) %>%
