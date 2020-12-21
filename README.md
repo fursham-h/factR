@@ -4,15 +4,15 @@ factR is a robust and easy-to-use R package with tools to process custom-assembl
 
 ## Features
 * Core features 
-  1. Constructs coding (CDS) information for each transcript entry using a reference annotation as guide
+  1. Construct coding (CDS) information for each transcript entry using a reference annotation as guide
   2. Predict protein domains on coding transcripts
-  3. Predict sensitivity of coding transcripts to NMD
-  4. Reanalyzes coding transcripts for upstream and overlapping ORFs
-  5. Compare and classify alternative segments between transcripts
+  3. Predict sensitivity of coding transcripts to Nonsense-mediated decay
+  4. Compare and classify alternative segments between transcripts
 * Supporting features 
-  1. Matches chromosome levels of query GTF/object to a reference annotation
-  2. Matches gene_id and gene_names of query GTF to a reference annotation
-  3. Filter or sort each element of a GRangesList object
+  1. Match chromosome levels of query GTF/object to reference annotation
+  2. Match gene_id and gene_names of query GTF to reference annotation
+  3. Plot transcripts from GTF GRanges object using *wiggleplotr*
+  4. Select new transcripts from custom transcriptome
 
 ## Installation
 ```r
@@ -21,7 +21,7 @@ devtools::install_github("fursham-h/factR")
 ```
 
 ## What you need
-1. Assembled transcripts (GTF/GFF3) imported as GenomicRanges object
+1. Custom-assembled transcriptome (GTF)
 2. Reference annotation as GenomicRanges object. Obtained from:
     * Resource database including AnnotationHub
     * Import of reference annotation assembly (GTF/GFF3)
@@ -29,10 +29,10 @@ devtools::install_github("fursham-h/factR")
     * Resource database including BSGenome, AnnotationHub
     * Import of genomic fasta file
 
+
 ## Getting started
 See [vignette](https://rpubs.com/fursham_h/693130) for full instructions on how to get started
 
 
-
 ## Acknowledgements
-* [Kaur Alasoo](https://github.com/kauralasoo)
+We thank [Kaur Alasoo](https://github.com/kauralasoo) for sharing code resources for *wiggleplotr* and for valuable discussions on the design of the package.
