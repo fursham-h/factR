@@ -4,28 +4,28 @@
 \alias{subsetNewTranscripts}
 \title{Subset GTF GRanges object for de novo transcripts}
 \usage{
-subsetNewTranscripts(query, ref, by.names = FALSE, by.CDS = FALSE)
+subsetNewTranscripts(query, ref, refine.by = c("none", "intron", "cds"))
 }
 \arguments{
 \item{query}{GRanges object containing query GTF data.}
 
 \item{ref}{GRanges object containing reference GTF data.}
 
-\item{by.names}{Whether to remove query transcripts with same name as reference transcripts. 
-Default: FALSE}
-
-\item{by.CDS}{Whether to remove query transcripts with CDS structure as reference transcripts.
-Default: FALSE}
+\item{refine.by}{Whether to refine the selection process by removing query transcripts with similar 
+introns or CDS structure to reference. Default input is "none", and can be changed
+to "intron" or "cds" respectively.}
 }
 \value{
 Filtered GRanges GTF object
 }
 \description{
-subsetNewTranscripts will compare query and reference GTF GRanges and by
-default, return query transcripts with different exon structures from 
-transcripts in reference. In addition, query GTF can be further filtered
-by removing transcripts of the same name (by.names = TRUE) and of same CDS info
-(by.CDS = TRUE) as reference transcripts
+subsetNewTranscripts will compare query and reference GTF GRanges and return
+query transcripts with different exon structures from reference transcripts.
+Transcriptome assemblers may sometime extend 5' and 3' ends of known transcripts
+based on experimental data. These annotated transcripts can be removed by inputting
+"intron" to the refine.by argument. This will further compare and remove transcripts
+of identical intron structures. Alternatively, transcripts with unique CDS coordinates
+can be selected by inputting "cds" to the refine.by argument.
 }
 \examples{
 subsetNewTranscripts(matched_query_gtf, ref_gtf)
