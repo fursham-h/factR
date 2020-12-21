@@ -15,9 +15,9 @@
 #' @param ref
 #' GRanges object containing reference GTF data.
 #' @param refine.by
-#'
-#'
-#'
+#' Whether to refine the selection process by removing query transcripts with similar 
+#' introns or CDS structure to reference. Default input is "none", and can be changed
+#' to "intron" or "cds" respectively.
 #'
 #' @return
 #' Filtered GRanges GTF object
