@@ -265,6 +265,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
   # prepare output table
   if ("DOMAIN" %in% output$type) {
     table.out <- output %>%
+      tibble::as_tibble() %>% 
       dplyr::filter(type == "DOMAIN") %>%
       dplyr::select(transcript = entryName, description, eval, begin, end)
     # dplyr::right_join(aaSeq %>% dplyr::select(transcript = id), by = "transcript")
