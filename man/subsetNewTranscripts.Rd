@@ -30,3 +30,6 @@ can be selected by inputting "cds" to the refine.by argument.
 \examples{
 subsetNewTranscripts(matched_query_gtf, ref_gtf)
 }
+\author{
+Fursham Hamid
+}

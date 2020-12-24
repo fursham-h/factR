@@ -36,9 +36,9 @@
 #' the last EJ is downstream of the stop_codon.
 #'
 #' num_of_down_EJs: Number of EJs downstream of the stop_codon.
-#'
-#' stop_to_downEJs: Concatenated integer values of the number of bases between
-#' the first base of the stop_codon to the last base of each downstream EJs.
+#' 
+#' `3_UTR_length`: Length of 3' UTR
+#' 
 #' @export
 #' @author Fursham Hamid
 #'

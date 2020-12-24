@@ -16,6 +16,8 @@
 #'
 #' @return ggplot2 object
 #' @export
+#' 
+#' @author Fursham Hamid
 #'
 #' @examples
 #' viewTranscripts(query_gtf)
