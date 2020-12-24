@@ -1,4 +1,4 @@
-#' Get protein domains from coding mRNAs
+#' Predict protein domain families from coding mRNAs
 #'
 #' @param x
 #' Can be a GRanges object containing 'CDS' features in GTF format
@@ -11,12 +11,15 @@
 #' Variables are metadata information found in `x` and multiple conditions can be
 #' provided delimited by comma. Example: transcript_id == "transcript1"
 #' @param plot
-#' Boolean argument to plot out protein domains. Only first 20 proteins will be plotted
+#' Boolean argument to plot out protein domains (Default: FASLE). 
+#' Only first 20 proteins will be plotted
 #'
 #' @return
 #' Dataframe containing protein features for each cds entry
+#' 
+#' @author Fursham Hamid
 #' @export
-predictDomains <- function(x, fasta, ..., plot = TRUE) {
+predictDomains <- function(x, fasta, ..., plot = FALSE) {
 
   # catch missing args
   mandargs <- c("x", "fasta")

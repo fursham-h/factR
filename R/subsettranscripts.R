@@ -24,6 +24,7 @@
 #'
 #' @export
 #'
+#' @author Fursham Hamid
 #' @examples
 #' subsetNewTranscripts(matched_query_gtf, ref_gtf)
 subsetNewTranscripts <- function(query, ref, refine.by = c("none", "intron", "cds")) {

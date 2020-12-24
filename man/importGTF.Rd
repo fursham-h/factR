@@ -13,5 +13,9 @@ importGTF(con)
 Imported GenomicRanges object in GTF format
 }
 \description{
-Wrapper to import GTF file
+This function is a wrapper to rtracklayer::import() function to conveniently
+import GTF file into R as a GenomicRanges object.
+}
+\author{
+Fursham Hamid
 }

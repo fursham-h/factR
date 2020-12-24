@@ -2,9 +2,9 @@
 % Please edit documentation in R/predictDomains.R
 \name{predictDomains}
 \alias{predictDomains}
-\title{Get protein domains from coding mRNAs}
+\title{Predict protein domain families from coding mRNAs}
 \usage{
-predictDomains(x, fasta, ..., plot = TRUE)
+predictDomains(x, fasta, ..., plot = FALSE)
 }
 \arguments{
 \item{x}{Can be a GRanges object containing 'CDS' features in GTF format
@@ -17,11 +17,15 @@ Can be a GRangesList object containing CDS ranges for each transcript}
 Variables are metadata information found in `x` and multiple conditions can be
 provided delimited by comma. Example: transcript_id == "transcript1"}
 
-\item{plot}{Boolean argument to plot out protein domains. Only first 20 proteins will be plotted}
+\item{plot}{Boolean argument to plot out protein domains (Default: FASLE). 
+Only first 20 proteins will be plotted}
 }
 \value{
 Dataframe containing protein features for each cds entry
 }
 \description{
-Get protein domains from coding mRNAs
+Predict protein domain families from coding mRNAs
+}
+\author{
+Fursham Hamid
 }

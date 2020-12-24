@@ -27,3 +27,6 @@ viewTranscripts(query_gtf)
 viewTranscripts(query_gtf, transcript_id == "transcript1")
 viewTranscripts(ref_gtf)
 }
+\author{
+Fursham Hamid
+}

@@ -26,7 +26,7 @@ GTF
 
 The default approach to this correction relies on finding overlaps between transcripts in query with
 transcripts in reference. Using this method alone could result in false positive matches (19 percent false positives).
-To improve this, users have an option to activate two additional layers of matching.
+To improve this, users have the option to invoke two additional layers of matching.
 (1) Matching by ENSEMBL Gene_IDs. If both query and reference transcript annotations containg Ensembl-style
 Gene IDs, this program will try to match both IDs in a less stringent manner. This correction can be invoked
 by providing the 'primary_gene_id' argument
@@ -35,7 +35,7 @@ by providing the 'primary_gene_id' argument
 may contain additional comments on the transcript information. This may include a distinct
 secondary Gene ID annotation that potentially matches with the reference. To invoke this correction,
 provide 'primary_gene_id' and 'secondary_gene_id' arguments. To determine if your transcript assembly contain
-possible secondary Gene IDs, try importing query GTF file using rtracklayer package and check its metadata
+possible secondary Gene IDs, import query GTF file using rtracklayer  and check its metadata
 columns
 }
 \author{
