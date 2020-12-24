@@ -16,7 +16,7 @@
 #' @return
 #' Dataframe containing protein features for each cds entry
 #' @export
-predictDomains <- function(x, fasta, ..., plot = TRUE) {
+predictDomains <- function(x, fasta, ..., plot = FALSE) {
 
   # catch missing args
   mandargs <- c("x", "fasta")
