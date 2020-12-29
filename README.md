@@ -1,10 +1,14 @@
-# factR
+# **factR**: Functional Annotation of Custom Transcriptomes in R
 
-factR is a robust and easy-to-use R package with tools to process custom-assembled transcripts (GTF)
+### General workflow
+<p align="center">
+  <img src="https://github.com/fursham-h/factR/blob/dev/factR_workflow.png" width="450"/>
+</p>
 
-## Features
+*factR* is a robust and easy-to-use R package with tools to process custom-assembled transcriptomes (GTF). Below are *factR*'s key functions:
+
 * Core features 
-  1. Construct coding (CDS) information for each transcript entry using a reference annotation as guide
+  1. Construct transcript coding (CDS) information using a reference-guided process
   2. Predict protein domains on coding transcripts
   3. Predict sensitivity of coding transcripts to Nonsense-mediated decay
 * Supporting features 
@@ -13,13 +17,13 @@ factR is a robust and easy-to-use R package with tools to process custom-assembl
   3. Plot transcripts from GTF GRanges object using *wiggleplotr*
   4. Select new transcripts from custom transcriptome
 
-## Installation
+### How to install
 ```r
 # install.packages("devtools")
 devtools::install_github("fursham-h/factR")
 ```
 
-## What you need
+### What you need
 1. Custom-assembled transcriptome (GTF)
 2. Reference annotation as GenomicRanges object. Obtained from:
     * Resource database including AnnotationHub
@@ -29,9 +33,9 @@ devtools::install_github("fursham-h/factR")
     * Import of genomic fasta file
 
 
-## Getting started
+### Getting started
 See [vignette](https://htmlpreview.github.io/?https://github.com/fursham-h/factR/blob/dev/doc/factR.html) for full instructions on how to get started
 
 
-## Acknowledgements
+### Acknowledgements
 We thank [Kaur Alasoo](https://github.com/kauralasoo) for sharing code resources for *wiggleplotr* and for valuable discussions on the design of the package.
