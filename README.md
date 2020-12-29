@@ -7,7 +7,6 @@ factR is a robust and easy-to-use R package with tools to process custom-assembl
   1. Construct coding (CDS) information for each transcript entry using a reference annotation as guide
   2. Predict protein domains on coding transcripts
   3. Predict sensitivity of coding transcripts to Nonsense-mediated decay
-  4. Compare and classify alternative segments between transcripts
 * Supporting features 
   1. Match chromosome levels of query GTF/object to reference annotation
   2. Match gene_id and gene_names of query GTF to reference annotation
