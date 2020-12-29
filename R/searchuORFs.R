@@ -22,7 +22,6 @@
 #' List containing exon and cds GRangesList of upstream and overlapping ORFs.
 #' If append is TRUE, function will append newly-found ORFs to input
 #' exons and cds provided
-#' @export
 #'
 searchuORFs <- function(exons, cds, fasta, ORFlength = 21,
                         which = NULL, append = FALSE) {

@@ -14,7 +14,6 @@
 #' @return
 #' GRanges object or data-frame containing alternative-spliced segments found in x
 #'
-#' @export
 #' @author Fursham Hamid
 #'
 #' @examples
@@ -113,7 +112,6 @@ labelSplicedSegment <- function(x, as.data.frame = FALSE, append = FALSE) {
 #' in comparison.
 #'
 #' @author Fursham Hamid
-#' @export
 #'
 #' @examples
 #' ## ---------------------------------------------------------------------
