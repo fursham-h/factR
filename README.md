@@ -1,7 +1,7 @@
 # **factR**: Functional Annotation of Custom Transcriptomes in R
 
 ### General workflow
-<img src="https://github.com/fursham-h/factR/blob/dev/factR_workflow.png" width="200">
+<img src="https://github.com/fursham-h/factR/blob/dev/factR_workflow.png" width="450">
 
 *factR* is a robust and easy-to-use R package with tools to process custom-assembled transcriptomes (GTF). Below are *factR*'s key functions:
 
