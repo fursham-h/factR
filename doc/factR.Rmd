@@ -10,7 +10,6 @@ output:
 vignette: >
   %\VignetteIndexEntry{factR}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, echo=FALSE, cache=FALSE}
@@ -34,457 +33,297 @@ library(rtracklayer)
 ```
 
 # Introduction
-High throughput RNA sequencing experiments have allowed the discovery of many new RNA species. Current bioinformatic pipelines typically involve aligning these sequencing reads to the genome and assembling contiguous reads into transcript architectures. This will output full descriptions of transcript and exon coordinates in Gene Transfer Format (GTF). Further analyses including differential transcript expression can be performed with these custom-assembled transcript information. Despite having rich details on transcript architectures, these custom-assembled transcripts lack functional information including coding potential. 
+High throughput RNA-sequencing experiments have expanded discovery of new RNA isoforms. Current bioinformatic pipelines to process these data typically involve aligning  sequencing reads to reference genome and assembling contiguous reads into transcript architectures. This outputs full descriptions of transcript and exon coordinates in Gene Transfer Format (GTF) file. Further analyses including experiment-specific transcript expression can be performed using these custom-assembled transcriptome as input. Despite having rich details on transcript architectures, the newly assembled transcripts often lack coding (CDS) information. 
 
-To this end, we developed a program with tools to Functionally Annotate Custom-assembled Transcripts in R (*factR*). At its core, *factR* will construct CDS features for assembled transcriptomes using a reference annotation as guide. With this newly-built coding information, we may then query transcripts for protein domain features, for nonsense-mediated decay inducing features and for upstream open-reading frames. *factR* also contain tools to annotate alternative segments between transcripts, to auto-fill gene metadata and other tools to visualize particular transcript families from a GTF file.
-
+To this end, we developed a program with tools to Functionally Annotate Custom-assembled Transcripts in R (*factR*). At its core, *factR* constructs CDS information on custom transcriptomes using a reference-guided process. With this newly-built coding information, functional consequences can be investigated. *factR* can predict presence of protein domain families on coding transcripts and test its susceptibility to nonsense-mediated decay. *factR* also contain supporting tools to annotate alternative-spliced segments, match gene metadata and plot transcript architectures.
 
 # Getting started
 
-## How to install and load *factR* and other dependencies
-To install *factR*, open R and type:
+## Installing *factR*
+To install *factR*, open your R environment and type:
 ```{r install.factR, eval = FALSE}
 install.packages("devtools")
 devtools::install_github("fursham-h/factR")
 ```
 
-The above installation will also install packages needed to run *factR*. In addition, you would need to install the following genome sequence for this workflow:
-```{r install.others, eval = FALSE}
-BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
-```
+## Materials needed
 
-Next, we need to load the following packages:
-```{r load.dep.workflow, eval = FALSE}
-library(factR)
-library(AnnotationHub)
-library(BSgenome.Mmusculus.UCSC.mm10)
-library(Biostrings)
-library(GenomicFeatures)
-library(rtracklayer)
-library(purrr)
-library(stringr)
-```
+### Custom-assembled transcriptome
 
-## What inputs you need
-
-### Query transcript assembly
-
-Transcript assembly programs typically outputs a GTF file containing transcript and exon coordinates, as well as attributes for each entry. It is mandatory that your assembly contain **gene_id** and **transcript_id** attributes.
-
-Query GTF file have to be imported into R and parsed into a GenomicRanges object. 
-To do so, run:
-```{r load,query, eval = FALSE}
-# import gtf file using rtracklayer
-query_gtf <- import('path/to/your.gtf')
-```
+Our workflow requires a custom-assembled transcriptome in the GTF format as an input. Users may provide their own custom GTF files, or use our sample pre-assembled GTF. It is mandatory that your transcriptome contain **gene_id** and **transcript_id** attributes. 
+<!-- *In the future, add how to assemble transcriptome* -->
 
 ### Reference annotation
 
-Reference transcript annotation serves as a guide in the construction of query CDS. We strongly recommend using transcript annotation in GTF/GFF3 format for the workflow. Reference GTF annotation can be acquired from the Annotation Hub database in R or downloaded locally from data server website via FTP. For the latter, the GTF file have to be imported into R and parsed into a GenomicRanges object. 
-
-Here, we will describe three ways to obtain mouse annotation:
-
-1. vM6 Gencode basic annotation from Annotation Hub database
-```{r load.gencode, eval = FALSE}
-# query database for mouse gencode basic annotation
-ah <- AnnotationHub()
-query(ah, c('Mus musculus', 'gencode', 'gff', 'basic'))
-#> AnnotationHub with 2 records
-#> # snapshotDate(): 2019-05-02 
-#> # $dataprovider: Gencode
-#> # $species: Mus musculus
-#> # $rdataclass: GRanges
-#> # additional mcols(): taxonomyid, genome, description, coordinate_1_based, maintainer,
-#> #   rdatadateadded, preparerclass, tags, rdatapath, sourceurl, sourcetype 
-#> # retrieve records with, e.g., 'object[["AH49547"]]' 
-#> 
-#>             title                                                    
-#>   AH49547 | gencode.vM6.basic.annotation.gff3.gz                     
-#>   AH49549 | gencode.vM6.chr_patch_hapl_scaff.basic.annotation.gff3.gz
-
-#>  retrieve id 'AH49547'
-ref_gtf <- ah[['AH49547']]
-```
-
-2. GRCm38 Ensembl annotation from Annotation Hub database
-```{r load.ensembl, eval = FALSE}
-# Load annotation hub and query database for ensembl annotation as in method 1 above.
-
-# retrieve latest GRCm38 annotation from ensembl
-ref_gtf <- ah[['AH60127']]
-```
-
-3. Import locally downloaded GTF annotation into R
-```{r load.localref, eval = FALSE}
-# import reference gtf file
-ref_gtf <- import('path/to/reference.gtf')
-```
+Several *factR* functions require reference annotation (GTF or GFF3) as guide. This can be acquired from within R environment using packages such as *AnnotationHub* or downloaded from external database such as GENCODE or Ensembl. We describe 2 ways to retrieve such reference in [this](#retrieve-annotation) section below.
 
 
 ### Genomic sequence
 
-Genomic DNA sequence is required for determining open-reading frames and for *in silico* translation of query transcripts. Here, we describe three ways to obtain genomic sequence for mouse GRCm38 assembly:
+Genomic DNA sequence is required for determining open-reading frames and for *in silico* translation of query transcripts. Users may acquire reference genome from R packages such as *BSgenome* or *AnnotationHub*, or download from external database such as GENCODE or Ensembl. We describe ways to retrieve genome sequence in [this](#retrieve-genome-fasta) section below.
 
-1. BSgenome sequence object from UCSC
-The package *BSgenome.Mmusculus.UCSC.mm10* contains genome sequence for mouse mm10.
-```{r load.BSgenome, eval = FALSE}
-Mmusculus <- BSgenome.Mmusculus.UCSC.mm10
+# Using *factR* 
+In this section, we describe a recommended workflow for running *factR*. We begin by loading *factR* into our R environment:
+
+```{r loadfactR, eval=FALSE}
+library(factR)
 ```
 
-2. TwoBit fasta sequence (Ensembl) from Annotation Hub
-```{r load.fastaAH, eval = FALSE}
+## Import and inspect custom GTF
+For this workflow, we use pre-assembled transcriptome from bulk RNA-seq of mouse embryonic stem cells treated with the NMD inhibitor cycloheximide (CHX) or untreated control [(reference)](https://genome.cshlp.org/content/23/10/1636.long) as an example. This GTF file was generated using [StringTie](https://ccb.jhu.edu/software/stringtie/) assembler and contain new and known transcripts expressed from *Celf1* gene.  
+
+*factR* interacts with GTF data stored as a GenomicRanges object with genomic interval data and relevant metadata. To create such an object from the sample GTF file, we use the `importGTF` function:
+```{r importGTF}
+input.file <- system.file("extdata", "sample.gtf", package = "factR")
+custom.gtf <- importGTF(input.file)
+```
+
+The imported GTF file is stored as a *GenomicRanges* object.
+```{r checktype}
+class(custom.gtf)
+```
+
+Contents of the object can be previewed using `head`:
+```{r headobj}
+head(custom.gtf)
+```
+
+In addition to genomic coordinates (seqnames and ranges), a typical imported GTF file will contain metadata describing the feature type (e.g. transcript or exon), its parental gene information and its assigned transcript ID.  
+
+The following code will calculate the total number of transcripts in the input transcriptome:
+```{r counttx}
+length(unique(custom.gtf$transcript_id))
+```
+
+none of which contain CDS information:
+```{r countcds}
+length(unique(custom.gtf[custom.gtf$type=="CDS"]$transcript_id))
+```
+
+## Plot transcripts from custom transcriptome
+Users may inspect architectures of specific sets of transcripts using `viewTranscripts`. To plot transcripts from *Celf1* gene, run:
+```{r plottranscripts, message=FALSE, warning=FALSE}
+viewTranscripts(custom.gtf, gene_name == "Celf1")
+```
+
+StringTie2, the transcript assembler used to generate this custom GTF, typically assigns arbitrary names to newly identified transcripts (e.g. "MSTRG.x.y") and uses the same prefix for their gene IDs (e.g. "MSTRG.x"). Incidentally, this is why the output above lacks any novel *Celf1* transcripts. 
+
+## Match gene information from custom transcriptome to reference annotation
+*factR* is able to correct gene metadata on custom transcriptome using a reference annotation as guide. Such reference can be obtained from databases such as UCSC, GENCODE or Ensembl. Below, we describe 2 ways to download mouse reference annotation from GENCODE.
+
+### Retrieve annotation
+1. Using AnnotationHub package
+```{r load.gencode, eval = FALSE}
 # query database for mouse gencode basic annotation
+library(AnnotationHub)
 ah <- AnnotationHub()
-query(ah, c("Mus musculus", "release-91", 'fasta', 'GRCm38'))
-#> AnnotationHub with 5 records
-#> # snapshotDate(): 2019-05-02 
-#> # $dataprovider: Ensembl
+query(ah, c('Mus musculus', 'gencode', 'gff'))
+AnnotationHub with 9 records
+#> # snapshotDate(): 2020-10-27
+#> # $dataprovider: Gencode
+#> # $species: Mus musculus
+#> # $rdataclass: GRanges
+#> # additional mcols(): taxonomyid, genome,
+#> #   description, coordinate_1_based, maintainer,
+#> #   rdatadateadded, preparerclass, tags, rdatapath,
+#> #   sourceurl, sourcetype 
+#> # retrieve records with, e.g., 'object[["AH49545"]]' 
+#> 
+#>             title                                          
+#>   AH49545 | gencode.vM6.2wayconspseudos.gff3.gz            
+#>   AH49546 | gencode.vM6.annotation.gff3.gz                 
+#>   AH49547 | gencode.vM6.basic.annotation.gff3.gz           
+#>   AH49548 | gencode.vM6.chr_patch_hapl_scaff.annotation....
+#>   AH49549 | gencode.vM6.chr_patch_hapl_scaff.basic.annot...
+#>   AH49550 | gencode.vM6.long_noncoding_RNAs.gff3.gz        
+#>   AH49551 | gencode.vM6.polyAs.gff3.gz                     
+#>   AH49552 | gencode.vM6.primary_assembly.annotation.gff3.gz
+#>   AH49553 | gencode.vM6.tRNAs.gff3.gz   
+
+# Download full annotation
+ref.gtf <- ah[['AH49546']]
+```
+
+2. From GENCODE database
+```{r import.gencode, eval=FALSE}
+download.file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz",
+              destfile = "gencode.vM25.annotation.gtf.gz")
+ref.gtf <- importGTF("gencode.vM25.annotation.gtf.gz")
+```
+
+```{r import.gencode.silent, include=FALSE}
+if(!file.exists("gencode.vM25.annotation.gtf.gz")){
+  download.file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz",
+              destfile = "gencode.vM25.annotation.gtf.gz")
+}
+ref.gtf <- importGTF("gencode.vM25.annotation.gtf.gz")
+```
+
+Note: when choosing a reference, users should consider using one with the same chromosome naming style (e.g. "chr1" or "1"). If not possible, *factR* can match the styles on both objects. Type `help(matchChromosomes)` for more info.  
+
+### Matching gene info
+Genes found in the custom custom.gtf can now be compared with the reference ref.gtf object using the `matchGeneInfo` function and novel transcripts assigned to the "official" genes, whenever possible. By default, this tool matches the query (custom.gtf) to the reference (ref.gtf) by finding overlapping coordinates:
+```{r matchgenemeta, message=FALSE}
+# matching gene metadata
+custom.gtf <- matchGeneInfo(custom.gtf, ref.gtf)
+
+# preview object
+head(custom.gtf)
+```
+
+To tune the performance of this tool, we provide additional arguments specifying the name of columns containing "primary" and potentially "secondary" gene IDs from the query (custom.gtf). Detailed description is available on the function help page by typing `help(matchGeneInfo)`.
+
+Now, `viewTranscripts` plots all 20 new and known transcripts of *Celf1* gene:
+```{r plottranscripts2}
+viewTranscripts(custom.gtf, gene_name == "Celf1")
+```
+
+## Subset transcriptome for novel transcripts
+As seen in the above example, custom transcriptomes typically combine both new and previously annotated transcripts. It is sometimes meaningful to select only newly-found transcripts and work with a more managaeable transcriptome. To perform this, run the following:
+```{r subsettx}
+custom_new.gtf <- subsetNewTranscripts(custom.gtf, ref.gtf)
+viewTranscripts(custom_new.gtf, gene_name == "Celf1")
+```
+
+The above command will subset custom.gtf transcripts with distinct exonic coordinates compared to ref.gtf and store these transcripts in the custom_new.gtf object. Some custom-built transcripts may differ from their reference counterparts by having different start or/and end coordinates, with otherwise similar exon-intron structure. To shortlist only those novel transcripts that have distinct intronic coordinates, simply set the "refine.by" argument to "intron":
+```{r subsettx2}
+custom_new.gtf <- subsetNewTranscripts(custom.gtf, ref.gtf, refine.by = "intron")
+viewTranscripts(custom_new.gtf, gene_name == "Celf1")
+```
+
+We will use custom_new.gtf object for the remaining of this workflow.
+
+## Construct CDS information
+Functional annotation of newly assembled transcripts in factR begins by deducing their protein-coding sequences (CDSs). To search for putative CDSs, factR requires a genome sequence file, which can be obtained using R packages or downloading from online databases (e.g. UCSC, GENCODE or Ensembl). Here, we show three ways to retrieve mouse genome sequence file.  
+
+### Retrieve genome fasta
+1. Using BSgenome. This package provides support for most sequenced genomes. Mouse mm10 sequence can be downloaded as such:
+```{r genomeBSgenome, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
+```
+
+and loaded into R environment:
+
+```{r loadBSgenome, eval=FALSE}
+library(BSgenome.Mmusculus.UCSC.mm10)
+```
+
+2. From AnnotationHub. 
+```{r genomeAhub, eval=FALSE}
+library(AnnotationHub) 
+ah <- AnnotationHub()
+query(ah, c("mm10","2bit")) 
+#> AnnotationHub with 1 record
+#> # snapshotDate(): 2020-10-27
+#> # names(): AH14005
+#> # $dataprovider: UCSC
 #> # $species: Mus musculus
 #> # $rdataclass: TwoBitFile
-#> # additional mcols(): taxonomyid, genome, description, coordinate_1_based, maintainer,
-#> #   rdatadateadded, preparerclass, tags, rdatapath, sourceurl, sourcetype 
-#> # retrieve records with, e.g., 'object[["AH60491"]]' 
-#> 
-#>             title                                           
-#>   AH60491 | Mus_musculus.GRCm38.cdna.all.2bit               
-#>   AH60492 | Mus_musculus.GRCm38.dna.primary_assembly.2bit   
-#>   AH60493 | Mus_musculus.GRCm38.dna_rm.primary_assembly.2bit
-#>   AH60494 | Mus_musculus.GRCm38.dna_sm.primary_assembly.2bit
-#>   AH60495 | Mus_musculus.GRCm38.ncrna.2bit  
+#> # $rdatadateadded: 2014-12-15
+#> # $title: mm10.2bit
+#> # $description: UCSC 2 bit file for mm10 
+#> # $taxonomyid: 10090
+#> # $genome: mm10
+#> # $sourcetype: TwoBit
+#> # $sourceurl: http://hgdownload.cse.ucsc.edu/goldenpath/...
+#> # $sourcesize: NA
+#> # $tags: c("2bit", "UCSC", "genome") 
+#> # retrieve record with 'object[["AH14005"]]' 
 
-#>  retrieve id 'AH60492'
-Mmusculus <- ah[['AH60492']]
+Mmusculus <- ah[['AH14005']]
 ```
 
-3. Import local FASTA genome sequence file
-```{r load.localfasta, eval = FALSE}
-# load package and import fasta file as a DNAStringSet
-Mmusculus <- readDNAStringSet('path/to/fasta')
+3. From GENCODE database
+```{r downloadGencode, eval=FALSE}
+download.file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/GRCm38.primary_assembly.genome.fa.gz",
+              "GRCm38.primary_assembly.genome.fa.gz")
+Mmusculus <- readDNAStringSet("GRCm38.primary_assembly.genome.fa.gz")
 ```
 
-Note: when using DNA FASTA from Ensembl, do check header lines for entry names. If long names are given (eg. 1 dna:chromosome chromosome:GRCm38:1:1:195471971:1 REF), you would need to convert them to short names in order to have consistent sequence levels. This can be done by running the following:
+When importing FASTA file from online database, always check for proper chromosome naming. This can be done as follows:
+```{r checkfasta, eval=FALSE}
+seqlevels(Mmusculus)
+#> [1] "chr1 1" "chr2 2" "chr3 3" "chr4 4" "chr5 5" "chr6 6"
+#> [7] "chr7 7" "chr8 8" "chr9 9"
+```
 
-```{r convert.fastaheader, eval = FALSE}
-# load package and import fasta file as a DNAStringSet
+In the above example, names on each chromosome do not follow standard convention (e.g. "chr1" or "1"). To correct this, run the following command:
+```{r correctfasta, eval=FALSE}
+library(stringr)
 names(Mmusculus) <- str_split(seqlevels(Mmusculus), " ") %>% map_chr(`[`, 1)
+seqlevels(Mmusculus)
+#> [1] "chr1" "chr2" "chr3" "chr4" "chr5" "chr6" "chr7" "chr8"
+#> [9] "chr9"
+```
+
+Note: when choosing a genome, users should consider using one with the same chromosome naming style (e.g. "chr1" or "1"). If not possible, *factR* can match the styles on both objects. Type `help(matchChromosomes)` for more info. 
+
+### Build CDS
+*factR*'s buildCDS() is a multi-step function that constructs CDSs on query transcripts using reference annotation as guide. First, a database of annotated ATGs is created and used to search for a potential translation start site on query transcripts. If successfully found, buildCDS() will look for an open-reading frame and append the CDS coordinates to the query object. This function can be run for our novel transcripts as follows:
+```{r buildcds, message=FALSE}
+custom_new_CDS.gtf <- buildCDS(custom_new.gtf, ref.gtf, Mmusculus)
+```
+
+The open-reading frames of our novel *Celf1* transcripts are updated:
+```{r viewafterCDS}
+viewTranscripts(custom_new_CDS.gtf, gene_name == "Celf1")
+```
+
+CDSs are now coloured dark blue and untranslated sequences are shown in light blue (top part of Figure 1C). Also note that by setting rescale_intron to TRUE we can see exonic regions more clearly but lose their genomic coordinates. 
+```{r viewafterCDSscale}
+viewTranscripts(custom_new_CDS.gtf, gene_name == "Celf1", rescale_introns = TRUE)
+```
+
+## Predict transcript susceptibility to NMD
+We can now examine possible functional consequences of alternative processing events affecting the newly identified transcripts. To test which transcripts may be susceptible to NMD, use the `predictNMD` function:
+```{r predictNMD1, eval=FALSE}
+NMDprediction.out <- predictNMD(custom_new_CDS.gtf)
+```
+
+`predictNMD` outputs a data-frame containing information on features that may trigger NMD, and a predicted NMD sensitivity for each coding transcript.  
+
+To identify putative NMD targets for specific genes (e.g. *Celf1*), run the following:
+```{r predictNMD2}
+predictNMD(custom_new_CDS.gtf, gene_name == "Celf1")
 ```
 
 
-# Sample datasets
-
-## Query 
-*factR* package contains a sample assembled GTF imported as a GRanges object. The assembly was constructed from a mouse dataset and contain **transcript** and **exon** descriptions of 4 transcript isoforms from the same parent gene. Transcripts in **query_gtf** have been assigned generic **gene_ids** and **transcript_ids**. This is to recapitulate the nomenclature of a typical custom-assembled GTF.
-```{r checkquery}
-# inspect query object
-head(query_gtf)
-
-# list out transcript_id and gene_id names
-unique(query_gtf$transcript_id)
-
-unique(query_gtf$gene_id)
+## Predict protein domain architecture
+factR can also inspect domain structure of the protein products encoded by newly identified mRNA isoforms using its `predictDomains` tool: 
+```{r predDomain1, eval=FALSE}
+domains.out <- predictDomains(custom_new_CDS.gtf, Mmusculus)
 ```
 
-Users can quickly visualize the exon structure of these query transcripts using the `viewTranscripts` tool, which is essentially a convenient wrapper to plot transcripts using the *wiggleplotr* package:
-```{r viewquery}
-viewTranscripts(query_gtf)
+The above code returns a data-frame containing the name, expected value and position of predicted protein domain families within each transcript.  
+
+Since predictDomains() queries PFAM database over the internet, it may require a substantial amount of time and stable internet connection to query multiple transcripts simultaneously. To quickly explore this functionality, users may prefer to begin form smaller subsets of transcripts specified. For example, to predict the domain structure for all transcripts of the *Celf1* gene, run:
+```{r predDomain2}
+predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Celf1")
 ```
 
-## Reference
-For our reference annotation, we will be using a subset of vM6 gencode reference annotation which contain basic transcripts from the same gene family as our query gene. 
-```{r viewref}
-# inspect reference object
-head(ref_gtf)
-
-# list out transcript_id and gene_id names
-unique(ref_gtf$transcript_id)
-
-unique(ref_gtf$gene_id)
+In addition, the domain architectures for the set of query proteins can be plotted by switching the argument “plot” to TRUE:
+```{r predDomain3}
+predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Celf1", plot = TRUE)
 ```
 
-# Matching chromosome IDs
-
-Different genomic objects may have different chromosome IDs (aka seqlevels), depending on its source. Users may have a custom GTF with "Ensembl"-style seqlevels but wish to use a gencode reference annotation which contain "UCSC"-style seqlevels. The sample **query_gtf** and **ref_gtf** objects presents this exact predicament:
-```{r inspectobjects}
-seqlevelsStyle(query_gtf)
-
-seqlevelsStyle(ref_gtf)
+## Export output objects
+The *custom_new_CDS.gtf* object can be exported to a GTF file as follows:
+```{r exportgtf, eval=FALSE}
+export(custom_new_CDS.gtf, "Custom_new.gtf", format = “GTF”)
 ```
 
-*factR* contain a tool to effectively match the seqlevels of a query GRanges object to any reference object with seqlevel information:
-```{r matchseqlvls}
-# matching seqlevels
-matched_query_gtf <- matchChromosomes(query_gtf, Mmusculus)
-
-head(matched_query_gtf)
-```
-Note: `matchChromosomes` will drop any unmatched seqlevels from query 
-
-*factR* also comes with the function `has_consistentSeqlevels` to test if two or more objects have consistent seqlevels. This function returns a logical value of FALSE if input objects have inconsistent seqlevels and recommends a `matchChromosomes` function to run.
-```{r testseqlevels}
-has_consistentSeqlevels(query_gtf, ref_gtf)
-
-has_consistentSeqlevels(matched_query_gtf, ref_gtf)
+Finally, to export *NMDprediction.out* and *domains.out* data frames as tab-delimited text files, run the following:
+```{r exporttable, eval=FALSE}
+write.table(NMDprediction.out, "Custom_new_NMD.txt", sep = "\t", row.names = FALSE, quote = FALSE)
+write.table(domains.out, "Custom_new_domains.txt", sep = "\t", row.names = FALSE, quote = FALSE)
 ```
 
-# Matching gene metadata
-
-Custom-built GTF annotation may contain generic **gene_id** and **gene_name** metadata (e.g. 'MSTRG1'), depending on how it was constructed. Users who wish to fill these metadata using a reference annotation may run the `matchGeneInfo` function:
-```{r matchgenemeta}
-# matching gene metadata
-matched_query_gtf <- matchGeneInfo(matched_query_gtf, ref_gtf)
-
-head(matched_query_gtf)
-```
-
-By default, this function will match query transcripts to reference by overlapping coordinates. Users may improve the accuracy of this matching function by providing inputs to **primary_gene_id** and **secondary_gene_id** arguments. See ?matchGeneMeta for detailed description.
-
-# Extract newly-discovered transcripts from query transcriptome
-
-
-Very often, custom-assembled transcriptomes contain *de novo* isoforms. It is useful to subset the dataset for these newly-discovered transcripts to streamline downstream steps. To perform this, run:
-```{r subsettranscripts}
-subsetted_query_gtf <- subsetNewTranscripts(matched_query_gtf, ref_gtf)
-
-# inspect length of subsetted object
-length(subsetted_query_gtf)
-
-length(matched_query_gtf)
-
-# list de novo transcripts
-unique(subsetted_query_gtf$transcript_id)
-```
-
-# Construct query CDS information
-
-To build CDS information on our query data, users can simply run:
-```{r buildcds}
-new_query_gtf <- buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
-```
-
-The above function will return a new GRanges object containing exon entries from **query_gtf** with appended cds entries. User can inspect the contents of the object further.
-```{r checkCDS}
-# check lengths of input and output GRanges
-length(matched_query_gtf)
-
-length(new_query_gtf)
-
-# inspect CDS entries
-head(new_query_gtf[new_query_gtf$type == "CDS"])
-```
-
-User can visualize the coding structure of each transcripts using the `viewTranscripts` tool:
-```{r viewCDS}
-viewTranscripts(new_query_gtf)
-```
-
-The new query GTF Granges object can be exported as a .gtf file using *rtracklayer*'s export funcition:
-```{r export, eval=FALSE}
-# get GrangesList of query exons and cds
-rtracklayer::export(new_query_gtf, 'path/to/output.gtf', format = 'gtf')
-```
-
-
-# Predicting protein domain structure
-
-Upon construction of coding segments on transcripts, users may be interested in determining the functional domains which is encoded within the coding sequence. To this end, users can utilize the `predictDomains` function. This tool accepts a GTF GRanges object containing CDS information as input, together with a genome sequence object. After checking the translated protein sequence, `predictDomains` will query the SuperFamily database for domain features and plot its domain architecture:
-```{r testfeature}
-domains <- predictDomains(new_query_gtf, Mmusculus)
-```
-
-
-In order to extract the domain features, `predictDomains` will attempt to submit the protein coding sequence to the SuperFamily database and return a summary of the domain structure. As this process is done over HTTP, the speed of this function is greatly dependent on the server and on the number of CDS in your list. This process can be sped up by subsetting the list of transcripts for analysis by providing logical conditions to the **...** argument. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
-```{r testfeaturewhich, eval=F}
-pd <- predictDomains(new_query_gtf, Mmusculus, transcript_id %in% c('transcript1', 'transcript3'))
-pd
-#>    transcript   description     eval begin end
-#> 1 transcript1 Canonical RBD 4.96e-06    46 143
-#> 2 transcript1 Canonical RBD 1.39e-05   357 446
-#> 3 transcript1 Canonical RBD 1.28e-06   177 281
-#> 4 transcript1 Canonical RBD 9.32e-06   469 553
-#> 5 transcript3 Canonical RBD 4.96e-06    46 143
-#> 6 transcript3 Canonical RBD 1.28e-06   177 281
-```
-
-
-Alternatively, users may reduce the number of transcripts for the query by subsetting the input GTF for *de novo* transcripts.
-```{r subsetandtest, eval=F}
-subsetted_new_query_gtf <- subsetNewTranscripts(new_query_gtf, ref_gtf)
-pd_subset <- predictDomains(subsetted_new_query_gtf, Mmusculus)
-pd_subset
-
-#>    transcript   description     eval begin end
-#> 1 transcript3 Canonical RBD 4.96e-06    46 143
-#> 2 transcript3 Canonical RBD 1.28e-06   177 281
-#> 3 transcript4 Canonical RBD 1.39e-05   291 380
-#> 4 transcript4 Canonical RBD 1.28e-06   137 241
-#> 5 transcript4 Canonical RBD 8.52e-05    39  95
-#> 6 transcript4 Canonical RBD 8.32e-06   403 487
-```
-
-
-
-
-# Predicting transcript sensitivity to nonsense-mediated decay
-
-Coding RNAs harbouring a premature stop codon are potentially eliminated by a process called Nonsense-mediated decay (NMD). Two common features of NMD targets include the upstream position of its stop_codon relative to the last exon-exon junction and the extensive length of its 3'-untranslated region (3'UTR). To report these NMD features and predict if any of the transcripts in the custom annotation are NMD-sensitive, users can run the `predictNMD` tool.
-
-`predictNMD` can accept a GTF GRanges object as input and will only analyze coding transcripts for NMD-features.
-```{r testnmd1}
-pn <- predictNMD(new_query_gtf)
-```
-
-`predictNMD` will output a tibble dataframe with report on NMD-inducing feature for each coding transcript. The column **stop_to_lastEJ** describes the relative distance of the stop_codon to the last exon-exon junction (lastEJ) of each transcript. Thus, a positive integer means that the lastEJ is downstream of the stop_codon. `predictNMD` also returns the number of exon-junctions downstream of the stop_codon (**num_of_downEJs**). **`3'UTR_length`** describes the length of the 3'-untranslated region for each coding transcript. The column containing logical values for **is_NMD** will return TRUE if the **stop_to_lastEJ** value exceed the NMD triggering threshold which is typically 50 base-pair. Users may set a custom value by overriding the default **NMD_threshold** argument.
-
-Users who wish to analyze certain genes or transcripts in their GTF GRanges for NMD features may provide logical conditions to the `...` argument to subset their GTF input. This argument accepts unquoted metadata column names from the GTF as variables and quoted values to filter the GTF by. For example:
-```{r testnmdfilter}
-pn <- predictNMD(new_query_gtf, transcript_id == 'transcript3')
-pn
-```
-
-This feature provides user the flexibility to analyze desired genes/transcripts from a large collection of GTF GRanges. Input GTF can be filtered with multiple conditions as long as variable names are found in the input GRanges object. Here are some examples on how this feature can be used on an Ensembl GTF annotation:
-```{r testnmdens, eval = FALSE}
-# retrieve latest GRCm38 annotation from ensembl
-ah <- AnnotationHub()
-mm10_gtf <- ah[['AH60127']]
-
-# predict transcripts from Ptbp1 gene for NMD features
-pn_Ptbp1 <- predictNMD(mm10_gtf, gene_name == 'Ptbp1')
-pn_Ptbp1
-#> # A tibble: 9 x 6
-#>   transcript         stop_to_lastEJ num_of_downEJs stop_to_downEJs threeUTRlength is_NMD
-#>   <chr>                       <dbl>          <int> <chr>                    <dbl> <lgl> 
-#> 1 ENSMUST00000057343            364              3 "69,286,364"               644 TRUE  
-#> 2 ENSMUST00000095457           -130              0 ""                        1085 FALSE 
-#> 3 ENSMUST00000165704           -130              0 ""                        1497 FALSE 
-#> 4 ENSMUST00000165724            286              2 "69,286"                   362 TRUE  
-#> 5 ENSMUST00000168683           -145              0 ""                           0 FALSE 
-#> 6 ENSMUST00000169091            -36              0 ""                           0 FALSE 
-#> 7 ENSMUST00000169483            139              1 "139"                      152 TRUE  
-#> 8 ENSMUST00000171599            -63              0 ""                           0 FALSE 
-#> 9 ENSMUST00000172282           -130              0 ""                        1158 FALSE 
-#> Warning message:
-#> 7 transcript(s) have missing cds info and was not analyzed 
-
-# predict several transcripts from Ptbp1 gene for NMD features
-pn_Ptbp1_transcripts <- predictNMD(mm10_gtf, gene_name == 'Ptbp1', transcript_id == c('ENSMUST00000057343', 'ENSMUST00000095457'))
-pn_Ptbp1_transcripts
-#> # A tibble: 2 x 6
-#>   transcript         stop_to_lastEJ num_of_downEJs stop_to_downEJs threeUTRlength is_NMD
-#>   <chr>                       <dbl>          <int> <chr>                    <dbl> <lgl> 
-#> 1 ENSMUST00000057343            364              3 "69,286,364"               644 TRUE  
-#> 2 ENSMUST00000095457           -130              0 ""                        1085 FALSE 
-```
-
-
-<!-- # Annotating alternatively-spliced segments in transcript annotation -->
-
-<!-- Alternative splicing is an ubiquitous post-transcriptional process that regulates the inclusion of exon segments. This results in the expression of two or more transcript isoforms in a gene family. Depending on the boundaries and position of the exon, alternative segments can be classified into at least one of eight classes; Casette Exon, First Exon, Last Exon, Spliced Donor, Spliced Acceptor, Retained Intron, Termination Start and Termination End.  -->
-
-<!-- To find and annotate alternative-spliced segments within a GTF file, users can simply run `labelSplicedSegment`. This function accepts any GTF GRanges object with exon features and will return a GRanges object containing annotated alternative segments in a similar GTF format -->
-<!-- ```{r annotateAS} -->
-<!-- labelSplicedSegment(new_query_gtf) -->
-<!-- ``` -->
-
-
-<!-- `annotateAS` can analyze an entire transcript annotation accurately and rapidly. -->
-<!-- ```{r annotateASmm10, eval = FALSE} -->
-<!-- # retrieve latest GRCm38 annotation from ensembl -->
-<!-- ah <- AnnotationHub() -->
-<!-- mm10_gtf <- ah[['AH60127']] -->
-
-<!-- # annotate GRCm38 transcriptome -->
-<!-- system.time({mm10_AS <- labelSplicedSegment(mm10_gtf)}) -->
-<!-- #>    user  system elapsed  -->
-<!-- #>  21.352   0.076  21.427  -->
-
-<!-- # inspect output -->
-<!-- mm10_AS -->
-<!-- #> GRanges object with 193519 ranges and 4 metadata columns: -->
-<!-- #>              seqnames              ranges strand |            gene_id      transcript_id        type      AStype -->
-<!-- #>                 <Rle>           <IRanges>  <Rle> |        <character>        <character> <character> <character> -->
-<!-- #>        [1] JH584294.1           3094-3166      + | ENSMUSG00000093828 ENSMUST00000177905          AS          FE -->
-<!-- #>        [2] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000096791          AS          CE -->
-<!-- #>        [3] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000071277          AS          CE -->
-<!-- #>        [4] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000179115          AS          CE -->
-<!-- #>        [5] JH584292.1           5658-5940      + | ENSMUSG00000096730 ENSMUST00000178970          AS          CE -->
-<!-- #>        ...        ...                 ...    ... .                ...                ...         ...         ... -->
-<!-- #>   [193515]          1 195169702-195169801      - | ENSMUSG00000026616 ENSMUST00000210219          AS          CE -->
-<!-- #>   [193516]          1 195169702-195169801      - | ENSMUSG00000026616 ENSMUST00000043104          AS          CE -->
-<!-- #>   [193517]          1 195170645-195171170      - | ENSMUSG00000026616 ENSMUST00000195722          AS          LE -->
-<!-- #>   [193518]          1 195170991-195171170      - | ENSMUSG00000026616 ENSMUST00000210219          AS          CE -->
-<!-- #>   [193519]          1 195170991-195171168      - | ENSMUSG00000026616 ENSMUST00000043104          AS          FE -->
-<!-- #>   ------- -->
-<!-- #>   seqinfo: 45 sequences from an unspecified genome; no seqlengths -->
-<!-- ``` -->
-
-
-<!-- Users who wish to compare alternative segments between two or more transcripts can run the `compareSplicedSegment` function. In contrast to `labelSplicedSegment`, this function accepts two or more GRanges object, each containing exon features for a particular transcript. Alternatively, users can provide the list of transcript exon features as a GRangesList object -->
-<!-- ```{r compareAS} -->
-<!-- # convert GTF GRanges into GRangesList of exons by transcript -->
-<!-- txlist <- split(query_gtf[query_gtf$type == 'exon'], ~transcript_id) -->
-<!-- names(txlist) -->
-
-<!-- # Pair-wise transcript comparison -->
-<!-- tx1 <- txlist[[1]] -->
-<!-- tx2 <- txlist[[3]] -->
-<!-- compareSplicedSegment(tx1, tx2) -->
-
-<!-- # Intralist comparison -->
-<!-- compareSplicedSegment(txlist) -->
-<!-- ``` -->
-
-
-
-
-<!-- # Search coding transcripts for upstream and overlapping ORFs -->
-
-<!-- Coding transcripts with long 5' untranslated regions may contain multiple start codons. This may be recognized by ribosomes as an initiating site for translation and create additional upstream open-reading frame or overlapping open-reading frame with the cds. To test for presence of upstream or overlapping ORFs, we can run `searchuORFs` function using `query_exons`, `query_cds` and our fasta `Mmusculus` as inputs. -->
-<!-- ```{r testuorfs} -->
-<!-- # test for uORFs -->
-<!-- uORFs <- searchuORFs(query_exons, query_cds, Mmusculus) -->
-
-<!-- # inspect output -->
-<!-- names(uORFs) -->
-
-<!-- names(uORFs$exons) -->
-
-<!-- ``` -->
-
-<!-- `searchuORFs` will return a list object containing a pair of exon and cds information of uORFs found. Each uORF will be named by its type (uORF or uATG), index of the uORF found in the transcript and its parent transcript name. The returned object can be separated into two separate objects zeallot's unpacking feature -->
-<!-- ```{r testuorfsunpack} -->
-<!-- # test for uORFs -->
-<!-- c(uORFs_exons, uORFs_cds) %<-% searchuORFs(query_exons, query_cds, Mmusculus) -->
-
-<!-- # inspect output -->
-<!-- names(uORFs_exons) -->
-
-<!-- names(uORFs_cds) -->
-
-<!-- ``` -->
-
-<!-- `searchuORFs` can also append the list of uORFs found to the original `query_exons` and `query_cds` lists. -->
-<!-- ```{r testuorfsappend} -->
-<!-- # test for uORFs -->
-<!-- c(newquery_exons, newquery_cds) %<-% searchuORFs(query_exons, query_cds,  -->
-<!--                                               Mmusculus, append = T) -->
-
-<!-- # inspect output -->
-<!-- names(newquery_exons) -->
-
-<!-- names(newquery_cds) -->
-
-<!-- ``` -->
-
-<!-- With the new list of coding transcript, we can retest the list for functional consequence. -->
-<!-- ```{r retestuorf} -->
-<!-- # visualize new list -->
-<!-- plotTranscripts(newquery_exons, newquery_cds) -->
-
-<!-- # retest list for NMD features -->
-<!-- predictNMD(newquery_exons, newquery_cds) -->
-
-<!-- ``` -->
-
+# Citing *factR*
+If you find *factR* useful and utilize it in your work, please cite:
+<!-- Add citation -->
 
 
 # Session Information
