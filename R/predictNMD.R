@@ -162,26 +162,6 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
   toStopWidth <- sum(BiocGenerics::width(GenomicRanges::pintersect(x, toStopRange)))
   EJtoStop <- cumsum(BiocGenerics::width(x)) - toStopWidth
 
-  newdf <- lapply(EJtoStop, function(x) {
-    id <- ifelse(!is.null(names(x)), names(x)[1], "transcript")
-    x <- sort(x, decreasing = T)
-    threeUTR <- x[1]
-    dist_to_last <- x[2]
-    is_NMD <- ifelse(dist_to_last > threshold, T, F)
-    dist_to_eachEJ <- rev(x[-1][x[-1] > 0])
-
-
-
-    return(tibble::tibble(
-      "transcript" = id,
-      "stop_to_lastEJ" = dist_to_last,
-      "num_of_downEJs" = length(dist_to_eachEJ),
-      # "stop_to_downEJs" = paste(dist_to_eachEJ, collapse = ","),
-      "3'UTR_length" = threeUTR,
-      "is_NMD" = is_NMD
-    ))
-  })
-
   out <- dplyr::bind_rows(out, lapply(EJtoStop, function(x) {
     id <- ifelse(!is.null(names(x)), names(x)[1], "transcript")
     x <- sort(x, decreasing = T)
@@ -200,7 +180,8 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
       "3'UTR_length" = threeUTR,
       "is_NMD" = is_NMD
     ))
-  }) %>% dplyr::bind_rows())
+  }) %>% dplyr::bind_rows() %>% 
+    tidyr::replace_na(list(is_NMD=FALSE)))
   return(out)
 }
 
