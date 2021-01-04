@@ -14,7 +14,7 @@ vignette: >
 
 ```{r setup, echo=FALSE, cache=FALSE}
 ## Global options
-options(max.print="75")
+options(max.print="100")
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>")
@@ -288,6 +288,11 @@ We can display exonic regions and CDSs more clearly (at the expense of loosing t
 viewTranscripts(custom_new_CDS.gtf, gene_name == "Zfr", rescale_introns = TRUE)
 ```
 
+For comparison, here is the CDS situation in the reference Zfr transcripts:
+```{r viewrefCDS} 
+viewTranscripts(ref.gtf, gene_name == "Zfr", rescale_introns = TRUE)
+```
+
 ## Predicting NMD
 To explore possible susceptibility of newly identified mRNA isoforms to NMD, we use the `predictNMD` function:
 ```{r predictNMD1, message=FALSE}
@@ -325,9 +330,9 @@ domains.Zfr <- predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Zfr",
 ```
 
 ## Processing *factR* output
-Dataframe outputs from `predictNMD` and `predictDomains` can be wrangled to output meaningful information. 
-
-We begin by inspecting the NMDprediction.out dataframe. With the help of data manipulation tools from the tidyverse package, we can compute the number of NMD-sensitive and non NMD-sensitive transripts:
+The information-rich output from `predictNMD` and `predictDomains` can be processed to give meaningful summaries of the data. Here we show common operations that we perform on *factR* output. 
+### summarising NMD data
+We begin with processing the NMDprediction.out object. With the help of data manipulation tools from the tidyverse package, we can compute the number of NMD-sensitive and non NMD-sensitive transcripts from this list of newly-found RNAs:
 ```{r NMDsumm1, message=FALSE}
 library(tidyverse)
 NMDprediction.out %>% 
@@ -335,15 +340,14 @@ NMDprediction.out %>%
   tally()
 ```
 
-Furthermore, the mean 3'UTR lengths of transcripts in these 2 groups can be calculated as follows:
+Furthermore, the mean 3'UTR lengths of these two groups of transcripts can be easily determined:
 ```{r NMDsumm2, message=FALSE}
 NMDprediction.out %>% 
   group_by(is_NMD) %>% 
-  summarise(mean_3UTR_length = mean(`3'UTR_length`))
-  
+  summarise(mean_3UTR_length = mean(`3'UTR_length`))  
 ```
 
-We can also compare the proportion of new and known NMD-sensitive transcripts. We first have to run `predictNMD` on our reference annotation:
+Comparisons can be made between newly-discovered and known NMD transcripts. To determine the prevalence of NMD in these two groups of transcripts, we first have to predict NMD susceptibility on reference transcripts:
 ```{r NMDknown, eval=FALSE}
 NMDprediction.known <- predictNMD(ref.gtf)
 ```
@@ -351,29 +355,128 @@ NMDprediction.known <- predictNMD(ref.gtf)
 NMDprediction.known <- read.delim("NMD_known.txt")
 ```
 
-Then, a new column "group" is added to the dataframes to label the type of transcript (new vs known).
+Next, we combine both dataframes and distinguish new from known transcripts:
 ```{r NMDanalysis1}
-NMDprediction.known$group <- "Known"
-NMDprediction.out$group <- "New"
+NMDprediction.combine <- bind_rows(NMDprediction.known, NMDprediction.out) %>%
+mutate(group = ifelse(transcript %in% NMDprediction.out$transcript, "New", "Known")) 
 ```
 
-Both dataframes are next combined, and grouped into 4 categories based on variables "group" and "is_NMD". The number of transcripts in each group will then be calculated:
+Lastly, the list of combined transcripts are categorised into 4 groups based on its source (“New” vs “Known”) and its NMD sensitivity, and the number of transcripts in each group is calculated:
 ```{r NMDanalysis2, message=FALSE}
-proportion.NMD <- bind_rows(NMDprediction.known, NMDprediction.out) %>% 
+proportion.NMD <- NMDprediction.combine %>% 
   group_by(group, is_NMD) %>% 
   tally(name = "n_transcripts")
 proportion.NMD
 
 ```
 
-and visualized using a stacked bar-graph:
+The above data can be visualized using a stacked bar-graph:
 ```{r NMDplot}
 proportion.NMD %>% 
   ggplot(aes(x=group, y=n_transcripts, fill=is_NMD)) +
   geom_bar(stat="identity", position="fill")
 ```
 
-<!-- Stopped here -->
+### summarising domain data
+Gain and loss of functional domains can profoundly alter a protein’s output function. Here, we will identify domains frequently added in newly-predicted proteins. We start by predicting protein domains on known reference proteins:
+```{r preddomref, eval=FALSE}
+domains.known <- predictDomains(ref.gtf, Mmusculus)
+```
+```{r silentloaddom, include=FALSE}
+domains.out <- read.delim("sc_new_domains.txt")
+domains.known <- read.delim("sc_known_domains.txt")
+```
+
+
+Next, we combine dataframes domains.out and domains.known and distinguish new from known proteins:
+```{r domcombine}
+domains.combine <- bind_rows(domains.known, domains.out) %>%
+  mutate(group = ifelse(transcript %in% domains.out$transcript, "New", "Known")) 
+```
+
+To be able to group proteins by genes, we first have to append gene information to our combined data frame:
+```{r fillgenemeta, message=FALSE}
+# generate a transcript to gene df
+t2g <- custom.gtf %>%
+  as.data.frame() %>%
+  select(gene_id, gene_name, transcript=transcript_id) %>%
+  distinct() 
+
+# combine t2g with domains.combine 
+domains.combine <- domains.combine %>%
+  left_join(t2g)
+```
+
+The next lines of code generate an ordered list of domains for each protein and retains unique domain structures:
+```{r nestdomains}
+domains.combine <- domains.combine %>%
+  group_by(transcript) %>% 
+  arrange(begin) %>%
+  mutate(domain = list(description)) %>% 
+  #nest(c(description,n)) %>% 
+  select(-description, -begin, -end, -eval) %>%
+  ungroup() %>% 
+  arrange(group) %>% 
+  distinct(gene_id, domain,.keep_all = TRUE) 
+```
+
+Genes with no new domain structures are filtered out:
+```{r filtergeneswithnonew}
+domains.combine.filtered <- domains.combine %>%
+  group_by(gene_id) %>%
+  mutate(anynew = ifelse("New" %in% group, TRUE, FALSE)) %>%
+  ungroup() %>% 
+  filter(anynew) %>% 
+  select(-anynew)
+```
+
+Then, domains gained in new proteins are shortlisted:
+```{r shortlistgains}
+domains.combine.shortlist <- domains.combine.filtered %>%
+  unnest(domain) %>% 
+  group_by(transcript, domain) %>%
+  mutate(n = row_number()) %>% 
+  ungroup() %>%
+  distinct(gene_id, group, domain, n,.keep_all=TRUE) %>%
+  group_by(gene_id, domain, n) %>%
+  filter(n() == 1 & group == "New") %>%
+  ungroup() 
+
+```
+
+Top 10 frequently gained domains are identified using this set of code:
+```{r top10domains}
+domains.combine.top <- domains.combine.shortlist %>%
+  distinct(gene_id, domain) %>%
+  group_by(domain) %>%
+  tally() %>%
+  slice_max(n, n=10, with_ties =TRUE) 
+
+domains.combine.top 
+```
+
+The summarised data above can be presented as a bar chart:
+```{r plotdomains}
+domains.combine.top %>% 
+  mutate(domain = fct_reorder(domain, n)) %>%
+  ggplot(aes(x=domain, y =n)) +
+  geom_bar(stat="identity") +
+  coord_flip() + 
+  scale_y_continuous(name="Number of genes")
+```
+
+
+We can list the first 10 genes with gain of C2H2 doamin:
+```{r list10C2H2}
+domains.combine.shortlist %>% 
+  filter(domain == "Classic zinc finger, C2H2") %>% 
+  distinct(gene_id, gene_name)
+```
+
+And view the domain architecture of new and known proteins in the gene "Zfp972":
+```{r showZfp972}
+domains.Zfp972 <- predictDomains(c(custom_new_CDS.gtf, ref.gtf), Mmusculus, gene_name == "Zfp972", plot = TRUE)
+```
 
 
 ## Export output objects
@@ -398,6 +501,7 @@ This workflow was conducted on:
 ```{r sessioninfo}
 sessionInfo()
 ```
+
 
 
 
