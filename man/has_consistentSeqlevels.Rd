@@ -2,7 +2,7 @@
 % Please edit documentation in R/has_consistentSeqLevels.R
 \name{has_consistentSeqlevels}
 \alias{has_consistentSeqlevels}
-\title{Test consistency in seqlevels across objects}
+\title{Test consistency of chromosome naming styles (aka seqlevels; e.g. "chr1" vs "1") across multiple objects}
 \usage{
 has_consistentSeqlevels(...)
 }
@@ -10,10 +10,11 @@ has_consistentSeqlevels(...)
 \item{...}{Two or more objects with seqlevels information}
 }
 \value{
-Logical value as to whether all objects have consistent seqlevels
+Logical value as to whether all objects have consistent seqlevel styles
 }
 \description{
-Test consistency in seqlevels across objects
+This function will determine if all input ranges objects have the same chromosome naming convention. 
+Input objects can be GenomicRanges, BSgenome or Biostrings object with seqlevel information.
 }
 \examples{
 ## ---------------------------------------------------------------------
@@ -28,7 +29,7 @@ gr2 <- GRanges("chr1", IRanges(start = c(1, 101), width = c(20, 20)), "+")
 ## Test for seqlevels consistency
 has_consistentSeqlevels(gr1, gr2)
 
-## Input can be Biostrings object with seqlevels
+## Input can be a Biostrings object with seqlevels information
 x0 <- c("chr2" = "CTCACCAGTAT", "chr3" = "TGTCAGTCGA")
 dna <- Biostrings::DNAStringSet(x0)
 

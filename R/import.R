@@ -1,7 +1,10 @@
-#' Wrapper to import GTF file
+#' Import GTF file into R
 #'
 #' @description 
-#' This function is a wrapper to rtracklayer::import() function to conveniently
+#' This function loads GTF files into R and converts it into 
+#' 
+#' 
+#' a wrapper to rtracklayer::import() function to conveniently
 #' import GTF file into R as a GenomicRanges object.
 #' 
 #' @param con
@@ -9,6 +12,9 @@
 #'
 #' @return
 #' Imported GenomicRanges object in GTF format
+#' 
+#' @examples
+#' input.gtf <- importGTF(system.file("extdata", "sample.gtf", package="factR"))
 #'
 #' @author Fursham Hamid
 #' @export
@@ -22,19 +28,26 @@ importGTF <- function(con) {
 }
 
 
-#' Wrapper to import FASTA file
+#' Import FASTA file into R
 #'
 #' @description 
 #' This function is a wrapper to Biostrings::readDNAStringSet() function to import
 #' FASTA genome sequence file and simultaneously convert long chromosome names 
-#' (1 dna:chromosome chromosome:GRCm38:1:1:195471971:1 REF) to short names (1)
+#' (e.g. 1 dna:chromosome chromosome:GRCm38:1:1:195471971:1 REF) to short names (e.g. 1)
 #' 
 #' @param con
 #' Path to FASTA file
 #'
 #' @return
 #' Imported DNAStringSet object
-#'
+#' 
+#' @examples 
+#' \dontrun{
+#' # download and import mouse genome FASTA from GENCODE
+#' download.file("http://bit.ly/mm10Fasta") 
+#' importFASTA("input.fa.gz")
+#' }
+#' 
 #' @author Fursham Hamid
 #' @export
 importFASTA <- function(con) {

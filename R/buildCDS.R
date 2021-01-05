@@ -1,13 +1,15 @@
-#' Construct query CDS using reference as guide
+#' Reference-guided construction of CDS on GTF object
 #'
 #' @description
 #'
-#' buildCDS is designed to construct CDS information on transcripts in query GTF
-#' object. It does this by firstly finding identical query and reference transcript
-#' pairs. If a query is paired to a coding reference transcript, it will be assigned
-#' the reference CDS. For unpaired query transcripts, buildCDS will assign the
-#' upstream-most, annotated ATG codon (if any) as its translation start and search
-#' for an in-frame stop codon.
+#' `buildCDS()` is designed to construct CDS information on transcripts from input GTF
+#' object. 
+#' 
+#' @details 
+#' The `buildCDS()`function will first assemble a database of annotated ATG codons from
+#' `ref` GTF object. Then for each transcripts in `query`, the upstream-most annotated ATG will 
+#' serve as the transcript's translation start site and `buildCDS()` will search for an
+#' in-frame termination codon.
 #'
 #' @param query
 #' GRanges object containing query GTF data.
@@ -19,6 +21,10 @@
 #' @return
 #' GRanges object containing query exon entries and newly-constructed CDS
 #' information
+#' 
+#' @examples
+#' library(BSgenome.Mmusculus.UCSC.mm10)
+#' buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
 #' 
 #' @export
 #' @author Fursham Hamid

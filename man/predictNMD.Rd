@@ -2,7 +2,7 @@
 % Please edit documentation in R/predictNMD.R
 \name{predictNMD}
 \alias{predictNMD}
-\title{Predict sensitivity of mRNA transcripts to NMD}
+\title{Predict NMD sensitivity on mRNA transcripts}
 \usage{
 predictNMD(x, ..., cds = NULL, NMD_threshold = 50)
 }
@@ -43,7 +43,7 @@ num_of_down_EJs: Number of EJs downstream of the stop_codon.
 `3_UTR_length`: Length of 3' UTR
 }
 \description{
-Predict sensitivity of mRNA transcripts to NMD
+Predict NMD sensitivity on mRNA transcripts
 }
 \examples{
 
@@ -69,7 +69,7 @@ predictNMD(query_exons[[3]], cds = query_cds[[3]])
 
 
 ## ---------------------------------------------------------------------
-## EXAMPLE USING TRANSCRIPT ANNOTATION DATABASE
+## EXAMPLE USING TRANSCRIPT ANNOTATION
 ## ---------------------------------------------------------------------
 \dontrun{
 library(AnnotationHub)

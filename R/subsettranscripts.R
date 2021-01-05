@@ -1,13 +1,17 @@
-#' Subset GTF GRanges object for de novo transcripts
+#' Shortlist GTF GRanges object for new transcripts
 #'
 #' @description
-#' subsetNewTranscripts will compare query and reference GTF GRanges and return
+#' `subsetNewTranscripts()` will retain transcripts in `query` that are distinct
+#' from those in `ref`
+#' 
+#' @details 
+#' `subsetNewTranscripts()` will compare query and reference GTF GRanges and return
 #' query transcripts with different exon structures from reference transcripts.
 #' Transcriptome assemblers may sometime extend 5' and 3' ends of known transcripts
 #' based on experimental data. These annotated transcripts can be removed by inputting
 #' "intron" to the refine.by argument. This will further compare and remove transcripts
 #' of identical intron structures. Alternatively, transcripts with unique CDS coordinates
-#' can be selected by inputting "cds" to the refine.by argument.
+#' can be selected by typing "cds" to the refine.by argument.
 #'
 #'
 #' @param query

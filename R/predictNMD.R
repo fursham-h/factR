@@ -1,4 +1,4 @@
-#' Predict sensitivity of mRNA transcripts to NMD
+#' Predict NMD sensitivity on mRNA transcripts
 #'
 #' @param x
 #' Can be a GRanges object containing exon and CDS transcript features in GTF
@@ -66,7 +66,7 @@
 #'
 #'
 #' ## ---------------------------------------------------------------------
-#' ## EXAMPLE USING TRANSCRIPT ANNOTATION DATABASE
+#' ## EXAMPLE USING TRANSCRIPT ANNOTATION
 #' ## ---------------------------------------------------------------------
 #' \dontrun{
 #' library(AnnotationHub)
@@ -141,7 +141,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
   exonorder <- strand <- start1 <- end1 <- group <- NULL
   seqnames <- newstart <- newend <- width <- NULL
   strand...7 <- start...1 <- start...4 <- end...5 <- end...12 <- NULL
-  group...1 <- group_name...2 <- seqnames...3 <- NULL
+  start...11 <- group...1 <- group_name...2 <- seqnames...3 <- NULL
 
   out <- tibble::tibble(
     "transcript" = as.character(),

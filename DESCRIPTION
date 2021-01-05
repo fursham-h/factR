@@ -28,7 +28,8 @@ Imports:
     RCurl (>= 1.98),
     XML (>= 3.99),
     drawProteins (>= 1.10),
-    ggplot2 (>= 3.3)
+    ggplot2 (>= 3.3),
+    stringr (>= 1.4)
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true

@@ -1,10 +1,14 @@
-#' Test consistency in seqlevels across objects
+#' Test consistency of chromosome naming styles (aka seqlevels; e.g. "chr1" vs "1") across multiple objects
+#' 
+#' @description
+#' This function will determine if all input ranges objects have the same chromosome naming convention. 
+#' Input objects can be GenomicRanges, BSgenome or Biostrings object with seqlevel information.
 #'
 #' @param ... Two or more objects with seqlevels information
 #'
 #' @export
 #' @author Fursham Hamid
-#' @return Logical value as to whether all objects have consistent seqlevels
+#' @return Logical value as to whether all objects have consistent seqlevel styles
 #'
 #' @importFrom dplyr %>%
 #' @importFrom IRanges %over%
@@ -29,7 +33,7 @@
 #' ## Test for seqlevels consistency
 #' has_consistentSeqlevels(gr1, gr2)
 #'
-#' ## Input can be Biostrings object with seqlevels
+#' ## Input can be a Biostrings object with seqlevels information
 #' x0 <- c("chr2" = "CTCACCAGTAT", "chr3" = "TGTCAGTCGA")
 #' dna <- Biostrings::DNAStringSet(x0)
 #'

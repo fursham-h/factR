@@ -15,6 +15,26 @@
 #' @importFrom GenomeInfoDb mapSeqlevels
 #' @importFrom GenomeInfoDb seqlevels
 #' @importFrom GenomeInfoDb renameSeqlevels
+#' 
+#' @examples 
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING TOY DATASET
+#' ## ---------------------------------------------------------------------
+#' require(GenomicRanges)
+#'
+#' ## Create toy GRanges objects
+#' gr1 <- GRanges("1", IRanges(start = c(1, 101), width = c(20, 20)), "+")
+#' gr2 <- GRanges("chr1", IRanges(start = c(1, 101), width = c(20, 20)), "+")
+#'
+#' ## Match Ensembl-style chromosomes from gr1 to UCSC-style gr2
+#' matchChromosomes(gr1, gr2)
+#'
+#' ## Possible to match chrosomomes from GRanges object to a Biostrings object containing seqlevels
+#' x0 <- c("chr2" = "CTCACCAGTAT", "chr3" = "TGTCAGTCGA")
+#' dna <- Biostrings::DNAStringSet(x0)
+#'
+#' ## Match gr1 to dna
+#' matchChromosomes(gr1, dna)
 #'
 matchChromosomes <- function(x, to) {
   nseqlevelsbefore <- length(GenomeInfoDb::seqlevels(x))

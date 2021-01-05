@@ -2,7 +2,7 @@
 % Please edit documentation in R/predictDomains.R
 \name{predictDomains}
 \alias{predictDomains}
-\title{Predict protein domain families from coding mRNAs}
+\title{Predict protein domain families from coding transcripts}
 \usage{
 predictDomains(x, fasta, ..., plot = FALSE)
 }
@@ -17,14 +17,34 @@ Can be a GRangesList object containing CDS ranges for each transcript}
 Variables are metadata information found in `x` and multiple conditions can be
 provided delimited by comma. Example: transcript_id == "transcript1"}
 
-\item{plot}{Boolean argument to plot out protein domains (Default: FASLE). 
-Only first 20 proteins will be plotted}
+\item{plot}{Argument whether to plot out protein domains (Default: FALSE). 
+Note: only first 20 proteins will be plotted}
 }
 \value{
 Dataframe containing protein features for each cds entry
 }
 \description{
-Predict protein domain families from coding mRNAs
+Predict protein domain families from coding transcripts
+}
+\examples{
+## ---------------------------------------------------------------------
+## EXAMPLE USING SAMPLE DATASET
+## ---------------------------------------------------------------------
+\dontrun{
+# Load Mouse genome sequence
+library(BSgenome.Mmusculus.UCSC.mm10)
+
+# predict domains of all CDSs in query GTF
+predictDomains(new_query_gtf, Mmusculus)
+
+# predict domains of CDSs from Ptbp1 gene
+predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1")
+
+# predict domains of CDSs from Ptbp1 gene and plot architecture out
+predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE)
+
+}
+
 }
 \author{
 Fursham Hamid

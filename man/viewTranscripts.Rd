@@ -9,7 +9,7 @@ viewTranscripts(x, ..., rescale_introns = F)
 \arguments{
 \item{x}{GRanges object containing transcript annotation in GTF format}
 
-\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
+\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for plotting.
 Variables are metadata information found in `x` and multiple conditions can be
 provided delimited by comma. Example: gene_name == "Ptbp1"}
 
@@ -19,13 +19,31 @@ provided delimited by comma. Example: gene_name == "Ptbp1"}
 ggplot2 object
 }
 \description{
-A wrapper around the plotTranscripts function. See the documentation for (\code{\link[wiggleplotr]{plotTranscripts}})
+A wrapper around wiggleplotr's plotTranscripts function. See the documentation for (\code{\link[wiggleplotr]{plotTranscripts}})
 for more information.
 }
 \examples{
+## ---------------------------------------------------------------------
+## EXAMPLE USING SAMPLE DATASET
+## ---------------------------------------------------------------------
 viewTranscripts(query_gtf)
 viewTranscripts(query_gtf, transcript_id == "transcript1")
 viewTranscripts(ref_gtf)
+
+## ---------------------------------------------------------------------
+## EXAMPLE USING TRANSCRIPT ANNOTATION
+## ---------------------------------------------------------------------
+\dontrun{
+library(AnnotationHub)
+
+## Retrieve GRCm38 trancript annotation
+ah <- AnnotationHub()
+GRCm38_gtf <- ah[["AH60127"]]
+
+## Plot transcripts from Ptbp1 gene
+viewTranscripts(GRCm38_gtf, gene_name == "Ptbp1")
+}
+
 }
 \author{
 Fursham Hamid

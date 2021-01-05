@@ -15,15 +15,16 @@ matchGeneInfo(query, ref, primary_gene_id = NULL, secondary_gene_id = NULL)
 Input to this argument is typically 'gene_id'}
 
 \item{secondary_gene_id}{Character name of the secondary gene id in query file.
-Example of input to this arguement is 'ref_gene_id'}
+Example of input to this argument is 'ref_gene_id'}
 }
 \value{
 Gene_id-matched query GRanges
 }
 \description{
-This function will match and correct Gene IDs from a query GTF to a reference
+`matchGeneInfo()` matches and corrects Gene IDs from a query GTF object to a reference
 GTF
-
+}
+\details{
 The default approach to this correction relies on finding overlaps between transcripts in query with
 transcripts in reference. Using this method alone could result in false positive matches (19 percent false positives).
 To improve this, users have the option to invoke two additional layers of matching.
@@ -35,7 +36,7 @@ by providing the 'primary_gene_id' argument
 may contain additional comments on the transcript information. This may include a distinct
 secondary Gene ID annotation that potentially matches with the reference. To invoke this correction,
 provide 'primary_gene_id' and 'secondary_gene_id' arguments. To determine if your transcript assembly contain
-possible secondary Gene IDs, import query GTF file using rtracklayer  and check its metadata
+possible secondary Gene IDs, import query GTF file using `importGTF()` and check its metadata
 columns
 }
 \author{
