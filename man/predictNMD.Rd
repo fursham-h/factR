@@ -71,7 +71,7 @@ predictNMD(query_exons[[3]], cds = query_cds[[3]])
 ## ---------------------------------------------------------------------
 ## EXAMPLE USING TRANSCRIPT ANNOTATION
 ## ---------------------------------------------------------------------
-\dontrun{
+\donttest{
 library(AnnotationHub)
 
 ## Retrieve GRCm38 trancript annotation

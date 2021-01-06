@@ -1,7 +1,7 @@
 #' Test consistency of chromosome naming styles (aka seqlevels; e.g. "chr1" vs "1") across multiple objects
-#' 
+#'
 #' @description
-#' This function will determine if all input ranges objects have the same chromosome naming convention. 
+#' This function will determine if all input ranges objects have the same chromosome naming convention.
 #' Input objects can be GenomicRanges, BSgenome or Biostrings object with seqlevel information.
 #'
 #' @param ... Two or more objects with seqlevels information
@@ -43,11 +43,11 @@
 has_consistentSeqlevels <- function(...) {
   dots <- list(...)
   argnames <- as.character(match.call())[-1]
-
+  
   if (length(dots) < 2) {
     rlang::abort("Insufficient input")
   }
-
+  
   consistent <- c()
   for (i in seq(1, length(dots) - 1)) {
     for (j in seq(i + 1, length(dots))) {

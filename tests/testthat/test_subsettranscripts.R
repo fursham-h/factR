@@ -7,7 +7,7 @@ test_that("Test subset robustness", {
 
 test_that("Test .subsetTranscripts", {
   out <- .subsetTranscripts(matched_query_gtf, ref_gtf, "exon")
-  expect_equal(is(out, "GRanges"), T)
+  expect_equal(is(out, "GRanges"), TRUE)
   expect_equal(length(out), 27)
   expect_equal(unique(out$transcript_id), c("transcript3", "transcript4"))
 })

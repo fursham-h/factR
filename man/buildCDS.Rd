@@ -18,19 +18,18 @@ GRanges object containing query exon entries and newly-constructed CDS
 information
 }
 \description{
-`buildCDS()` is designed to construct CDS information on transcripts from input GTF
-object.
+`buildCDS()` is designed to construct CDS information on transcripts from
+input GTF object.
 }
 \details{
-The `buildCDS()`function will first assemble a database of annotated ATG codons from
-`ref` GTF object. Then for each transcripts in `query`, the upstream-most annotated ATG will 
-serve as the transcript's translation start site and `buildCDS()` will search for an
-in-frame termination codon.
+The `buildCDS()`function will first assemble a database of annotated ATG
+codons from `ref` GTF object. Then for each transcripts in `query`, the
+upstream-most annotated ATG will serve as the transcript's translation start
+ site and `buildCDS()` will search for an in-frame termination codon.
 }
 \examples{
 library(BSgenome.Mmusculus.UCSC.mm10)
 buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
-
 }
 \author{
 Fursham Hamid

@@ -35,7 +35,7 @@ devtools::install_github("fursham-h/factR")
 
 
 ### Getting started
-See [vignette](https://htmlpreview.github.io/?https://github.com/fursham-h/factR/blob/dev/doc/factR.html) for full instructions on how to get started
+See [vignette](https://htmlpreview.github.io/?https://github.com/fursham-h/factR/blob/dev/vignette/factR.html) for full instructions on how to get started
 
 
 ### Acknowledgements

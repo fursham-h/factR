@@ -13,7 +13,7 @@ has_consistentSeqlevels(...)
 Logical value as to whether all objects have consistent seqlevel styles
 }
 \description{
-This function will determine if all input ranges objects have the same chromosome naming convention. 
+This function will determine if all input ranges objects have the same chromosome naming convention.
 Input objects can be GenomicRanges, BSgenome or Biostrings object with seqlevel information.
 }
 \examples{

@@ -10,7 +10,7 @@ test_that("Test buildCDS robustness", {
 
 test_that("Test .runbuildCDS", {
   out <- .runbuildCDS(matched_query_gtf, ref_gtf, Mmusculus, "test")
-  expect_equal(is(out, "GRanges"), T)
+  expect_equal(is(out, "GRanges"), TRUE)
   expect_equal(length(out), 49)
   expect_equal(BiocGenerics::start(out), BiocGenerics::start(unlist(query_cds)))
 })

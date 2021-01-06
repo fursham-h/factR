@@ -1,18 +1,16 @@
 Package: factR
 Title: Functional Annotation of Custom Transcriptomes
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Version: 0.99.0
+Authors@R: person("Fursham", "Hamid", email = "fursham.h@gmail.com", role = c("aut", "cre"))
+Description: factR contain tools to process and interact with custom-assembled transcriptomes (GTF). At its core, factR constructs CDS information on custom transcripts and subsequently predicts its functional output. In addition,  factR has tools capable of plotting transcripts, correcting chromosome and gene information and shortlisting new transcripts.
 Depends: R (>= 4.0)
-biocViews:
+biocViews: GeneExpression, Transcription, AlternativeSplicing, FunctionalPrediction, GenePrediction
 Imports:
-    AnnotationHub (>= 2.22),
     BiocGenerics (>= 0.36),
     Biostrings (>= 2.58),
-    BSgenome (>= 1.58),
+    GenomeInfoDb (>= 1.2),
     dplyr (>= 1.0),
     GenomicFeatures (>= 1.38),
-    GenomeInfoDb (>= 1.22),
     GenomicRanges (>= 1.42),
     IRanges (>= 2.24),
     purrr (>= 0.3),
@@ -29,13 +27,18 @@ Imports:
     XML (>= 3.99),
     drawProteins (>= 1.10),
     ggplot2 (>= 3.3),
-    stringr (>= 1.4)
+    stringr (>= 1.4),
+    stats,
+    utils,
+    graphics
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
 RoxygenNote: 7.1.1
 Suggests: 
+    AnnotationHub (>= 2.22),
+    BSgenome (>= 1.58),
     BSgenome.Mmusculus.UCSC.mm10,
     testthat,
     knitr,

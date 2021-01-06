@@ -38,7 +38,6 @@ dna <- Biostrings::DNAStringSet(x0)
 
 ## Match gr1 to dna
 matchChromosomes(gr1, dna)
-
 }
 \author{
 Fursham Hamid

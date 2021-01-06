@@ -4,7 +4,7 @@
 \alias{viewTranscripts}
 \title{Plot transcripts directly from GTF.}
 \usage{
-viewTranscripts(x, ..., rescale_introns = F)
+viewTranscripts(x, ..., rescale_introns = FALSE)
 }
 \arguments{
 \item{x}{GRanges object containing transcript annotation in GTF format}
@@ -33,7 +33,7 @@ viewTranscripts(ref_gtf)
 ## ---------------------------------------------------------------------
 ## EXAMPLE USING TRANSCRIPT ANNOTATION
 ## ---------------------------------------------------------------------
-\dontrun{
+\donttest{
 library(AnnotationHub)
 
 ## Retrieve GRCm38 trancript annotation

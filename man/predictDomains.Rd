@@ -17,7 +17,7 @@ Can be a GRangesList object containing CDS ranges for each transcript}
 Variables are metadata information found in `x` and multiple conditions can be
 provided delimited by comma. Example: transcript_id == "transcript1"}
 
-\item{plot}{Argument whether to plot out protein domains (Default: FALSE). 
+\item{plot}{Argument whether to plot out protein domains (Default: FALSE).
 Note: only first 20 proteins will be plotted}
 }
 \value{
@@ -30,7 +30,7 @@ Predict protein domain families from coding transcripts
 ## ---------------------------------------------------------------------
 ## EXAMPLE USING SAMPLE DATASET
 ## ---------------------------------------------------------------------
-\dontrun{
+\donttest{
 # Load Mouse genome sequence
 library(BSgenome.Mmusculus.UCSC.mm10)
 
@@ -42,7 +42,6 @@ predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1")
 
 # predict domains of CDSs from Ptbp1 gene and plot architecture out
 predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE)
-
 }
 
 }

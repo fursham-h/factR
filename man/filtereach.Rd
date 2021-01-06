@@ -18,6 +18,10 @@ Filtered GRangesList object
 \description{
 Internally filter each element of a GenomicRangesList
 }
+\examples{
+# select first element of each GRangesList item
+filtereach(query_exons, dplyr::row_number() == 1)
+}
 \author{
 Fursham Hamid
 }

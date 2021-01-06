@@ -13,15 +13,14 @@ importGTF(con)
 Imported GenomicRanges object in GTF format
 }
 \description{
-This function loads GTF files into R and converts it into 
+This function loads GTF files into R and converts it into
 
 
 a wrapper to rtracklayer::import() function to conveniently
 import GTF file into R as a GenomicRanges object.
 }
 \examples{
-input.gtf <- importGTF(system.file("extdata", "sample.gtf", package="factR"))
-
+input.gtf <- importGTF(system.file("extdata", "sample.gtf", package = "factR"))
 }
 \author{
 Fursham Hamid

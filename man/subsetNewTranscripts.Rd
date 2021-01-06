@@ -11,7 +11,7 @@ subsetNewTranscripts(query, ref, refine.by = c("none", "intron", "cds"))
 
 \item{ref}{GRanges object containing reference GTF data.}
 
-\item{refine.by}{Whether to refine the selection process by removing query transcripts with similar 
+\item{refine.by}{Whether to refine the selection process by removing query transcripts with similar
 introns or CDS structure to reference. Default input is "none", and can be changed
 to "intron" or "cds" respectively.}
 }
