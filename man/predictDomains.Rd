@@ -30,7 +30,6 @@ Predict protein domain families from coding transcripts
 ## ---------------------------------------------------------------------
 ## EXAMPLE USING SAMPLE DATASET
 ## ---------------------------------------------------------------------
-\donttest{
 # Load Mouse genome sequence
 library(BSgenome.Mmusculus.UCSC.mm10)
 
@@ -42,7 +41,6 @@ predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1")
 
 # predict domains of CDSs from Ptbp1 gene and plot architecture out
 predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE)
-}
 
 }
 \author{

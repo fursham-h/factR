@@ -39,6 +39,13 @@ provide 'primary_gene_id' and 'secondary_gene_id' arguments. To determine if you
 possible secondary Gene IDs, import query GTF file using `importGTF()` and check its metadata
 columns
 }
+\examples{
+## ---------------------------------------------------------------------
+## EXAMPLE USING SAMPLE DATASET
+## ---------------------------------------------------------------------
+matchGeneInfo(chrom_matched_query_gtf, ref_gtf)
+
+}
 \author{
 Fursham Hamid
 }
