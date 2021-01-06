@@ -21,7 +21,6 @@
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING SAMPLE DATASET
 #' ## ---------------------------------------------------------------------
-#' \donttest{
 #' # Load Mouse genome sequence
 #' library(BSgenome.Mmusculus.UCSC.mm10)
 #'
@@ -33,12 +32,10 @@
 #'
 #' # predict domains of CDSs from Ptbp1 gene and plot architecture out
 #' predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE)
-#' }
-#'
 #' @author Fursham Hamid
 #' @export
 predictDomains <- function(x, fasta, ..., plot = FALSE) {
-    
+
     # catch missing args
     mandargs <- c("x", "fasta")
     passed <- names(as.list(match.call())[-1])
@@ -48,24 +45,24 @@ predictDomains <- function(x, fasta, ..., plot = FALSE) {
             paste(setdiff(mandargs, passed), collapse = ", ")
         ))
     }
-    
+
     # get argnames and carry out checks
     argnames <- as.character(match.call())[-1]
     cds <- .extractCDSchecks(x, fasta, argnames, ...)
     # feature <- .featurechecks(hmmer, signalHsmm)
-    
+
     # define global variables
     . <- id <- NULL
-    
+
     # get sequence
     aaSeq <- .getSequence(cds, fasta)
-    
+
     # # prepare output and run analysis
     # output <- aaSeq %>% dplyr::select(id)
     #
-    
+
     output_table <- .runDomainSearch(aaSeq, plot)
-    
+
     return(output_table)
 }
 
@@ -73,7 +70,7 @@ predictDomains <- function(x, fasta, ..., plot = FALSE) {
 .extractCDSchecks <- function(cds, fasta, argnames, ...) {
     # define global variables
     exonorder <- NULL
-    
+
     if (suppressWarnings(!has_consistentSeqlevels(cds, fasta))) {
         rlang::abort(sprintf(
             "`%s` and `%s` has unmatched seqlevel styles. 
@@ -90,11 +87,11 @@ Try running: %s <- matchChromosomes(%s, %s)",
             ))
         }
     }
-    
+
     if (!is(cds, "GRangesList")) {
         rlang::abort("cds class type is not GRanges GTF or GRangesList")
     }
-    
+
     cds <- filtereach(cds, ...)
     if (length(cds) == 0) {
         rlang::abort("No CDS to display")
@@ -166,7 +163,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
         dplyr::mutate(noATG = ifelse(y[[1]] != "M", TRUE, FALSE)) %>%
         dplyr::mutate(instop = ifelse("*" %in% y, TRUE, FALSE)) %>%
         dplyr::ungroup()
-    
+
     # check for ATG and internal stop_codon, truncate proteins with internal stop codon
     ## and remove entries without proteins after truncation
     if (TRUE %in% aaSeq$noATG) {
@@ -174,14 +171,14 @@ Try running: %s <- matchChromosomes(%s, %s)",
     }
     if (TRUE %in% aaSeq$instop) {
         aaSeq <- suppressWarnings(aaSeq %>%
-                                      dplyr::rowwise() %>%
-                                      dplyr::mutate(x = ifelse(instop == TRUE,
-                                                               paste(y[1:which(y == "*") - 1], collapse = ""),
-                                                               x
-                                      )) %>%
-                                      dplyr::mutate(y = strsplit(x, split = "")) %>%
-                                      dplyr::ungroup())
-        
+            dplyr::rowwise() %>%
+            dplyr::mutate(x = ifelse(instop == TRUE,
+                paste(y[1:which(y == "*") - 1], collapse = ""),
+                x
+            )) %>%
+            dplyr::mutate(y = strsplit(x, split = "")) %>%
+            dplyr::ungroup())
+
         rlang::warn(sprintf("%s cds entries contain internal stop_codon. These proteins have been truncated", sum(aaSeq$instop)))
         if ("" %in% aaSeq$x) {
             rlang::warn(sprintf("After truncation, %s cds have no coding sequences. These entries were not analyzed", sum(aaSeq$x == "")))
@@ -195,16 +192,16 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
 .getdomains <- function(url, curl.opts, seq, id, length, n) {
     type <- famdesc <- fameval <- begin <- NULL
-    
+
     hmm <- RCurl::postForm(url,
-                           hmmdb = "superfamily", seqdb = NULL,
-                           seq = seq, style = "POST", .opts = curl.opts, .contentEncodeFun = RCurl::curlPercentEncode,
-                           .checkParams = TRUE
+        hmmdb = "superfamily", seqdb = NULL,
+        seq = seq, style = "POST", .opts = curl.opts, .contentEncodeFun = RCurl::curlPercentEncode,
+        .checkParams = TRUE
     )
     xml <- XML::xmlParse(hmm)
     family <- XML::xpathSApply(xml, "///family", XML::xpathSApply, "@*")
     segment <- XML::xpathSApply(xml, "///segments", XML::xpathSApply, "@*")
-    
+
     if (ncol(family) != ncol(segment)) {
         ndomains <- XML::xpathSApply(xml, "///domains", XML::xpathSApply, "count(segments)")
         family2 <- suppressMessages(lapply(seq_along(ndomains), function(x) {
@@ -215,7 +212,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     } else {
         data <- rbind(family, segment)
     }
-    
+
     data <- as.data.frame(t(data), stringsAsFactors = FALSE) %>%
         dplyr::mutate(type = "DOMAIN", begin = as.numeric(start), end = as.numeric(end)) %>%
         dplyr::select(type, description = famdesc, eval = fameval, begin, end) %>%
@@ -226,14 +223,14 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
 .runDomainSearch <- function(aaSeq, plot) {
     type <- entryName <- description <- begin <- id <- NULL
-    
+
     # prepare URL
     url <- paste("https://www.ebi.ac.uk/Tools/hmmer/search/hmmscan")
     url.opts <- list(
         httpheader = "Expect:", httpheader = "Accept:text/xml",
         verbose = FALSE, followlocation = TRUE
     )
-    
+
     # run search for each protein sequence
     output <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(y) {
         # account for return errors
@@ -241,7 +238,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
             .getdomains(url, url.opts, aaSeq[y, ]$x, aaSeq[y, ]$id, nchar(aaSeq[y, ]$x), y),
             error = function(e) NULL
         )
-        
+
         if (is.null(report)) {
             return(tibble::tibble(type = "CHAIN", description = aaSeq[y, ]$id, begin = 1, end = nchar(aaSeq[y, ]$x), entryName = aaSeq[y, ]$id))
         } else {
@@ -252,7 +249,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
         }
     }, BPPARAM = BiocParallel::MulticoreParam()) %>%
         dplyr::bind_rows()
-    
+
     # plot protein domains if requested
     if (plot) {
         datatoplot <- output %>%
@@ -267,22 +264,22 @@ Try running: %s <- matchChromosomes(%s, %s)",
             datatoplot <- datatoplot[datatoplot$order <= 20, ]
             rlang::warn("Plotting only first 20 proteins")
         }
-        
+
         print(drawProteins::draw_canvas(datatoplot) %>%
-                  drawProteins::draw_chains(datatoplot) %>%
-                  drawProteins::draw_domains(datatoplot, label_domains = FALSE) +
-                  ggplot2::theme_bw() + # white background
-                  ggplot2::theme(
-                      panel.grid.minor = ggplot2::element_blank(),
-                      panel.grid.major = ggplot2::element_blank()
-                  ) +
-                  ggplot2::theme(
-                      axis.ticks = ggplot2::element_blank(),
-                      axis.text.y = ggplot2::element_blank()
-                  ) +
-                  ggplot2::theme(panel.border = ggplot2::element_blank()))
+            drawProteins::draw_chains(datatoplot) %>%
+            drawProteins::draw_domains(datatoplot, label_domains = FALSE) +
+            ggplot2::theme_bw() + # white background
+            ggplot2::theme(
+                panel.grid.minor = ggplot2::element_blank(),
+                panel.grid.major = ggplot2::element_blank()
+            ) +
+            ggplot2::theme(
+                axis.ticks = ggplot2::element_blank(),
+                axis.text.y = ggplot2::element_blank()
+            ) +
+            ggplot2::theme(panel.border = ggplot2::element_blank()))
     }
-    
+
     # prepare output table
     if ("DOMAIN" %in% output$type) {
         table.out <- output %>%

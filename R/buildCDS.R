@@ -201,7 +201,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
         stringsAsFactors = FALSE
     ) %>%
         dplyr::filter(!is.na(ref_transcript_index)) %>%
-        dplyr::mutate(ref_transcript_id = names(ref_exons[ref_transcript_index])) %>%
+        dplyr::mutate(ref_transcript_id = 
+                          names(ref_exons[ref_transcript_index])) %>%
         dplyr::filter(ref_transcript_id %in% names(ref_cds)) %>%
         dplyr::mutate(coverage = 1)
 
@@ -219,14 +220,21 @@ Try running: %s <- matchChromosomes(%s, %s)",
             dplyr::mutate(tailphase = (cumsum(width) %% 3) %% 3) %>%
             dplyr::mutate(order = dplyr::row_number()) %>%
             dplyr::ungroup() %>%
-            dplyr::mutate(start = ifelse(strand == "+", start + phase, start + tailphase)) %>%
-            dplyr::mutate(end = ifelse(strand == "-", end - phase, end - tailphase)) %>%
+            dplyr::mutate(start = ifelse(strand == "+", 
+                                         start + phase, 
+                                         start + tailphase)) %>%
+            dplyr::mutate(end = ifelse(strand == "-", 
+                                       end - phase, 
+                                       end - tailphase)) %>%
             dplyr::filter(end > start) %>%
             dplyr::group_by(strand) %>%
-            dplyr::arrange(order, ifelse(strand == "-", dplyr::desc(end), start)) %>%
+            dplyr::arrange(order, ifelse(strand == "-", 
+                                         dplyr::desc(end), 
+                                         start)) %>%
             GenomicRanges::makeGRangesFromDataFrame() %>%
             unique()
-        codons_gr <- IRanges::subsetByOverlaps(codons_gr, nonexact, type = "within")
+        codons_gr <- IRanges::subsetByOverlaps(codons_gr, nonexact, 
+                                               type = "within")
 
         # further trim CDS segments to the
         codons_seq <- BSgenome::getSeq(fasta, codons_gr)
@@ -236,10 +244,15 @@ Try running: %s <- matchChromosomes(%s, %s)",
             dplyr::filter(end %% 3 == 0) %>%
             dplyr::mutate(start = start - 1)
         codons_gr <- codons_gr[startMatch$group]
-        codons_gr <- GenomicRanges::resize(codons_gr, width = BiocGenerics::width(codons_gr) - startMatch$start, fix = "end")
+        codons_gr <- GenomicRanges::resize(codons_gr, 
+                        width = BiocGenerics::width(codons_gr) - startMatch$start, 
+                        fix = "end")
         codons_gr <- GenomicRanges::resize(codons_gr, width = 3, fix = "start")
 
-        firstATGoverlap <- GenomicRanges::findOverlaps(nonexact, codons_gr, minoverlap = 3, select = "first")
+        firstATGoverlap <- GenomicRanges::findOverlaps(nonexact, 
+                                                       codons_gr, 
+                                                       minoverlap = 3, 
+                                                       select = "first")
         firstATGq2r <- data.frame(
             "transcript_id" = names(nonexact),
             "ref_transcript_index" = firstATGoverlap,
@@ -257,32 +270,41 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
 .getCDS <- function(order_query, order_ref, fasta) {
     strand <- start1 <- end1 <- group <- seqnames <- newstart <- newend <- NULL
-    stoppos <- width <- seqnames <- strand <- type <- transcript_id <- phase <- NULL
-    newstrand <- exonorder <- NULL
+    stoppos <- width <- seqnames <- strand <- type <- transcript_id  <- NULL
+    newstrand <- exonorder <- phase <- NULL
     strand...7 <- start...4 <- start...9 <- end...10 <- end...5 <- NULL
     group_name <- seqnames...3 <- NULL
 
     # get range from ATG to end of transcript
     startToend <- suppressMessages(
-        dplyr::bind_cols(as.data.frame(range(order_query)), as.data.frame(order_ref)) %>%
+        dplyr::bind_cols(as.data.frame(range(order_query)), 
+                         as.data.frame(order_ref)) %>%
             dplyr::rowwise() %>%
-            dplyr::mutate(newstart = list(ifelse(strand...7 == "-", start...4, start...9))) %>%
-            dplyr::mutate(newend = list(ifelse(strand...7 == "-", end...10, end...5))) %>%
+            dplyr::mutate(newstart = list(ifelse(strand...7 == "-", 
+                                                 start...4, start...9))) %>%
+            dplyr::mutate(newend = list(ifelse(strand...7 == "-", 
+                                               end...10, end...5))) %>%
             dplyr::ungroup() %>%
             dplyr::mutate(strand = as.character(strand...7)) %>%
             dplyr::mutate(newstrand = strand) %>%
-            dplyr::mutate(newstrand = ifelse(strand == "-" & newend > end...5, "+", newstrand)) %>%
-            dplyr::mutate(newstrand = ifelse(strand != "-" & newstart < start...4, "-", newstrand)) %>%
-            dplyr::select(group, group_name, seqnames = seqnames...3, start = newstart, end = newend, strand = newstrand) %>%
+            dplyr::mutate(newstrand = ifelse(strand == "-" & newend > end...5, 
+                                             "+", newstrand)) %>%
+            dplyr::mutate(newstrand = ifelse(strand != "-" & newstart < start...4, 
+                                             "-", newstrand)) %>%
+            dplyr::select(group, group_name, seqnames = seqnames...3, 
+                          start = newstart, end = newend, strand = newstrand) %>%
             GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
     )
 
     # get exon coordinates and sequence from ATG to end of transcript
-    startToendexons <- GenomicRanges::pintersect(order_query, startToend, drop.nohit.ranges = TRUE) %>%
+    startToendexons <- GenomicRanges::pintersect(order_query, 
+                                                 startToend, 
+                                                 drop.nohit.ranges = TRUE) %>%
         sorteach(exonorder)
     seq <- GenomicFeatures::extractTranscriptSeqs(fasta, startToendexons)
 
-    # search for in-frame stop codon and return a df of its position in startToendexons
+    # search for in-frame stop codon and return a df of 
+    # its position in startToendexons
     CDSstop <- lapply(c("TAG", "TGA", "TAA"), function(x) {
         a <- Biostrings::vmatchPattern(x, seq)
         as.data.frame(a)
@@ -296,7 +318,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
         dplyr::mutate(start = start - 1)
 
     # prepare df with 3UTR length (if any) for each transcript
-    stopdf <- tibble::tibble(group = seq_len(length(seq)), width = BiocGenerics::width(seq)) %>%
+    stopdf <- tibble::tibble(group = seq_len(length(seq)), 
+                             width = BiocGenerics::width(seq)) %>%
         dplyr::left_join(CDSstop, by = "group") %>%
         dplyr::mutate(threeUTR = ifelse(!is.na(start), (width - start), width))
 

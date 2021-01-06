@@ -80,7 +80,7 @@
 #' }
 #'
 predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
-    
+
     # catch missing args
     mandargs <- c("x")
     passed <- names(as.list(match.call())[-1])
@@ -92,10 +92,10 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     }
     # define global variable
     exonorder <- NULL
-    
+
     # retrieve input object names
     argnames <- as.character(match.call())[-1]
-    
+
     # check if exons is a gtf or both exons and cds are GR or GRlist
     if (is_gtf(x)) {
         exons <- sorteach(S4Vectors::split(x[x$type == "exon"], ~transcript_id), exonorder)
@@ -120,15 +120,15 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
             argnames[2], cdstype, argnames[1], txtype
         ))
     }
-    
+
     # catch unmatched seqlevels
     if (suppressWarnings(!has_consistentSeqlevels(exons, cds))) {
         rlang::abort("exons and cds have inconsistent seqlevels")
     }
-    
+
     # subset list for `which` and check if all exons have a cds entry
     totest <- .prepTotest(exons, cds, argnames, ...)
-    
+
     # run NMD analysis and return result
     return(.testNMD(exons[totest], cds[totest], NMD_threshold))
 }
@@ -136,13 +136,13 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
 
 
 .testNMD <- function(x, y, threshold) {
-    
+
     # define global variables
     exonorder <- strand <- start1 <- end1 <- group <- NULL
     seqnames <- newstart <- newend <- width <- NULL
     strand...7 <- start...1 <- start...4 <- end...5 <- end...12 <- NULL
     start...11 <- group...1 <- group_name...2 <- seqnames...3 <- NULL
-    
+
     out <- tibble::tibble(
         "transcript" = as.character(),
         "stop_to_lastEJ" = as.double(),
@@ -151,17 +151,17 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
         "3'UTR_length" = as.double(),
         "is_NMD" = as.logical()
     )
-    
+
     toStopRange <- suppressMessages(dplyr::bind_cols(as.data.frame(range(x)), as.data.frame(range(y))) %>%
-                                        dplyr::rowwise() %>%
-                                        dplyr::mutate(newstart = ifelse(strand...7 == "-", start...11, start...4)) %>%
-                                        dplyr::mutate(newend = ifelse(strand...7 == "-", end...5, end...12)) %>%
-                                        dplyr::select(group = group...1, group_name = group_name...2, seqnames = seqnames...3, start = newstart, end = newend, strand = strand...7) %>%
-                                        GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE))
-    
+        dplyr::rowwise() %>%
+        dplyr::mutate(newstart = ifelse(strand...7 == "-", start...11, start...4)) %>%
+        dplyr::mutate(newend = ifelse(strand...7 == "-", end...5, end...12)) %>%
+        dplyr::select(group = group...1, group_name = group_name...2, seqnames = seqnames...3, start = newstart, end = newend, strand = strand...7) %>%
+        GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE))
+
     toStopWidth <- sum(BiocGenerics::width(GenomicRanges::pintersect(x, toStopRange)))
     EJtoStop <- cumsum(BiocGenerics::width(x)) - toStopWidth
-    
+
     out <- dplyr::bind_rows(out, lapply(EJtoStop, function(x) {
         id <- ifelse(!is.null(names(x)), names(x)[1], "transcript")
         x <- sort(x, decreasing = TRUE)
@@ -169,9 +169,9 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
         dist_to_last <- x[2]
         is_NMD <- ifelse(dist_to_last > threshold, TRUE, FALSE)
         dist_to_eachEJ <- rev(x[-1][x[-1] > 0])
-        
-        
-        
+
+
+
         return(tibble::tibble(
             "transcript" = id,
             "stop_to_lastEJ" = dist_to_last,

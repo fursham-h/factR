@@ -36,24 +36,24 @@
 #' ## Match gr1 to dna
 #' matchChromosomes(gr1, dna)
 matchChromosomes <- function(x, to) {
-  nseqlevelsbefore <- length(GenomeInfoDb::seqlevels(x))
-  suppressWarnings(
-    if (!has_consistentSeqlevels(x, to)) {
-      # attempt to match style first
-      newStyle <- mapSeqlevels(seqlevels(x), (seqlevelsStyle(to)[1]))
-      newStyle <- newStyle[!is.na(newStyle)]
-      x <- renameSeqlevels(x, newStyle)
-      
-      # # prune if there are remaining unmatched levels
-      # if (any(!GenomeInfoDb::seqlevels(x) %in% GenomeInfoDb::seqlevels(to))) {
-      #   GenomeInfoDb::seqlevels(x, pruning.mode = "tidy") <- as.vector(newStyle)
-      # }
+    nseqlevelsbefore <- length(GenomeInfoDb::seqlevels(x))
+    suppressWarnings(
+        if (!has_consistentSeqlevels(x, to)) {
+            # attempt to match style first
+            newStyle <- mapSeqlevels(seqlevels(x), (seqlevelsStyle(to)[1]))
+            newStyle <- newStyle[!is.na(newStyle)]
+            x <- renameSeqlevels(x, newStyle)
+
+            # # prune if there are remaining unmatched levels
+            # if (any(!GenomeInfoDb::seqlevels(x) %in% GenomeInfoDb::seqlevels(to))) {
+            #   GenomeInfoDb::seqlevels(x, pruning.mode = "tidy") <- as.vector(newStyle)
+            # }
+        }
+    )
+    if (length(GenomeInfoDb::seqlevels(x)) < nseqlevelsbefore) {
+        nseqlevelsafter <- nseqlevelsbefore - length(GenomeInfoDb::seqlevels(x))
+        rlang::warn(sprintf("%s seqlevels were dropped", nseqlevelsafter))
     }
-  )
-  if (length(GenomeInfoDb::seqlevels(x)) < nseqlevelsbefore) {
-    nseqlevelsafter <- nseqlevelsbefore - length(GenomeInfoDb::seqlevels(x))
-    rlang::warn(sprintf("%s seqlevels were dropped", nseqlevelsafter))
-  }
-  msg <- has_consistentSeqlevels(x, to)
-  return(x)
+    msg <- has_consistentSeqlevels(x, to)
+    return(x)
 }

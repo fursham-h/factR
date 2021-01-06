@@ -30,11 +30,11 @@
 #' trimTranscripts(gr1, 20, 80)
 #' trimTranscripts(gr1, 110, 150)
 trimTranscripts <- function(x, start = 0, end = 0) {
-    
+
     # define global variables
     width <- tmp.fwdcumsum <- tmp.revcumsum <- tmp.end <- tmp.start <- NULL
     strand <- group <- tmp.headlength <- tmp.taillength <- group_name <- NULL
-            
+
     # check inputs
     if (is(x, "GRanges")) {
         type <- "GR"
@@ -58,16 +58,16 @@ trimTranscripts <- function(x, start = 0, end = 0) {
         xlen <- length(x)
         rlang::abort(sprintf("Length of `end` (%s) is not equal to `x` (%s)", endlen, xlen))
     }
-    
+
     # return if appending length is longer than transcript
     if (any(sum(BiocGenerics::width(x)) < (start + end))) {
         rlang::abort("Appending length is larger than size of transcript")
     }
-    
-    
+
+
     # retrieve strand information
     strandList <- as.character(S4Vectors::runValue(BiocGenerics::strand(x)))
-    
+
     # subsequently,we will treat granges as forward stranded
     # so if granges is initially on rev strand, we will swap
     trim_df <- tibble::tibble(
@@ -79,8 +79,8 @@ trimTranscripts <- function(x, start = 0, end = 0) {
         dplyr::mutate(tmp.headlength = ifelse(strand == "-", end, start)) %>%
         dplyr::mutate(tmp.taillength = ifelse(strand == "-", start, end)) %>%
         dplyr::select(-strand, -start, -end)
-    
-    
+
+
     x <- x %>%
         as.data.frame() %>%
         dplyr::bind_cols(trim_df) %>%
@@ -100,7 +100,7 @@ trimTranscripts <- function(x, start = 0, end = 0) {
         dplyr::arrange(ifelse(strand == "-", dplyr::desc(start), start)) %>%
         dplyr::select(-dplyr::starts_with("tmp.")) %>%
         dplyr::ungroup()
-    
+
     # format output
     if (type == "GR") {
         x <- x %>%
@@ -114,6 +114,6 @@ trimTranscripts <- function(x, start = 0, end = 0) {
                 split.field = "group_name"
             )
     }
-    
+
     return(x)
 }

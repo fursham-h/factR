@@ -12,6 +12,16 @@
 #' @source \url{http://www.ensembl.org/}
 "query_gtf"
 
+#' Seqlevels matched query data
+#'
+#' query_gtf data which have been corrected for its seqlevels
+#'
+#' @format A GRanges object with 56 ranges and 6 metadata columns:
+#' \describe{
+#'   \item{element}{Exon start and end coordinates from 4 transcripts}
+#'   ...
+#' }
+"chrom_matched_query_gtf"
 
 #' Seqlevels and gene_id matched query data
 #'
@@ -105,3 +115,27 @@
 #' }
 #' @source \url{https://www.gencodegenes.org/}
 "ref_cds"
+
+#' Example output of predictDomains()
+#'
+#' Output dataframe from predictDomains() function.
+#'
+#' @format A data.frame with 14880 rows and 5 columns:
+#' \describe{
+#'   \item{element}{Predicted domains from newly-discovered mRNAs}
+#'   ...
+#' }
+"domains.out"
+
+#' Example output of predictDomains()
+#'
+#' Output dataframe from predictDomains() function. mRNAs from GENCODE
+#' mouse annotation was predicted for putative domain families.
+#'
+#' @format A data.frame with 85780 rows and 5 columns:
+#' \describe{
+#'   \item{element}{Predicted domains from annotated mouse mRNAs}
+#'   ...
+#' }
+#' @source \url{https://www.gencodegenes.org/}
+"domains.known"

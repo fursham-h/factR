@@ -13,8 +13,6 @@
 #' @return
 #' Imported GenomicRanges object in GTF format
 #'
-#' @examples
-#' input.gtf <- importGTF(system.file("extdata", "sample.gtf", package = "factR"))
 #' @author Fursham Hamid
 #' @export
 importGTF <- function(con) {
@@ -39,8 +37,6 @@ importGTF <- function(con) {
 #'
 #' @return
 #' Imported DNAStringSet object
-#'
-#' @examples
 #'
 #' @author Fursham Hamid
 #' @export

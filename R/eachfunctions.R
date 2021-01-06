@@ -32,12 +32,12 @@ sorteach <- function(x, ...) {
         expr[[index]] <- rlang::quo(ifelse(strand == "-", dplyr::desc(start), start))
     }
     return(x %>% as.data.frame() %>%
-               dplyr::arrange(!!!expr) %>%
-               dplyr::select(-group) %>%
-               GenomicRanges::makeGRangesListFromDataFrame(
-                   split.field = "group_name",
-                   keep.extra.columns = TRUE
-               ))
+        dplyr::arrange(!!!expr) %>%
+        dplyr::select(-group) %>%
+        GenomicRanges::makeGRangesListFromDataFrame(
+            split.field = "group_name",
+            keep.extra.columns = TRUE
+        ))
 }
 
 #' Internally filter each element of a GenomicRangesList
@@ -60,14 +60,14 @@ filtereach <- function(x, ...) {
     group <- NULL
     stopifnot(is(x, "GRangesList"))
     return(x %>% as.data.frame() %>%
-               dplyr::group_by(group) %>%
-               dplyr::filter(...) %>%
-               dplyr::ungroup() %>%
-               dplyr::select(-group) %>%
-               GenomicRanges::makeGRangesListFromDataFrame(
-                   split.field = "group_name",
-                   keep.extra.columns = TRUE
-               ))
+        dplyr::group_by(group) %>%
+        dplyr::filter(...) %>%
+        dplyr::ungroup() %>%
+        dplyr::select(-group) %>%
+        GenomicRanges::makeGRangesListFromDataFrame(
+            split.field = "group_name",
+            keep.extra.columns = TRUE
+        ))
 }
 
 #' Internally create or transform metadata of a GenomicRangesList
@@ -90,10 +90,10 @@ mutateeach <- function(x, ...) {
     group <- NULL
     stopifnot(is(x, "GRangesList"))
     return(x %>% as.data.frame() %>%
-               dplyr::mutate(...) %>%
-               dplyr::select(-group) %>%
-               GenomicRanges::makeGRangesListFromDataFrame(
-                   split.field = "group_name",
-                   keep.extra.columns = TRUE
-               ))
+        dplyr::mutate(...) %>%
+        dplyr::select(-group) %>%
+        GenomicRanges::makeGRangesListFromDataFrame(
+            split.field = "group_name",
+            keep.extra.columns = TRUE
+        ))
 }

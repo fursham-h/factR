@@ -43,7 +43,7 @@
 #' }
 #'
 viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
-    
+
     # catch missing args
     mandargs <- c("x")
     passed <- names(as.list(match.call())[-1])
@@ -55,14 +55,14 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
     }
     # define global variable
     # is_NMD <- NULL
-    
+
     # retrieve input object names
     argnames <- as.character(match.call())[-1]
-    
+
     if (!is_gtf(x)) {
         rlang::abort(sprintf("`%s` is not a GTF GRanges object", argnames[1]))
     }
-    
+
     if (!missing(...)) {
         x <- tryCatch(
             {
@@ -82,9 +82,9 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
             rlang::abort("No transcripts to display")
         }
     }
-    
+
     # Need to have a check for plotting multiple genes.....
-    
+
     # Fetch gene exons and cdss
     exons <- S4Vectors::split(x[x$type == "exon"], ~transcript_id)
     cdss <- S4Vectors::split(x[x$type == "CDS"], ~transcript_id)
@@ -92,13 +92,13 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
     if (length(cdss) == 0) {
         cdss <- NULL
     }
-    
+
     # Control check for number of plotted transcripts
     if (length(exons) > 25) {
         exons <- exons[seq_len(25)]
         rlang::warn("Plotting only first 25 transcripts")
     }
-    
+
     # main plot function
     plot <- wiggleplotr::plotTranscripts(
         exons = exons,
