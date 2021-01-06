@@ -18,11 +18,6 @@ FASTA genome sequence file and simultaneously convert long chromosome names
 (e.g. 1 dna:chromosome chromosome:GRCm38:1:1:195471971:1 REF) to short names (e.g. 1)
 }
 \examples{
-\donttest{
-# download and import mouse genome FASTA from GENCODE
-download.file("http://bit.ly/mm10Fasta")
-importFASTA("input.fa.gz")
-}
 
 }
 \author{

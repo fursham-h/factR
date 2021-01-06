@@ -41,11 +41,6 @@ importGTF <- function(con) {
 #' Imported DNAStringSet object
 #'
 #' @examples
-#' \donttest{
-#' # download and import mouse genome FASTA from GENCODE
-#' download.file("http://bit.ly/mm10Fasta")
-#' importFASTA("input.fa.gz")
-#' }
 #'
 #' @author Fursham Hamid
 #' @export
