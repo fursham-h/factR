@@ -11,7 +11,6 @@
   1. Construct transcript coding (CDS) information using a reference-guided process
   2. Predict protein domains on coding transcripts
   3. Predict sensitivity of coding transcripts to Nonsense-mediated decay
-  4. Compare and classify alternative segments between transcripts
 * Supporting features 
   1. Match chromosome levels of query GTF/object to reference annotation
   2. Match gene_id and gene_names of query GTF to reference annotation
