@@ -102,7 +102,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
         dplyr::distinct(gene_id, .keep_all = TRUE) %>%
         dplyr::filter(is.na(matched)) %>%
         nrow()
-    message(sprintf("Number of mismatched gene_ids found: %s", nonstand_before))
+    rlang::inform(sprintf("Number of mismatched gene_ids found: %s", nonstand_before))
 
     # Matching function 1: replace primary_gene_id with secondary_gene_id, IF both args are provided
     if (!is.null(primary_gene_id) & !is.null(secondary_gene_id)) {
@@ -116,7 +116,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
         # proceed with matching only if there are unmatched gene ids
         if (countsbefore > 0) {
-            message(sprintf(
+            rlang::inform(sprintf(
                 "-> Attempting to correct gene ids by replacing %s with %s...",
                 primary_gene_id, secondary_gene_id
             ))
@@ -152,7 +152,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
             countsafter <- if (countsafter > countsbefore) countsbefore else countsafter
 
             # report number of IDs corrected
-            message(sprintf(
+            rlang::inform(sprintf(
                 "-> %s gene_ids matched",
                 (countsbefore - countsafter)
             ))
@@ -171,7 +171,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
         # proceed with matching only if there are unmatched gene ids
         if (countsbefore > 0) {
-            message("--> Attempting to match ensembl gene_ids...")
+            rlang::inform("--> Attempting to match ensembl gene_ids...")
             # prepare a df with a list of reference gene_ids and append ENSEMBL style ids to remove suffixes
             ref.genelist.2 <- ref %>%
                 as.data.frame() %>%
@@ -220,7 +220,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
             # print out statistics of the match
             #   or print out warning if none of the genes were matched
             if (countsbefore > countsafter) {
-                message(sprintf("--> %s gene_ids matched", (countsbefore - countsafter)))
+                rlang::inform(sprintf("--> %s gene_ids matched", (countsbefore - countsafter)))
             } else {
                 anyEnsid <- query %>%
                     dplyr::select(gene_id) %>%
@@ -229,9 +229,9 @@ Try running: %s <- matchChromosomes(%s, %s)",
                     nrow() > 0
 
                 if (anyEnsid == TRUE) {
-                    message("--> All ensembl gene ids have been matched")
+                    rlang::inform("--> All ensembl gene ids have been matched")
                 } else {
-                    message("--> No ensembl gene ids found in query")
+                    rlang::inform("--> No ensembl gene ids found in query")
                 }
             }
         }
@@ -247,9 +247,9 @@ Try running: %s <- matchChromosomes(%s, %s)",
         nrow()
 
     if (countsbefore == 0) {
-        message("--> All gene ids have been matched")
+        rlang::inform("--> All gene ids have been matched")
     } else {
-        message("---> Attempting to match gene_ids by finding overlapping coordinates...")
+        rlang::inform("---> Attempting to match gene_ids by finding overlapping coordinates...")
         # core of the function.
         #   this function will gather all unmatched transcripts
         #   and attempt to find its overlap with the reference
@@ -290,7 +290,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
 
         # report statistics of the match
-        message(sprintf("---> %s gene_id matched", (countsbefore - countsafter)))
+        rlang::inform(sprintf("---> %s gene_id matched", (countsbefore - countsafter)))
     }
 
 
@@ -337,8 +337,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
         nrow()
     corrected_ids <- nonstand_before - nonstand_after
 
-    message(sprintf("Total gene_ids corrected: %s", corrected_ids))
-    message(sprintf("Remaining number of mismatched gene_ids: %s", nonstand_after))
+    rlang::inform(sprintf("Total gene_ids corrected: %s", corrected_ids))
+    rlang::inform(sprintf("Remaining number of mismatched gene_ids: %s", nonstand_after))
     if (nonstand_after > 0) {
         # warnLog("Transcripts with non-standard gene_ids will be skipped from analysis")
     }

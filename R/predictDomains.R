@@ -13,6 +13,9 @@
 #' @param plot
 #' Argument whether to plot out protein domains (Default: FALSE).
 #' Note: only first 20 proteins will be plotted
+#' @param progress_bar
+#' Argument whether to show progress bar (Default: FALSE). Useful to track
+#' progress of predicting a long list of proteins.
 #'
 #' @return
 #' Dataframe containing protein features for each cds entry
@@ -34,7 +37,7 @@
 #' predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE)
 #' @author Fursham Hamid
 #' @export
-predictDomains <- function(x, fasta, ..., plot = FALSE) {
+predictDomains <- function(x, fasta, ..., plot = FALSE, progress_bar = FALSE) {
 
     # catch missing args
     mandargs <- c("x", "fasta")
@@ -61,7 +64,7 @@ predictDomains <- function(x, fasta, ..., plot = FALSE) {
     # output <- aaSeq %>% dplyr::select(id)
     #
 
-    output_table <- .runDomainSearch(aaSeq, plot)
+    output_table <- .runDomainSearch(aaSeq, plot, progress_bar)
 
     return(output_table)
 }
@@ -154,6 +157,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
 .getSequence <- function(cds, fasta) {
     x <- y <- instop <- NULL
+    
+    rlang::inform("Checking CDSs and translating protein sequences")
     cdsSeq <- GenomicFeatures::extractTranscriptSeqs(fasta, cds)
     aaSeq <- suppressWarnings(Biostrings::translate(cdsSeq, if.fuzzy.codon = "solve")) %>%
         as.data.frame() %>%
@@ -167,7 +172,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     # check for ATG and internal stop_codon, truncate proteins with internal stop codon
     ## and remove entries without proteins after truncation
     if (TRUE %in% aaSeq$noATG) {
-        rlang::warn(sprintf("%s cds entries do not start with ATG", sum(aaSeq$noATG)))
+        rlang::warn(sprintf("%s CDSs do not begin with ATG", sum(aaSeq$noATG)))
     }
     if (TRUE %in% aaSeq$instop) {
         aaSeq <- suppressWarnings(aaSeq %>%
@@ -179,12 +184,13 @@ Try running: %s <- matchChromosomes(%s, %s)",
             dplyr::mutate(y = strsplit(x, split = "")) %>%
             dplyr::ungroup())
 
-        rlang::warn(sprintf("%s cds entries contain internal stop_codon. These proteins have been truncated", sum(aaSeq$instop)))
+        rlang::warn(sprintf("%s CDSs contain internal stop codon. Truncating CDS sequence to retain ORF", sum(aaSeq$instop)))
         if ("" %in% aaSeq$x) {
-            rlang::warn(sprintf("After truncation, %s cds have no coding sequences. These entries were not analyzed", sum(aaSeq$x == "")))
+            rlang::warn(sprintf("After truncation, %s cds have no coding sequences. These CDSs were not analyzed", sum(aaSeq$x == "")))
             aaSeq <- aaSeq[aaSeq$x != "", ]
         }
     }
+    rlang::inform(sprintf("Predicting domain families for %s proteins", nrow(aaSeq)))
     return(aaSeq)
 }
 
@@ -221,7 +227,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     return(data)
 }
 
-.runDomainSearch <- function(aaSeq, plot) {
+.runDomainSearch <- function(aaSeq, plot, progress_bar) {
     type <- entryName <- description <- begin <- id <- NULL
 
     # prepare URL
@@ -247,7 +253,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
                 tibble::tibble(type = "CHAIN", description = aaSeq[y, ]$id, begin = 1, end = nchar(aaSeq[y, ]$x), entryName = aaSeq[y, ]$id)
             ))
         }
-    }, BPPARAM = BiocParallel::MulticoreParam()) %>%
+    }, BPPARAM = BiocParallel::MulticoreParam(progressbar = progress_bar)) %>%
         dplyr::bind_rows()
 
     # plot protein domains if requested

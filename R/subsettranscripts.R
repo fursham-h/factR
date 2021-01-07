@@ -79,6 +79,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
     # Filter transcripts by identical exon structure:
     # create exons by transcripts
+    rlang::inform("Removing transcripts with exact exon coordinates")
     query_exons <- S4Vectors::split(query[query$type == "exon"], ~transcript_id)
     ref_exons <- S4Vectors::split(ref[ref$type == "exon"], ~transcript_id)
 
@@ -92,6 +93,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
     # Refine list By identical introns:
     if (by == "intron") {
+        rlang::inform("Removing transcripts with exact intron coordinates")
         # create exons by transcripts
         query_exons <- S4Vectors::split(query[query$type == "exon"], ~transcript_id)
         ref_exons <- S4Vectors::split(ref[ref$type == "exon"], ~transcript_id)
@@ -110,6 +112,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
     # Refine list By identical CDS:
     else if (by == "cds") {
+        rlang::inform("Removing transcripts with exact CDS coordinates")
         # create CDS by transcripts
         query_CDS <- S4Vectors::split(query[query$type == "CDS"], ~transcript_id)
         ref_CDS <- S4Vectors::split(ref[ref$type == "CDS"], ~transcript_id)

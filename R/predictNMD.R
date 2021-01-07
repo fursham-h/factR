@@ -162,7 +162,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     toStopWidth <- sum(BiocGenerics::width(GenomicRanges::pintersect(x, toStopRange)))
     EJtoStop <- cumsum(BiocGenerics::width(x)) - toStopWidth
 
-    out <- dplyr::bind_rows(out, lapply(EJtoStop, function(x) {
+    out <- dplyr::bind_rows(out, pbapply::pblapply(EJtoStop, function(x) {
         id <- ifelse(!is.null(names(x)), names(x)[1], "transcript")
         x <- sort(x, decreasing = TRUE)
         threeUTR <- x[1]
@@ -204,15 +204,14 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     }
     txwithcds <- intersect(totest, names(y)) # subset transcripts with cds info
     if (length(txwithcds) == 0) {
-        rlang::abort("all transcripts have missing cds info")
+        rlang::abort("All transcripts have no CDS information")
     }
     if (length(txwithcds) < length(totest)) {
-        skiptest <- length(totest) - length(txwithcds)
-        rlang::warn(sprintf(
-            "%s transcript(s) have missing cds info and was not analyzed",
-            skiptest
-        ))
         totest <- txwithcds
     }
+    rlang::inform(sprintf(
+        "Predicting NMD sensitivities for %s mRNAs",
+        length(totest)
+    ))
     return(totest)
 }

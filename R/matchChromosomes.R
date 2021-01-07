@@ -52,7 +52,7 @@ matchChromosomes <- function(x, to) {
     )
     if (length(GenomeInfoDb::seqlevels(x)) < nseqlevelsbefore) {
         nseqlevelsafter <- nseqlevelsbefore - length(GenomeInfoDb::seqlevels(x))
-        rlang::warn(sprintf("%s seqlevels were dropped", nseqlevelsafter))
+        rlang::warn(sprintf("%s seqlevels were removed after matching", nseqlevelsafter))
     }
     msg <- has_consistentSeqlevels(x, to)
     return(x)

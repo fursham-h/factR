@@ -3,13 +3,15 @@
 #' @description
 #'
 #' `buildCDS()` is designed to construct CDS information on transcripts from
-#' input GTF object.
+#' query GTF object.
 #'
 #' @details
-#' The `buildCDS()`function will first assemble a database of annotated ATG
-#' codons from `ref` GTF object. Then for each transcripts in `query`, the
-#' upstream-most annotated ATG will serve as the transcript's translation start
-#'  site and `buildCDS()` will search for an in-frame termination codon.
+#' The `buildCDS()`function will first search for known reference mRNAs in
+#' `query` and annotate its CDS information. For the remaining transcripts, 
+#' `buildCDS()` will search for a putative translation start site using a 
+#' database of annotated ATG codons from `ref`. Transcripts containing an 
+#' open-reading frame will be assigned the newly-determined CDS information. 
+#' 
 #'
 #' @param query
 #' GRanges object containing query GTF data.
@@ -107,6 +109,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     query <- query[BiocGenerics::strand(query) != "*"]
 
     # Create lists of cds and exons
+    rlang::inform("Searching for reference mRNAs in query")
     query_exons <- S4Vectors::split(query[query$type == "exon"], ~transcript_id)
     ref_cds <- S4Vectors::split(ref[ref$type == "CDS"], ~transcript_id)
     ref_exons <- S4Vectors::split(ref[ref$type == "exon"], ~transcript_id)
@@ -147,6 +150,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
     # run .getCDS function for remaining transcripts
     if (length(order_query) > 0) {
         restoutCDS <- .getCDS(order_query, order_ref, fasta)
+        rlang::inform(sprintf("%s new CDSs constructed",
+                              length(unique(restoutCDS$transcript_id))))
     } else {
         restoutCDS <- NULL
     }
@@ -169,15 +174,15 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
         successtx <- length(unique(outCDS$transcript_id))
         message(sprintf(
-            "Out of %s transcripts in `%s`, %s transcript CDSs were built",
+            "\nSummary: Out of %s transcripts in `%s`, %s transcript CDSs were built",
             totaltx, argnames[1], successtx
         ))
         return(GenomicRanges::makeGRangesFromDataFrame(outCDS,
             keep.extra.columns = TRUE
         ))
     } else {
-        message(sprintf(
-            "Out of %s transcripts in `%s`, none transcript CDSs were built",
+        rlang::inform(sprintf(
+            "\nSummary: Out of %s transcripts in `%s`, none transcript CDSs were built",
             totaltx, argnames[1]
         ))
         return(NULL)
@@ -205,13 +210,23 @@ Try running: %s <- matchChromosomes(%s, %s)",
                           names(ref_exons[ref_transcript_index])) %>%
         dplyr::filter(ref_transcript_id %in% names(ref_cds)) %>%
         dplyr::mutate(coverage = 1)
+    
+    # report known mRNAs
+    if (nrow(q2r) > 0) {
+        rlang::inform(sprintf("%s reference mRNAs found and its CDS were assigned",
+                              nrow(q2r)))
+    } else {
+        rlang::inform("No reference mRNAs found")
+    }
+    
 
     # search for first ATG overlap for non-exact transcripts
     if (NA %in% fulloverlap) {
+        rlang::inform("Building database of annotated ATG codons")
         nonexact <- query_exons[is.na(fulloverlap)]
         subsetRef <- IRanges::subsetByOverlaps(ref, nonexact)
 
-        # prepare a GRanges of trimmed CDS segments
+        # prepare a list of exons trimmed by codon triplets
         codons_gr <- subsetRef %>%
             as.data.frame() %>%
             dplyr::filter(type == "CDS") %>%
@@ -233,10 +248,12 @@ Try running: %s <- matchChromosomes(%s, %s)",
                                          start)) %>%
             GenomicRanges::makeGRangesFromDataFrame() %>%
             unique()
+        
+        # shortlist trimmed exons which fully overlap query transcripts
         codons_gr <- IRanges::subsetByOverlaps(codons_gr, nonexact, 
                                                type = "within")
 
-        # further trim CDS segments to the
+        # further trim exons to only retain ATG codon
         codons_seq <- BSgenome::getSeq(fasta, codons_gr)
         startMatch <- Biostrings::vmatchPattern("ATG", codons_seq) %>%
             as.data.frame() %>%
@@ -249,10 +266,15 @@ Try running: %s <- matchChromosomes(%s, %s)",
                         fix = "end")
         codons_gr <- GenomicRanges::resize(codons_gr, width = 3, fix = "start")
 
+        # select up-stream most ATG codon for remaining transcripts
+        rlang::inform(paste0("Selecting best ATG start codon for remaining ",
+        "transcripts and determining open-reading frame"))
         firstATGoverlap <- GenomicRanges::findOverlaps(nonexact, 
                                                        codons_gr, 
                                                        minoverlap = 3, 
                                                        select = "first")
+        
+        # Update q2r with selected ATG start
         firstATGq2r <- data.frame(
             "transcript_id" = names(nonexact),
             "ref_transcript_index" = firstATGoverlap,
