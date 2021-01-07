@@ -53,12 +53,13 @@ devtools::install_github("fursham-h/factR")
   
 ### Custom-assembled transcriptome  
   
-*factR* requires a custom transcriptome file in the GTF format as an input, and we provide the following three custom transcriptome files that can be used to test *factR* tools (http://bit.ly/factRGTFs).  
+*factR* requires a custom transcriptome file in the GTF format as an input, and we provide the following three custom transcriptome files that can be used to test *factR* tools:
   
 1. **bulk_merged.gtf.gz** assembled using the HISAT2-StringtTie2 pipeline [@Pertea2016] from bulk RNA-seq data for mouse embryonic stem cells treated with the NMD inhibitor cycloheximide (CHX) or left untreated as a control.   
 2. **sc_merged.gtf.gz** assembled using the HISAT2-StringtTie2 pipeline from single-cell RNA-seq data for glutamatergic neurons, GABAergic neurons, astrocytes or endothelial cells from the mouse visual cortex [@Tasic2018].   
 3. **lr_merged.gtf.gz** assembled using minimap2 [@Li2018] and StringtTie2 [@Kovaka2019] from brain-specific long-read Oxford Nanopore RNA sequencing data [@Sessegolo2019].  
   
+Method to download the above GTF files is described in the  ["Importing and inspecting GTF data"](#importing-and-inspecting-gtf-data) section below.  
 Users may alternatively prepare their own GTF files making sure that these contain both **gene_id** and **transcript_id** attributes.   
 <!-- *In the future, add how to build custom GTF files* -->  
   
@@ -145,34 +146,36 @@ ref.gtf <- importGTF("gencode.vM25.annotation.gtf.gz")
 When choosing a reference, users should consider using one with the same chromosome naming style (e.g. "chr1" or "1"). Alternatively, the styles can be matched using the  `matchChromosomes` function (see `help(matchChromosomes)` for more detail).    
   
 Once the ref.gtf object is ready, novel transcripts in custom.gtf can be assigned to "official" gene IDs, whenever possible, using `matchGeneInfo`. By default, this function matches the query (custom.gtf) to the reference (ref.gtf) by finding overlapping coordinates:  
-```{r matchgenemeta, message=FALSE}  
+```{r matchgenemeta, warning=FALSE}  
 # matching gene metadata  
-custom_matched.gtf <- matchGeneInfo(custom.gtf, ref.gtf)  
+custom_matched_1.gtf <- matchGeneInfo(custom.gtf, ref.gtf)  
 ```  
   
 To tune the performance of `matchGeneInfo`, we provide additional arguments specifying the name of columns containing "primary" and potentially "secondary" gene IDs from the query (custom.gtf). For further information, see `help(matchGeneInfo)`.  
-```{r matchgenemeta2, message=FALSE, warning=FALSE}  
+```{r matchgenemeta2, warning=FALSE}  
 # matching gene metadata  
-custom_matched.gtf <- matchGeneInfo(custom.gtf, ref.gtf,   
+custom_matched_2.gtf <- matchGeneInfo(custom.gtf, ref.gtf,   
                             primary_gene_id = "gene_id",   
                             secondary_gene_id = "ref_gene_id")  
 ```  
   
 Note that custom.gtf updated by `matchGeneInfo` now contains 10 known and 7 newly *Zfr* assembled transcripts:  
 ```{r plottranscripts2}  
-viewTranscripts(custom_matched.gtf, gene_name == "Zfr")  
+viewTranscripts(custom_matched_2.gtf, gene_name == "Zfr")  
 ```  
   
 ## Shortlisting novel transcripts  
 As seen in the above example, custom transcriptomes typically combine both new and previously annotated transcripts. To select only newly predicted transcripts, run the following:  
 ```{r subsettx, warning=FALSE}  
-custom_new.gtf <- subsetNewTranscripts(custom_matched.gtf, ref.gtf)  
+custom_new.gtf <- subsetNewTranscripts(custom_matched_2.gtf, ref.gtf)  
+
 viewTranscripts(custom_new.gtf, gene_name == "Zfr")  
 ```  
   
 This will subset custom.gtf transcripts with distinct exonic coordinates compared to ref.gtf and will store these transcripts in the custom_new.gtf object. Some custom-built transcripts may differ from their reference counterparts by having different start or/and end coordinates, with otherwise similar exon-intron structure. To shortlist novel transcripts with distinct intronic coordinates only, simply set the "refine.by" argument to "intron":  
 ```{r subsettx2, warning=FALSE}  
-custom_new.gtf <- subsetNewTranscripts(custom_matched.gtf, ref.gtf, refine.by = "intron")  
+custom_new.gtf <- subsetNewTranscripts(custom_matched_2.gtf, ref.gtf, refine.by = "intron")  
+
 viewTranscripts(custom_new.gtf, gene_name == "Zfr")  
 ```  
   
@@ -194,7 +197,8 @@ BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
 and loaded into R environment:  
   
 ```{r loadBSgenome}  
-library(BSgenome.Mmusculus.UCSC.mm10)  
+library(BSgenome.Mmusculus.UCSC.mm10)
+Mmusculus <- BSgenome.Mmusculus.UCSC.mm10
 ```  
   
 2. Using *AnnotationHub*  
@@ -219,7 +223,7 @@ Mmusculus <- importFASTA("GRCm38.primary_assembly.genome.fa.gz")
 ```  
  
 Once the genome sequence object is ready, *factR* can predict CDSs using its buildCDS() function and reference transcriptome data as a guide. buildCDS() first generates a database of previously annotated ATGs and uses this information to search for a potential translation start sites in query transcripts. buildCDS() then deduces the CDS and appends its coordinates to the custom transcriptome object. Let's run this function for our novel transcripts:  
-```{r buildcds, message=FALSE}  
+```{r buildcds, warning=FALSE}  
 custom_new_CDS.gtf <- buildCDS(custom_new.gtf, ref.gtf, Mmusculus)  
 ```  
   
@@ -240,8 +244,9 @@ viewTranscripts(ref.gtf, gene_name == "Zfr", rescale_introns = TRUE)
   
 ## Predicting NMD  
 To explore possible susceptibility of newly identified mRNA isoforms to NMD, we use the `predictNMD` function:  
-```{r predictNMD1, message=FALSE, warning=FALSE}  
+```{r predictNMD1, warning=FALSE}  
 NMDprediction.out <- predictNMD(custom_new_CDS.gtf)  
+
 head(NMDprediction.out)  
 ```  
   
@@ -249,12 +254,14 @@ head(NMDprediction.out)
   
 To identify putative NMD targets for specific genes (e.g. *Zfr*), run the following:  
 ```{r predictNMD2}  
-NMDprediction.Zfr <- predictNMD(custom_new_CDS.gtf, gene_name == "Zfr")  
+NMDprediction.Zfr <- predictNMD(custom_new_CDS.gtf, gene_name == "Zfr") 
+
 head(NMDprediction.Zfr)  
 ```  
   
 ## Predicting protein domains  
-*factR* can also inspect domain structure of protein products encoded by newly identified mRNA isoforms using its `predictDomains` tool:   
+*factR* can also inspect domain structure of protein products encoded by newly identified mRNA isoforms using its `predictDomains` tool:  
+(Note: code below will predict domains on all proteins and will require a substantial amount of time to complete)
 <!-- Code below not evaluated as it takes substantial amount of time to complete -->
 ```{r predDomain1, eval=FALSE}  
 domains.out <- predictDomains(custom_new_CDS.gtf, Mmusculus)  
@@ -323,6 +330,7 @@ proportion.NMD %>%
 ### Summarising domain data  
  
 Gain and loss of domains can alter protein function in a profound manner. To identify domains frequently added in newly predicted protein products, we first predict protein domains of known reference proteins:  
+(Note: code below will predict domains on all proteins and will require a substantial amount of time to complete)
 <!-- Code below not evaluated as it takes substantial amount of time to complete -->
 ```{r preddomref, eval=FALSE}  
 domains.known <- predictDomains(ref.gtf, Mmusculus)  
