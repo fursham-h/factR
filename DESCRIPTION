@@ -28,6 +28,7 @@ Imports:
     drawProteins (>= 1.10),
     ggplot2 (>= 3.3),
     stringr (>= 1.4),
+    pbapply (>= 1.4),
     stats,
     utils,
     graphics
