@@ -73,13 +73,13 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
             },
             error = function(e) {
                 rlang::abort(sprintf(
-                    "Metadata in ... not found in `%s`",
+                    "Variables given in ... are not found in `%s`",
                     argnames[1]
                 ))
             }
         )
         if (length(x) == 0) {
-            rlang::abort("No transcripts to display")
+            rlang::abort("No transcripts to plot")
         }
     }
 

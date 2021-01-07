@@ -61,7 +61,7 @@ trimTranscripts <- function(x, start = 0, end = 0) {
 
     # return if appending length is longer than transcript
     if (any(sum(BiocGenerics::width(x)) < (start + end))) {
-        rlang::abort("Appending length is larger than size of transcript")
+        rlang::abort("Appending length is greater than size of transcript")
     }
 
 
