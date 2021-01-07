@@ -207,12 +207,11 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
         rlang::abort("All transcripts have no CDS information")
     }
     if (length(txwithcds) < length(totest)) {
-        skiptest <- length(totest) - length(txwithcds)
-        rlang::inform(sprintf(
-            "Predicting NMD sensitivities for %s mRNAs",
-            length(txwithcds)
-        ))
         totest <- txwithcds
     }
+    rlang::inform(sprintf(
+        "Predicting NMD sensitivities for %s mRNAs",
+        length(totest)
+    ))
     return(totest)
 }

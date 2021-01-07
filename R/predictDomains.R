@@ -13,6 +13,9 @@
 #' @param plot
 #' Argument whether to plot out protein domains (Default: FALSE).
 #' Note: only first 20 proteins will be plotted
+#' @param progress_bar
+#' Argument whether to show progress bar (Default: FALSE). Useful to track
+#' progress of predicting a long list of proteins.
 #'
 #' @return
 #' Dataframe containing protein features for each cds entry
@@ -34,7 +37,7 @@
 #' predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE)
 #' @author Fursham Hamid
 #' @export
-predictDomains <- function(x, fasta, ..., plot = FALSE) {
+predictDomains <- function(x, fasta, ..., plot = FALSE, progress_bar = FALSE) {
 
     # catch missing args
     mandargs <- c("x", "fasta")
@@ -61,7 +64,7 @@ predictDomains <- function(x, fasta, ..., plot = FALSE) {
     # output <- aaSeq %>% dplyr::select(id)
     #
 
-    output_table <- .runDomainSearch(aaSeq, plot)
+    output_table <- .runDomainSearch(aaSeq, plot, progress_bar)
 
     return(output_table)
 }
@@ -224,7 +227,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     return(data)
 }
 
-.runDomainSearch <- function(aaSeq, plot) {
+.runDomainSearch <- function(aaSeq, plot, progress_bar) {
     type <- entryName <- description <- begin <- id <- NULL
 
     # prepare URL
@@ -250,7 +253,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
                 tibble::tibble(type = "CHAIN", description = aaSeq[y, ]$id, begin = 1, end = nchar(aaSeq[y, ]$x), entryName = aaSeq[y, ]$id)
             ))
         }
-    }, BPPARAM = BiocParallel::MulticoreParam(progressbar = TRUE)) %>%
+    }, BPPARAM = BiocParallel::MulticoreParam(progressbar = progress_bar)) %>%
         dplyr::bind_rows()
 
     # plot protein domains if requested
