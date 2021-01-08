@@ -1,5 +1,9 @@
 # **factR**: Functional Annotation of Custom Transcriptomes in R
 
+<!-- badges: start -->
+  [![R build status](https://github.com/fursham-h/factR/workflows/R-CMD-check/badge.svg)](https://github.com/fursham-h/factR/actions)
+  <!-- badges: end -->
+  
 ### General workflow
 <p align="center">
   <img src="https://github.com/fursham-h/factR/blob/dev/factR_workflow.png" width="450"/>
