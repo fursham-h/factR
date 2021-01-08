@@ -15,3 +15,4 @@ R/._splicingFunctions.R
 doc/*.R
 Meta
 data-raw
+docs
