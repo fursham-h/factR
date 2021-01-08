@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
   [![R build status](https://github.com/fursham-h/factR/workflows/R-CMD-check/badge.svg)](https://github.com/fursham-h/factR/actions)
+  [![Codecov test coverage](https://github.com/fursham-h/factR/workflows/test-coverage/badge.svg)](https://github.com/fursham-h/factR/actions)
 <!-- badges: end -->
   
 ## General workflow
