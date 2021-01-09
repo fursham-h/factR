@@ -19,13 +19,14 @@ information
 }
 \description{
 `buildCDS()` is designed to construct CDS information on transcripts from
-input GTF object.
+query GTF object.
 }
 \details{
-The `buildCDS()`function will first assemble a database of annotated ATG
-codons from `ref` GTF object. Then for each transcripts in `query`, the
-upstream-most annotated ATG will serve as the transcript's translation start
- site and `buildCDS()` will search for an in-frame termination codon.
+The `buildCDS()`function will first search for known reference mRNAs in
+`query` and annotate its CDS information. For the remaining transcripts, 
+`buildCDS()` will search for a putative translation start site using a 
+database of annotated ATG codons from `ref`. Transcripts containing an 
+open-reading frame will be assigned the newly-determined CDS information.
 }
 \examples{
 library(BSgenome.Mmusculus.UCSC.mm10)
