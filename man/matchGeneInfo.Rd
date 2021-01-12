@@ -44,7 +44,6 @@ columns
 ## EXAMPLE USING SAMPLE DATASET
 ## ---------------------------------------------------------------------
 matchGeneInfo(chrom_matched_query_gtf, ref_gtf)
-
 }
 \author{
 Fursham Hamid
