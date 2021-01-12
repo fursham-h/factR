@@ -28,8 +28,10 @@ removeExonsfromTx <- function(x, y) {
   
   # combine x and y by its group, also annotate which pair could be an IR
   temp.y <- as.data.frame(y) %>% 
-    dplyr::mutate(group=dplyr::row_number()) %>% 
-    dplyr::right_join(as.data.frame(x), by = "group") %>% 
+    dplyr::mutate(group=dplyr::row_number()) 
+  
+  x.y <- as.data.frame(x) %>% 
+    dplyr::left_join(temp.y, by = "group") %>% 
     dplyr::mutate(is.internal = ifelse(start.x < start.y & end.x > end.y,
                                        TRUE, FALSE))
   
@@ -54,6 +56,7 @@ removeExonsfromTx <- function(x, y) {
     dplyr::rename_with(~ stringr::str_sub(.x,end=-3), ends_with("y")) %>%
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
   
+  
   # Remove exons
   diff <- GenomicRanges::psetdiff(x,y)
   diff$group_name <- x$group_name
@@ -65,5 +68,5 @@ removeExonsfromTx <- function(x, y) {
     GenomicRanges::makeGRangesListFromDataFrame(split.field = "group_name") %>% 
     sorteach(exonorder)
   
-  return(diff)
+  return(GenomicRanges::reduce(diff))
 }

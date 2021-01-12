@@ -87,5 +87,11 @@ test_that("Test removeExonsfromTx function", {
   expect_equal(out[[1]], gr1)
   expect_equal(out[[2]], gr1)
   expect_equal(out[[3]], gr1)
+  
+  out <- removeExonsfromTx(grl2, exonset2)
+  expect_equal(out, grl2)
+  
+  out <- removeExonsfromTx(grl2, exonset3)
+  expect_equal(out, grl2)
 })
 
