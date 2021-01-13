@@ -25,6 +25,10 @@
 #' @param NMD_threshold
 #' Minimum distance of stop_codon to last exon junction (EJ) which triggers NMD.
 #' Default = 50bp
+#' 
+#' @param progress_bar
+#' Whether to display progress 
+#' Default = TRUE
 #'
 #' @return
 #' Dataframe with prediction of NMD sensitivity and NMD features:
@@ -79,7 +83,8 @@
 #' predictNMD(GRCm38_gtf, gene_name == "Ptbp1")
 #' }
 #'
-predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
+predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50, 
+                       progress_bar = TRUE) {
 
     # catch missing args
     mandargs <- c("x")
@@ -130,12 +135,12 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
     totest <- .prepTotest(exons, cds, argnames, ...)
 
     # run NMD analysis and return result
-    return(.testNMD(exons[totest], cds[totest], NMD_threshold))
+    return(.testNMD(exons[totest], cds[totest], NMD_threshold, progress_bar))
 }
 
 
 
-.testNMD <- function(x, y, threshold) {
+.testNMD <- function(x, y, threshold, progress_bar) {
 
     # define global variables
     exonorder <- strand <- start1 <- end1 <- group <- NULL
@@ -161,6 +166,12 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50) {
 
     toStopWidth <- sum(BiocGenerics::width(GenomicRanges::pintersect(x, toStopRange)))
     EJtoStop <- cumsum(BiocGenerics::width(x)) - toStopWidth
+    
+    # switch off progress_bar if requested
+    if(!progress_bar) {
+        pbo <- pbapply::pboptions(type = "none")
+        on.exit(pbapply::pboptions(pbo), add = TRUE)
+    }
 
     out <- dplyr::bind_rows(out, pbapply::pblapply(EJtoStop, function(x) {
         id <- ifelse(!is.null(names(x)), names(x)[1], "transcript")
