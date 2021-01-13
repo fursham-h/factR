@@ -221,9 +221,9 @@ Try running: %s <- matchChromosomes(%s, %s)",
     
 
     # search for first ATG overlap for non-exact transcripts
-    if (NA %in% fulloverlap) {
+    if (nrow(q2r) < length(query_exons)) {
         rlang::inform("Building database of annotated ATG codons")
-        nonexact <- query_exons[is.na(fulloverlap)]
+        nonexact <- query_exons[!names(query_exons) %in% q2r$transcript_id]
         subsetRef <- IRanges::subsetByOverlaps(ref, nonexact)
 
         # prepare a list of exons trimmed by codon triplets
