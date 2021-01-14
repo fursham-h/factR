@@ -90,7 +90,7 @@ download.file(paste0("https://github.com/fursham-h/MiMB-factR-supplement/raw/mas
               "input.gtf.gz")  
 custom.gtf <- importGTF("input.gtf.gz")  
 ```  
-This should import sc_merged.gtf.gz, and we will use this input in the walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply change "sc" to "bulk" or "lr" in the selected.data variable. Users may import your own GTF file by specifying the path to such file in the `importGTF` function. 
+This should import sc_merged.gtf.gz, and we will use this input in the walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply change "sc" to "bulk" or "lr" in the selected.data variable. Users may import their own GTF file by specifying the path to such file in the `importGTF` function. 
   
 The imported GTF file is stored as a *GenomicRanges* object.  
 ```{r checktype}  
@@ -125,7 +125,7 @@ StringTie2, a popular transcript assembler used to generate our custom GTF, typi
 ## Updating gene info  
 *factR* can update gene metadata in custom transcriptome objects using a reference annotation as guide. Below, we describe two alternative ways to obtain mouse reference transcriptome data from GENCODE.  
   
-1. Using *AnnotationHub* package  
+1. Using *AnnotationHub* package (ref.gtf generated from this method will be used for the remaining of the workflow)  
 ```{r load.gencode}  
 # query database for mouse gencode basic annotation  
 library(AnnotationHub)  
@@ -184,7 +184,7 @@ We will use the custom_new.gtf object in the rest of the workflow.
 ## Constructing CDS information  
 Functional annotation of newly assembled transcripts in *factR* begins by deducing their protein-coding sequences (CDSs). To search for putative CDSs, *factR* requires a genome sequence file, which can be obtained using R packages or downloaded from online databases (e.g. UCSC, GENCODE or Ensembl). Three alternative ways to retrieve mouse genomic sequence are described below.    
   
-1. Using *BSgenome*  
+1. Using *BSgenome*  (Mmusculus generated from this method will be used for the remaining of the workflow)
 This package supports most sequenced genomes. Mouse mm10 sequence can be downloaded as follows:  
 <!-- Installation code below is for demonstration and not evaluated -->
 ```{r genomeBSgenome, eval=FALSE}  
@@ -260,25 +260,22 @@ head(NMDprediction.Zfr)
 ```  
   
 ## Predicting protein domains  
-*factR* can also inspect domain structure of protein products encoded by newly identified mRNA isoforms using its `predictDomains` tool:  
-(Note: code below will predict domains on all proteins and will require a substantial amount of time to complete)
-<!-- Code below not evaluated as it takes substantial amount of time to complete -->
-```{r predDomain1, eval=FALSE}  
-domains.out <- predictDomains(custom_new_CDS.gtf, Mmusculus)  
-```  
-  
-The above code returns a data frame containing the name, expected value and position of predicted protein domain families within each transcript.    
-  
-Since predictDomains() connects to the online PFAM database, it may require a substantial amount of time and stable internet connection to query multiple transcripts simultaneously. To quickly explore this functionality, users may prefer to begin with a relatively small subset of transcripts. For example, to predict the domain structure for all transcripts of the *Zfr* gene, run:  
+*factR* can also inspect domain structure of protein products encoded by newly identified mRNA isoforms using its `predictDomains()` function. This requires connection to the online PFAM database and may require a substantial amount of time and stable internet connection to query multiple transcripts simultaneously. To quickly explore functionality of the `predictDomains()` tool, users may prefer to begin with a relatively small subset of transcripts. For example, the following will predict domain structure for all transcripts of the Zfr gene:
 ```{r predDomain2}  
-predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Zfr")  
+predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Zfr", progress_bar = FALSE)  
 ```  
   
 The domain architectures for the set of query proteins can be additionally plotted by switching the argument "plot" to TRUE:  
 ```{r predDomain3}  
-domains.Zfr <- predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Zfr", plot = TRUE)  
+domains.Zfr <- predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Zfr", plot = TRUE, progress_bar = FALSE)  
 ```  
   
+If you want to predict domains for all new transcripts and do not mind waiting for some time depending on the connection speed and the PFAM server load, run the following:
+```{r predDomain1, eval=FALSE}  
+domains.out <- predictDomains(custom_new_CDS.gtf, Mmusculus, progress_bar = FALSE)  
+```  
+  
+
 ## Processing *factR* output  
 Here we describe several ways to summarize information-rich outputs of `predictNMD` and `predictDomains` functions.   
   
@@ -333,7 +330,7 @@ Gain and loss of domains can alter protein function in a profound manner. To ide
 (Note: code below will predict domains on all proteins and will require a substantial amount of time to complete)
 <!-- Code below not evaluated as it takes substantial amount of time to complete -->
 ```{r preddomref, eval=FALSE}  
-domains.known <- predictDomains(ref.gtf, Mmusculus)  
+domains.known <- predictDomains(ref.gtf, Mmusculus, progress_bar = FALSE)  
 ```  
   
 Next, we combine the domains.out and domains.known data frames distinguishing between new and known proteins:  
