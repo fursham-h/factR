@@ -41,7 +41,7 @@
 
 <meta property="og:title" content="Reference-guided construction of CDS on GTF object — buildCDS" />
 <meta property="og:description" content="`buildCDS()` is designed to construct CDS information on transcripts from
-input GTF object." />
+query GTF object." />
 
 
 
@@ -73,7 +73,7 @@ input GTF object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
       </span>
     </div>
 
@@ -117,7 +117,7 @@ input GTF object." />
 
     <div class="ref-description">
     <p>`buildCDS()` is designed to construct CDS information on transcripts from
-input GTF object.</p>
+query GTF object.</p>
     </div>
 
     <pre class="usage"><span class='fu'>buildCDS</span><span class='op'>(</span><span class='va'>query</span>, <span class='va'>ref</span>, <span class='va'>fasta</span><span class='op'>)</span></pre>
@@ -145,10 +145,11 @@ input GTF object.</p>
 information</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The `buildCDS()`function will first assemble a database of annotated ATG
-codons from `ref` GTF object. Then for each transcripts in `query`, the
-upstream-most annotated ATG will serve as the transcript's translation start
- site and `buildCDS()` will search for an in-frame termination codon.</p>
+    <p>The `buildCDS()`function will first search for known reference mRNAs in
+`query` and annotate its CDS information. For the remaining transcripts, 
+`buildCDS()` will search for a putative translation start site using a 
+database of annotated ATG codons from `ref`. Transcripts containing an 
+open-reading frame will be assigned the newly-determined CDS information.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Fursham Hamid</p>

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
     <p>Predict protein domain families from coding transcripts</p>
     </div>
 
-    <pre class="usage"><span class='fu'>predictDomains</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>fasta</span>, <span class='va'>...</span>, plot <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>predictDomains</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>fasta</span>, <span class='va'>...</span>, plot <span class='op'>=</span> <span class='cn'>FALSE</span>, progress_bar <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -142,6 +142,11 @@ provided delimited by comma. Example: transcript_id == "transcript1"</p></td>
       <th>plot</th>
       <td><p>Argument whether to plot out protein domains (Default: FALSE).
 Note: only first 20 proteins will be plotted</p></td>
+    </tr>
+    <tr>
+      <th>progress_bar</th>
+      <td><p>Argument whether to show progress bar (Default: FALSE). Useful to track
+progress of predicting a long list of proteins.</p></td>
     </tr>
     </table>
 
@@ -215,8 +220,7 @@ Note: only first 20 proteins will be plotted</p></td>
 #&gt; </span><span style='color: #555555;'>11</span><span> transcript4 Canonical RBD 1.39e-05   291   380
 #&gt; </span><span style='color: #555555;'>12</span><span> transcript4 Canonical RBD 1.28e-06   137   241
 #&gt; </span><span style='color: #555555;'>13</span><span> transcript4 Canonical RBD 8.52e-05    39    95
-#&gt; </span><span style='color: #555555;'>14</span><span> transcript4 Canonical RBD 8.32e-06   403   487</div><div class='input'>
-</div></span></pre>
+#&gt; </span><span style='color: #555555;'>14</span><span> transcript4 Canonical RBD 8.32e-06   403   487</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
