@@ -4,7 +4,7 @@
 \alias{predictNMD}
 \title{Predict NMD sensitivity on mRNA transcripts}
 \usage{
-predictNMD(x, ..., cds = NULL, NMD_threshold = 50)
+predictNMD(x, ..., cds = NULL, NMD_threshold = 50, progress_bar = TRUE)
 }
 \arguments{
 \item{x}{Can be a GRanges object containing exon and CDS transcript features in GTF
@@ -28,6 +28,9 @@ for the transcript in `x`.}
 
 \item{NMD_threshold}{Minimum distance of stop_codon to last exon junction (EJ) which triggers NMD.
 Default = 50bp}
+
+\item{progress_bar}{Whether to display progress 
+Default = TRUE}
 }
 \value{
 Dataframe with prediction of NMD sensitivity and NMD features:

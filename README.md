@@ -41,6 +41,8 @@ devtools::install_github("fursham-h/factR")
 ## Getting started
 See our [vignette](https://fursham-h.github.io/factR/articles/factR.html) for full instructions on how to get started
 
+## Reporting bugs and issues
+If you encounter a bug with *factR*, please file an issue on [GitHub](https://github.com/fursham-h/factR/issues).
 
 ## Acknowledgements
 We thank [Kaur Alasoo](https://github.com/kauralasoo) for sharing code resources for *wiggleplotr* and for valuable discussions on the design of the package.

@@ -4,7 +4,7 @@
 \alias{predictDomains}
 \title{Predict protein domain families from coding transcripts}
 \usage{
-predictDomains(x, fasta, ..., plot = FALSE)
+predictDomains(x, fasta, ..., plot = FALSE, progress_bar = FALSE)
 }
 \arguments{
 \item{x}{Can be a GRanges object containing 'CDS' features in GTF format
@@ -19,6 +19,9 @@ provided delimited by comma. Example: transcript_id == "transcript1"}
 
 \item{plot}{Argument whether to plot out protein domains (Default: FALSE).
 Note: only first 20 proteins will be plotted}
+
+\item{progress_bar}{Argument whether to show progress bar (Default: FALSE). Useful to track
+progress of predicting a long list of proteins.}
 }
 \value{
 Dataframe containing protein features for each cds entry
@@ -41,7 +44,6 @@ predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1")
 
 # predict domains of CDSs from Ptbp1 gene and plot architecture out
 predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE)
-
 }
 \author{
 Fursham Hamid

@@ -100,10 +100,10 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
     }
 
     # main plot function
-    plot <- wiggleplotr::plotTranscripts(
+    plot <- suppressWarnings(wiggleplotr::plotTranscripts(
         exons = exons,
         cdss = cdss[names(cdss) %in% names(exons)],
         rescale_introns = rescale_introns
-    )
+    ))
     plot
 }
