@@ -1,8 +1,8 @@
 # **factR**: Functional Annotation of Custom Transcriptomes in R
 
 <!-- badges: start -->
-  [![R build status](https://github.com/fursham-h/factR/workflows/R-CMD-check/badge.svg$branch=master)](https://github.com/fursham-h/factR/actions)
-  [![Codecov test coverage](https://github.com/fursham-h/factR/workflows/test-coverage/badge.svg$branch=dev)](https://github.com/fursham-h/factR/actions)
+  [![R build status](https://github.com/fursham-h/factR/workflows/R-CMD-check/badge.svg)](https://github.com/fursham-h/factR/actions)
+  [![Codecov test coverage](https://github.com/fursham-h/factR/workflows/test-coverage/badge.svg)](https://github.com/fursham-h/factR/actions)
 <!-- badges: end -->
   
 ## General workflow
