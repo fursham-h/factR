@@ -1,102 +1,88 @@
 identifyNMDexons <- function(x, fasta, NMD.result = NULL) {
   
-  # checks etc, will add later
-  ## check for x format, check for CDS
-  ## check for NMD.result, if yes check if all tx have NMD annotation
-  if(is.null(NMD.result)) {
-    NMD.result <- suppressMessages(predictNMD(x, progress_bar = FALSE))
-  }
+  # catch missing args
+  .catchargs(c("x", "fasta"), names(as.list(match.call())[-1]))
   
+  # retrieve input object names
+  argnames <- as.character(match.call())[-1]
+  
+  # check input objects
+  NMD.result <- .identifynmdchecks(x, fasta, NMD.result, argnames) 
+
   # get reference CDS transcript for each gene
   ref <- .getbestref(x, NMD.result)
+  
+  # run core function and return GRanges of predicted NMD exons
+  return(.runidentifynmdexons(x, ref, fasta, NMD.result))
 
-  # get AS segments between NMD transcript and reference transcript
-  ## shortlist NMD transcripts from GTF
-  x.NMD <- x[x$transcript_id %in% NMD.result[NMD.result$is_NMD,]$transcript]
-  
-  ## get AS segments and annotate its splicing nature
-  AS.exons <- labelSplicedSegment(c(x.NMD, ref))
-  AS.exons$splice <- ifelse(AS.exons$transcript_id %in% ref$transcript_id,
-                            "skipped", "spliced")
-  
-  # simplify df by removing redundant exons
-  ## in cases where ref and NMD tx contain said exon, the skipped form will be retained
-  AS.exons <- AS.exons %>%
-    as.data.frame() %>% 
-    dplyr::mutate(coord = paste0(seqnames, ":", start, "-", 
-                                 end, "_", strand, "_", AStype)) %>% 
-    dplyr::arrange(splice) %>%
-    dplyr::select(gene_id, transcript_id, coord, splice) %>% 
-    dplyr::distinct(coord, .keep_all = TRUE)
-    
-  # recreate hypothetical tx by inserting/removing AS segments
-  ## create grl of ref trancripts
-  ref.grl <- S4Vectors::split(ref[ref$type == "exon"], ~gene_id)
-  mod.tx <- tibble::tibble(
-    "seqnames" = as.character(),
-    "start" = as.integer(),
-    "end" = as.integer(),
-    "strand" = as.character(),
-    "coord" = as.character()
-  )
-  
-  ## Add exons to ref transcripts
-  if("spliced" %in% AS.exons$splice) {
-    toadd <- dplyr::filter(AS.exons, splice == "spliced")
-    addedtx <- ref.grl[toadd$gene_id]
-    names(addedtx) <- toadd$coord
-    exons.toadd <- toadd["coord"] %>%
-      tidyr::separate(coord, c("seqnames", "start", "end", "strand", "AStype"),
-                      sep = ":|-|_") %>%
-      GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
-    addedtx <- addExonstoTx(addedtx, exons.toadd) %>% 
-      as.data.frame() %>% 
-      dplyr::select(seqnames, start, end, strand, coord = group_name)
-    mod.tx <- dplyr::bind_rows(mod.tx, addedtx)
-  }
-  
-  
-  ## Remove exons from ref transcripts
-  if("skipped" %in% AS.exons$splice) {
-    toremove <- dplyr::filter(AS.exons, splice == "skipped")
-    removedtx <- ref.grl[toremove$gene_id]
-    names(removedtx) <- toremove$coord
-    exons.toremove <- toremove["coord"] %>%
-      tidyr::separate(coord, c("seqnames", "start", "end", "strand", "AStype"),
-                      sep = ":|-|_") %>%
-      GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
-    removedtx <- removeExonsfromTx(removedtx, exons.toremove) %>% 
-      as.data.frame() %>% 
-      dplyr::select(seqnames, start, end, strand, coord = group_name)
-    mod.tx <- dplyr::bind_rows(mod.tx, removedtx)
-  }
-  
-  
-  # cleanup mod.tx by adding gene_id info and create GRanges
-  mod.tx <- mod.tx %>% 
-    dplyr::left_join(AS.exons %>% dplyr::select(coord, gene_id), by = "coord") %>% 
-    dplyr::mutate(transcript_id = coord, type = "exon") %>% 
-    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
-
-  # test NMD again
-  mod.tx <- suppressMessages(buildCDS(mod.tx, ref, fasta))
-  mod.NMD <- suppressMessages(predictNMD(mod.tx, progress_bar = FALSE))
-  
-  # Report NMD exons
-  AS.exons <- AS.exons %>% 
-    dplyr::left_join(mod.NMD %>% dplyr::select(transcript, is_NMD), 
-              by = c("coord"="transcript")) %>% 
-    dplyr::mutate(NMDtype = ifelse(splice == "skipped", "ORF-maintain", "Poison")) %>% 
-    dplyr::select(coord, NMDtype, is_NMD) %>% 
-    tidyr::separate(coord, c("seqnames", "start", "end", "strand", "AStype"),
-                    sep = ":|-|_") %>% 
-    dplyr::filter(is_NMD) %>% 
-    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
-  
-  return(AS.exons)
 }
 
+
+
+
+
+.catchargs <- function(mandargs, passed) {
+  if (any(!mandargs %in% passed)) {
+    rlang::abort(paste(
+      "missing values for",
+      paste(setdiff(mandargs, passed), collapse = ", ")
+    ))
+  }
+}
+
+
+
+
+.identifynmdchecks <- function(x, fasta, NMD, argnames) {
+  
+  # check inputs are gtf
+  if (!is_gtf(x)) {
+    rlang::abort(sprintf(
+      "`%s` is not gtf GRanges",
+      argnames[1]
+    ))
+  }
+  
+  # check if ref have CDS info
+  if (!"CDS" %in% S4Vectors::mcols(x)$type) {
+    rlang::abort(sprintf(
+      "`%s` have missing CDS info", argnames[1]
+    ))
+  }
+  
+  # catch unmatched seqlevels
+  if (suppressWarnings(!has_consistentSeqlevels(x, fasta))) {
+    rlang::abort(sprintf(
+      "`%s` and `%s` has unmatched seqlevel styles. 
+Try running: %s <- matchChromosomes(%s, %s)",
+      argnames[1], argnames[2], argnames[1], argnames[1], argnames[2]
+    ))
+  }
+  
+  # check for correct formatting of NMD df and create new one if not
+  if(!is.null(NMD)) {
+    # check format of NMD df
+    if(all(c("transcript", "is_NMD") %in% names(NMD))) {
+      if(all(x[x$type=="CDS"]$transcript_id %in% NMD$transcript)){
+        return(NMD)
+      } else {
+        rlang::inform(sprintf("Some mRNAs in `%s` are not in `%s`, re-running predictNMD()",
+                              argnames[1], argnames[3]))
+      }
+    } else {
+      rlang::inform("`NMD.result` is of wrong format, running predictNMD()")
+    }
+  } else{
+    rlang::inform("`NMD.result` not provided, running predictNMD()")
+  }
+  return(suppressMessages(predictNMD(x, progress_bar = FALSE)))
+}
+
+
+
+
 .getbestref <- function(x, NMD.result) {
+  rlang::inform("Selecting best reference mRNAs")
   # get reference CDS transcript for each gene
   ## get sizes of all CDSs
   cds.sizes <- sum(BiocGenerics::width(S4Vectors::split(x[x$type == "CDS"], 
@@ -117,6 +103,111 @@ identifyNMDexons <- function(x, fasta, NMD.result = NULL) {
   return(x[x$transcript_id %in% cds.reference$transcript_id])
 }
 
+.runidentifynmdexons <- function(x, ref, fasta, NMD.result) {
+  
+  rlang::inform("Finding NMD causing exons")
+  
+  # get AS segments between NMD transcript and reference transcript
+  ## shortlist NMD transcripts from GTF
+  x.NMD <- x[x$transcript_id %in% NMD.result[NMD.result$is_NMD,]$transcript]
+  
+  # shortlist NMD transcripts from genes containing reference mRNAs
+  x.NMD <- x.NMD[x.NMD$gene_id %in% ref$gene_id]
+  
+  ## get AS segments and annotate its splicing nature
+  AS.exons <- labelSplicedSegment(c(x.NMD, ref))
+  AS.exons$splice <- ifelse(AS.exons$transcript_id %in% ref$transcript_id,
+                            "skipped", "spliced")
+  
+  # return if no AS exons were found
+  if(length(AS.exons) == 0) {
+    rlang::warn("No alternatively spliced exons found")
+    return(NULL)
+  }
+  
+  # simplify df by removing redundant exons
+  ## in cases where ref and NMD tx contain said exon, the skipped form will be retained
+  AS.exons <- AS.exons %>%
+    as.data.frame() %>% 
+    dplyr::mutate(coord = paste0(seqnames, "_", start, "_", 
+                                 end, "_", strand, "_", AStype)) %>% 
+    dplyr::arrange(splice) %>%
+    dplyr::select(gene_id, transcript_id, coord, splice) %>% 
+    dplyr::distinct(coord, .keep_all = TRUE)
+  
+  # recreate hypothetical tx by inserting/removing AS segments 
+  ## create grl of ref trancripts
+  ref.grl <- S4Vectors::split(ref[ref$type == "exon"], ~gene_id)
+  mod.tx <- tibble::tibble(
+    "seqnames" = as.character(),
+    "start" = as.integer(),
+    "end" = as.integer(),
+    "strand" = as.character(),
+    "coord" = as.character()
+  )
+  
+  ## Add exons to ref transcripts
+  if("spliced" %in% AS.exons$splice) {
+    toadd <- dplyr::filter(AS.exons, splice == "spliced")
+    addedtx <- ref.grl[toadd$gene_id]
+    names(addedtx) <- toadd$coord
+    exons.toadd <- toadd["coord"] %>%
+      tidyr::separate(coord, c("seqnames", "start", "end", "strand", "AStype"),
+                      sep = "_") %>%
+      GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+    addedtx <- addExonstoTx(addedtx, exons.toadd) %>% 
+      as.data.frame() %>% 
+      dplyr::select(seqnames, start, end, strand, coord = group_name)
+    mod.tx <- dplyr::bind_rows(mod.tx, addedtx)
+  }
+  
+  
+  ## Remove exons from ref transcripts
+  if("skipped" %in% AS.exons$splice) {
+    toremove <- dplyr::filter(AS.exons, splice == "skipped")
+    removedtx <- ref.grl[toremove$gene_id]
+    names(removedtx) <- toremove$coord
+    exons.toremove <- toremove["coord"] %>%
+      tidyr::separate(coord, c("seqnames", "start", "end", "strand", "AStype"),
+                      sep = "_") %>%
+      GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+    removedtx <- removeExonsfromTx(removedtx, exons.toremove) %>% 
+      as.data.frame() %>% 
+      dplyr::select(seqnames, start, end, strand, coord = group_name)
+    mod.tx <- dplyr::bind_rows(mod.tx, removedtx)
+  }
+  
+  
+  # cleanup mod.tx by adding gene_id info and create GRanges
+  mod.tx <- mod.tx %>% 
+    dplyr::left_join(AS.exons %>% dplyr::select(coord, gene_id), by = "coord") %>% 
+    dplyr::mutate(transcript_id = coord, type = "exon") %>% 
+    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+  
+  # test NMD again
+  mod.tx <- suppressMessages(buildCDS(mod.tx, ref, fasta))
+  mod.NMD <- suppressMessages(predictNMD(mod.tx, progress_bar = FALSE))
+  
+  # return if none of the reconstructed transcripts are NMD sensitive
+  if(sum(mod.NMD$is_NMD) == 0) {
+    rlang::warn("None of the alternative exons are NMD-causing")
+    return(NULL)
+  }
+  
+  # Report NMD exons
+  AS.exons <- AS.exons %>% 
+    dplyr::left_join(mod.NMD %>% dplyr::select(transcript, is_NMD), 
+                     by = c("coord"="transcript")) %>% 
+    dplyr::mutate(NMDtype = ifelse(splice == "skipped", "ORF-maintain", "Poison")) %>% 
+    dplyr::select(coord, gene_id, NMDtype, is_NMD) %>% 
+    tidyr::separate(coord, c("seqnames", "start", "end", "strand", "AStype"),
+                    sep = "_") %>% 
+    dplyr::filter(is_NMD) %>% 
+    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+  AS.exons$is_NMD <- NULL
+  
+  return(AS.exons)
+}
 
 
 addExonstoTx <- function(x, y, drop.unmodified = FALSE, 
@@ -125,6 +216,9 @@ addExonstoTx <- function(x, y, drop.unmodified = FALSE,
   if (length(x) != length(y)){
     rlang::abort("x and y are not of the same length")
   }
+  
+  # drop all metadata first
+  mcols(x, level = "within") <- NULL
   
   # retain pairs with same chr and strand
   chr.x <- as.character(S4Vectors::runValue(GenomeInfoDb::seqnames(x)))
@@ -172,6 +266,9 @@ removeExonsfromTx <- function(x, y, drop.unmodified = FALSE,
   # checks for length and overlaps. returns nonoverlaps granges
   nonoverlaps.x <- .checklengthandoverlap(x, y , drop.unmodified, 
                                           ignore.strand)
+  
+  # drop all metadata first
+  mcols(x, level = "within") <- NULL
 
   # merge x and y and prepare for intron removals
   x.y <- .mergexyandcorrectIR(x, y)
