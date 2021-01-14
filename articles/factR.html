@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
       </span>
     </div>
 
@@ -146,7 +146,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
                      <span class="st">"Custom%20transcriptome/"</span>, <span class="va">selected.data</span>, <span class="st">"_merged.gtf.gz"</span><span class="op">)</span>,   
               <span class="st">"input.gtf.gz"</span><span class="op">)</span>  
 <span class="va">custom.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importGTF.html">importGTF</a></span><span class="op">(</span><span class="st">"input.gtf.gz"</span><span class="op">)</span>  </code></pre></div>
-<p>This should import sc_merged.gtf.gz, and we will use this input in the walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply change “sc” to “bulk” or “lr” in the selected.data variable. Users may import your own GTF file by specifying the path to such file in the <code>importGTF</code> function.</p>
+<p>This should import sc_merged.gtf.gz, and we will use this input in the walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply change “sc” to “bulk” or “lr” in the selected.data variable. Users may import their own GTF file by specifying the path to such file in the <code>importGTF</code> function.</p>
 <p>The imported GTF file is stored as a <em>GenomicRanges</em> object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">)</span>  
@@ -207,13 +207,13 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <a href="#updating-gene-info" class="anchor"></a>Updating gene info</h2>
 <p><em>factR</em> can update gene metadata in custom transcriptome objects using a reference annotation as guide. Below, we describe two alternative ways to obtain mouse reference transcriptome data from GENCODE.</p>
 <ol style="list-style-type: decimal">
-<li>Using <em>AnnotationHub</em> package</li>
+<li>Using <em>AnnotationHub</em> package (ref.gtf generated from this method will be used for the remaining of the workflow)</li>
 </ol>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># query database for mouse gencode basic annotation  </span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span>  
 <span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>  
-<span class="co">#&gt; using temporary cache /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpzX4tjF/BiocFileCache</span>
+<span class="co">#&gt; using temporary cache /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpywUpIS/BiocFileCache</span>
 <span class="co">#&gt; snapshotDate(): 2020-10-27</span>
 <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Mus musculus'</span>, <span class="st">'gencode'</span>, <span class="st">'gff'</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; AnnotationHub with 9 records</span>
@@ -304,8 +304,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <a href="#constructing-cds-information" class="anchor"></a>Constructing CDS information</h2>
 <p>Functional annotation of newly assembled transcripts in <em>factR</em> begins by deducing their protein-coding sequences (CDSs). To search for putative CDSs, <em>factR</em> requires a genome sequence file, which can be obtained using R packages or downloaded from online databases (e.g. UCSC, GENCODE or Ensembl). Three alternative ways to retrieve mouse genomic sequence are described below.</p>
 <ol style="list-style-type: decimal">
-<li>Using <em>BSgenome</em><br>
-This package supports most sequenced genomes. Mouse mm10 sequence can be downloaded as follows:<br><!-- Installation code below is for demonstration and not evaluated -->
+<li>Using <em>BSgenome</em> (Mmusculus generated from this method will be used for the remaining of the workflow) This package supports most sequenced genomes. Mouse mm10 sequence can be downloaded as follows:<br><!-- Installation code below is for demonstration and not evaluated -->
 </li>
 </ol>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -415,14 +414,9 @@ This package supports most sequenced genomes. Mouse mm10 sequence can be downloa
 <div id="predicting-protein-domains" class="section level2">
 <h2 class="hasAnchor">
 <a href="#predicting-protein-domains" class="anchor"></a>Predicting protein domains</h2>
-<p><em>factR</em> can also inspect domain structure of protein products encoded by newly identified mRNA isoforms using its <code>predictDomains</code> tool:<br>
-(Note: code below will predict domains on all proteins and will require a substantial amount of time to complete) <!-- Code below not evaluated as it takes substantial amount of time to complete --></p>
+<p><em>factR</em> can also inspect domain structure of protein products encoded by newly identified mRNA isoforms using its <code><a href="../reference/predictDomains.html">predictDomains()</a></code> function. This requires connection to the online PFAM database and may require a substantial amount of time and stable internet connection to query multiple transcripts simultaneously. To quickly explore functionality of the <code><a href="../reference/predictDomains.html">predictDomains()</a></code> tool, users may prefer to begin with a relatively small subset of transcripts. For example, the following will predict domain structure for all transcripts of the Zfr gene:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span><span class="op">)</span>  </code></pre></div>
-<p>The above code returns a data frame containing the name, expected value and position of predicted protein domain families within each transcript.</p>
-<p>Since predictDomains() connects to the online PFAM database, it may require a substantial amount of time and stable internet connection to query multiple transcripts simultaneously. To quickly explore this functionality, users may prefer to begin with a relatively small subset of transcripts. For example, to predict the domain structure for all transcripts of the <em>Zfr</em> gene, run:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span><span class="op">)</span>  
+<code class="sourceCode R"><span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  
 <span class="co">#&gt; Checking CDSs and translating protein sequences</span>
 <span class="co">#&gt; Predicting domain families for 7 proteins</span>
 <span class="co">#&gt; # A tibble: 6 x 5</span>
@@ -435,11 +429,14 @@ This package supports most sequenced genomes. Mouse mm10 sequence can be downloa
 <span class="co">#&gt; 5 MSTRG.14649.9 HkH motif-containing C2H2 finger 0.044   289   350</span>
 <span class="co">#&gt; 6 MSTRG.14649.9 HkH motif-containing C2H2 finger 0.065   357   400</span></code></pre></div>
 <p>The domain architectures for the set of query proteins can be additionally plotted by switching the argument “plot” to TRUE:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.Zfr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">domains.Zfr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span>, plot <span class="op">=</span> <span class="cn">TRUE</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  
 <span class="co">#&gt; Checking CDSs and translating protein sequences</span>
 <span class="co">#&gt; Predicting domain families for 7 proteins</span></code></pre></div>
 <p><img src="factR_files/figure-html/predDomain3-1.png" width="700"></p>
+<p>If you want to predict domains for all new transcripts and do not mind waiting for some time depending on the connection speed and the PFAM server load, run the following:</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">domains.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </code></pre></div>
 </div>
 <div id="processing-factr-output" class="section level2">
 <h2 class="hasAnchor">
@@ -505,7 +502,7 @@ This package supports most sequenced genomes. Mouse mm10 sequence can be downloa
 <p>Gain and loss of domains can alter protein function in a profound manner. To identify domains frequently added in newly predicted protein products, we first predict protein domains of known reference proteins:<br>
 (Note: code below will predict domains on all proteins and will require a substantial amount of time to complete) <!-- Code below not evaluated as it takes substantial amount of time to complete --></p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.known</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">ref.gtf</span>, <span class="va">Mmusculus</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span class="va">domains.known</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">ref.gtf</span>, <span class="va">Mmusculus</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </code></pre></div>
 <p>Next, we combine the domains.out and domains.known data frames distinguishing between new and known proteins:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">domains.combine</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span><span class="op">(</span><span class="va">domains.known</span>, <span class="va">domains.out</span><span class="op">)</span> <span class="op">%&gt;%</span>  
@@ -680,7 +677,7 @@ This package supports most sequenced genomes. Mouse mm10 sequence can be downloa
 <span class="co">#&gt; [19] XVector_0.30.0                     IRanges_2.24.1                    </span>
 <span class="co">#&gt; [21] S4Vectors_0.28.1                   AnnotationHub_2.22.0              </span>
 <span class="co">#&gt; [23] BiocFileCache_1.14.0               dbplyr_2.0.0                      </span>
-<span class="co">#&gt; [25] BiocGenerics_0.36.0                factR_0.99.1                      </span>
+<span class="co">#&gt; [25] BiocGenerics_0.36.0                factR_0.99.2                      </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
 <span class="co">#&gt;   [1] colorspace_2.0-0              ellipsis_0.3.1               </span>
