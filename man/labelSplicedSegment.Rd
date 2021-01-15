@@ -4,7 +4,12 @@
 \alias{labelSplicedSegment}
 \title{Label alternative-spliced segments from a GTF annotation}
 \usage{
-labelSplicedSegment(x, as.data.frame = FALSE, append = FALSE)
+labelSplicedSegment(
+  x,
+  as.data.frame = FALSE,
+  append = FALSE,
+  group.by = "gene_id"
+)
 }
 \arguments{
 \item{x}{GRanges object containing transcript features in GTF format}

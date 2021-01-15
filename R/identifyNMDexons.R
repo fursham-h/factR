@@ -31,7 +31,8 @@
 #'
 #' @return
 #' GRanges object containing coordinates of identified NMD-causing exons, 
-#' including metadata on the type of alternative splicing and the gene origin.
+#' including metadata on its gene of origin, type of AS exon, type of NMD exon
+#' and whether it is spliced within CDS
 #' 
 #' @export
 #'
@@ -274,8 +275,14 @@ Try running: %s <- matchChromosomes(%s, %s)",
     tidyr::separate(coord, c("seqnames", "start", "end", "strand", "AStype"),
                     sep = "_") %>% 
     dplyr::filter(is_NMD) %>% 
+    dplyr::select(seqnames:strand, gene_id, AStype, NMDtype) %>% 
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
   AS.exons$is_NMD <- NULL
+  
+  # Annotate location of NMD exons relative to reference CDS
+  ## Useful to know if exons are 3'UTR introns etc
+  ref.cds.grl <- S4Vectors::split(ref[ref$type == "CDS"], ~gene_id)
+  AS.exons$within.CDS <- IRanges::overlapsAny(AS.exons, range(ref.cds.grl))
   
   return(AS.exons)
 }
