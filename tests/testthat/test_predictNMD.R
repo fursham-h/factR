@@ -1,12 +1,12 @@
 context("Test predictNMD functions")
 
 test_that("Test .testNMD", {
-  out <- .testNMD(query_exons[1], query_cds[1], 50)
+  out <- .testNMD(query_exons[1], query_cds[1], 50, FALSE)
   expect_equal(out$is_NMD, FALSE)
   expect_equal(out$stop_to_lastEJ, -130)
   expect_equal(out$`3'UTR_length`, 1158)
 
-  out <- .testNMD(query_exons[3], query_cds[3], 50)
+  out <- .testNMD(query_exons[3], query_cds[3], 50, FALSE)
   expect_equal(out$is_NMD, TRUE)
   expect_equal(out$stop_to_lastEJ, 364)
   expect_equal(out$`3'UTR_length`, 644)
