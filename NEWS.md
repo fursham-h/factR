@@ -1,3 +1,9 @@
+# factR (development)
+
+## New features (from findNMD branch, not merged)
+
+* `labelSpliceSegments()`, `compareSpliceSegments()`, `identifyNMDexons()`
+
 # factR 0.99.2
 
 * `predictNMD()` now contain progress_bar switch to disable progress_bar
