@@ -1,3 +1,74 @@
+#' Find NMD-causing exons from GTF objects
+#' 
+#' @description 
+#' This function will identify alternative exons that triggers NMD when 
+#' spliced or skipped.
+#' 
+#' @details 
+#' Alternative splicing of regulated exons may introduce premature termination 
+#' codon which are cleared by nonsense-mediated decay. There are two major class 
+#' of such exons: Poison and ORF-maintaining exons. The former triggers NMD when
+#' spliced in, hence its name, while the latter triggers NMD when removed from a 
+#' transcript.
+#' 
+#' To identify and classify NMD-causing exons, identifyNMDexons first find
+#' alternative segments between NMD-sensitive transcripts and pre-determined 
+#' reference transcript of the same gene. The longest, NMD-insensitive coding 
+#' transcript of each gene is chosen as the best reference. For each alternative segment, 
+#' a modified version of reference RNA is built by inserting exons spliced in NMD transcripts, or
+#' by removing exons skipped from NMD transcripts. These modified transcripts are
+#' then tested for NMD features and if positive, the alternative exon will be
+#' annotated as NMD-causing.
+#' 
+#' @param x 
+#' GRanges object containing query GTF data with CDS information.
+#' @param fasta 
+#' BSgenome or Biostrings object containing genomic sequence
+#' @param NMD.result 
+#' Output dataframe from predictNMD() [Optional]. If not provided, or if 
+#' data-frame do not contain necessary variables, identifyNMDexons will run
+#' predictNMD() first.
+#'
+#' @return
+#' GRanges object containing coordinates of identified NMD-causing exons, 
+#' including metadata on the type of alternative splicing and the gene origin.
+#' 
+#' @export
+#'
+#' @examples
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING SAMPLE DATASET
+#' ## ---------------------------------------------------------------------
+#' library(BSgenome.Mmusculus.UCSC.mm10)
+#' 
+#' # build CDS information first
+#' out.gtf <- buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
+#' 
+#' # proceed with identifying NMD exons
+#' NMD.exons_1 <- identifyNMDexons(out.gtf, Mmusculus)
+#' 
+#' # if output of predictNMD() has been generated, this can be provided to
+#' # NMD.result argument
+#' NMD.output <- predictNMD(out.gtf)
+#' NMD.exons_2 <- identifyNMDexons(out.gtf, Mmusculus, NMD.result = NMD.output)
+#' 
+#' identical(NMD.exons_1, NMD.exons_2)
+#' 
+#' 
+#' ## ---------------------------------------------------------------------
+#' ## EXAMPLE USING TRANSCRIPT ANNOTATION
+#' ## ---------------------------------------------------------------------
+#' \donttest{
+#' library(AnnotationHub)
+#'
+#' ## Retrieve GRCm38 trancript annotation
+#' ah <- AnnotationHub()
+#' GRCm38_gtf <- ah[["AH60127"]]
+#'
+#' ## Identify NMD-causing exons in entire transcriptome
+#' NMD.exons.all <- identifyNMDexons(GRCm38_gtf, Mmusculus)
+#' }
+#' 
 identifyNMDexons <- function(x, fasta, NMD.result = NULL) {
   
   # catch missing args
@@ -46,7 +117,7 @@ identifyNMDexons <- function(x, fasta, NMD.result = NULL) {
   # check if ref have CDS info
   if (!"CDS" %in% S4Vectors::mcols(x)$type) {
     rlang::abort(sprintf(
-      "`%s` have missing CDS info", argnames[1]
+      "`%s` have missing CDS info. Run buildCDS() to construct CDSs", argnames[1]
     ))
   }
   
@@ -209,149 +280,3 @@ Try running: %s <- matchChromosomes(%s, %s)",
   return(AS.exons)
 }
 
-
-addExonstoTx <- function(x, y, drop.unmodified = FALSE, 
-                         allow.external.exons = FALSE) {
-  # check for length of x and y
-  if (length(x) != length(y)){
-    rlang::abort("x and y are not of the same length")
-  }
-  
-  # drop all metadata first
-  mcols(x, level = "within") <- NULL
-  
-  # retain pairs with same chr and strand
-  chr.x <- as.character(S4Vectors::runValue(GenomeInfoDb::seqnames(x)))
-  strand.x <- as.character(S4Vectors::runValue(BiocGenerics::strand(x)))
-  chr.y <- as.character(GenomeInfoDb::seqnames(y))
-  strand.y <- as.character(BiocGenerics::strand(y))
-  
-  samechr.strand <-  chr.x == chr.y & strand.x == strand.y
-  if(sum(samechr.strand) == 0) {
-    rlang::abort("All x-y pairs are on different chromosome and/or strand")
-  } else if(sum(samechr.strand) < length(x) & drop.unmodified) {
-    rlang::warn(sprintf("%s x-y pairs are on different chromosome and/or strand and 
-  these transcripts were not modified",
-                         length(x)-sum(samechr.strand)))
-  }
-  
-  # check if exons in y are within transcripts in x
-  internal <- as.data.frame(IRanges::pintersect(range(x), y))$hit
-  if(allow.external.exons) {
-    external.addition <- sum(samechr.strand & !internal)
-    if(external.addition > 0) {
-      rlang::warn(sprintf("%s external exons were added", external.addition))
-    }
-  } else {
-    samechr.strand <- samechr.strand & internal
-  }
-  
-  if(drop.unmodified){
-    return(GenomicRanges::reduce(IRanges::punion(x,y))[samechr.strand])
-  } else {
-    modified <- GenomicRanges::reduce(IRanges::punion(x,y))[samechr.strand] %>% 
-      mutateeach(modified = TRUE)
-    unmodified <- x[!samechr.strand] %>% mutateeach(modified = FALSE)
-    
-    return(c(modified, unmodified)[names(x)])
-  }
-  
-}
-
-
-
-removeExonsfromTx <- function(x, y, drop.unmodified = FALSE,
-                              ignore.strand = FALSE) {
-  
-  # checks for length and overlaps. returns nonoverlaps granges
-  nonoverlaps.x <- .checklengthandoverlap(x, y , drop.unmodified, 
-                                          ignore.strand)
-  
-  # drop all metadata first
-  mcols(x, level = "within") <- NULL
-
-  # merge x and y and prepare for intron removals
-  x.y <- .mergexyandcorrectIR(x, y)
-  # x.y$modified <- ifelse(x.y$group_name %in% names(nonoverlaps.x),
-  #                        FALSE, TRUE)
-  
-  # Re-generate x and y GRanges
-  x <- x.y %>%
-    dplyr::select(group, group_name, ends_with("x")) %>%
-    dplyr::rename_with(~ stringr::str_sub(.x,end=-3), ends_with("x")) %>%
-    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
-  
-  y <- x.y %>%
-    dplyr::select(group, ends_with("y")) %>%
-    dplyr::rename_with(~ stringr::str_sub(.x,end=-3), ends_with("y")) %>%
-    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
-  
-  
-  # Core part: Removal of exon segments from transcripts in x
-  diff <- suppressWarnings(
-    GenomicRanges::psetdiff(x,y, ignore.strand = ignore.strand))
-  diff$group_name <- x$group_name
-
-  # prepare output grangeslist
-  diff <- diff %>% as.data.frame() %>% 
-    dplyr::mutate(group_name = x$group_name) %>% 
-    dplyr::filter(width > 0) %>% 
-    GenomicRanges::makeGRangesListFromDataFrame(split.field = "group_name",
-                                                keep.extra.columns=TRUE) %>% 
-    sorteach(exonorder) %>% 
-    GenomicRanges::reduce() %>% 
-    mutateeach(modified = ifelse(group_name %in% names(nonoverlaps.x),
-                                 FALSE, TRUE))
-  
-  # drop non-overlapping pairs if requested, or annotate modified tx
-  if(drop.unmodified) {
-    diff <- filtereach(diff, modified) %>% 
-      mutateeach(modified = NULL)
-  }
-
-  return(diff)
-}
-
-.checklengthandoverlap <- function(x, y, drop, ignore.strand) {
-  # check for length of x and y
-  if (length(x) != length(y)){
-    rlang::abort("x and y are not of the same length")
-  }
-  
-  # determine poverlaps between x and y and report
-  temp.x <- IRanges::pintersect(x, y, ignore.strand = ignore.strand) %>% 
-    filtereach(sum(hit) == 0)
-  
-  if(length(temp.x) == length(x)) {
-    rlang::abort("All x-y pairs do not overlap")
-  } else if(length(temp.x) > 0){
-    if(drop) {
-      rlang::warn(sprintf("%s x-y pairs do not overlap and these transcripts were not modified",
-                          length(temp.x)))
-    } 
-  }
-  return(temp.x)
-}
-
-.mergexyandcorrectIR <- function(x,y) {
-  
-  # combine x and y by its group, also annotate which pair could be an IR
-  temp.y <- as.data.frame(y) %>% 
-    dplyr::mutate(group=dplyr::row_number()) 
-  x.y <- as.data.frame(x) %>% 
-    dplyr::left_join(temp.y, by = "group") %>% 
-    dplyr::mutate(is.internal = ifelse(start.x < start.y & end.x > end.y,
-                                       TRUE, FALSE))
-  
-  # extract all IR events and change the end coord
-  ## this will serve as a duplicate
-  ir2 <- x.y[x.y$is.internal,] %>% 
-    dplyr::mutate(end.y = end.x)
-  
-  # change start coord of IR events and combine with ir2
-  ## also, filter out entries of different chr/strand
-  x.y <- x.y %>% 
-    dplyr::mutate(start.y = ifelse(is.internal, start.x, start.y)) %>% 
-    dplyr::bind_rows(ir2)
-  return(x.y)
-}
