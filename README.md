@@ -23,6 +23,14 @@
   4. Select new transcripts from custom transcriptome
 
 ## How to install
+The latest stable version of *factR* can be downloaded from Bioconductor as such:
+```r
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("factR")
+```
+
+Alternatively, you may retrieve the development version from this repository:
 ```r
 # install.packages("devtools")
 devtools::install_github("fursham-h/factR")
