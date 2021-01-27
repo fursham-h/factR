@@ -45,8 +45,9 @@ To this end, we developed a package for functional annotation of custom-assemble
 ## Installing *factR*  
 To install *factR*, enter the following commands in your R environment:  
 ```{r install.factR, eval = FALSE}  
-install.packages("devtools")  
-devtools::install_github("fursham-h/factR")  
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("factR")
 ```  
   
 ## Materials needed  
