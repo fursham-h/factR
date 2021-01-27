@@ -43,7 +43,7 @@ predictDomains <- function(x, fasta, ..., plot = FALSE, progress_bar = FALSE) {
     mandargs <- c("x", "fasta")
     passed <- names(as.list(match.call())[-1])
     if (any(!mandargs %in% passed)) {
-        stop(paste(
+        rlang::abort(paste(
             "missing values for",
             paste(setdiff(mandargs, passed), collapse = ", ")
         ))
