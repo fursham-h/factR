@@ -156,13 +156,6 @@ Try running: %s <- matchChromosomes(%s, %s)",
         restoutCDS <- NULL
     }
 
-    # # get number of newly-found CDSs
-    # if (!is.null(restoutCDS)) {
-    #   newCDS <- length(unique(restoutCDS$transcript_id))
-    # } else {
-    #   newCDS <- "none"
-    # }
-
     # combine all CDSs and print out stats
     outCDS <- suppressWarnings(dplyr::bind_rows(fulloutCDS, restoutCDS))
     if (nrow(outCDS) > 0) {

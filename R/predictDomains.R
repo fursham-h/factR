@@ -52,17 +52,12 @@ predictDomains <- function(x, fasta, ..., plot = FALSE, progress_bar = FALSE) {
     # get argnames and carry out checks
     argnames <- as.character(match.call())[-1]
     cds <- .extractCDSchecks(x, fasta, argnames, ...)
-    # feature <- .featurechecks(hmmer, signalHsmm)
 
     # define global variables
     . <- id <- NULL
 
     # get sequence
     aaSeq <- .getSequence(cds, fasta)
-
-    # # prepare output and run analysis
-    # output <- aaSeq %>% dplyr::select(id)
-    #
 
     output_table <- .runDomainSearch(aaSeq, plot, progress_bar)
 
@@ -102,58 +97,6 @@ Try running: %s <- matchChromosomes(%s, %s)",
     return(sorteach(cds, exonorder))
 }
 
-.featurechecks <- function(hmmer, signalHsmm) {
-    # check for correct feature column names for return
-    hmmer.header <- c(
-        "name", "acc", "bias", "desc", "evalue", "flags", "hindex", "ndom",
-        "nincluded", "nregions", "nreported", "pvalue", "score", "taxid",
-        "pdb.id", "bitscore", "mlog.evalue"
-    )
-    if ("default" %in% hmmer) { # convert default into list of headers
-        hmmer <- c(
-            "desc", "evalue", "nincluded",
-            hmmer[hmmer != "default"]
-        ) %>% unique()
-    }
-    if (any(!hmmer %in% hmmer.header)) {
-        fields_support <- hmmer %in% hmmer.header
-        rlang::warn(sprintf(
-            "`%s` are not supported hmmer reported fields",
-            hmmer[!fields_support]
-        ))
-        if (sum(fields_support) == 0) {
-            hmmer <- c("desc", "evalue", "nincluded")
-            rlang::warn("returning default hmmer fields")
-        } else {
-            hmmer <- hmmer[fields_support]
-        }
-    }
-    # check for correct field names for return
-    signalHsmm.header <- c(
-        "sp_probability", "sp_start", "sp_end",
-        "struc", "prot", "name", "str_approx"
-    )
-    if ("default" %in% signalHsmm) { # convert default into list of headers
-        signalHsmm <- c(
-            "sp_probability",
-            signalHsmm[signalHsmm != "default"]
-        ) %>% unique()
-    }
-    if (any(!signalHsmm %in% signalHsmm.header)) {
-        fields_support <- signalHsmm %in% signalHsmm.header
-        rlang::warn(sprintf(
-            "`%s` are not supported signalHsmm reported fields",
-            signalHsmm[!fields_support]
-        ))
-        if (sum(fields_support) == 0) {
-            signalHsmm <- "sp_probability"
-            rlang::warn("returning default signalHsmm fields")
-        } else {
-            signalHsmm <- signalHsmm[fields_support]
-        }
-    }
-    return(list(hmmer = hmmer, signalHsmm = signalHsmm))
-}
 
 .getSequence <- function(cds, fasta) {
     x <- y <- instop <- NULL

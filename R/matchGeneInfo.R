@@ -314,20 +314,6 @@ Try running: %s <- matchChromosomes(%s, %s)",
             dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
             dplyr::mutate(gene_name = ref_gene_name) %>%
             dplyr::select(-ref_gene_name)
-
-        # if ("gene_name" %in% names(query)) {
-        #   query <- query %>%
-        #     dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
-        #     dplyr::mutate(gene_name = ifelse(match_level != 5 & is.na(gene_name),
-        #       ref_gene_name, gene_name
-        #     )) %>%
-        #     dplyr::select(-ref_gene_name)
-        # } else {
-        #   query <- query %>%
-        #     dplyr::left_join(ref.genelist.1, by = "gene_id") %>%
-        #     dplyr::mutate(gene_name = ref_gene_name) %>%
-        #     dplyr::select(-ref_gene_name)
-        # }
     }
 
     # report pre-testing analysis and return query
@@ -339,9 +325,6 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
     rlang::inform(sprintf("Total gene_ids corrected: %s", corrected_ids))
     rlang::inform(sprintf("Remaining number of mismatched gene_ids: %s", nonstand_after))
-    if (nonstand_after > 0) {
-        # warnLog("Transcripts with non-standard gene_ids will be skipped from analysis")
-    }
 
     query <- GenomicRanges::makeGRangesFromDataFrame(query, keep.extra.columns = TRUE)
     return(query)

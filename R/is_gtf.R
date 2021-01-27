@@ -3,7 +3,6 @@
 #' @param ... One or more objects to test
 #'
 #' @return Logical values as to whether each object is a GTF GRanges
-#' @export
 #' @author Fursham Hamid
 #'
 #' @examples

@@ -53,8 +53,6 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
             paste(setdiff(mandargs, passed), collapse = ", ")
         ))
     }
-    # define global variable
-    # is_NMD <- NULL
 
     # retrieve input object names
     argnames <- as.character(match.call())[-1]
