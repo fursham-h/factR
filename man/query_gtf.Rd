@@ -19,7 +19,7 @@ A GRanges object with 56 ranges and 3 metadata columns:
 \url{http://www.ensembl.org/}
 }
 \usage{
-query_gtf
+data(query_gtf)
 }
 \description{
 A dataset containing coordinates of transcript and exons from 4 transcripts of

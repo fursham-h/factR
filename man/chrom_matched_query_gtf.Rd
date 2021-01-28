@@ -16,7 +16,7 @@ A GRanges object with 56 ranges and 3 metadata columns:
 }
 }
 \usage{
-chrom_matched_query_gtf
+data(chrom_matched_query_gtf)
 }
 \description{
 query_gtf data which have been corrected for its seqlevels

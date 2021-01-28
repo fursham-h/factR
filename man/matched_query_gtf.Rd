@@ -19,7 +19,7 @@ A GRanges object with 56 ranges and 6 metadata columns:
 }
 }
 \usage{
-matched_query_gtf
+data(matched_query_gtf)
 }
 \description{
 query_gtf data which have been corrected for its seqlevels and gene_ids

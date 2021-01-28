@@ -20,7 +20,7 @@ A GRanges object with 105 ranges and 7 metadata columns:
 }
 }
 \usage{
-new_query_gtf
+data(new_query_gtf)
 }
 \description{
 matched_query_gtf data that has undergone buildCDS function and containing

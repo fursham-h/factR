@@ -21,7 +21,7 @@ A GRangesList object with 2 elements:
 \url{https://www.gencodegenes.org/}
 }
 \usage{
-ref_cds
+data(ref_cds)
 }
 \description{
 A dataset containing coordinates of CDS from 2 reference transcripts of

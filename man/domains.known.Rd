@@ -16,7 +16,7 @@ A data.frame with 85780 rows and 5 columns:
 }
 }
 \usage{
-domains.known
+data(domains.known)
 }
 \description{
 Output dataframe from predictDomains() function. mRNAs from GENCODE

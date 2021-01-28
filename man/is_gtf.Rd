@@ -15,9 +15,6 @@ Logical values as to whether each object is a GTF GRanges
 \description{
 Test for GTF GRanges object
 }
-\examples{
-is_gtf(query_gtf, ref_gtf)
-}
 \author{
 Fursham Hamid
 }

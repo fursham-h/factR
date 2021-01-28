@@ -21,7 +21,7 @@ A GRanges object with 64 ranges and 5 metadata columns:
 \url{https://www.gencodegenes.org/}
 }
 \usage{
-ref_gtf
+data(ref_gtf)
 }
 \description{
 A dataset containing coordinates of transcript and exons from 2 reference

@@ -17,7 +17,7 @@ A GRangesList object with 4 elements:
 }
 }
 \usage{
-query_cds
+data(query_cds)
 }
 \description{
 A dataset containing coordinates of CDS from 4 transcripts of

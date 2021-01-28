@@ -19,7 +19,7 @@ A GRangesList object with 4 elements:
 }
 }
 \usage{
-query_exons
+data(query_exons)
 }
 \description{
 A dataset containing coordinates of exons from 4 transcripts of

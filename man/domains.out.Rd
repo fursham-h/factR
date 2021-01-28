@@ -16,7 +16,7 @@ A data.frame with 14880 rows and 5 columns:
 }
 }
 \usage{
-domains.out
+data(domains.out)
 }
 \description{
 Output dataframe from predictDomains() function.
