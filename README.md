@@ -10,10 +10,12 @@
   <img src="man/figures/factR_workflow.png" width="450"/>
 </p>
 
-*factR* is a robust and easy-to-use R package with tools to process custom-assembled transcriptomes (GTF). Below are *factR*'s key functions:
+*factR* is a robust and easy-to-use R package with tools to process 
+custom-assembled transcriptomes (GTF). Below are *factR*'s key functions:
 
 * Core features 
-  1. Construct transcript coding (CDS) information using a reference-guided process
+  1. Construct transcript coding (CDS) information 
+  using a reference-guided process
   2. Predict protein domains on coding transcripts
   3. Predict sensitivity of coding transcripts to Nonsense-mediated decay
 * Supporting features 
@@ -23,7 +25,8 @@
   4. Select new transcripts from custom transcriptome
 
 ## How to install
-The latest stable version of *factR* can be downloaded from Bioconductor as such:
+The latest stable version of *factR* can be 
+downloaded from Bioconductor as such:
 ```r
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
@@ -47,10 +50,14 @@ devtools::install_github("fursham-h/factR")
 
 
 ## Getting started
-See our [vignette](https://fursham-h.github.io/factR/articles/factR.html) for full instructions on how to get started
+See our [vignette](https://fursham-h.github.io/factR/articles/factR.html) 
+for full instructions on how to get started
 
 ## Reporting bugs and issues
-If you encounter a bug with *factR*, please file an issue on [GitHub](https://github.com/fursham-h/factR/issues).
+If you encounter a bug with *factR*, please file an issue on 
+[GitHub](https://github.com/fursham-h/factR/issues).
 
 ## Acknowledgements
-We thank [Kaur Alasoo](https://github.com/kauralasoo) for sharing code resources for *wiggleplotr* and for valuable discussions on the design of the package.
+We thank [Kaur Alasoo](https://github.com/kauralasoo) for sharing code 
+resources for *wiggleplotr* and for valuable discussions on the design 
+of the package.
