@@ -1,8 +1,8 @@
 #' Imported GTF file containing 4 transcript entries of the same gene
 #'
-#' A dataset containing coordinates of transcript and exons from 4 transcripts of
-#' mouse Ptbp1. Transcript names and gene IDs have been modified to demonstrate
-#' de novo origin of GTF
+#' A dataset containing coordinates of transcript and exons from 4 transcripts 
+#' of mouse Ptbp1. Transcript names and gene IDs have been modified to 
+#' demonstrate de novo origin of GTF
 #'
 #' @format A GRanges object with 56 ranges and 3 metadata columns:
 #' \describe{

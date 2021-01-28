@@ -1,14 +1,17 @@
-#' Test consistency of chromosome naming styles (aka seqlevels; e.g. "chr1" vs "1") across multiple objects
+#' Test consistency of chromosome naming styles 
+#' (aka seqlevels; e.g. "chr1" vs "1") across multiple objects
 #'
 #' @description
-#' This function will determine if all input ranges objects have the same chromosome naming convention.
-#' Input objects can be GenomicRanges, BSgenome or Biostrings object with seqlevel information.
+#' This function will determine if all input ranges objects have the 
+#' same chromosome naming convention. Input objects can be GenomicRanges, 
+#' BSgenome or Biostrings object with seqlevel information.
 #'
 #' @param ... Two or more objects with seqlevels information
 #'
 #' @export
 #' @author Fursham Hamid
-#' @return Logical value as to whether all objects have consistent seqlevel styles
+#' @return Logical value as to whether all objects have consistent 
+#' seqlevel styles
 #'
 #' @importFrom dplyr %>%
 #' @importFrom IRanges %over%
@@ -54,16 +57,20 @@ has_consistentSeqlevels <- function(...) {
             if (identical(dots[[i]], dots[[j]])) {
                 next
             }
-            test <- any(GenomeInfoDb::seqlevelsStyle(dots[[i]]) %in% GenomeInfoDb::seqlevelsStyle(dots[[j]]))
-            testlevels <- sum(!GenomeInfoDb::seqlevels(dots[[i]]) %in% GenomeInfoDb::seqlevels(dots[[j]]))
+            test <- any(GenomeInfoDb::seqlevelsStyle(dots[[i]]) %in% 
+                            GenomeInfoDb::seqlevelsStyle(dots[[j]]))
+            testlevels <- sum(!GenomeInfoDb::seqlevels(dots[[i]]) %in% 
+                                  GenomeInfoDb::seqlevels(dots[[j]]))
             consistent <- c(consistent, test)
             if (!test) {
                 rlang::warn(sprintf(
-                    "Try running: %s <- matchChromosomes(%s, %s)", argnames[i], argnames[i], argnames[j]
+                    "Try running: %s <- matchChromosomes(%s, %s)", 
+                    argnames[i], argnames[i], argnames[j]
                 ))
             } else if (testlevels > 0) {
                 rlang::warn(sprintf(
-                    "%s seqlevel(s) in `%s` are not found in `%s`", testlevels, argnames[i], argnames[j]
+                    "%s seqlevel(s) in `%s` are not found in `%s`", 
+                    testlevels, argnames[i], argnames[j]
                 ))
             }
             break

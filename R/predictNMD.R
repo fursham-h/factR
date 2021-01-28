@@ -4,27 +4,29 @@
 #' Can be a GRanges object containing exon and CDS transcript features in GTF
 #' format.
 #'
-#' Can be a GRangesList object containing exon features for a list of transcripts.
+#' Can be a GRangesList object containing exon features for a list of 
+#' transcripts.If so, `cds` argument have to be provided.
+#'
+#' Can be a GRanges object containing exon features for a transcript. 
 #' If so, `cds` argument have to be provided.
 #'
-#' Can be a GRanges object containing exon features for a transcript. If so, `cds`
-#' argument have to be provided.
-#'
 #' @param ...
-#' Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
-#' Variables are metadata information found in `x` and multiple conditions can be
-#' provided delimited by comma. Example: transcript_id == "transcript1"
+#' Logical conditions to pass to dplyr::filter to subset transcripts for 
+#' analysis. Variables are metadata information found in `x` and multiple 
+#' conditions can be provided delimited by comma. 
+#' Example: transcript_id == "transcript1"
 #'
 #' @param cds
-#' If `x` is a GRangesList object, `cds` has to be a GRangesList containing CDS features
-#' for the list of transcripts in `x`. List names in `x` and `cds` have to match.
+#' If `x` is a GRangesList object, `cds` has to be a GRangesList containing 
+#' CDS features for the list of transcripts in `x`. List names in `x` and 
+#' `cds` have to match.
 #'
-#' If `x` is a GRanges object, `cds` has to be a GRanges containing CDS features
-#' for the transcript in `x`.
+#' If `x` is a GRanges object, `cds` has to be a GRanges containing CDS 
+#' features for the transcript in `x`.
 #'
 #' @param NMD_threshold
-#' Minimum distance of stop_codon to last exon junction (EJ) which triggers NMD.
-#' Default = 50bp
+#' Minimum distance of stop_codon to last exon junction 
+#' (EJ) which triggers NMD. Default = 50bp
 #' 
 #' @param progress_bar
 #' Whether to display progress 
@@ -36,8 +38,8 @@
 #' is_NMD: logical value in prediciting transcript sensitivity to NMD
 #'
 #' stop_to_lastEJ: Integer value of the number of bases between the first
-#' base of the stop_codon to the last base of EJ. A positive value indicates that
-#' the last EJ is downstream of the stop_codon.
+#' base of the stop_codon to the last base of EJ. A positive value indicates 
+#' that the last EJ is downstream of the stop_codon.
 #'
 #' num_of_down_EJs: Number of EJs downstream of the stop_codon.
 #'
@@ -60,7 +62,8 @@
 #'
 #' ### Transcripts for analysis can be subsetted using logical conditions
 #' predictNMD(new_query_gtf, transcript_id == "transcript1")
-#' predictNMD(new_query_gtf, transcript_id %in% c("transcript1", "transcript3"))
+#' predictNMD(new_query_gtf, 
+#' transcript_id %in% c("transcript1", "transcript3"))
 #'
 #'
 #' ## Using exon and CDS GRangesLists as input
@@ -107,11 +110,13 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
 
     # check if exons is a gtf or both exons and cds are GR or GRlist
     if (is_gtf(x)) {
-        exons <- sorteach(S4Vectors::split(x[x$type == "exon"], ~transcript_id), exonorder)
+        exons <- sorteach(S4Vectors::split(x[x$type == "exon"], 
+                                           ~transcript_id), exonorder)
         cds <- S4Vectors::split(x[x$type == "CDS"], ~transcript_id)
     } else if (all(is(x) %in% is(cds))) {
         if (is(x, "GRanges")) {
-            exons <- sorteach(GenomicRanges::GRangesList("transcript" = x), exonorder)
+            exons <- sorteach(GenomicRanges::GRangesList("transcript" = x), 
+                              exonorder)
             cds <- GenomicRanges::GRangesList("transcript" = cds)
         } else if (is(x, "GRangesList")) {
             exons <- sorteach(x, exonorder)
@@ -161,14 +166,20 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
         "is_NMD" = as.logical()
     )
 
-    toStopRange <- suppressMessages(dplyr::bind_cols(as.data.frame(range(x)), as.data.frame(range(y))) %>%
+    toStopRange <- suppressMessages(
+        dplyr::bind_cols(as.data.frame(range(x)), as.data.frame(range(y))) %>%
         dplyr::rowwise() %>%
-        dplyr::mutate(newstart = ifelse(strand...7 == "-", start...11, start...4)) %>%
-        dplyr::mutate(newend = ifelse(strand...7 == "-", end...5, end...12)) %>%
-        dplyr::select(group = group...1, group_name = group_name...2, seqnames = seqnames...3, start = newstart, end = newend, strand = strand...7) %>%
+        dplyr::mutate(newstart = ifelse(strand...7 == "-", 
+                                        start...11, start...4)) %>%
+        dplyr::mutate(newend = ifelse(
+            strand...7 == "-", end...5, end...12)) %>%
+        dplyr::select(group = group...1, group_name = group_name...2, 
+                      seqnames = seqnames...3, start = newstart, 
+                      end = newend, strand = strand...7) %>%
         GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE))
 
-    toStopWidth <- sum(BiocGenerics::width(GenomicRanges::pintersect(x, toStopRange)))
+    toStopWidth <- sum(BiocGenerics::width(
+        GenomicRanges::pintersect(x, toStopRange)))
     EJtoStop <- cumsum(BiocGenerics::width(x)) - toStopWidth
     
     # switch off progress_bar if requested

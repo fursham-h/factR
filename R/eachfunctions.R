@@ -3,9 +3,10 @@
 #' @param x
 #' GRangesList object
 #' @param ...
-#' Comma separated list of unquoted variable names to sort by. Variables are names of metadata columns
-#' found in GRangesList object. Use desc() to sort a variable in descending order.
-#' Input can be `exonorder` to sort each element in exon order
+#' Comma separated list of unquoted variable names to sort by. Variables are 
+#' names of metadata columns found in GRangesList object. Use desc() to sort a
+#' variable in descending order. Input can be `exonorder` to sort each element 
+#' in exon order
 #'
 #'
 #' @return
@@ -32,7 +33,8 @@ sorteach <- function(x, ...) {
     expr <- rlang::quos(...)
     if ("~exonorder" %in% as.character(expr)) {
         index <- which("~exonorder" %in% as.character(expr))
-        expr[[index]] <- rlang::quo(ifelse(strand == "-", dplyr::desc(start), start))
+        expr[[index]] <- rlang::quo(ifelse(strand == "-", 
+                                           dplyr::desc(start), start))
     }
     return(x %>% as.data.frame() %>%
         dplyr::arrange(!!!expr) %>%
@@ -48,8 +50,8 @@ sorteach <- function(x, ...) {
 #' @param x
 #' GRangesList object
 #' @param ...
-#' Logical conditions to filter each element in the GRanges by. Multiple conditions
-#' can be provided as comma-delimited inputs
+#' Logical conditions to filter each element in the GRanges by. 
+#' Multiple conditions can be provided as comma-delimited inputs
 #'
 #' @return
 #' Filtered GRangesList object

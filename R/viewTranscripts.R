@@ -1,19 +1,21 @@
 #' Plot transcripts directly from GTF.
 #'
 #' @description
-#' A wrapper around wiggleplotr's plotTranscripts function. See the documentation for (\code{\link[wiggleplotr]{plotTranscripts}})
+#' A wrapper around wiggleplotr's plotTranscripts function. 
+#' See the documentation for (\code{\link[wiggleplotr]{plotTranscripts}})
 #' for more information.
 #'
 #' @param x
 #' GRanges object containing transcript annotation in GTF format
 #'
 #' @param ...
-#' Logical conditions to pass to dplyr::filter to subset transcripts for plotting.
-#' Variables are metadata information found in `x` and multiple conditions can be
-#' provided delimited by comma. Example: gene_name == "Ptbp1"
+#' Logical conditions to pass to dplyr::filter to subset transcripts for 
+#' plotting. Variables are metadata information found in `x` and multiple 
+#' conditions can be provided delimited by comma. Example: gene_name == "Ptbp1"
 #'
 #' @param rescale_introns
-#' Specifies if the introns should be scaled to fixed length or not. (default: FALSE)
+#' Specifies if the introns should be scaled to fixed length or not. 
+#' (default: FALSE)
 #'
 #' @return ggplot2 object
 #' @export
@@ -70,7 +72,8 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
                 x %>%
                     as.data.frame() %>%
                     dplyr::filter(...) %>%
-                    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+                    GenomicRanges::makeGRangesFromDataFrame(
+                        keep.extra.columns = TRUE)
             },
             error = function(e) {
                 rlang::abort(sprintf(

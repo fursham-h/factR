@@ -171,7 +171,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
         successtx <- length(unique(outCDS$transcript_id))
         message(sprintf(
-            "\nSummary: Out of %s transcripts in `%s`, %s transcript CDSs were built",
+            paste0("\nSummary: Out of %s transcripts in `%s`,",
+                   " %s transcript CDSs were built"),
             totaltx, argnames[1], successtx
         ))
         return(GenomicRanges::makeGRangesFromDataFrame(outCDS,
@@ -179,7 +180,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
         ))
     } else {
         rlang::inform(sprintf(
-            "\nSummary: Out of %s transcripts in `%s`, none transcript CDSs were built",
+            paste0("\nSummary: Out of %s transcripts in `%s`,",
+                   " none transcript CDSs were built"),
             totaltx, argnames[1]
         ))
         return(NULL)
@@ -210,7 +212,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
     
     # report known mRNAs
     if (nrow(q2r) > 0) {
-        rlang::inform(sprintf("%s reference mRNAs found and its CDS were assigned",
+        rlang::inform(sprintf(
+            "%s reference mRNAs found and its CDS were assigned",
                               nrow(q2r)))
     } else {
         rlang::inform("No reference mRNAs found")
@@ -259,8 +262,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
             dplyr::mutate(start = start - 1)
         codons_gr <- codons_gr[startMatch$group]
         codons_gr <- GenomicRanges::resize(codons_gr, 
-                        width = BiocGenerics::width(codons_gr) - startMatch$start, 
-                        fix = "end")
+                    width = BiocGenerics::width(codons_gr) - startMatch$start, 
+                    fix = "end")
         codons_gr <- GenomicRanges::resize(codons_gr, width = 3, fix = "start")
 
         # select up-stream most ATG codon for remaining transcripts
@@ -308,10 +311,11 @@ Try running: %s <- matchChromosomes(%s, %s)",
             dplyr::mutate(newstrand = strand) %>%
             dplyr::mutate(newstrand = ifelse(strand == "-" & newend > end...5, 
                                              "+", newstrand)) %>%
-            dplyr::mutate(newstrand = ifelse(strand != "-" & newstart < start...4, 
-                                             "-", newstrand)) %>%
+            dplyr::mutate(newstrand = ifelse(
+                strand != "-" & newstart < start...4, "-", newstrand)) %>%
             dplyr::select(group, group_name, seqnames = seqnames...3, 
-                          start = newstart, end = newend, strand = newstrand) %>%
+                          start = newstart, end = newend, 
+                          strand = newstrand) %>%
             GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
     )
 
