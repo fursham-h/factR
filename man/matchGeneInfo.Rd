@@ -21,22 +21,28 @@ Example of input to this argument is 'ref_gene_id'}
 Gene_id-matched query GRanges
 }
 \description{
-`matchGeneInfo()` matches and corrects Gene IDs from a query GTF object to a reference
-GTF
+`matchGeneInfo()` matches and corrects Gene IDs from a 
+query GTF object to a reference GTF
 }
 \details{
-The default approach to this correction relies on finding overlaps between transcripts in query with
-transcripts in reference. Using this method alone could result in false positive matches (19 percent false positives).
-To improve this, users have the option to invoke two additional layers of matching.
-(1) Matching by ENSEMBL Gene_IDs. If both query and reference transcript annotations containg Ensembl-style
-Gene IDs, this program will try to match both IDs in a less stringent manner. This correction can be invoked
+The default approach to this correction relies on finding overlaps 
+between transcripts in query with transcripts in reference. Using this 
+method alone could result in false positive matches 
+(19 percent false positives).
+To improve this, users have the option to invoke two additional layers 
+of matching.  
+(1) Matching by ENSEMBL Gene_IDs. If both query and reference transcript 
+annotations containg Ensembl-style Gene IDs, this program will try to 
+match both IDs in a less stringent manner. This correction can be invoked
 by providing the 'primary_gene_id' argument
 
-(2) Matching by secondary Gene_IDs. Depending on the transcript assembly program, GTF/GFF3 annotations
-may contain additional comments on the transcript information. This may include a distinct
-secondary Gene ID annotation that potentially matches with the reference. To invoke this correction,
-provide 'primary_gene_id' and 'secondary_gene_id' arguments. To determine if your transcript assembly contain
-possible secondary Gene IDs, import query GTF file using `importGTF()` and check its metadata
+(2) Matching by secondary Gene_IDs. Depending on the transcript assembly 
+program, GTF/GFF3 annotations may contain additional comments on the
+transcript information. This may include a distinct secondary Gene ID 
+annotation that potentially matches with the reference. To invoke this 
+correction, provide 'primary_gene_id' and 'secondary_gene_id' arguments. 
+To determine if your transcript assembly contain possible secondary 
+Gene IDs, import query GTF file using `importGTF()` and check its metadata
 columns
 }
 \examples{

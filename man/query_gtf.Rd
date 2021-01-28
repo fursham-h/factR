@@ -22,8 +22,8 @@ A GRanges object with 56 ranges and 3 metadata columns:
 data(query_gtf)
 }
 \description{
-A dataset containing coordinates of transcript and exons from 4 transcripts of
-mouse Ptbp1. Transcript names and gene IDs have been modified to demonstrate
-de novo origin of GTF
+A dataset containing coordinates of transcript and exons from 4 transcripts 
+of mouse Ptbp1. Transcript names and gene IDs have been modified to 
+demonstrate de novo origin of GTF
 }
 \keyword{datasets}

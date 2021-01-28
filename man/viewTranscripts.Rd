@@ -9,17 +9,19 @@ viewTranscripts(x, ..., rescale_introns = FALSE)
 \arguments{
 \item{x}{GRanges object containing transcript annotation in GTF format}
 
-\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for plotting.
-Variables are metadata information found in `x` and multiple conditions can be
-provided delimited by comma. Example: gene_name == "Ptbp1"}
+\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for 
+plotting. Variables are metadata information found in `x` and multiple 
+conditions can be provided delimited by comma. Example: gene_name == "Ptbp1"}
 
-\item{rescale_introns}{Specifies if the introns should be scaled to fixed length or not. (default: FALSE)}
+\item{rescale_introns}{Specifies if the introns should be scaled to fixed length or not. 
+(default: FALSE)}
 }
 \value{
 ggplot2 object
 }
 \description{
-A wrapper around wiggleplotr's plotTranscripts function. See the documentation for (\code{\link[wiggleplotr]{plotTranscripts}})
+A wrapper around wiggleplotr's plotTranscripts function. 
+See the documentation for (\code{\link[wiggleplotr]{plotTranscripts}})
 for more information.
 }
 \examples{

@@ -13,9 +13,10 @@ Can be a GRangesList object containing CDS ranges for each transcript}
 
 \item{fasta}{BSgenome or Biostrings object containing genomic sequence}
 
-\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
-Variables are metadata information found in `x` and multiple conditions can be
-provided delimited by comma. Example: transcript_id == "transcript1"}
+\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for 
+analysis. Variables are metadata information found in `x` and multiple 
+conditions can be provided delimited by comma. 
+Example: transcript_id == "transcript1"}
 
 \item{plot}{Argument whether to plot out protein domains (Default: FALSE).
 Note: only first 20 proteins will be plotted}

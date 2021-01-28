@@ -9,8 +9,8 @@ filtereach(x, ...)
 \arguments{
 \item{x}{GRangesList object}
 
-\item{...}{Logical conditions to filter each element in the GRanges by. Multiple conditions
-can be provided as comma-delimited inputs}
+\item{...}{Logical conditions to filter each element in the GRanges by. 
+Multiple conditions can be provided as comma-delimited inputs}
 }
 \value{
 Filtered GRangesList object

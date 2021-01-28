@@ -10,24 +10,26 @@ predictNMD(x, ..., cds = NULL, NMD_threshold = 50, progress_bar = TRUE)
 \item{x}{Can be a GRanges object containing exon and CDS transcript features in GTF
 format.
 
-Can be a GRangesList object containing exon features for a list of transcripts.
-If so, `cds` argument have to be provided.
+Can be a GRangesList object containing exon features for a list of 
+transcripts.If so, `cds` argument have to be provided.
 
-Can be a GRanges object containing exon features for a transcript. If so, `cds`
-argument have to be provided.}
+Can be a GRanges object containing exon features for a transcript. 
+If so, `cds` argument have to be provided.}
 
-\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
-Variables are metadata information found in `x` and multiple conditions can be
-provided delimited by comma. Example: transcript_id == "transcript1"}
+\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for 
+analysis. Variables are metadata information found in `x` and multiple 
+conditions can be provided delimited by comma. 
+Example: transcript_id == "transcript1"}
 
-\item{cds}{If `x` is a GRangesList object, `cds` has to be a GRangesList containing CDS features
-for the list of transcripts in `x`. List names in `x` and `cds` have to match.
+\item{cds}{If `x` is a GRangesList object, `cds` has to be a GRangesList containing 
+CDS features for the list of transcripts in `x`. List names in `x` and 
+`cds` have to match.
 
-If `x` is a GRanges object, `cds` has to be a GRanges containing CDS features
-for the transcript in `x`.}
+If `x` is a GRanges object, `cds` has to be a GRanges containing CDS 
+features for the transcript in `x`.}
 
-\item{NMD_threshold}{Minimum distance of stop_codon to last exon junction (EJ) which triggers NMD.
-Default = 50bp}
+\item{NMD_threshold}{Minimum distance of stop_codon to last exon junction 
+(EJ) which triggers NMD. Default = 50bp}
 
 \item{progress_bar}{Whether to display progress 
 Default = TRUE}
@@ -38,8 +40,8 @@ Dataframe with prediction of NMD sensitivity and NMD features:
 is_NMD: logical value in prediciting transcript sensitivity to NMD
 
 stop_to_lastEJ: Integer value of the number of bases between the first
-base of the stop_codon to the last base of EJ. A positive value indicates that
-the last EJ is downstream of the stop_codon.
+base of the stop_codon to the last base of EJ. A positive value indicates 
+that the last EJ is downstream of the stop_codon.
 
 num_of_down_EJs: Number of EJs downstream of the stop_codon.
 
@@ -62,7 +64,8 @@ predictNMD(new_query_gtf)
 
 ### Transcripts for analysis can be subsetted using logical conditions
 predictNMD(new_query_gtf, transcript_id == "transcript1")
-predictNMD(new_query_gtf, transcript_id \%in\% c("transcript1", "transcript3"))
+predictNMD(new_query_gtf, 
+transcript_id \%in\% c("transcript1", "transcript3"))
 
 
 ## Using exon and CDS GRangesLists as input
