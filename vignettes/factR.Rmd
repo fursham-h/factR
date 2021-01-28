@@ -32,6 +32,8 @@ library(BSgenome.Mmusculus.UCSC.mm10)
 library(GenomicFeatures)  
 library(rtracklayer)  
 library(tidyverse)  
+
+devtools::install_github("fursham-h/factRdata")
 library(factRdata)
 ```  
   
