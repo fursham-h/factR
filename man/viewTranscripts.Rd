@@ -26,6 +26,9 @@ for more information.
 ## ---------------------------------------------------------------------
 ## EXAMPLE USING SAMPLE DATASET
 ## ---------------------------------------------------------------------
+# Load datasets
+data(query_gtf, ref_gtf)
+
 viewTranscripts(query_gtf)
 viewTranscripts(query_gtf, transcript_id == "transcript1")
 viewTranscripts(ref_gtf)

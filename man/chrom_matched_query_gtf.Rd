@@ -3,11 +3,15 @@
 \docType{data}
 \name{chrom_matched_query_gtf}
 \alias{chrom_matched_query_gtf}
-\title{Seqlevels matched query data}
+\title{Chromosome matched version of "query_gtf"}
 \format{
-A GRanges object with 56 ranges and 6 metadata columns:
+A GRanges object with 56 ranges and 3 metadata columns:
 \describe{
-  \item{element}{Exon start and end coordinates from 4 transcripts}
+  \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+  and its exons}
+  \item{type}{Entry type; transcript or exon}
+  \item{transcript_id}{ID given to transcripts}
+  \item{gene_id}{ID given to gene origin of transcripts}
   ...
 }
 }

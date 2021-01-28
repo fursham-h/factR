@@ -32,6 +32,10 @@ of identical intron structures. Alternatively, transcripts with unique CDS coord
 can be selected by typing "cds" to the refine.by argument.
 }
 \examples{
+# Load dataset
+data(matched_query_gtf, ref_gtf)
+
+# shortlist new transcripts
 subsetNewTranscripts(matched_query_gtf, ref_gtf)
 }
 \author{

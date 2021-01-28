@@ -43,6 +43,10 @@ columns
 ## ---------------------------------------------------------------------
 ## EXAMPLE USING SAMPLE DATASET
 ## ---------------------------------------------------------------------
+# Load datasets
+data(chrom_matched_query_gtf, ref_gtf)
+
+# Run matching function
 matchGeneInfo(chrom_matched_query_gtf, ref_gtf)
 }
 \author{

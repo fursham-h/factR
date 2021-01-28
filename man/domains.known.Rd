@@ -7,12 +7,13 @@
 \format{
 A data.frame with 85780 rows and 5 columns:
 \describe{
-  \item{element}{Predicted domains from annotated mouse mRNAs}
+  \item{transcript}{Transcript ID of protein-coding RNAs}
+  \item{description}{Name of domain families}
+  \item{eval}{E-value score}
+  \item{begin}{Start position of domain in protein}
+  \item{end}{End position of domain in protein}
   ...
 }
-}
-\source{
-\url{https://www.gencodegenes.org/}
 }
 \usage{
 domains.known

@@ -5,10 +5,17 @@
 \alias{new_query_gtf}
 \title{Query data containing CDS information}
 \format{
-A GRanges object with 105 ranges and 8 metadata columns:
+A GRanges object with 105 ranges and 7 metadata columns:
 \describe{
-  \item{element}{Exon start and end coordinates from 4 transcripts}
-  \item{element}{CDS start and end coordinates from 4 transcripts}
+  \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+  and its exons}
+  \item{type}{Entry type; transcript or exon}
+  \item{transcript_id}{ID given to transcripts}
+  \item{gene_id}{Matched gene_id}
+  \item{old_gene_id}{Original gene_id}
+  \item{match_level}{Level of matching performed}
+  \item{gene_name}{Name of gene}
+  \item{phase}{Phase of open-reading frame}
   ...
 }
 }

@@ -7,12 +7,14 @@
 \format{
 A GRangesList object with 4 elements:
 \describe{
-  \item{element}{CDS start and end coordinates of each transcript}
+  \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+  and its exons}
+  \item{type}{Entry type; transcript or exon}
+  \item{transcript_id}{ID given to transcripts}
+  \item{phase}{Phase of open-reading frame}
+  \item{built_from}{Method by which CDS was built}
   ...
 }
-}
-\source{
-\url{http://www.ensembl.org/}
 }
 \usage{
 query_cds

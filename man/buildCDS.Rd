@@ -29,7 +29,11 @@ database of annotated ATG codons from `ref`. Transcripts containing an
 open-reading frame will be assigned the newly-determined CDS information.
 }
 \examples{
+# Load genome and datasets
 library(BSgenome.Mmusculus.UCSC.mm10)
+data(matched_query_gtf, ref_gtf)
+
+# Build CDS
 buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
 }
 \author{

@@ -20,6 +20,9 @@ Sorted GRangesList object
 Internally sort each element of a GenomicRangesList
 }
 \examples{
+# Load dataset
+data(query_exons)
+
 # sort elements in each GRangesList in descending coordinate order
 query_exons_desc <- sorteach(query_exons, dplyr::desc(start))
 

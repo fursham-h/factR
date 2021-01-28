@@ -7,7 +7,11 @@
 \format{
 A GRanges object with 56 ranges and 3 metadata columns:
 \describe{
-  \item{element}{Exon start and end coordinates from 4 transcripts}
+  \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+  and its exons}
+  \item{type}{Entry type; transcript or exon}
+  \item{transcript_id}{Name or ID given to transcripts}
+  \item{gene_id}{Name or ID given to gene origin of transcripts}
   ...
 }
 }
