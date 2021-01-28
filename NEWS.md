@@ -4,6 +4,10 @@
 
 * `labelSpliceSegments()`, `compareSpliceSegments()`, `identifyNMDexons()`
 
+# factR 0.99.3
+
+* Minor reformatting for Bioconductor resubmission
+
 # factR 0.99.2
 
 * `predictNMD()` now contain progress_bar switch to disable progress_bar
