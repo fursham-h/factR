@@ -14,6 +14,7 @@
 #'   ...
 #' }
 #' @source \url{http://www.ensembl.org/}
+#' @usage data(query_gtf)
 "query_gtf"
 
 #' Chromosome matched version of "query_gtf"
@@ -29,6 +30,7 @@
 #'   \item{gene_id}{ID given to gene origin of transcripts}
 #'   ...
 #' }
+#' @usage data(chrom_matched_query_gtf)
 "chrom_matched_query_gtf"
 
 #' Seqlevels and gene_id matched query data
@@ -47,6 +49,7 @@
 #'   \item{gene_name}{Name of gene}
 #'   ...
 #' }
+#' @usage data(matched_query_gtf)
 "matched_query_gtf"
 
 #' Query data containing CDS information
@@ -67,6 +70,7 @@
 #'   \item{phase}{Phase of open-reading frame}
 #'   ...
 #' }
+#' @usage data(new_query_gtf)
 "new_query_gtf"
 
 
@@ -87,6 +91,7 @@
 #'   \item{gene_name}{Name of gene}
 #'   ...
 #' }
+#' @usage data(query_exons)
 "query_exons"
 
 
@@ -107,6 +112,7 @@
 #'   \item{built_from}{Method by which CDS was built}
 #'   ...
 #' }
+#' @usage data(query_cds)
 "query_cds"
 
 #' Imported GTF file containing 2 reference transcript entries of the same gene
@@ -126,6 +132,7 @@
 #'   ...
 #' }
 #' @source \url{https://www.gencodegenes.org/}
+#' @usage data(ref_gtf)
 "ref_gtf"
 
 #' Exons from 2 reference transcripts entries of the same gene
@@ -145,6 +152,7 @@
 #'   ...
 #' }
 #' @source \url{https://www.gencodegenes.org/}
+#' @usage data(ref_exons)
 "ref_exons"
 
 #' CDS from 2 reference transcripts entries of the same gene
@@ -164,6 +172,7 @@
 #'   ...
 #' }
 #' @source \url{https://www.gencodegenes.org/}
+#' @usage data(ref_cds)
 "ref_cds"
 
 #' Example output of predictDomains()
@@ -179,6 +188,7 @@
 #'   \item{end}{End position of domain in protein}
 #'   ...
 #' }
+#' @usage data(domains.out)
 "domains.out"
 
 #' Example output of predictDomains()
@@ -195,4 +205,5 @@
 #'   \item{end}{End position of domain in protein}
 #'   ...
 #' }
+#' @usage data(domains.known)
 "domains.known"
