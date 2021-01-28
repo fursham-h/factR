@@ -51,6 +51,10 @@
 #' ## ---------------------------------------------------------------------
 #' ## EXAMPLE USING SAMPLE DATASET
 #' ## ---------------------------------------------------------------------
+#' 
+#' # Load datasets
+#' data(new_query_gtf, query_exons, query_cds)
+#' 
 #' ## Using GTF GRanges as input
 #' predictNMD(new_query_gtf)
 #'

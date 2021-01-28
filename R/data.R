@@ -6,19 +6,27 @@
 #'
 #' @format A GRanges object with 56 ranges and 3 metadata columns:
 #' \describe{
-#'   \item{element}{Exon start and end coordinates from 4 transcripts}
+#'   \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+#'   and its exons}
+#'   \item{type}{Entry type; transcript or exon}
+#'   \item{transcript_id}{Name or ID given to transcripts}
+#'   \item{gene_id}{Name or ID given to gene origin of transcripts}
 #'   ...
 #' }
 #' @source \url{http://www.ensembl.org/}
 "query_gtf"
 
-#' Seqlevels matched query data
+#' Chromosome matched version of "query_gtf"
 #'
 #' query_gtf data which have been corrected for its seqlevels
 #'
-#' @format A GRanges object with 56 ranges and 6 metadata columns:
+#' @format A GRanges object with 56 ranges and 3 metadata columns:
 #' \describe{
-#'   \item{element}{Exon start and end coordinates from 4 transcripts}
+#'   \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+#'   and its exons}
+#'   \item{type}{Entry type; transcript or exon}
+#'   \item{transcript_id}{ID given to transcripts}
+#'   \item{gene_id}{ID given to gene origin of transcripts}
 #'   ...
 #' }
 "chrom_matched_query_gtf"
@@ -29,7 +37,14 @@
 #'
 #' @format A GRanges object with 56 ranges and 6 metadata columns:
 #' \describe{
-#'   \item{element}{Exon start and end coordinates from 4 transcripts}
+#'   \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+#'   and its exons}
+#'   \item{type}{Entry type; transcript or exon}
+#'   \item{transcript_id}{ID given to transcripts}
+#'   \item{gene_id}{Matched gene_id}
+#'   \item{old_gene_id}{Original gene_id}
+#'   \item{match_level}{Level of matching performed}
+#'   \item{gene_name}{Name of gene}
 #'   ...
 #' }
 "matched_query_gtf"
@@ -39,26 +54,39 @@
 #' matched_query_gtf data that has undergone buildCDS function and containing
 #' CDS features
 #'
-#' @format A GRanges object with 105 ranges and 8 metadata columns:
+#' @format A GRanges object with 105 ranges and 7 metadata columns:
 #' \describe{
-#'   \item{element}{Exon start and end coordinates from 4 transcripts}
-#'   \item{element}{CDS start and end coordinates from 4 transcripts}
+#'   \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+#'   and its exons}
+#'   \item{type}{Entry type; transcript or exon}
+#'   \item{transcript_id}{ID given to transcripts}
+#'   \item{gene_id}{Matched gene_id}
+#'   \item{old_gene_id}{Original gene_id}
+#'   \item{match_level}{Level of matching performed}
+#'   \item{gene_name}{Name of gene}
+#'   \item{phase}{Phase of open-reading frame}
 #'   ...
 #' }
 "new_query_gtf"
 
 
-#' Exons from 4 transcripts entries of the same gene
+#' GRangeList of exons from 4 transcripts entries from query_gtf
 #'
 #' A dataset containing coordinates of exons from 4 transcripts of
 #' mouse Ptbp1. Transcript names and gene IDs have been modified
 #'
 #' @format A GRangesList object with 4 elements:
 #' \describe{
-#'   \item{element}{Exon start and end coordinates of each transcript}
+#'   \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+#'   and its exons}
+#'   \item{type}{Entry type; transcript or exon}
+#'   \item{transcript_id}{ID given to transcripts}
+#'   \item{gene_id}{Matched gene_id}
+#'   \item{old_gene_id}{Original gene_id}
+#'   \item{match_level}{Level of matching performed}
+#'   \item{gene_name}{Name of gene}
 #'   ...
 #' }
-#' @source \url{http://www.ensembl.org/}
 "query_exons"
 
 
@@ -71,10 +99,14 @@
 #'
 #' @format A GRangesList object with 4 elements:
 #' \describe{
-#'   \item{element}{CDS start and end coordinates of each transcript}
+#'   \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+#'   and its exons}
+#'   \item{type}{Entry type; transcript or exon}
+#'   \item{transcript_id}{ID given to transcripts}
+#'   \item{phase}{Phase of open-reading frame}
+#'   \item{built_from}{Method by which CDS was built}
 #'   ...
 #' }
-#' @source \url{http://www.ensembl.org/}
 "query_cds"
 
 #' Imported GTF file containing 2 reference transcript entries of the same gene
@@ -84,7 +116,13 @@
 #'
 #' @format A GRanges object with 64 ranges and 5 metadata columns:
 #' \describe{
-#'   \item{element}{Exon start and end coordinates from 2 reference transcripts}
+#'   \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+#'   and its exons}
+#'   \item{type}{Entry type; transcript or exon}
+#'   \item{phase}{Phase of open-reading frame}
+#'   \item{gene_id}{Matched gene_id}
+#'   \item{gene_name}{Name of gene}
+#'   \item{transcript_id}{ID given to transcripts}
 #'   ...
 #' }
 #' @source \url{https://www.gencodegenes.org/}
@@ -97,7 +135,13 @@
 #'
 #' @format A GRangesList object with 2 elements:
 #' \describe{
-#'   \item{element}{Exon start and end coordinates of each transcript}
+#'   \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+#'   and its exons}
+#'   \item{type}{Entry type; transcript or exon}
+#'   \item{phase}{Phase of open-reading frame}
+#'   \item{gene_id}{Matched gene_id}
+#'   \item{gene_name}{Name of gene}
+#'   \item{transcript_id}{ID given to transcripts}
 #'   ...
 #' }
 #' @source \url{https://www.gencodegenes.org/}
@@ -110,7 +154,13 @@
 #'
 #' @format A GRangesList object with 2 elements:
 #' \describe{
-#'   \item{element}{CDS start and end coordinates of each transcript}
+#'   \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+#'   and its exons}
+#'   \item{type}{Entry type; transcript or exon}
+#'   \item{phase}{Phase of open-reading frame}
+#'   \item{gene_id}{Matched gene_id}
+#'   \item{gene_name}{Name of gene}
+#'   \item{transcript_id}{ID given to transcripts}
 #'   ...
 #' }
 #' @source \url{https://www.gencodegenes.org/}
@@ -122,7 +172,11 @@
 #'
 #' @format A data.frame with 14880 rows and 5 columns:
 #' \describe{
-#'   \item{element}{Predicted domains from newly-discovered mRNAs}
+#'   \item{transcript}{Transcript ID of protein-coding RNAs}
+#'   \item{description}{Name of domain families}
+#'   \item{eval}{E-value score}
+#'   \item{begin}{Start position of domain in protein}
+#'   \item{end}{End position of domain in protein}
 #'   ...
 #' }
 "domains.out"
@@ -134,8 +188,11 @@
 #'
 #' @format A data.frame with 85780 rows and 5 columns:
 #' \describe{
-#'   \item{element}{Predicted domains from annotated mouse mRNAs}
+#'   \item{transcript}{Transcript ID of protein-coding RNAs}
+#'   \item{description}{Name of domain families}
+#'   \item{eval}{E-value score}
+#'   \item{begin}{Start position of domain in protein}
+#'   \item{end}{End position of domain in protein}
 #'   ...
 #' }
-#' @source \url{https://www.gencodegenes.org/}
 "domains.known"

@@ -30,6 +30,10 @@
 #'
 #' @author Fursham Hamid
 #' @examples
+#' # Load dataset
+#' data(matched_query_gtf, ref_gtf)
+#' 
+#' # shortlist new transcripts
 #' subsetNewTranscripts(matched_query_gtf, ref_gtf)
 subsetNewTranscripts <- function(query, ref, refine.by = c("none", "intron", "cds")) {
 

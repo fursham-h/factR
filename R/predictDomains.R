@@ -26,6 +26,9 @@
 #' ## ---------------------------------------------------------------------
 #' # Load Mouse genome sequence
 #' library(BSgenome.Mmusculus.UCSC.mm10)
+#' 
+#' # Load dataset
+#' data(new_query_gtf)
 #'
 #' # predict domains of all CDSs in query GTF
 #' predictDomains(new_query_gtf, Mmusculus)

@@ -13,6 +13,9 @@
 #' @export
 #'
 #' @examples
+#' # Load dataset
+#' data(query_exons)
+#' 
 #' # sort elements in each GRangesList in descending coordinate order
 #' query_exons_desc <- sorteach(query_exons, dplyr::desc(start))
 #'
@@ -53,6 +56,9 @@ sorteach <- function(x, ...) {
 #' @export
 #'
 #' @examples
+#' # Load dataset
+#' data(query_exons)
+#' 
 #' # select first element of each GRangesList item
 #' filtereach(query_exons, dplyr::row_number() == 1)
 #' @author Fursham Hamid
@@ -83,6 +89,9 @@ filtereach <- function(x, ...) {
 #' @export
 #'
 #' @examples
+#' # Load dataset
+#' data(query_exons)
+#' 
 #' # Create chr:start-end id for each entry
 #' mutateeach(query_exons, id = paste0(seqnames, ":", start, "-", end))
 #' @author Fursham Hamid

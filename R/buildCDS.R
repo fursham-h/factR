@@ -25,7 +25,11 @@
 #' information
 #'
 #' @examples
+#' # Load genome and datasets
 #' library(BSgenome.Mmusculus.UCSC.mm10)
+#' data(matched_query_gtf, ref_gtf)
+#' 
+#' # Build CDS
 #' buildCDS(matched_query_gtf, ref_gtf, Mmusculus)
 #' @export
 #' @author Fursham Hamid
