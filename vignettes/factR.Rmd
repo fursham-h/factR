@@ -36,9 +36,25 @@ library(factRdata)
 ```  
   
 # Introduction  
-Many eukaryotic genes give rise to multiple RNA isoforms, increasing the protein-coding capacity of the genome and extending the range of post-transcriptional regulation possibilities. High-throughput sequencing is often used to deduce repertoires of transcripts expressed in specific biological samples by aligning the data to genomic sequences and assembling the alignments into transcript architectures. This typically outputs Gene Transfer Format (GTF) files describing newly identified transcripts as sets of exonic coordinates, but lacking the information about their coding sequences (CDSs; also known as ORFs) and possible biological functions.   
+Many eukaryotic genes give rise to multiple RNA isoforms, increasing the 
+protein-coding capacity of the genome and extending the range of 
+post-transcriptional regulation possibilities. High-throughput sequencing is 
+often used to deduce repertoires of transcripts expressed in specific 
+biological samples by aligning the data to genomic sequences and assembling 
+the alignments into transcript architectures. This typically outputs Gene 
+Transfer Format (GTF) files describing newly identified transcripts as sets of 
+exonic coordinates, but lacking the information about their coding sequences 
+(CDSs; also known as ORFs) and possible biological functions.   
   
-To this end, we developed a package for functional annotation of custom-assembled transcriptomes in R (*factR*). *factR* predicts CDSs for novel RNA isoforms using a reference-guided process and then determines domain organisation of the protein products and possible susceptibility of transcripts to nonsense-mediated decay (NMD; a pathway destabilizing mRNAs with premature translation termination codons). *factR* also provides supporting tools for matching new transcripts to "official" gene IDs, visualizing transcript architectures and annotating alternatively spliced segments.  
+To this end, we developed a package for functional annotation of 
+custom-assembled transcriptomes in R (*factR*). *factR* predicts CDSs for novel 
+RNA isoforms using a reference-guided process and then determines domain 
+organisation of the protein products and possible susceptibility of 
+transcripts to nonsense-mediated decay (NMD; a pathway destabilizing mRNAs 
+with premature translation termination codons). *factR* also provides 
+supporting tools for matching new transcripts to "official" gene IDs, 
+visualizing transcript architectures and annotating alternatively 
+spliced segments.  
   
   
 # Getting started  
@@ -55,24 +71,43 @@ BiocManager::install("factR")
   
 ### Custom-assembled transcriptome  
   
-*factR* requires a custom transcriptome file in the GTF format as an input, and we provide the following three custom transcriptome files that can be used to test *factR* tools:
+*factR* requires a custom transcriptome file in the GTF format as an input, 
+and we provide the following three custom transcriptome files that can be 
+used to test *factR* tools:
   
-1. **bulk_merged.gtf.gz** assembled using the HISAT2-StringtTie2 pipeline [@Pertea2016] from bulk RNA-seq data for mouse embryonic stem cells treated with the NMD inhibitor cycloheximide (CHX) or left untreated as a control.   
-2. **sc_merged.gtf.gz** assembled using the HISAT2-StringtTie2 pipeline from single-cell RNA-seq data for glutamatergic neurons, GABAergic neurons, astrocytes or endothelial cells from the mouse visual cortex [@Tasic2018].   
-3. **lr_merged.gtf.gz** assembled using minimap2 [@Li2018] and StringtTie2 [@Kovaka2019] from brain-specific long-read Oxford Nanopore RNA sequencing data [@Sessegolo2019].  
+1. **bulk_merged.gtf.gz** assembled using the HISAT2-StringtTie2 pipeline 
+[@Pertea2016] from bulk RNA-seq data for mouse embryonic stem cells treated 
+with the NMD inhibitor cycloheximide (CHX) or left untreated as a control.   
+2. **sc_merged.gtf.gz** assembled using the HISAT2-StringtTie2 pipeline from 
+single-cell RNA-seq data for glutamatergic neurons, GABAergic neurons, 
+astrocytes or endothelial cells from the mouse visual cortex [@Tasic2018].   
+3. **lr_merged.gtf.gz** assembled using minimap2 [@Li2018] and StringtTie2 
+[@Kovaka2019] from brain-specific long-read Oxford Nanopore RNA sequencing 
+data [@Sessegolo2019].  
   
-Method to download the above GTF files is described in the  ["Importing and inspecting GTF data"](#importing-and-inspecting-gtf-data) section below.  
-Users may alternatively prepare their own GTF files making sure that these contain both **gene_id** and **transcript_id** attributes.   
+Method to download the above GTF files is described in the 
+["Importing and inspecting GTF data"](#importing-and-inspecting-gtf-data) 
+section below.  
+Users may alternatively prepare their own GTF files making sure that these 
+contain both **gene_id** and **transcript_id** attributes.   
 <!-- *In the future, add how to build custom GTF files* -->  
   
 ### Reference transcriptome  
   
-Several *factR* functions require reference transcriptome files (GTF or GFF3) as a guide. Such files can be accessed from within the R environment using e.g. the R package *AnnotationHub* or downloaded from an external database such as GENCODE or Ensembl. Both possibilities are described in the ["Updating gene info"](#updating-gene-info) section below.  
+Several *factR* functions require reference transcriptome files (GTF or GFF3) 
+as a guide. Such files can be accessed from within the R environment using e.g. 
+the R package *AnnotationHub* or downloaded from an external database such as 
+GENCODE or Ensembl. Both possibilities are described in the 
+["Updating gene info"](#updating-gene-info) section below.  
   
   
 ### Genome  
   
-*factR* needs genomic DNA sequence to predict CDSs. Users may obtain genome files using e.g. *BSgenome* or *AnnotationHub* or download them from an external database such as GENCODE or Ensembl. We describe this in more detail in the ["Constructing CDS information"](#constructing-CDS-information) section below.  
+*factR* needs genomic DNA sequence to predict CDSs. Users may obtain genome 
+files using e.g. *BSgenome* or *AnnotationHub* or download them from an 
+external database such as GENCODE or Ensembl. We describe this in more detail 
+in the ["Constructing CDS information"](#constructing-CDS-information) 
+section below.  
   
 # Using *factR*  
 Load *factR* to the R environment as follows:  
@@ -83,15 +118,23 @@ library(factR)
   
 ## Importing and inspecting GTF data  
   
-*factR* handles transcriptome information in the form of *GenomicRanges* objects containing genomic interval data and relevant metadata. To create such an object from a GTF file, we use the `importGTF` function:  
+*factR* handles transcriptome information in the form of *GenomicRanges* 
+objects containing genomic interval data and relevant metadata. To create such 
+an object from a GTF file, we use the `importGTF` function:  
 ```{r importGTF, warning=FALSE}  
 library(factRdata)
 selected.data <- "sc"  
-input.file <- system.file("extdata", paste0(selected.data, "_merged.gtf.gz"), package = "factRdata")
+input.file <- system.file("extdata", 
+                          paste0(selected.data, "_merged.gtf.gz"), 
+                          package = "factRdata")
 
 custom.gtf <- importGTF(input.file)  
 ```  
-This should import sc_merged.gtf.gz, and we will use this input in the walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply change "sc" to "bulk" or "lr" in the selected.data variable. Users may import their own GTF file by specifying the path to such file in the `importGTF` function. 
+This should import sc_merged.gtf.gz, and we will use this input in the 
+walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply 
+change "sc" to "bulk" or "lr" in the selected.data variable. Users may import 
+their own GTF file by specifying the path to such file in the `importGTF` 
+function. 
   
 The imported GTF file is stored as a *GenomicRanges* object.  
 ```{r checktype}  
@@ -103,28 +146,41 @@ Contents of the object can be examined using `head`:
 head(custom.gtf)  
 ```  
   
-In addition to genomic coordinates (seqnames and ranges), a typical GTF file contains metadata describing the feature type (e.g. transcript or exon), transcript IDs and some information on their parental genes.    
+In addition to genomic coordinates (seqnames and ranges), a typical GTF file 
+contains metadata describing the feature type (e.g. transcript or exon), 
+transcript IDs and some information on their parental genes.    
   
-Use the following command to calculate the total number of transcripts in the input transcriptome:  
+Use the following command to calculate the total number of transcripts in the
+input transcriptome:  
 ```{r counttx}  
 length(unique(custom.gtf$transcript_id))  
 ```  
   
-Note that none of the transcripts in the custom.gtf object contain CDS information:  
+Note that none of the transcripts in the custom.gtf object contain CDS 
+information:  
 ```{r countcds}  
 length(unique(custom.gtf[custom.gtf$type=="CDS"]$transcript_id))  
 ```  
   
 ## Plotting transcript structures  
-Users may visualize specific sets of transcripts using `viewTranscripts`. For example, the following will plot transcripts from the *Zfr* gene encoding a conserved zinc finger-containing RNA-binding protein with known neuronal functions :  
+Users may visualize specific sets of transcripts using `viewTranscripts`. 
+For example, the following will plot transcripts from the *Zfr* gene encoding a 
+conserved zinc finger-containing RNA-binding protein with known neuronal
+functions :  
 ```{r plottranscripts, message=FALSE, warning=FALSE}  
 viewTranscripts(custom.gtf, gene_name == "Zfr")  
 ```  
   
-StringTie2, a popular transcript assembler used to generate our custom GTF, typically assigns arbitrary names to newly identified transcripts (e.g. "MSTRG.x.y") and uses the same prefix for their gene IDs (e.g. "MSTRG.x"). Incidentally, this is why the output above contains 10 previously known *Zfr* transcripts but lacks any novel entries.   
+StringTie2, a popular transcript assembler used to generate our custom GTF, 
+typically assigns arbitrary names to newly identified transcripts 
+(e.g. "MSTRG.x.y") and uses the same prefix for their gene IDs 
+(e.g. "MSTRG.x"). Incidentally, this is why the output above contains 10 
+previously known *Zfr* transcripts but lacks any novel entries.   
   
 ## Updating gene info  
-*factR* can update gene metadata in custom transcriptome objects using a reference annotation as guide. Below, we describe two alternative ways to obtain mouse reference transcriptome data from GENCODE.  
+*factR* can update gene metadata in custom transcriptome objects using a 
+reference annotation as guide. Below, we describe two alternative ways to 
+obtain mouse reference transcriptome data from GENCODE.  
   
 1. Using *AnnotationHub* package  
 ```{r load.gencode}  
@@ -137,7 +193,8 @@ query(ah, c('Mus musculus', 'gencode', 'gff'))
 ref.gtf <- ah[['AH49546']]  
 ```  
   
-2. Downloading from a GENCODE database (ref.gtf generated from this method will be used for the remaining of the workflow) 
+2. Downloading from a GENCODE database (ref.gtf generated from this method 
+will be used for the remaining of the workflow) 
 ```{r import.gencode, warning=FALSE}  
 tmp <- tempfile()
 download.file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz",  
@@ -145,15 +202,24 @@ download.file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M
 ref.gtf <- importGTF(tmp) 
 ```  
   
-When choosing a reference, users should consider using one with the same chromosome naming style (e.g. "chr1" or "1"). Alternatively, the styles can be matched using the  `matchChromosomes` function (see `help(matchChromosomes)` for more detail).    
+When choosing a reference, users should consider using one with the same 
+chromosome naming style (e.g. "chr1" or "1"). Alternatively, the styles can be 
+matched using the  `matchChromosomes` function (see `help(matchChromosomes)` 
+for more detail).    
   
-Once the ref.gtf object is ready, novel transcripts in custom.gtf can be assigned to "official" gene IDs, whenever possible, using `matchGeneInfo`. By default, this function matches the query (custom.gtf) to the reference (ref.gtf) by finding overlapping coordinates:  
+Once the ref.gtf object is ready, novel transcripts in custom.gtf can be 
+assigned to "official" gene IDs, whenever possible, using `matchGeneInfo`. By 
+default, this function matches the query (custom.gtf) to the reference (ref.gtf) 
+by finding overlapping coordinates:  
 ```{r matchgenemeta, warning=FALSE}  
 # matching gene metadata  
 custom_matched_1.gtf <- matchGeneInfo(custom.gtf, ref.gtf)  
 ```  
   
-To tune the performance of `matchGeneInfo`, we provide additional arguments specifying the name of columns containing "primary" and potentially "secondary" gene IDs from the query (custom.gtf). For further information, see `help(matchGeneInfo)`.  
+To tune the performance of `matchGeneInfo`, we provide additional arguments 
+specifying the name of columns containing "primary" and potentially "secondary" 
+gene IDs from the query (custom.gtf). For further information, 
+see `help(matchGeneInfo)`.  
 ```{r matchgenemeta2, warning=FALSE}  
 # matching gene metadata  
 custom_matched_2.gtf <- matchGeneInfo(custom.gtf, ref.gtf,   
@@ -161,20 +227,28 @@ custom_matched_2.gtf <- matchGeneInfo(custom.gtf, ref.gtf,
                             secondary_gene_id = "ref_gene_id")  
 ```  
   
-Note that custom.gtf updated by `matchGeneInfo` now contains 10 known and 7 newly *Zfr* assembled transcripts:  
+Note that custom.gtf updated by `matchGeneInfo` now contains 10 known and 7 
+newly *Zfr* assembled transcripts:  
 ```{r plottranscripts2}  
 viewTranscripts(custom_matched_2.gtf, gene_name == "Zfr")  
 ```  
   
 ## Shortlisting novel transcripts  
-As seen in the above example, custom transcriptomes typically combine both new and previously annotated transcripts. To select only newly predicted transcripts, run the following:  
+As seen in the above example, custom transcriptomes typically combine both 
+new and previously annotated transcripts. To select only newly predicted 
+transcripts, run the following:  
 ```{r subsettx, warning=FALSE}  
 custom_new.gtf <- subsetNewTranscripts(custom_matched_2.gtf, ref.gtf)  
 
 viewTranscripts(custom_new.gtf, gene_name == "Zfr")  
 ```  
   
-This will subset custom.gtf transcripts with distinct exonic coordinates compared to ref.gtf and will store these transcripts in the custom_new.gtf object. Some custom-built transcripts may differ from their reference counterparts by having different start or/and end coordinates, with otherwise similar exon-intron structure. To shortlist novel transcripts with distinct intronic coordinates only, simply set the "refine.by" argument to "intron":  
+This will subset custom.gtf transcripts with distinct exonic coordinates 
+compared to ref.gtf and will store these transcripts in the custom_new.gtf 
+object. Some custom-built transcripts may differ from their reference 
+counterparts by having different start or/and end coordinates, with otherwise 
+similar exon-intron structure. To shortlist novel transcripts with distinct 
+intronic coordinates only, simply set the "refine.by" argument to "intron":  
 ```{r subsettx2, warning=FALSE}  
 custom_new.gtf <- subsetNewTranscripts(custom_matched_2.gtf, ref.gtf, refine.by = "intron")  
 
@@ -184,10 +258,16 @@ viewTranscripts(custom_new.gtf, gene_name == "Zfr")
 We will use the custom_new.gtf object in the rest of the workflow.  
   
 ## Constructing CDS information  
-Functional annotation of newly assembled transcripts in *factR* begins by deducing their protein-coding sequences (CDSs). To search for putative CDSs, *factR* requires a genome sequence file, which can be obtained using R packages or downloaded from online databases (e.g. UCSC, GENCODE or Ensembl). Three alternative ways to retrieve mouse genomic sequence are described below.    
+Functional annotation of newly assembled transcripts in *factR* begins by 
+deducing their protein-coding sequences (CDSs). To search for putative CDSs, 
+*factR* requires a genome sequence file, which can be obtained using R packages 
+or downloaded from online databases (e.g. UCSC, GENCODE or Ensembl). Three 
+alternative ways to retrieve mouse genomic sequence are described below.    
   
-1. Using *BSgenome*  (Mmusculus generated from this method will be used for the remaining of the workflow)
-This package supports most sequenced genomes. Mouse mm10 sequence can be downloaded as follows:  
+1. Using *BSgenome*  (Mmusculus generated from this method will be used for 
+the remaining of the workflow)
+This package supports most sequenced genomes. Mouse mm10 sequence can be 
+downloaded as follows:  
 <!-- Installation code below is for demonstration and not evaluated -->
 ```{r genomeBSgenome, eval=FALSE}  
 if (!requireNamespace("BiocManager", quietly = TRUE))  
@@ -225,17 +305,26 @@ download.file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M
 Mmusculus <- importFASTA(paste0(tmp, "/GRCm38.primary_assembly.genome.fa.gz"))  
 ```  
  
-Once the genome sequence object is ready, *factR* can predict CDSs using its buildCDS() function and reference transcriptome data as a guide. buildCDS() first generates a database of previously annotated ATGs and uses this information to search for a potential translation start sites in query transcripts. buildCDS() then deduces the CDS and appends its coordinates to the custom transcriptome object. Let's run this function for our novel transcripts:  
+Once the genome sequence object is ready, *factR* can predict CDSs using its 
+buildCDS() function and reference transcriptome data as a guide. buildCDS() 
+first generates a database of previously annotated ATGs and uses this 
+information to search for a potential translation start sites in query 
+transcripts. buildCDS() then deduces the CDS and appends its coordinates to 
+the custom transcriptome object. Let's run this function for our novel 
+transcripts:  
 ```{r buildcds, warning=FALSE}  
 custom_new_CDS.gtf <- buildCDS(custom_new.gtf, ref.gtf, Mmusculus)  
 ```  
   
-Note that the novel *Zfr* transcripts have been updated with information about likely CDSs (dark blue) and untranslated regions (light blue) :  
+Note that the novel *Zfr* transcripts have been updated with information
+about likely CDSs (dark blue) and untranslated regions (light blue) :  
 ```{r viewafterCDS}  
 viewTranscripts(custom_new_CDS.gtf, gene_name == "Zfr")  
 ```  
   
-We can display exonic regions and CDSs more clearly (at the expense of loosing their bona fide genomic coordinates) by setting rescale_intron argument to TRUE.   
+We can display exonic regions and CDSs more clearly (at the expense of 
+loosing their bona fide genomic coordinates) by setting rescale_intron 
+argument to TRUE.   
 ```{r viewafterCDSscale}  
 viewTranscripts(custom_new_CDS.gtf, gene_name == "Zfr", rescale_introns = TRUE)  
 ```  
@@ -246,14 +335,17 @@ viewTranscripts(ref.gtf, gene_name == "Zfr", rescale_introns = TRUE)
 ```  
   
 ## Predicting NMD  
-To explore possible susceptibility of newly identified mRNA isoforms to NMD, we use the `predictNMD` function:  
+To explore possible susceptibility of newly identified mRNA isoforms to NMD, 
+we use the `predictNMD` function:  
 ```{r predictNMD1, warning=FALSE}  
 NMDprediction.out <- predictNMD(custom_new_CDS.gtf)  
 
 head(NMDprediction.out)  
 ```  
   
-`predictNMD` outputs a data frame containing information on features that may promote NMD and predicts NMD sensitivity for each CDS-containing transcript based on the distance between the stop codon and the last exon-exon junction.    
+`predictNMD` outputs a data frame containing information on features that may 
+promote NMD and predicts NMD sensitivity for each CDS-containing transcript 
+based on the distance between the stop codon and the last exon-exon junction.    
   
 To identify putative NMD targets for specific genes (e.g. *Zfr*), run the following:  
 ```{r predictNMD2}  
@@ -263,28 +355,41 @@ head(NMDprediction.Zfr)
 ```  
   
 ## Predicting protein domains  
-*factR* can also inspect domain structure of protein products encoded by newly identified mRNA isoforms using its `predictDomains()` function. This requires connection to the online PFAM database and may require a substantial amount of time and stable internet connection to query multiple transcripts simultaneously. To quickly explore functionality of the `predictDomains()` tool, users may prefer to begin with a relatively small subset of transcripts. For example, the following will predict domain structure for all transcripts of the Zfr gene:
+*factR* can also inspect domain structure of protein products encoded by newly 
+identified mRNA isoforms using its `predictDomains()` function. This requires 
+connection to the online PFAM database and may require a substantial amount of 
+time and stable internet connection to query multiple transcripts 
+simultaneously. To quickly explore functionality of the `predictDomains()` tool,
+users may prefer to begin with a relatively small subset of transcripts. 
+For example, the following will predict domain structure for all transcripts 
+of the Zfr gene:
 ```{r predDomain2}  
 predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Zfr", progress_bar = FALSE)  
 ```  
   
-The domain architectures for the set of query proteins can be additionally plotted by switching the argument "plot" to TRUE:  
+The domain architectures for the set of query proteins can be additionally 
+plotted by switching the argument "plot" to TRUE:  
 ```{r predDomain3}  
 domains.Zfr <- predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Zfr", plot = TRUE, progress_bar = FALSE)  
 ```  
   
-If you want to predict domains for all new transcripts and do not mind waiting for some time depending on the connection speed and the PFAM server load, run the following:
+If you want to predict domains for all new transcripts and do not mind waiting 
+for some time depending on the connection speed and the PFAM server load, 
+run the following:
 ```{r predDomain1, eval=FALSE}  
 domains.out <- predictDomains(custom_new_CDS.gtf, Mmusculus, progress_bar = FALSE)  
 ```  
   
 
 ## Processing *factR* output  
-Here we describe several ways to summarize information-rich outputs of `predictNMD` and `predictDomains` functions.   
+Here we describe several ways to summarize information-rich outputs of 
+`predictNMD` and `predictDomains` functions.   
   
 ### Summarising NMD data  
   
-Using the above NMDprediction.out object and *tidyverse* package tools, we can estimate the numbers of NMD-sensitive and non-NMD-sensitive transcripts among newly assembled RNAs:  
+Using the above NMDprediction.out object and *tidyverse* package tools, we 
+can estimate the numbers of NMD-sensitive and non-NMD-sensitive transcripts 
+among newly assembled RNAs:  
 ```{r NMDsumm1, message=FALSE}  
 library(tidyverse)  
 NMDprediction.out %>%   
@@ -292,25 +397,31 @@ NMDprediction.out %>%
   tally()  
 ```  
   
-We might be interested in calculating mean 3'UTR lengths for these two groups of transcripts:  
+We might be interested in calculating mean 3'UTR lengths for these two 
+groups of transcripts:  
 ```{r NMDsumm2, message=FALSE}  
 NMDprediction.out %>%   
   group_by(is_NMD) %>%   
   summarise(mean_3UTR_length = mean(`3'UTR_length`))    
 ```  
   
-To compare the prevalence of NMD regulation between newly assembled and reference transcripts, we first predict NMD susceptibility on reference transcripts:  
+To compare the prevalence of NMD regulation between newly assembled and 
+reference transcripts, we first predict NMD susceptibility on reference 
+transcripts:  
 ```{r NMDknown}  
 NMDprediction.known <- predictNMD(ref.gtf)  
 ```  
 
-Next, we combine the NMDprediction.out and NMDprediction.known data frames distinguishing between new and known transcripts:  
+Next, we combine the NMDprediction.out and NMDprediction.known data frames 
+distinguishing between new and known transcripts:  
 ```{r NMDanalysis1}  
 NMDprediction.combine <- bind_rows(NMDprediction.known, NMDprediction.out) %>%  
   mutate(group = ifelse(transcript %in% NMDprediction.out$transcript, "New", "Known"))   
 ```  
   
-Lastly, the combined transcripts are categorised into 4 groups based on their source ("New" vs "Known") and predicted NMD sensitivity, and the number of transcripts in each group is tallied:  
+Lastly, the combined transcripts are categorised into 4 groups based on their 
+source ("New" vs "Known") and predicted NMD sensitivity, and the number of 
+transcripts in each group is tallied:  
 ```{r NMDanalysis2, message=FALSE}  
 proportion.NMD <- NMDprediction.combine %>%   
   group_by(group, is_NMD) %>%   
@@ -329,20 +440,25 @@ proportion.NMD %>%
   
 ### Summarising domain data  
  
-Gain and loss of domains can alter protein function in a profound manner. To identify domains frequently added in newly predicted protein products, we first predict protein domains of known reference proteins:  
-(Note: code below will predict domains on all proteins and will require a substantial amount of time to complete)
+Gain and loss of domains can alter protein function in a profound manner. To 
+identify domains frequently added in newly predicted protein products, we 
+first predict protein domains of known reference proteins:  
+(Note: code below will predict domains on all proteins and will require a 
+substantial amount of time to complete)
 <!-- Code below not evaluated as it takes substantial amount of time to complete -->
 ```{r preddomref, eval=FALSE}  
 domains.known <- predictDomains(ref.gtf, Mmusculus, progress_bar = FALSE)  
 ```  
   
-Next, we combine the domains.out and domains.known data frames distinguishing between new and known proteins:  
+Next, we combine the domains.out and domains.known data frames distinguishing 
+between new and known proteins:  
 ```{r domcombine}  
 domains.combine <- bind_rows(domains.known, domains.out) %>%  
   mutate(group = ifelse(transcript %in% domains.out$transcript, "New", "Known"))   
 ```  
   
-To enable grouping of protein isoforms by gene names, let's append gene information to our combined data frame:  
+To enable grouping of protein isoforms by gene names, let's append gene 
+information to our combined data frame:  
 ```{r fillgenemeta, message=FALSE}  
 # generate a transcript to gene df  
 t2g <- custom.gtf %>%  
@@ -357,7 +473,8 @@ domains.combine <- domains.combine %>%
 head(domains.combine)
 ```  
   
-We then generate a non-redundant list of N-to-C-ordered domain architectures for each gene  
+We then generate a non-redundant list of N-to-C-ordered domain architectures 
+for each gene  
 ```{r nestdomains}  
 domains.combine.architecture <- domains.combine %>%  
   group_by(transcript) %>%   
@@ -418,7 +535,8 @@ domains.combine.shortlist %>%
   distinct(gene_id, gene_name)  
 ```  
   
-Finally, to visualize domain architectures of new and known protein isoforms produced from a gene of interest (say, *Zfp972*):  
+Finally, to visualize domain architectures of new and known protein isoforms 
+produced from a gene of interest (say, *Zfp972*):  
 ```{r showZfp972, warning=FALSE}  
 domains.Zfp972 <- predictDomains(c(custom_new_CDS.gtf, ref.gtf), Mmusculus, gene_name == "Zfp972", plot = TRUE)  
 ```  
@@ -431,7 +549,8 @@ tmp <- tempdir()
 export(custom_new_CDS.gtf, paste0(tmp, "Custom_new.gtf"), format = "GTF")  
 ```  
   
-Finally, to export *NMDprediction.out* and *domains.out* data frames as tab-delimited text files, run the following:  
+Finally, to export *NMDprediction.out* and *domains.out* data frames as 
+tab-delimited text files, run the following:  
 ```{r exporttable}  
 write.table(NMDprediction.out, paste0(tmp, "Custom_new_NMD.txt"), sep = "\t", row.names = FALSE, quote = FALSE)  
 write.table(domains.out, paste0(tmp, "Custom_new_domains.txt"), sep = "\t", row.names = FALSE, quote = FALSE)  
