@@ -32,6 +32,7 @@ library(BSgenome.Mmusculus.UCSC.mm10)
 library(GenomicFeatures)  
 library(rtracklayer)  
 library(tidyverse)  
+library(factRdata)
 ```  
   
 # Introduction  
@@ -83,13 +84,12 @@ library(factR)
 ## Importing and inspecting GTF data  
   
 *factR* handles transcriptome information in the form of *GenomicRanges* objects containing genomic interval data and relevant metadata. To create such an object from a GTF file, we use the `importGTF` function:  
-```{r importGTF}  
+```{r importGTF, warning=FALSE}  
+library(factRdata)
 selected.data <- "sc"  
-  
-download.file(paste0("https://github.com/fursham-h/MiMB-factR-supplement/raw/master/",  
-                     "Custom%20transcriptome/", selected.data, "_merged.gtf.gz"),   
-              "input.gtf.gz")  
-custom.gtf <- importGTF("input.gtf.gz")  
+input.file <- system.file("extdata", paste0(selected.data, "_merged.gtf.gz"), package = "factRdata")
+
+custom.gtf <- importGTF(input.file)  
 ```  
 This should import sc_merged.gtf.gz, and we will use this input in the walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply change "sc" to "bulk" or "lr" in the selected.data variable. Users may import their own GTF file by specifying the path to such file in the `importGTF` function. 
   
@@ -126,7 +126,7 @@ StringTie2, a popular transcript assembler used to generate our custom GTF, typi
 ## Updating gene info  
 *factR* can update gene metadata in custom transcriptome objects using a reference annotation as guide. Below, we describe two alternative ways to obtain mouse reference transcriptome data from GENCODE.  
   
-1. Using *AnnotationHub* package (ref.gtf generated from this method will be used for the remaining of the workflow)  
+1. Using *AnnotationHub* package  
 ```{r load.gencode}  
 # query database for mouse gencode basic annotation  
 library(AnnotationHub)  
@@ -137,11 +137,12 @@ query(ah, c('Mus musculus', 'gencode', 'gff'))
 ref.gtf <- ah[['AH49546']]  
 ```  
   
-2. Downloading from a database (e.g. GENCODE)  
-```{r import.gencode}  
+2. Downloading from a GENCODE database (ref.gtf generated from this method will be used for the remaining of the workflow) 
+```{r import.gencode, warning=FALSE}  
+tmp <- tempfile()
 download.file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz",  
-              destfile = "gencode.vM25.annotation.gtf.gz")  
-ref.gtf <- importGTF("gencode.vM25.annotation.gtf.gz")  
+              destfile = tmp)
+ref.gtf <- importGTF(tmp) 
 ```  
   
 When choosing a reference, users should consider using one with the same chromosome naming style (e.g. "chr1" or "1"). Alternatively, the styles can be matched using the  `matchChromosomes` function (see `help(matchChromosomes)` for more detail).    
@@ -218,9 +219,10 @@ Mmusculus <- ah[['AH14005']]
 3. Downloading from a database (e.g. GENCODE)  
 <!-- Code below not evaluated as it serves as an alternative method of retrieving genome data -->
 ```{r downloadGencode, eval=FALSE}  
+tmp <- tempfile()
 download.file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/GRCm38.primary_assembly.genome.fa.gz",  
-              "GRCm38.primary_assembly.genome.fa.gz")  
-Mmusculus <- importFASTA("GRCm38.primary_assembly.genome.fa.gz")  
+              tmp)  
+Mmusculus <- importFASTA(paste0(tmp, "/GRCm38.primary_assembly.genome.fa.gz"))  
 ```  
  
 Once the genome sequence object is ready, *factR* can predict CDSs using its buildCDS() function and reference transcriptome data as a guide. buildCDS() first generates a database of previously annotated ATGs and uses this information to search for a potential translation start sites in query transcripts. buildCDS() then deduces the CDS and appends its coordinates to the custom transcriptome object. Let's run this function for our novel transcripts:  
@@ -425,18 +427,19 @@ domains.Zfp972 <- predictDomains(c(custom_new_CDS.gtf, ref.gtf), Mmusculus, gene
 Annotated *custom_new_CDS.gtf* object can be exported to a GTF file as follows:  
 ```{r exportgtf}  
 library(rtracklayer) 
-export(custom_new_CDS.gtf, "Custom_new.gtf", format = "GTF")  
+tmp <- tempdir()
+export(custom_new_CDS.gtf, paste0(tmp, "Custom_new.gtf"), format = "GTF")  
 ```  
   
 Finally, to export *NMDprediction.out* and *domains.out* data frames as tab-delimited text files, run the following:  
 ```{r exporttable}  
-write.table(NMDprediction.out, "Custom_new_NMD.txt", sep = "\t", row.names = FALSE, quote = FALSE)  
-write.table(domains.out, "Custom_new_domains.txt", sep = "\t", row.names = FALSE, quote = FALSE)  
+write.table(NMDprediction.out, paste0(tmp, "Custom_new_NMD.txt"), sep = "\t", row.names = FALSE, quote = FALSE)  
+write.table(domains.out, paste0(tmp, "Custom_new_domains.txt"), sep = "\t", row.names = FALSE, quote = FALSE)  
 ```  
   
 # Citing *factR*  
 Please cite *factR* if you find it useful:  
-<!-- Add citation -->  
+<!-- Citation will be added in the near future -->  
   
   
 # Session Information  
