@@ -61,9 +61,8 @@ spliced segments.
 ## Installing *factR*  
 To install *factR*, enter the following commands in your R environment:  
 ```{r install.factR, eval = FALSE}  
-if (!requireNamespace("BiocManager", quietly=TRUE))
-    install.packages("BiocManager")
-BiocManager::install("factR")
+install.packages("devtools")  
+devtools::install_github("fursham-h/factR")  
 ```  
   
 ## Materials needed  

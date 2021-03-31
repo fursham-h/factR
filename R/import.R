@@ -14,13 +14,6 @@
 #' Imported GenomicRanges object in GTF format
 #'
 #' @author Fursham Hamid
-#' @examples 
-#' require(factRdata)
-#' input.file <- system.file("extdata", "sc_merged.gtf.gz", 
-#' package = "factRdata")
-#' 
-#' importGTF(input.file)
-#' 
 #' @export
 importGTF <- function(con) {
     infile <- try(rtracklayer::import(con, format = "GTF"), silent = TRUE)

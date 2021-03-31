@@ -19,14 +19,6 @@ This function loads GTF files into R and converts it into
 a wrapper to rtracklayer::import() function to conveniently
 import GTF file into R as a GenomicRanges object.
 }
-\examples{
-require(factRdata)
-input.file <- system.file("extdata", "sc_merged.gtf.gz", 
-package = "factRdata")
-
-importGTF(input.file)
-
-}
 \author{
 Fursham Hamid
 }
