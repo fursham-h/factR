@@ -32,9 +32,6 @@ library(BSgenome.Mmusculus.UCSC.mm10)
 library(GenomicFeatures)  
 library(rtracklayer)  
 library(tidyverse)  
-
-devtools::install_github("fursham-h/factRdata")
-library(factRdata)
 ```  
   
 # Introduction  
@@ -123,14 +120,13 @@ library(factR)
 *factR* handles transcriptome information in the form of *GenomicRanges* 
 objects containing genomic interval data and relevant metadata. To create such 
 an object from a GTF file, we use the `importGTF` function:  
-```{r importGTF, warning=FALSE}  
-library(factRdata)
+```{r importGTF}  
 selected.data <- "sc"  
-input.file <- system.file("extdata", 
-                          paste0(selected.data, "_merged.gtf.gz"), 
-                          package = "factRdata")
-
-custom.gtf <- importGTF(input.file)  
+  
+download.file(paste0("https://github.com/fursham-h/MiMB-factR-supplement/raw/master/",  
+                     "Custom%20transcriptome/", selected.data, "_merged.gtf.gz"),   
+              "input.gtf.gz")  
+custom.gtf <- importGTF("input.gtf.gz")  
 ```  
 This should import sc_merged.gtf.gz, and we will use this input in the 
 walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply 
