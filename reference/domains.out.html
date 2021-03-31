@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -118,13 +118,17 @@
     <p>Output dataframe from predictDomains() function.</p>
     </div>
 
-    <pre class="usage"><span class='va'>domains.out</span></pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>domains.out</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
     <p>A data.frame with 14880 rows and 5 columns:</p><dl>
-  <dt>element</dt><dd><p>Predicted domains from newly-discovered mRNAs</p></dd>
+  <dt>transcript</dt><dd><p>Transcript ID of protein-coding RNAs</p></dd>
+  <dt>description</dt><dd><p>Name of domain families</p></dd>
+  <dt>eval</dt><dd><p>E-value score</p></dd>
+  <dt>begin</dt><dd><p>Start position of domain in protein</p></dd>
+  <dt>end</dt><dd><p>End position of domain in protein</p></dd>
   ...
 
 </dl>

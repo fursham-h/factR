@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -134,9 +134,10 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
-Variables are metadata information found in `x` and multiple conditions can be
-provided delimited by comma. Example: transcript_id == "transcript1"</p></td>
+      <td><p>Logical conditions to pass to dplyr::filter to subset transcripts for 
+analysis. Variables are metadata information found in `x` and multiple 
+conditions can be provided delimited by comma. 
+Example: transcript_id == "transcript1"</p></td>
     </tr>
     <tr>
       <th>plot</th>
@@ -164,63 +165,66 @@ progress of predicting a long list of proteins.</p></td>
 <span class='co'># Load Mouse genome sequence</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>BSgenome.Mmusculus.UCSC.mm10</span><span class='op'>)</span>
 
+<span class='co'># Load dataset</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>new_query_gtf</span><span class='op'>)</span>
+
 <span class='co'># predict domains of all CDSs in query GTF</span>
 <span class='fu'>predictDomains</span><span class='op'>(</span><span class='va'>new_query_gtf</span>, <span class='va'>Mmusculus</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Checking CDSs and translating protein sequences</span></div><div class='output co'>#&gt; <span class='message'>Predicting domain families for 4 proteins</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 14 x 5</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Checking CDSs and translating protein sequences</span></div><div class='output co'>#&gt; <span class='message'>Predicting domain families for 4 proteins</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 14 x 5</span><span>
 #&gt;    transcript  description   eval     begin   end
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> transcript1 Canonical RBD 4.96e-06    46   143
-#&gt; </span><span style='color: #555555;'> 2</span><span> transcript1 Canonical RBD 1.39e-05   357   446
-#&gt; </span><span style='color: #555555;'> 3</span><span> transcript1 Canonical RBD 1.28e-06   177   281
-#&gt; </span><span style='color: #555555;'> 4</span><span> transcript1 Canonical RBD 9.32e-06   469   553
-#&gt; </span><span style='color: #555555;'> 5</span><span> transcript2 Canonical RBD 4.96e-06    46   143
-#&gt; </span><span style='color: #555555;'> 6</span><span> transcript2 Canonical RBD 1.39e-05   331   420
-#&gt; </span><span style='color: #555555;'> 7</span><span> transcript2 Canonical RBD 1.28e-06   177   281
-#&gt; </span><span style='color: #555555;'> 8</span><span> transcript2 Canonical RBD 8.32e-06   443   527
-#&gt; </span><span style='color: #555555;'> 9</span><span> transcript3 Canonical RBD 4.96e-06    46   143
-#&gt; </span><span style='color: #555555;'>10</span><span> transcript3 Canonical RBD 1.28e-06   177   281
-#&gt; </span><span style='color: #555555;'>11</span><span> transcript4 Canonical RBD 1.39e-05   291   380
-#&gt; </span><span style='color: #555555;'>12</span><span> transcript4 Canonical RBD 1.28e-06   137   241
-#&gt; </span><span style='color: #555555;'>13</span><span> transcript4 Canonical RBD 8.52e-05    39    95
-#&gt; </span><span style='color: #555555;'>14</span><span> transcript4 Canonical RBD 8.32e-06   403   487</div><div class='input'>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> transcript1 Canonical RBD 4.96e-06    46   143
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> transcript1 Canonical RBD 1.39e-05   357   446
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> transcript1 Canonical RBD 1.28e-06   177   281
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> transcript1 Canonical RBD 9.32e-06   469   553
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> transcript2 Canonical RBD 4.96e-06    46   143
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> transcript2 Canonical RBD 1.39e-05   331   420
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> transcript2 Canonical RBD 1.28e-06   177   281
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> transcript2 Canonical RBD 8.32e-06   443   527
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> transcript3 Canonical RBD 4.96e-06    46   143
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> transcript3 Canonical RBD 1.28e-06   177   281
+#&gt; </span><span style='color: #BCBCBC;'>11</span><span> transcript4 Canonical RBD 1.39e-05   291   380
+#&gt; </span><span style='color: #BCBCBC;'>12</span><span> transcript4 Canonical RBD 1.28e-06   137   241
+#&gt; </span><span style='color: #BCBCBC;'>13</span><span> transcript4 Canonical RBD 8.52e-05    39    95
+#&gt; </span><span style='color: #BCBCBC;'>14</span><span> transcript4 Canonical RBD 8.32e-06   403   487</div><div class='input'>
 <span class='co'># predict domains of CDSs from Ptbp1 gene</span>
 <span class='fu'>predictDomains</span><span class='op'>(</span><span class='va'>new_query_gtf</span>, <span class='va'>Mmusculus</span>, <span class='va'>gene_name</span> <span class='op'>==</span> <span class='st'>"Ptbp1"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Checking CDSs and translating protein sequences</span></div><div class='output co'>#&gt; <span class='message'>Predicting domain families for 4 proteins</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 14 x 5</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Checking CDSs and translating protein sequences</span></div><div class='output co'>#&gt; <span class='message'>Predicting domain families for 4 proteins</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 14 x 5</span><span>
 #&gt;    transcript  description   eval     begin   end
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> transcript1 Canonical RBD 4.96e-06    46   143
-#&gt; </span><span style='color: #555555;'> 2</span><span> transcript1 Canonical RBD 1.39e-05   357   446
-#&gt; </span><span style='color: #555555;'> 3</span><span> transcript1 Canonical RBD 1.28e-06   177   281
-#&gt; </span><span style='color: #555555;'> 4</span><span> transcript1 Canonical RBD 9.32e-06   469   553
-#&gt; </span><span style='color: #555555;'> 5</span><span> transcript2 Canonical RBD 4.96e-06    46   143
-#&gt; </span><span style='color: #555555;'> 6</span><span> transcript2 Canonical RBD 1.39e-05   331   420
-#&gt; </span><span style='color: #555555;'> 7</span><span> transcript2 Canonical RBD 1.28e-06   177   281
-#&gt; </span><span style='color: #555555;'> 8</span><span> transcript2 Canonical RBD 8.32e-06   443   527
-#&gt; </span><span style='color: #555555;'> 9</span><span> transcript3 Canonical RBD 4.96e-06    46   143
-#&gt; </span><span style='color: #555555;'>10</span><span> transcript3 Canonical RBD 1.28e-06   177   281
-#&gt; </span><span style='color: #555555;'>11</span><span> transcript4 Canonical RBD 1.39e-05   291   380
-#&gt; </span><span style='color: #555555;'>12</span><span> transcript4 Canonical RBD 1.28e-06   137   241
-#&gt; </span><span style='color: #555555;'>13</span><span> transcript4 Canonical RBD 8.52e-05    39    95
-#&gt; </span><span style='color: #555555;'>14</span><span> transcript4 Canonical RBD 8.32e-06   403   487</div><div class='input'>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> transcript1 Canonical RBD 4.96e-06    46   143
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> transcript1 Canonical RBD 1.39e-05   357   446
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> transcript1 Canonical RBD 1.28e-06   177   281
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> transcript1 Canonical RBD 9.32e-06   469   553
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> transcript2 Canonical RBD 4.96e-06    46   143
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> transcript2 Canonical RBD 1.39e-05   331   420
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> transcript2 Canonical RBD 1.28e-06   177   281
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> transcript2 Canonical RBD 8.32e-06   443   527
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> transcript3 Canonical RBD 4.96e-06    46   143
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> transcript3 Canonical RBD 1.28e-06   177   281
+#&gt; </span><span style='color: #BCBCBC;'>11</span><span> transcript4 Canonical RBD 1.39e-05   291   380
+#&gt; </span><span style='color: #BCBCBC;'>12</span><span> transcript4 Canonical RBD 1.28e-06   137   241
+#&gt; </span><span style='color: #BCBCBC;'>13</span><span> transcript4 Canonical RBD 8.52e-05    39    95
+#&gt; </span><span style='color: #BCBCBC;'>14</span><span> transcript4 Canonical RBD 8.32e-06   403   487</div><div class='input'>
 <span class='co'># predict domains of CDSs from Ptbp1 gene and plot architecture out</span>
 <span class='fu'>predictDomains</span><span class='op'>(</span><span class='va'>new_query_gtf</span>, <span class='va'>Mmusculus</span>, <span class='va'>gene_name</span> <span class='op'>==</span> <span class='st'>"Ptbp1"</span>, plot <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Checking CDSs and translating protein sequences</span></div><div class='output co'>#&gt; <span class='message'>Predicting domain families for 4 proteins</span></div><div class='img'><img src='predictDomains-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 14 x 5</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Checking CDSs and translating protein sequences</span></div><div class='output co'>#&gt; <span class='message'>Predicting domain families for 4 proteins</span></div><div class='img'><img src='predictDomains-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 14 x 5</span><span>
 #&gt;    transcript  description   eval     begin   end
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> transcript1 Canonical RBD 4.96e-06    46   143
-#&gt; </span><span style='color: #555555;'> 2</span><span> transcript1 Canonical RBD 1.39e-05   357   446
-#&gt; </span><span style='color: #555555;'> 3</span><span> transcript1 Canonical RBD 1.28e-06   177   281
-#&gt; </span><span style='color: #555555;'> 4</span><span> transcript1 Canonical RBD 9.32e-06   469   553
-#&gt; </span><span style='color: #555555;'> 5</span><span> transcript2 Canonical RBD 4.96e-06    46   143
-#&gt; </span><span style='color: #555555;'> 6</span><span> transcript2 Canonical RBD 1.39e-05   331   420
-#&gt; </span><span style='color: #555555;'> 7</span><span> transcript2 Canonical RBD 1.28e-06   177   281
-#&gt; </span><span style='color: #555555;'> 8</span><span> transcript2 Canonical RBD 8.32e-06   443   527
-#&gt; </span><span style='color: #555555;'> 9</span><span> transcript3 Canonical RBD 4.96e-06    46   143
-#&gt; </span><span style='color: #555555;'>10</span><span> transcript3 Canonical RBD 1.28e-06   177   281
-#&gt; </span><span style='color: #555555;'>11</span><span> transcript4 Canonical RBD 1.39e-05   291   380
-#&gt; </span><span style='color: #555555;'>12</span><span> transcript4 Canonical RBD 1.28e-06   137   241
-#&gt; </span><span style='color: #555555;'>13</span><span> transcript4 Canonical RBD 8.52e-05    39    95
-#&gt; </span><span style='color: #555555;'>14</span><span> transcript4 Canonical RBD 8.32e-06   403   487</div></span></pre>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> transcript1 Canonical RBD 4.96e-06    46   143
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> transcript1 Canonical RBD 1.39e-05   357   446
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> transcript1 Canonical RBD 1.28e-06   177   281
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> transcript1 Canonical RBD 9.32e-06   469   553
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> transcript2 Canonical RBD 4.96e-06    46   143
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> transcript2 Canonical RBD 1.39e-05   331   420
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> transcript2 Canonical RBD 1.28e-06   177   281
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> transcript2 Canonical RBD 8.32e-06   443   527
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> transcript3 Canonical RBD 4.96e-06    46   143
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> transcript3 Canonical RBD 1.28e-06   177   281
+#&gt; </span><span style='color: #BCBCBC;'>11</span><span> transcript4 Canonical RBD 1.39e-05   291   380
+#&gt; </span><span style='color: #BCBCBC;'>12</span><span> transcript4 Canonical RBD 1.28e-06   137   241
+#&gt; </span><span style='color: #BCBCBC;'>13</span><span> transcript4 Canonical RBD 8.52e-05    39    95
+#&gt; </span><span style='color: #BCBCBC;'>14</span><span> transcript4 Canonical RBD 8.32e-06   403   487</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

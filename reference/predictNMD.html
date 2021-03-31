@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -127,28 +127,30 @@
       <th>x</th>
       <td><p>Can be a GRanges object containing exon and CDS transcript features in GTF
 format.</p>
-<p>Can be a GRangesList object containing exon features for a list of transcripts.
-If so, `cds` argument have to be provided.</p>
-<p>Can be a GRanges object containing exon features for a transcript. If so, `cds`
-argument have to be provided.</p></td>
+<p>Can be a GRangesList object containing exon features for a list of 
+transcripts.If so, `cds` argument have to be provided.</p>
+<p>Can be a GRanges object containing exon features for a transcript. 
+If so, `cds` argument have to be provided.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
-Variables are metadata information found in `x` and multiple conditions can be
-provided delimited by comma. Example: transcript_id == "transcript1"</p></td>
+      <td><p>Logical conditions to pass to dplyr::filter to subset transcripts for 
+analysis. Variables are metadata information found in `x` and multiple 
+conditions can be provided delimited by comma. 
+Example: transcript_id == "transcript1"</p></td>
     </tr>
     <tr>
       <th>cds</th>
-      <td><p>If `x` is a GRangesList object, `cds` has to be a GRangesList containing CDS features
-for the list of transcripts in `x`. List names in `x` and `cds` have to match.</p>
-<p>If `x` is a GRanges object, `cds` has to be a GRanges containing CDS features
-for the transcript in `x`.</p></td>
+      <td><p>If `x` is a GRangesList object, `cds` has to be a GRangesList containing 
+CDS features for the list of transcripts in `x`. List names in `x` and 
+`cds` have to match.</p>
+<p>If `x` is a GRanges object, `cds` has to be a GRanges containing CDS 
+features for the transcript in `x`.</p></td>
     </tr>
     <tr>
       <th>NMD_threshold</th>
-      <td><p>Minimum distance of stop_codon to last exon junction (EJ) which triggers NMD.
-Default = 50bp</p></td>
+      <td><p>Minimum distance of stop_codon to last exon junction 
+(EJ) which triggers NMD. Default = 50bp</p></td>
     </tr>
     <tr>
       <th>progress_bar</th>
@@ -162,8 +164,8 @@ Default = TRUE</p></td>
     <p>Dataframe with prediction of NMD sensitivity and NMD features:</p>
 <p>is_NMD: logical value in prediciting transcript sensitivity to NMD</p>
 <p>stop_to_lastEJ: Integer value of the number of bases between the first
-base of the stop_codon to the last base of EJ. A positive value indicates that
-the last EJ is downstream of the stop_codon.</p>
+base of the stop_codon to the last base of EJ. A positive value indicates 
+that the last EJ is downstream of the stop_codon.</p>
 <p>num_of_down_EJs: Number of EJs downstream of the stop_codon.</p>
 <p>`3_UTR_length`: Length of 3' UTR</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
@@ -175,47 +177,52 @@ the last EJ is downstream of the stop_codon.</p>
 <span class='co'>## ---------------------------------------------------------------------</span>
 <span class='co'>## EXAMPLE USING SAMPLE DATASET</span>
 <span class='co'>## ---------------------------------------------------------------------</span>
+
+<span class='co'># Load datasets</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>new_query_gtf</span>, <span class='va'>query_exons</span>, <span class='va'>query_cds</span><span class='op'>)</span>
+
 <span class='co'>## Using GTF GRanges as input</span>
 <span class='fu'>predictNMD</span><span class='op'>(</span><span class='va'>new_query_gtf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 4 mRNAs</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 4 x 5</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 4 mRNAs</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 4 x 5</span><span>
 #&gt;   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> 
-#&gt; </span><span style='color: #555555;'>1</span><span> transcript1           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>158 FALSE 
-#&gt; </span><span style='color: #555555;'>2</span><span> transcript2           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>497 FALSE 
-#&gt; </span><span style='color: #555555;'>3</span><span> transcript3            364              3            644 TRUE  
-#&gt; </span><span style='color: #555555;'>4</span><span> transcript4           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>085 FALSE </div><div class='input'>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> transcript1           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>158 FALSE 
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span> transcript2           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>497 FALSE 
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span> transcript3            364              3            644 TRUE  
+#&gt; </span><span style='color: #BCBCBC;'>4</span><span> transcript4           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>085 FALSE </div><div class='input'>
 <span class='co'>### Transcripts for analysis can be subsetted using logical conditions</span>
 <span class='fu'>predictNMD</span><span class='op'>(</span><span class='va'>new_query_gtf</span>, <span class='va'>transcript_id</span> <span class='op'>==</span> <span class='st'>"transcript1"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 1 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 5</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 1 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 1 x 5</span><span>
 #&gt;   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> 
-#&gt; </span><span style='color: #555555;'>1</span><span> transcript           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>158 FALSE </div><div class='input'><span class='fu'>predictNMD</span><span class='op'>(</span><span class='va'>new_query_gtf</span>, <span class='va'>transcript_id</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"transcript1"</span>, <span class='st'>"transcript3"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 2 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 2 x 5</span><span>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> transcript           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>158 FALSE </div><div class='input'><span class='fu'>predictNMD</span><span class='op'>(</span><span class='va'>new_query_gtf</span>, 
+<span class='va'>transcript_id</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"transcript1"</span>, <span class='st'>"transcript3"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 2 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 2 x 5</span><span>
 #&gt;   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> 
-#&gt; </span><span style='color: #555555;'>1</span><span> transcript1           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>158 FALSE 
-#&gt; </span><span style='color: #555555;'>2</span><span> transcript3            364              3            644 TRUE  </div><div class='input'>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> transcript1           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>158 FALSE 
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span> transcript3            364              3            644 TRUE  </div><div class='input'>
 
 <span class='co'>## Using exon and CDS GRangesLists as input</span>
 <span class='fu'>predictNMD</span><span class='op'>(</span><span class='va'>query_exons</span>, cds <span class='op'>=</span> <span class='va'>query_cds</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 4 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 4 x 5</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 4 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 4 x 5</span><span>
 #&gt;   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> 
-#&gt; </span><span style='color: #555555;'>1</span><span> transcript1           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>158 FALSE 
-#&gt; </span><span style='color: #555555;'>2</span><span> transcript2           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>497 FALSE 
-#&gt; </span><span style='color: #555555;'>3</span><span> transcript3            364              3            644 TRUE  
-#&gt; </span><span style='color: #555555;'>4</span><span> transcript4           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>085 FALSE </div><div class='input'><span class='fu'>predictNMD</span><span class='op'>(</span><span class='va'>query_exons</span>, cds <span class='op'>=</span> <span class='va'>query_cds</span>, <span class='va'>transcript_id</span> <span class='op'>==</span> <span class='st'>"transcript3"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 1 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 5</span><span>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> transcript1           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>158 FALSE 
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span> transcript2           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>497 FALSE 
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span> transcript3            364              3            644 TRUE  
+#&gt; </span><span style='color: #BCBCBC;'>4</span><span> transcript4           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>085 FALSE </div><div class='input'><span class='fu'>predictNMD</span><span class='op'>(</span><span class='va'>query_exons</span>, cds <span class='op'>=</span> <span class='va'>query_cds</span>, <span class='va'>transcript_id</span> <span class='op'>==</span> <span class='st'>"transcript3"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 1 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 1 x 5</span><span>
 #&gt;   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> 
-#&gt; </span><span style='color: #555555;'>1</span><span> transcript            364              3            644 TRUE  </div><div class='input'>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> transcript            364              3            644 TRUE  </div><div class='input'>
 
 <span class='co'>## Using exon and CDS GRanges as input</span>
 <span class='fu'>predictNMD</span><span class='op'>(</span><span class='va'>query_exons</span><span class='op'>[[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>]</span>, cds <span class='op'>=</span> <span class='va'>query_cds</span><span class='op'>[[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 1 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1 x 5</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 1 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 1 x 5</span><span>
 #&gt;   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> 
-#&gt; </span><span style='color: #555555;'>1</span><span> transcript            364              3            644 TRUE  </div><div class='input'>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> transcript            364              3            644 TRUE  </div><div class='input'>
 
 
 <span class='co'>## ---------------------------------------------------------------------</span>
@@ -226,22 +233,30 @@ the last EJ is downstream of the stop_codon.</p>
 </div><div class='output co'>#&gt; <span class='message'>Loading required package: BiocFileCache</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: dbplyr</span></div><div class='input'>
 <span class='co'>## Retrieve GRCm38 trancript annotation</span>
 <span class='va'>ah</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html'>AnnotationHub</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>using temporary cache /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpKVtuOt/BiocFileCache</span></div><div class='output co'>#&gt; <span class='message'>snapshotDate(): 2020-10-27</span></div><div class='input'><span class='va'>GRCm38_gtf</span> <span class='op'>&lt;-</span> <span class='va'>ah</span><span class='op'>[[</span><span class='st'>"AH60127"</span><span class='op'>]</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; <span class='message'>downloading 1 resources</span></div><div class='output co'>#&gt; <span class='message'>retrieving 1 resource</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='output co'>#&gt; <span class='message'>Importing File into R ..</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>using temporary cache /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpVnOZEN/BiocFileCache</span></div><div class='output co'>#&gt; <span class='message'>snapshotDate(): 2020-10-27</span></div><div class='input'><span class='va'>GRCm38_gtf</span> <span class='op'>&lt;-</span> <span class='va'>ah</span><span class='op'>[[</span><span class='st'>"AH60127"</span><span class='op'>]</span><span class='op'>]</span>
+</div><div class='output co'>#&gt; <span class='message'>downloading 1 resources</span></div><div class='output co'>#&gt; <span class='message'>retrieving 1 resource</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='output co'>#&gt; <span class='message'>Importing File into R ..</span></div><div class='output co'>#&gt; <span class='message'>'getOption("repos")' replaces Bioconductor standard repositories, see</span>
+#&gt; <span class='message'>'?repositories' for details</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>replacement repositories:</span>
+#&gt; <span class='message'>    CRAN: https://cloud.r-project.org</span></div><div class='output co'>#&gt; <span class='message'>'getOption("repos")' replaces Bioconductor standard repositories, see</span>
+#&gt; <span class='message'>'?repositories' for details</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>replacement repositories:</span>
+#&gt; <span class='message'>    CRAN: https://cloud.r-project.org</span></div><div class='input'>
 <span class='co'>## Run tool on specific gene family</span>
 <span class='fu'>predictNMD</span><span class='op'>(</span><span class='va'>GRCm38_gtf</span>, <span class='va'>gene_name</span> <span class='op'>==</span> <span class='st'>"Ptbp1"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 9 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 9 x 5</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 9 mRNAs</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 9 x 5</span><span>
 #&gt;   transcript         stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> 
-#&gt; </span><span style='color: #555555;'>1</span><span> ENSMUST00000057343            364              3            644 TRUE  
-#&gt; </span><span style='color: #555555;'>2</span><span> ENSMUST00000095457           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>085 FALSE 
-#&gt; </span><span style='color: #555555;'>3</span><span> ENSMUST00000165704           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>497 FALSE 
-#&gt; </span><span style='color: #555555;'>4</span><span> ENSMUST00000165724            286              2            362 TRUE  
-#&gt; </span><span style='color: #555555;'>5</span><span> ENSMUST00000168683           -</span><span style='color: #BB0000;'>145</span><span>              0              0 FALSE 
-#&gt; </span><span style='color: #555555;'>6</span><span> ENSMUST00000169091            -</span><span style='color: #BB0000;'>36</span><span>              0              0 FALSE 
-#&gt; </span><span style='color: #555555;'>7</span><span> ENSMUST00000169483            139              1            152 TRUE  
-#&gt; </span><span style='color: #555555;'>8</span><span> ENSMUST00000171599            -</span><span style='color: #BB0000;'>63</span><span>              0              0 FALSE 
-#&gt; </span><span style='color: #555555;'>9</span><span> ENSMUST00000172282           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>158 FALSE </div><div class='input'><span class='co'># }</span>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> ENSMUST00000057343            364              3            644 TRUE  
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span> ENSMUST00000095457           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>085 FALSE 
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span> ENSMUST00000165704           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>497 FALSE 
+#&gt; </span><span style='color: #BCBCBC;'>4</span><span> ENSMUST00000165724            286              2            362 TRUE  
+#&gt; </span><span style='color: #BCBCBC;'>5</span><span> ENSMUST00000168683           -</span><span style='color: #BB0000;'>145</span><span>              0              0 FALSE 
+#&gt; </span><span style='color: #BCBCBC;'>6</span><span> ENSMUST00000169091            -</span><span style='color: #BB0000;'>36</span><span>              0              0 FALSE 
+#&gt; </span><span style='color: #BCBCBC;'>7</span><span> ENSMUST00000169483            139              1            152 TRUE  
+#&gt; </span><span style='color: #BCBCBC;'>8</span><span> ENSMUST00000171599            -</span><span style='color: #BB0000;'>63</span><span>              0              0 FALSE 
+#&gt; </span><span style='color: #BCBCBC;'>9</span><span> ENSMUST00000172282           -</span><span style='color: #BB0000;'>130</span><span>              0           </span><span style='text-decoration: underline;'>1</span><span>158 FALSE </div><div class='input'><span class='co'># }</span>
 
 </div></span></pre>
   </div>

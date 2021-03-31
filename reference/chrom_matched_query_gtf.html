@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Seqlevels matched query data — chrom_matched_query_gtf • factR</title>
+<title>Chromosome matched version of "query_gtf" — chrom_matched_query_gtf • factR</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Seqlevels matched query data — chrom_matched_query_gtf" />
+<meta property="og:title" content="Chromosome matched version of "query_gtf" — chrom_matched_query_gtf" />
 <meta property="og:description" content="query_gtf data which have been corrected for its seqlevels" />
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -109,7 +109,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Seqlevels matched query data</h1>
+    <h1>Chromosome matched version of "query_gtf"</h1>
     
     <div class="hidden name"><code>chrom_matched_query_gtf.Rd</code></div>
     </div>
@@ -118,13 +118,17 @@
     <p>query_gtf data which have been corrected for its seqlevels</p>
     </div>
 
-    <pre class="usage"><span class='va'>chrom_matched_query_gtf</span></pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>chrom_matched_query_gtf</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A GRanges object with 56 ranges and 6 metadata columns:</p><dl>
-  <dt>element</dt><dd><p>Exon start and end coordinates from 4 transcripts</p></dd>
+    <p>A GRanges object with 56 ranges and 3 metadata columns:</p><dl>
+  <dt>ranges</dt><dd><p>Chromosome, start, end, and strand info of 4 transcripts
+  and its exons</p></dd>
+  <dt>type</dt><dd><p>Entry type; transcript or exon</p></dd>
+  <dt>transcript_id</dt><dd><p>ID given to transcripts</p></dd>
+  <dt>gene_id</dt><dd><p>ID given to gene origin of transcripts</p></dd>
   ...
 
 </dl>

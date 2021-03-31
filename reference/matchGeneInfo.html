@@ -40,8 +40,8 @@
 
 
 <meta property="og:title" content="Match gene metadata from query GTF to a reference GTF — matchGeneInfo" />
-<meta property="og:description" content="`matchGeneInfo()` matches and corrects Gene IDs from a query GTF object to a reference
-GTF" />
+<meta property="og:description" content="`matchGeneInfo()` matches and corrects Gene IDs from a 
+query GTF object to a reference GTF" />
 
 
 
@@ -73,7 +73,7 @@ GTF" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -116,8 +116,8 @@ GTF" />
     </div>
 
     <div class="ref-description">
-    <p>`matchGeneInfo()` matches and corrects Gene IDs from a query GTF object to a reference
-GTF</p>
+    <p>`matchGeneInfo()` matches and corrects Gene IDs from a 
+query GTF object to a reference GTF</p>
     </div>
 
     <pre class="usage"><span class='fu'>matchGeneInfo</span><span class='op'>(</span><span class='va'>query</span>, <span class='va'>ref</span>, primary_gene_id <span class='op'>=</span> <span class='cn'>NULL</span>, secondary_gene_id <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
@@ -150,17 +150,23 @@ Example of input to this argument is 'ref_gene_id'</p></td>
     <p>Gene_id-matched query GRanges</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The default approach to this correction relies on finding overlaps between transcripts in query with
-transcripts in reference. Using this method alone could result in false positive matches (19 percent false positives).
-To improve this, users have the option to invoke two additional layers of matching.
-(1) Matching by ENSEMBL Gene_IDs. If both query and reference transcript annotations containg Ensembl-style
-Gene IDs, this program will try to match both IDs in a less stringent manner. This correction can be invoked
+    <p>The default approach to this correction relies on finding overlaps 
+between transcripts in query with transcripts in reference. Using this 
+method alone could result in false positive matches 
+(19 percent false positives).
+To improve this, users have the option to invoke two additional layers 
+of matching.  
+(1) Matching by ENSEMBL Gene_IDs. If both query and reference transcript 
+annotations containg Ensembl-style Gene IDs, this program will try to 
+match both IDs in a less stringent manner. This correction can be invoked
 by providing the 'primary_gene_id' argument</p>
-<p>(2) Matching by secondary Gene_IDs. Depending on the transcript assembly program, GTF/GFF3 annotations
-may contain additional comments on the transcript information. This may include a distinct
-secondary Gene ID annotation that potentially matches with the reference. To invoke this correction,
-provide 'primary_gene_id' and 'secondary_gene_id' arguments. To determine if your transcript assembly contain
-possible secondary Gene IDs, import query GTF file using `importGTF()` and check its metadata
+<p>(2) Matching by secondary Gene_IDs. Depending on the transcript assembly 
+program, GTF/GFF3 annotations may contain additional comments on the
+transcript information. This may include a distinct secondary Gene ID 
+annotation that potentially matches with the reference. To invoke this 
+correction, provide 'primary_gene_id' and 'secondary_gene_id' arguments. 
+To determine if your transcript assembly contain possible secondary 
+Gene IDs, import query GTF file using `importGTF()` and check its metadata
 columns</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
@@ -170,6 +176,10 @@ columns</p>
     <pre class="examples"><div class='input'><span class='co'>## ---------------------------------------------------------------------</span>
 <span class='co'>## EXAMPLE USING SAMPLE DATASET</span>
 <span class='co'>## ---------------------------------------------------------------------</span>
+<span class='co'># Load datasets</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>chrom_matched_query_gtf</span>, <span class='va'>ref_gtf</span><span class='op'>)</span>
+
+<span class='co'># Run matching function</span>
 <span class='fu'>matchGeneInfo</span><span class='op'>(</span><span class='va'>chrom_matched_query_gtf</span>, <span class='va'>ref_gtf</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Number of mismatched gene_ids found: 1</span></div><div class='output co'>#&gt; <span class='message'>---&gt; Attempting to match gene_ids by finding overlapping coordinates...</span></div><div class='output co'>#&gt; <span class='message'>---&gt; 1 gene_id matched</span></div><div class='output co'>#&gt; <span class='message'>Total gene_ids corrected: 1</span></div><div class='output co'>#&gt; <span class='message'>Remaining number of mismatched gene_ids: 0</span></div><div class='output co'>#&gt; GRanges object with 56 ranges and 6 metadata columns:
 #&gt;        seqnames            ranges strand |       type transcript_id

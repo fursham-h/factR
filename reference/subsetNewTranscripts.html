@@ -73,7 +73,7 @@ from those in `ref`" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -135,9 +135,9 @@ from those in `ref`</p>
     </tr>
     <tr>
       <th>refine.by</th>
-      <td><p>Whether to refine the selection process by removing query transcripts with similar
-introns or CDS structure to reference. Default input is "none", and can be changed
-to "intron" or "cds" respectively.</p></td>
+      <td><p>Whether to refine the selection process by removing query transcripts with
+similar introns or CDS structure to reference. Default input is "none", and 
+can be changed to "intron" or "cds" respectively.</p></td>
     </tr>
     </table>
 
@@ -146,19 +146,24 @@ to "intron" or "cds" respectively.</p></td>
     <p>Filtered GRanges GTF object</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>`subsetNewTranscripts()` will compare query and reference GTF GRanges and return
-query transcripts with different exon structures from reference transcripts.
-Transcriptome assemblers may sometime extend 5' and 3' ends of known transcripts
-based on experimental data. These annotated transcripts can be removed by inputting
-"intron" to the refine.by argument. This will further compare and remove transcripts
-of identical intron structures. Alternatively, transcripts with unique CDS coordinates
-can be selected by typing "cds" to the refine.by argument.</p>
+    <p>`subsetNewTranscripts()` will compare query and reference GTF GRanges and 
+return query transcripts with different exon structures from reference 
+transcripts. Transcriptome assemblers may sometime extend 5' and 3' ends 
+of known transcripts based on experimental data. These annotated transcripts 
+can be removed by inputting "intron" to the refine.by argument. This will 
+further compare and remove transcripts of identical intron structures. 
+Alternatively, transcripts with unique CDS coordinates can be selected by 
+typing "cds" to the refine.by argument.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Fursham Hamid</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>subsetNewTranscripts</span><span class='op'>(</span><span class='va'>matched_query_gtf</span>, <span class='va'>ref_gtf</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='co'># Load dataset</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>matched_query_gtf</span>, <span class='va'>ref_gtf</span><span class='op'>)</span>
+
+<span class='co'># shortlist new transcripts</span>
+<span class='fu'>subsetNewTranscripts</span><span class='op'>(</span><span class='va'>matched_query_gtf</span>, <span class='va'>ref_gtf</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Removing transcripts with exact exon coordinates</span></div><div class='output co'>#&gt; GRanges object with 27 ranges and 6 metadata columns:
 #&gt;        seqnames            ranges strand |       type transcript_id
 #&gt;           &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;factor&gt;   &lt;character&gt;

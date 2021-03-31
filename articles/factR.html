@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -69,7 +69,7 @@
       <h1 data-toc-skip>Using factR</h1>
                         <h4 class="author">Fursham Hamid</h4>
             
-            <h4 class="date">2021-01-15</h4>
+            <h4 class="date">2021-03-31</h4>
       
       
       <div class="hidden name"><code>factR.Rmd</code></div>
@@ -119,7 +119,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <div id="reference-transcriptome" class="section level3">
 <h3 class="hasAnchor">
 <a href="#reference-transcriptome" class="anchor"></a>Reference transcriptome</h3>
-<p>Several <em>factR</em> functions require reference transcriptome files (GTF or GFF3) as a guide. Such files can be accessed from within the R environment using e.g. the R package <em>AnnotationHub</em> or downloaded from an external database such as GENCODE or Ensembl. Both possibilities are described in the <a href="#updating-gene-info">“Updating gene info”</a> section below.</p>
+<p>Several <em>factR</em> functions require reference transcriptome files (GTF or GFF3) as a guide. Such files can be accessed from within the R environment using e.g.  the R package <em>AnnotationHub</em> or downloaded from an external database such as GENCODE or Ensembl. Both possibilities are described in the <a href="#updating-gene-info">“Updating gene info”</a> section below.</p>
 </div>
 <div id="genome" class="section level3">
 <h3 class="hasAnchor">
@@ -134,18 +134,19 @@ Users may alternatively prepare their own GTF files making sure that these conta
 </h1>
 <p>Load <em>factR</em> to the R environment as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">factR</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://fursham-h.github.io/factR/">factR</a></span><span class="op">)</span>  </code></pre></div>
 <div id="importing-and-inspecting-gtf-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#importing-and-inspecting-gtf-data" class="anchor"></a>Importing and inspecting GTF data</h2>
 <p><em>factR</em> handles transcriptome information in the form of <em>GenomicRanges</em> objects containing genomic interval data and relevant metadata. To create such an object from a GTF file, we use the <code>importGTF</code> function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">selected.data</span> <span class="op">&lt;-</span> <span class="st">"sc"</span>  
-  
+
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">".gtf"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"https://github.com/fursham-h/MiMB-factR-supplement/raw/master/"</span>,  
                      <span class="st">"Custom%20transcriptome/"</span>, <span class="va">selected.data</span>, <span class="st">"_merged.gtf.gz"</span><span class="op">)</span>,   
-              <span class="st">"input.gtf.gz"</span><span class="op">)</span>  
-<span class="va">custom.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importGTF.html">importGTF</a></span><span class="op">(</span><span class="st">"input.gtf.gz"</span><span class="op">)</span>  </code></pre></div>
+              <span class="va">tmp</span><span class="op">)</span>  
+<span class="va">custom.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importGTF.html">importGTF</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span>  </code></pre></div>
 <p>This should import sc_merged.gtf.gz, and we will use this input in the walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply change “sc” to “bulk” or “lr” in the selected.data variable. Users may import their own GTF file by specifying the path to such file in the <code>importGTF</code> function.</p>
 <p>The imported GTF file is stored as a <em>GenomicRanges</em> object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -207,13 +208,13 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <a href="#updating-gene-info" class="anchor"></a>Updating gene info</h2>
 <p><em>factR</em> can update gene metadata in custom transcriptome objects using a reference annotation as guide. Below, we describe two alternative ways to obtain mouse reference transcriptome data from GENCODE.</p>
 <ol style="list-style-type: decimal">
-<li>Using <em>AnnotationHub</em> package (ref.gtf generated from this method will be used for the remaining of the workflow)</li>
+<li>Using <em>AnnotationHub</em> package</li>
 </ol>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># query database for mouse gencode basic annotation  </span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span>  
 <span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>  
-<span class="co">#&gt; using temporary cache /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpWc97aE/BiocFileCache</span>
+<span class="co">#&gt; using temporary cache /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpIkLLY4/BiocFileCache</span>
 <span class="co">#&gt; snapshotDate(): 2020-10-27</span>
 <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Mus musculus'</span>, <span class="st">'gencode'</span>, <span class="st">'gff'</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; AnnotationHub with 9 records</span>
@@ -243,12 +244,13 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt; retrieving 1 resource</span>
 <span class="co">#&gt; loading from cache</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
-<li>Downloading from a database (e.g. GENCODE)</li>
+<li>Downloading from a GENCODE database (ref.gtf generated from this method will be used for the remaining of the workflow)</li>
 </ol>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="st">"ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz"</span>,  
-              destfile <span class="op">=</span> <span class="st">"gencode.vM25.annotation.gtf.gz"</span><span class="op">)</span>  
-<span class="va">ref.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importGTF.html">importGTF</a></span><span class="op">(</span><span class="st">"gencode.vM25.annotation.gtf.gz"</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="st">"ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz"</span>,  
+              destfile <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
+<span class="va">ref.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importGTF.html">importGTF</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span> </code></pre></div>
 <p>When choosing a reference, users should consider using one with the same chromosome naming style (e.g. “chr1” or “1”). Alternatively, the styles can be matched using the <code>matchChromosomes</code> function (see <code><a href="../reference/matchChromosomes.html">help(matchChromosomes)</a></code> for more detail).</p>
 <p>Once the ref.gtf object is ready, novel transcripts in custom.gtf can be assigned to “official” gene IDs, whenever possible, using <code>matchGeneInfo</code>. By default, this function matches the query (custom.gtf) to the reference (ref.gtf) by finding overlapping coordinates:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -350,9 +352,10 @@ Users may alternatively prepare their own GTF files making sure that these conta
 </li>
 </ol>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="st">"ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/GRCm38.primary_assembly.genome.fa.gz"</span>,  
-              <span class="st">"GRCm38.primary_assembly.genome.fa.gz"</span><span class="op">)</span>  
-<span class="va">Mmusculus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importFASTA.html">importFASTA</a></span><span class="op">(</span><span class="st">"GRCm38.primary_assembly.genome.fa.gz"</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="st">"ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/GRCm38.primary_assembly.genome.fa.gz"</span>,  
+              <span class="va">tmp</span><span class="op">)</span>  
+<span class="va">Mmusculus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importFASTA.html">importFASTA</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"/GRCm38.primary_assembly.genome.fa.gz"</span><span class="op">)</span><span class="op">)</span>  </code></pre></div>
 <p>Once the genome sequence object is ready, <em>factR</em> can predict CDSs using its buildCDS() function and reference transcriptome data as a guide. buildCDS() first generates a database of previously annotated ATGs and uses this information to search for a potential translation start sites in query transcripts. buildCDS() then deduces the CDS and appends its coordinates to the custom transcriptome object. Let’s run this function for our novel transcripts:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">custom_new_CDS.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/buildCDS.html">buildCDS</a></span><span class="op">(</span><span class="va">custom_new.gtf</span>, <span class="va">ref.gtf</span>, <span class="va">Mmusculus</span><span class="op">)</span>  
@@ -630,18 +633,19 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <p>Annotated <em>custom_new_CDS.gtf</em> object can be exported to a GTF file as follows:</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span> 
-<span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/export.html">export</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="st">"Custom_new.gtf"</span>, format <span class="op">=</span> <span class="st">"GTF"</span><span class="op">)</span>  </code></pre></div>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/export.html">export</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"Custom_new.gtf"</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"GTF"</span><span class="op">)</span>  </code></pre></div>
 <p>Finally, to export <em>NMDprediction.out</em> and <em>domains.out</em> data frames as tab-delimited text files, run the following:</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">NMDprediction.out</span>, <span class="st">"Custom_new_NMD.txt"</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, quote <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  
-<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">domains.out</span>, <span class="st">"Custom_new_domains.txt"</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, quote <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">NMDprediction.out</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"Custom_new_NMD.txt"</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, quote <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  
+<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">domains.out</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"Custom_new_domains.txt"</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, quote <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </code></pre></div>
 </div>
 </div>
 <div id="citing-factr" class="section level1">
 <h1 class="hasAnchor">
 <a href="#citing-factr" class="anchor"></a>Citing <em>factR</em>
 </h1>
-<p>Please cite <em>factR</em> if you find it useful:<br><!-- Add citation --></p>
+<p>Please cite <em>factR</em> if you find it useful:<br><!-- Citation will be added in the near future --></p>
 </div>
 <div id="session-information" class="section level1">
 <h1 class="hasAnchor">
@@ -649,7 +653,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <p>This workflow was conducted on:</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>  
-<span class="co">#&gt; R version 4.0.3 (2020-10-10)</span>
+<span class="co">#&gt; R version 4.0.4 (2021-02-15)</span>
 <span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span>
 <span class="co">#&gt; Running under: macOS Catalina 10.15.7</span>
 <span class="co">#&gt; </span>
@@ -665,72 +669,72 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt; [8] methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt;  [1] forcats_0.5.0                      stringr_1.4.0                     </span>
-<span class="co">#&gt;  [3] dplyr_1.0.2                        purrr_0.3.4                       </span>
-<span class="co">#&gt;  [5] readr_1.4.0                        tidyr_1.1.2                       </span>
-<span class="co">#&gt;  [7] tibble_3.0.4                       ggplot2_3.3.3                     </span>
-<span class="co">#&gt;  [9] tidyverse_1.3.0                    GenomicFeatures_1.42.1            </span>
+<span class="co">#&gt;  [1] forcats_0.5.1                      stringr_1.4.0                     </span>
+<span class="co">#&gt;  [3] dplyr_1.0.5                        purrr_0.3.4                       </span>
+<span class="co">#&gt;  [5] readr_1.4.0                        tidyr_1.1.3                       </span>
+<span class="co">#&gt;  [7] tibble_3.1.0                       ggplot2_3.3.3                     </span>
+<span class="co">#&gt;  [9] tidyverse_1.3.0                    GenomicFeatures_1.42.2            </span>
 <span class="co">#&gt; [11] AnnotationDbi_1.52.0               Biobase_2.50.0                    </span>
 <span class="co">#&gt; [13] BSgenome.Mmusculus.UCSC.mm10_1.4.0 BSgenome_1.58.0                   </span>
 <span class="co">#&gt; [15] rtracklayer_1.50.0                 GenomicRanges_1.42.0              </span>
-<span class="co">#&gt; [17] GenomeInfoDb_1.26.2                Biostrings_2.58.0                 </span>
+<span class="co">#&gt; [17] GenomeInfoDb_1.26.4                Biostrings_2.58.0                 </span>
 <span class="co">#&gt; [19] XVector_0.30.0                     IRanges_2.24.1                    </span>
 <span class="co">#&gt; [21] S4Vectors_0.28.1                   AnnotationHub_2.22.0              </span>
-<span class="co">#&gt; [23] BiocFileCache_1.14.0               dbplyr_2.0.0                      </span>
-<span class="co">#&gt; [25] BiocGenerics_0.36.0                factR_0.99.2                      </span>
+<span class="co">#&gt; [23] BiocFileCache_1.14.0               dbplyr_2.1.0                      </span>
+<span class="co">#&gt; [25] BiocGenerics_0.36.0                factR_0.99.3                      </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
 <span class="co">#&gt;   [1] colorspace_2.0-0              ellipsis_0.3.1               </span>
 <span class="co">#&gt;   [3] rprojroot_2.0.2               fs_1.5.0                     </span>
-<span class="co">#&gt;   [5] rstudioapi_0.13               farver_2.0.3                 </span>
+<span class="co">#&gt;   [5] rstudioapi_0.13               farver_2.1.0                 </span>
 <span class="co">#&gt;   [7] bit64_4.0.5                   interactiveDisplayBase_1.28.0</span>
-<span class="co">#&gt;   [9] fansi_0.4.1                   lubridate_1.7.9.2            </span>
-<span class="co">#&gt;  [11] xml2_1.3.2                    knitr_1.30                   </span>
-<span class="co">#&gt;  [13] jsonlite_1.7.2                wiggleplotr_1.14.0           </span>
-<span class="co">#&gt;  [15] Rsamtools_2.6.0               broom_0.7.3                  </span>
-<span class="co">#&gt;  [17] shiny_1.5.0                   BiocManager_1.30.10          </span>
-<span class="co">#&gt;  [19] compiler_4.0.3                httr_1.4.2                   </span>
-<span class="co">#&gt;  [21] backports_1.2.1               assertthat_0.2.1             </span>
-<span class="co">#&gt;  [23] Matrix_1.2-18                 fastmap_1.0.1                </span>
-<span class="co">#&gt;  [25] cli_2.2.0                     later_1.1.0.1                </span>
-<span class="co">#&gt;  [27] htmltools_0.5.1               prettyunits_1.1.1            </span>
-<span class="co">#&gt;  [29] tools_4.0.3                   gtable_0.3.0                 </span>
-<span class="co">#&gt;  [31] glue_1.4.2                    GenomeInfoDbData_1.2.4       </span>
-<span class="co">#&gt;  [33] rappdirs_0.3.1                Rcpp_1.0.5                   </span>
-<span class="co">#&gt;  [35] cellranger_1.1.0              pkgdown_1.6.1                </span>
-<span class="co">#&gt;  [37] vctrs_0.3.6                   drawProteins_1.10.0          </span>
-<span class="co">#&gt;  [39] xfun_0.20                     ps_1.5.0                     </span>
-<span class="co">#&gt;  [41] rvest_0.3.6                   mime_0.9                     </span>
-<span class="co">#&gt;  [43] lifecycle_0.2.0               XML_3.99-0.5                 </span>
-<span class="co">#&gt;  [45] zlibbioc_1.36.0               scales_1.1.1                 </span>
-<span class="co">#&gt;  [47] ragg_0.4.1                    hms_1.0.0                    </span>
-<span class="co">#&gt;  [49] promises_1.1.1                MatrixGenerics_1.2.0         </span>
-<span class="co">#&gt;  [51] SummarizedExperiment_1.20.0   RColorBrewer_1.1-2           </span>
-<span class="co">#&gt;  [53] yaml_2.2.1                    curl_4.3                     </span>
-<span class="co">#&gt;  [55] pbapply_1.4-3                 memoise_1.1.0                </span>
-<span class="co">#&gt;  [57] biomaRt_2.46.0                stringi_1.5.3                </span>
-<span class="co">#&gt;  [59] RSQLite_2.2.2                 BiocVersion_3.12.0           </span>
-<span class="co">#&gt;  [61] desc_1.2.0                    BiocParallel_1.24.1          </span>
-<span class="co">#&gt;  [63] rlang_0.4.10                  pkgconfig_2.0.3              </span>
-<span class="co">#&gt;  [65] systemfonts_0.3.2             matrixStats_0.57.0           </span>
-<span class="co">#&gt;  [67] bitops_1.0-6                  evaluate_0.14                </span>
-<span class="co">#&gt;  [69] lattice_0.20-41               labeling_0.4.2               </span>
-<span class="co">#&gt;  [71] GenomicAlignments_1.26.0      bit_4.0.4                    </span>
-<span class="co">#&gt;  [73] tidyselect_1.1.0              magrittr_2.0.1               </span>
-<span class="co">#&gt;  [75] bookdown_0.21                 R6_2.5.0                     </span>
-<span class="co">#&gt;  [77] generics_0.1.0                DelayedArray_0.16.0          </span>
-<span class="co">#&gt;  [79] DBI_1.1.1                     pillar_1.4.7                 </span>
-<span class="co">#&gt;  [81] haven_2.3.1                   withr_2.3.0                  </span>
-<span class="co">#&gt;  [83] RCurl_1.98-1.2                modelr_0.1.8                 </span>
-<span class="co">#&gt;  [85] crayon_1.3.4                  utf8_1.1.4                   </span>
-<span class="co">#&gt;  [87] rmarkdown_2.6                 progress_1.2.2               </span>
-<span class="co">#&gt;  [89] grid_4.0.3                    readxl_1.3.1                 </span>
-<span class="co">#&gt;  [91] data.table_1.13.6             blob_1.2.1                   </span>
-<span class="co">#&gt;  [93] rmdformats_1.0.1              reprex_0.3.0                 </span>
-<span class="co">#&gt;  [95] digest_0.6.27                 xtable_1.8-4                 </span>
-<span class="co">#&gt;  [97] httpuv_1.5.5                  textshaping_0.2.1            </span>
-<span class="co">#&gt;  [99] openssl_1.4.3                 munsell_0.5.0                </span>
-<span class="co">#&gt; [101] askpass_1.1</span></code></pre></div>
+<span class="co">#&gt;   [9] fansi_0.4.2                   lubridate_1.7.10             </span>
+<span class="co">#&gt;  [11] xml2_1.3.2                    cachem_1.0.4                 </span>
+<span class="co">#&gt;  [13] knitr_1.31                    jsonlite_1.7.2               </span>
+<span class="co">#&gt;  [15] wiggleplotr_1.14.0            Rsamtools_2.6.0              </span>
+<span class="co">#&gt;  [17] broom_0.7.5                   shiny_1.6.0                  </span>
+<span class="co">#&gt;  [19] BiocManager_1.30.12           compiler_4.0.4               </span>
+<span class="co">#&gt;  [21] httr_1.4.2                    backports_1.2.1              </span>
+<span class="co">#&gt;  [23] assertthat_0.2.1              Matrix_1.3-2                 </span>
+<span class="co">#&gt;  [25] fastmap_1.1.0                 cli_2.3.1                    </span>
+<span class="co">#&gt;  [27] later_1.1.0.1                 htmltools_0.5.1.1            </span>
+<span class="co">#&gt;  [29] prettyunits_1.1.1             tools_4.0.4                  </span>
+<span class="co">#&gt;  [31] gtable_0.3.0                  glue_1.4.2                   </span>
+<span class="co">#&gt;  [33] GenomeInfoDbData_1.2.4        rappdirs_0.3.3               </span>
+<span class="co">#&gt;  [35] Rcpp_1.0.6                    cellranger_1.1.0             </span>
+<span class="co">#&gt;  [37] jquerylib_0.1.3               pkgdown_1.6.1                </span>
+<span class="co">#&gt;  [39] vctrs_0.3.7                   drawProteins_1.10.0          </span>
+<span class="co">#&gt;  [41] xfun_0.22                     ps_1.6.0                     </span>
+<span class="co">#&gt;  [43] rvest_1.0.0                   mime_0.10                    </span>
+<span class="co">#&gt;  [45] lifecycle_1.0.0               XML_3.99-0.6                 </span>
+<span class="co">#&gt;  [47] zlibbioc_1.36.0               scales_1.1.1                 </span>
+<span class="co">#&gt;  [49] ragg_1.1.2                    hms_1.0.0                    </span>
+<span class="co">#&gt;  [51] promises_1.2.0.1              MatrixGenerics_1.2.1         </span>
+<span class="co">#&gt;  [53] SummarizedExperiment_1.20.0   RColorBrewer_1.1-2           </span>
+<span class="co">#&gt;  [55] yaml_2.2.1                    curl_4.3                     </span>
+<span class="co">#&gt;  [57] pbapply_1.4-3                 memoise_2.0.0                </span>
+<span class="co">#&gt;  [59] sass_0.3.1                    biomaRt_2.46.3               </span>
+<span class="co">#&gt;  [61] stringi_1.5.3                 RSQLite_2.2.5                </span>
+<span class="co">#&gt;  [63] highr_0.8                     BiocVersion_3.12.0           </span>
+<span class="co">#&gt;  [65] desc_1.3.0                    BiocParallel_1.24.1          </span>
+<span class="co">#&gt;  [67] rlang_0.4.10                  pkgconfig_2.0.3              </span>
+<span class="co">#&gt;  [69] systemfonts_1.0.1             matrixStats_0.58.0           </span>
+<span class="co">#&gt;  [71] bitops_1.0-6                  evaluate_0.14                </span>
+<span class="co">#&gt;  [73] lattice_0.20-41               labeling_0.4.2               </span>
+<span class="co">#&gt;  [75] GenomicAlignments_1.26.0      bit_4.0.4                    </span>
+<span class="co">#&gt;  [77] tidyselect_1.1.0              magrittr_2.0.1               </span>
+<span class="co">#&gt;  [79] bookdown_0.21                 R6_2.5.0                     </span>
+<span class="co">#&gt;  [81] generics_0.1.0                DelayedArray_0.16.3          </span>
+<span class="co">#&gt;  [83] DBI_1.1.1                     withr_2.4.1                  </span>
+<span class="co">#&gt;  [85] pillar_1.5.1                  haven_2.3.1                  </span>
+<span class="co">#&gt;  [87] RCurl_1.98-1.3                modelr_0.1.8                 </span>
+<span class="co">#&gt;  [89] crayon_1.4.1                  utf8_1.2.1                   </span>
+<span class="co">#&gt;  [91] rmarkdown_2.7                 progress_1.2.2               </span>
+<span class="co">#&gt;  [93] grid_4.0.4                    readxl_1.3.1                 </span>
+<span class="co">#&gt;  [95] data.table_1.14.0             blob_1.2.1                   </span>
+<span class="co">#&gt;  [97] rmdformats_1.0.1              reprex_1.0.0                 </span>
+<span class="co">#&gt;  [99] digest_0.6.27                 xtable_1.8-4                 </span>
+<span class="co">#&gt;  [ reached getOption("max.print") -- omitted 6 entries ]</span></code></pre></div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">

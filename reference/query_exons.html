@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Exons from 4 transcripts entries of the same gene — query_exons • factR</title>
+<title>GRangeList of exons from 4 transcripts entries from query_gtf — query_exons • factR</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Exons from 4 transcripts entries of the same gene — query_exons" />
+<meta property="og:title" content="GRangeList of exons from 4 transcripts entries from query_gtf — query_exons" />
 <meta property="og:description" content="A dataset containing coordinates of exons from 4 transcripts of
 mouse Ptbp1. Transcript names and gene IDs have been modified" />
 
@@ -73,7 +73,7 @@ mouse Ptbp1. Transcript names and gene IDs have been modified" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -110,7 +110,7 @@ mouse Ptbp1. Transcript names and gene IDs have been modified" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Exons from 4 transcripts entries of the same gene</h1>
+    <h1>GRangeList of exons from 4 transcripts entries from query_gtf</h1>
     
     <div class="hidden name"><code>query_exons.Rd</code></div>
     </div>
@@ -120,20 +120,24 @@ mouse Ptbp1. Transcript names and gene IDs have been modified" />
 mouse Ptbp1. Transcript names and gene IDs have been modified</p>
     </div>
 
-    <pre class="usage"><span class='va'>query_exons</span></pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>query_exons</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
     <p>A GRangesList object with 4 elements:</p><dl>
-  <dt>element</dt><dd><p>Exon start and end coordinates of each transcript</p></dd>
+  <dt>ranges</dt><dd><p>Chromosome, start, end, and strand info of 4 transcripts
+  and its exons</p></dd>
+  <dt>type</dt><dd><p>Entry type; transcript or exon</p></dd>
+  <dt>transcript_id</dt><dd><p>ID given to transcripts</p></dd>
+  <dt>gene_id</dt><dd><p>Matched gene_id</p></dd>
+  <dt>old_gene_id</dt><dd><p>Original gene_id</p></dd>
+  <dt>match_level</dt><dd><p>Level of matching performed</p></dd>
+  <dt>gene_name</dt><dd><p>Name of gene</p></dd>
   ...
 
 </dl>
 
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
-
-    <p><a href='http://www.ensembl.org/'>http://www.ensembl.org/</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

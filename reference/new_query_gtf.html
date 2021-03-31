@@ -73,7 +73,7 @@ CDS features" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -120,14 +120,21 @@ CDS features" />
 CDS features</p>
     </div>
 
-    <pre class="usage"><span class='va'>new_query_gtf</span></pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>new_query_gtf</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A GRanges object with 105 ranges and 8 metadata columns:</p><dl>
-  <dt>element</dt><dd><p>Exon start and end coordinates from 4 transcripts</p></dd>
-  <dt>element</dt><dd><p>CDS start and end coordinates from 4 transcripts</p></dd>
+    <p>A GRanges object with 105 ranges and 7 metadata columns:</p><dl>
+  <dt>ranges</dt><dd><p>Chromosome, start, end, and strand info of 4 transcripts
+  and its exons</p></dd>
+  <dt>type</dt><dd><p>Entry type; transcript or exon</p></dd>
+  <dt>transcript_id</dt><dd><p>ID given to transcripts</p></dd>
+  <dt>gene_id</dt><dd><p>Matched gene_id</p></dd>
+  <dt>old_gene_id</dt><dd><p>Original gene_id</p></dd>
+  <dt>match_level</dt><dd><p>Level of matching performed</p></dd>
+  <dt>gene_name</dt><dd><p>Name of gene</p></dd>
+  <dt>phase</dt><dd><p>Phase of open-reading frame</p></dd>
   ...
 
 </dl>

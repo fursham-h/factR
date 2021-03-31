@@ -73,7 +73,7 @@ mouse Ptbp1." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -120,13 +120,19 @@ mouse Ptbp1." />
 mouse Ptbp1.</p>
     </div>
 
-    <pre class="usage"><span class='va'>ref_cds</span></pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>ref_cds</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
     <p>A GRangesList object with 2 elements:</p><dl>
-  <dt>element</dt><dd><p>CDS start and end coordinates of each transcript</p></dd>
+  <dt>ranges</dt><dd><p>Chromosome, start, end, and strand info of 4 transcripts
+  and its exons</p></dd>
+  <dt>type</dt><dd><p>Entry type; transcript or exon</p></dd>
+  <dt>phase</dt><dd><p>Phase of open-reading frame</p></dd>
+  <dt>gene_id</dt><dd><p>Matched gene_id</p></dd>
+  <dt>gene_name</dt><dd><p>Name of gene</p></dd>
+  <dt>transcript_id</dt><dd><p>ID given to transcripts</p></dd>
   ...
 
 </dl>

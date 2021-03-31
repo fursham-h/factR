@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -142,7 +142,7 @@
         <td>
           <p><code><a href="chrom_matched_query_gtf.html">chrom_matched_query_gtf</a></code> </p>
         </td>
-        <td><p>Seqlevels matched query data</p></td>
+        <td><p>Chromosome matched version of "query_gtf"</p></td>
       </tr><tr>
         
         <td>
@@ -166,7 +166,8 @@
         <td>
           <p><code><a href="has_consistentSeqlevels.html">has_consistentSeqlevels()</a></code> </p>
         </td>
-        <td><p>Test consistency of chromosome naming styles (aka seqlevels; e.g. "chr1" vs "1") across multiple objects</p></td>
+        <td><p>Test consistency of chromosome naming styles 
+(aka seqlevels; e.g. "chr1" vs "1") across multiple objects</p></td>
       </tr><tr>
         
         <td>
@@ -179,12 +180,6 @@
           <p><code><a href="importGTF.html">importGTF()</a></code> </p>
         </td>
         <td><p>Import GTF file into R</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="is_gtf.html">is_gtf()</a></code> </p>
-        </td>
-        <td><p>Test for GTF GRanges object</p></td>
       </tr><tr>
         
         <td>
@@ -238,7 +233,7 @@
         <td>
           <p><code><a href="query_exons.html">query_exons</a></code> </p>
         </td>
-        <td><p>Exons from 4 transcripts entries of the same gene</p></td>
+        <td><p>GRangeList of exons from 4 transcripts entries from query_gtf</p></td>
       </tr><tr>
         
         <td>

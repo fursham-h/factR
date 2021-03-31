@@ -40,9 +40,9 @@
 
 
 <meta property="og:title" content="Imported GTF file containing 4 transcript entries of the same gene — query_gtf" />
-<meta property="og:description" content="A dataset containing coordinates of transcript and exons from 4 transcripts of
-mouse Ptbp1. Transcript names and gene IDs have been modified to demonstrate
-de novo origin of GTF" />
+<meta property="og:description" content="A dataset containing coordinates of transcript and exons from 4 transcripts 
+of mouse Ptbp1. Transcript names and gene IDs have been modified to 
+demonstrate de novo origin of GTF" />
 
 
 
@@ -74,7 +74,7 @@ de novo origin of GTF" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -117,18 +117,22 @@ de novo origin of GTF" />
     </div>
 
     <div class="ref-description">
-    <p>A dataset containing coordinates of transcript and exons from 4 transcripts of
-mouse Ptbp1. Transcript names and gene IDs have been modified to demonstrate
-de novo origin of GTF</p>
+    <p>A dataset containing coordinates of transcript and exons from 4 transcripts 
+of mouse Ptbp1. Transcript names and gene IDs have been modified to 
+demonstrate de novo origin of GTF</p>
     </div>
 
-    <pre class="usage"><span class='va'>query_gtf</span></pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>query_gtf</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
     <p>A GRanges object with 56 ranges and 3 metadata columns:</p><dl>
-  <dt>element</dt><dd><p>Exon start and end coordinates from 4 transcripts</p></dd>
+  <dt>ranges</dt><dd><p>Chromosome, start, end, and strand info of 4 transcripts
+  and its exons</p></dd>
+  <dt>type</dt><dd><p>Entry type; transcript or exon</p></dd>
+  <dt>transcript_id</dt><dd><p>Name or ID given to transcripts</p></dd>
+  <dt>gene_id</dt><dd><p>Name or ID given to gene origin of transcripts</p></dd>
   ...
 
 </dl>
