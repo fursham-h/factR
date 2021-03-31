@@ -31,7 +31,9 @@ library(Biostrings)
 library(BSgenome.Mmusculus.UCSC.mm10)  
 library(GenomicFeatures)  
 library(rtracklayer)  
-library(tidyverse)  
+library(tidyverse) 
+
+
 ```  
   
 # Introduction  
@@ -121,10 +123,11 @@ objects containing genomic interval data and relevant metadata. To create such
 an object from a GTF file, we use the `importGTF` function:  
 ```{r importGTF}  
 selected.data <- "sc"  
-  
+
+tmp <- tempfile()
 download.file(paste0("https://github.com/fursham-h/MiMB-factR-supplement/raw/master/",  
                      "Custom%20transcriptome/", selected.data, "_merged.gtf.gz"),   
-              "input.gtf.gz")  
+              tmp)  
 custom.gtf <- importGTF("input.gtf.gz")  
 ```  
 This should import sc_merged.gtf.gz, and we will use this input in the 
