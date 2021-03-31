@@ -124,11 +124,11 @@ an object from a GTF file, we use the `importGTF` function:
 ```{r importGTF}  
 selected.data <- "sc"  
 
-tmp <- tempfile()
+tmp <- paste0(tempfile(), ".gtf")
 download.file(paste0("https://github.com/fursham-h/MiMB-factR-supplement/raw/master/",  
                      "Custom%20transcriptome/", selected.data, "_merged.gtf.gz"),   
               tmp)  
-custom.gtf <- importGTF("input.gtf.gz")  
+custom.gtf <- importGTF(tmp)  
 ```  
 This should import sc_merged.gtf.gz, and we will use this input in the 
 walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply 
