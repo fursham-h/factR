@@ -3,13 +3,13 @@
 #' @param x
 #' GRanges or GRangesList object containing exon coordinates for each transcript
 #' @param start
-#' Number of bases to trim from the start of transcript. Providing a negative value will
-#' extend the transcript instead. If `x` is a GRanges object,
+#' Number of bases to trim from the start of transcript. Providing a negative 
+#' value will extend the transcript instead. If `x` is a GRanges object,
 #' `start` is a single integer. If `x` is a GRangesList, `start` can be a single
 #' integer or a list of integers of the same length as `x`
 #' @param end
-#' Number of bases to trim from the end of transcript. Providing a negative value will
-#' extend the transcript instead. If `x` is a GRanges object,
+#' Number of bases to trim from the end of transcript. Providing a negative 
+#' value will extend the transcript instead. If `x` is a GRanges object,
 #' `end` is a single integer. If `x` is a GRangesList, `end` can be a single
 #' integer or a list of integers of the same length as `x`
 #'
@@ -49,14 +49,16 @@ trimTranscripts <- function(x, start = 0, end = 0) {
     } else if (length(start) != length(x)) {
         startlen <- length(start)
         xlen <- length(x)
-        rlang::abort(sprintf("Length of `start` (%s) is not equal to `x` (%s)", startlen, xlen))
+        rlang::abort(sprintf("Length of `start` (%s) is not equal to `x` (%s)", 
+                             startlen, xlen))
     }
     if (length(end) == 1) {
         end <- rep(end, length(x))
     } else if (length(end) != length(x)) {
         endlen <- length(end)
         xlen <- length(x)
-        rlang::abort(sprintf("Length of `end` (%s) is not equal to `x` (%s)", endlen, xlen))
+        rlang::abort(sprintf("Length of `end` (%s) is not equal to `x` (%s)", 
+                             endlen, xlen))
     }
 
     # return if appending length is longer than transcript
@@ -94,8 +96,10 @@ trimTranscripts <- function(x, start = 0, end = 0) {
         ) %>%
         dplyr::filter(tmp.fwdcumsum > 0 & tmp.revcumsum > 0) %>%
         dplyr::mutate(
-            start = ifelse(dplyr::row_number() == 1, tmp.end - tmp.fwdcumsum + 1, start),
-            end = ifelse(dplyr::row_number() == dplyr::n(), tmp.start + tmp.revcumsum - 1, end)
+            start = ifelse(dplyr::row_number() == 1, 
+                           tmp.end - tmp.fwdcumsum + 1, start),
+            end = ifelse(dplyr::row_number() == dplyr::n(), 
+                         tmp.start + tmp.revcumsum - 1, end)
         ) %>%
         dplyr::arrange(ifelse(strand == "-", dplyr::desc(start), start)) %>%
         dplyr::select(-dplyr::starts_with("tmp.")) %>%

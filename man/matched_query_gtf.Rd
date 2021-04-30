@@ -7,12 +7,19 @@
 \format{
 A GRanges object with 56 ranges and 6 metadata columns:
 \describe{
-  \item{element}{Exon start and end coordinates from 4 transcripts}
+  \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+  and its exons}
+  \item{type}{Entry type; transcript or exon}
+  \item{transcript_id}{ID given to transcripts}
+  \item{gene_id}{Matched gene_id}
+  \item{old_gene_id}{Original gene_id}
+  \item{match_level}{Level of matching performed}
+  \item{gene_name}{Name of gene}
   ...
 }
 }
 \usage{
-matched_query_gtf
+data(matched_query_gtf)
 }
 \description{
 query_gtf data which have been corrected for its seqlevels and gene_ids

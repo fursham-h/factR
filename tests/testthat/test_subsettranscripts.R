@@ -1,5 +1,11 @@
 context("Test subset function")
 
+data(query_gtf)
+data(matched_query_gtf)
+data(new_query_gtf)
+data(ref_gtf)
+data(ref_cds)
+
 test_that("Test subset robustness", {
   expect_error(subsetNewTranscripts(query_gtf, ref_cds))
   expect_error(buildCDS(query_gtf))

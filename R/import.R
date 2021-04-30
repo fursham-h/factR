@@ -28,9 +28,11 @@ importGTF <- function(con) {
 #' Import FASTA file into R
 #'
 #' @description
-#' This function is a wrapper to Biostrings::readDNAStringSet() function to import
-#' FASTA genome sequence file and simultaneously convert long chromosome names
-#' (e.g. 1 dna:chromosome chromosome:GRCm38:1:1:195471971:1 REF) to short names (e.g. 1)
+#' This function is a wrapper to Biostrings::readDNAStringSet() 
+#' function to import FASTA genome sequence file and simultaneously 
+#' convert long chromosome names 
+#' (e.g. 1 dna:chromosome chromosome:GRCm38:1:1:195471971:1 REF) 
+#' to short names (e.g. 1)
 #'
 #' @param con
 #' Path to FASTA file
@@ -49,6 +51,7 @@ importFASTA <- function(con) {
             rlang::abort(paste(con, " not found or not in FASTA format"))
         }
     )
-    names(infile) <- stringr::str_split(seqlevels(infile), " ") %>% purrr::map_chr(`[`, 1)
+    names(infile) <- stringr::str_split(seqlevels(infile), " ") %>% 
+        purrr::map_chr(`[`, 1)
     return(infile)
 }

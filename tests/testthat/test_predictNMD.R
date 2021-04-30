@@ -1,5 +1,8 @@
 context("Test predictNMD functions")
 
+data(query_exons)
+data(query_cds)
+
 test_that("Test .testNMD", {
   out <- .testNMD(query_exons[1], query_cds[1], 50, FALSE)
   expect_equal(out$is_NMD, FALSE)

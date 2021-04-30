@@ -9,9 +9,10 @@ sorteach(x, ...)
 \arguments{
 \item{x}{GRangesList object}
 
-\item{...}{Comma separated list of unquoted variable names to sort by. Variables are names of metadata columns
-found in GRangesList object. Use desc() to sort a variable in descending order.
-Input can be `exonorder` to sort each element in exon order}
+\item{...}{Comma separated list of unquoted variable names to sort by. Variables are 
+names of metadata columns found in GRangesList object. Use desc() to sort a
+variable in descending order. Input can be `exonorder` to sort each element 
+in exon order}
 }
 \value{
 Sorted GRangesList object
@@ -20,6 +21,9 @@ Sorted GRangesList object
 Internally sort each element of a GenomicRangesList
 }
 \examples{
+# Load dataset
+data(query_exons)
+
 # sort elements in each GRangesList in descending coordinate order
 query_exons_desc <- sorteach(query_exons, dplyr::desc(start))
 

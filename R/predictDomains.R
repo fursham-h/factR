@@ -7,9 +7,10 @@
 #' @param fasta
 #' BSgenome or Biostrings object containing genomic sequence
 #' @param ...
-#' Logical conditions to pass to dplyr::filter to subset transcripts for analysis.
-#' Variables are metadata information found in `x` and multiple conditions can be
-#' provided delimited by comma. Example: transcript_id == "transcript1"
+#' Logical conditions to pass to dplyr::filter to subset transcripts for 
+#' analysis. Variables are metadata information found in `x` and multiple 
+#' conditions can be provided delimited by comma. 
+#' Example: transcript_id == "transcript1"
 #' @param plot
 #' Argument whether to plot out protein domains (Default: FALSE).
 #' Note: only first 20 proteins will be plotted
@@ -26,6 +27,9 @@
 #' ## ---------------------------------------------------------------------
 #' # Load Mouse genome sequence
 #' library(BSgenome.Mmusculus.UCSC.mm10)
+#' 
+#' # Load dataset
+#' data(new_query_gtf)
 #'
 #' # predict domains of all CDSs in query GTF
 #' predictDomains(new_query_gtf, Mmusculus)
@@ -43,7 +47,7 @@ predictDomains <- function(x, fasta, ..., plot = FALSE, progress_bar = FALSE) {
     mandargs <- c("x", "fasta")
     passed <- names(as.list(match.call())[-1])
     if (any(!mandargs %in% passed)) {
-        stop(paste(
+        rlang::abort(paste(
             "missing values for",
             paste(setdiff(mandargs, passed), collapse = ", ")
         ))
@@ -52,17 +56,12 @@ predictDomains <- function(x, fasta, ..., plot = FALSE, progress_bar = FALSE) {
     # get argnames and carry out checks
     argnames <- as.character(match.call())[-1]
     cds <- .extractCDSchecks(x, fasta, argnames, ...)
-    # feature <- .featurechecks(hmmer, signalHsmm)
 
     # define global variables
     . <- id <- NULL
 
     # get sequence
     aaSeq <- .getSequence(cds, fasta)
-
-    # # prepare output and run analysis
-    # output <- aaSeq %>% dplyr::select(id)
-    #
 
     output_table <- .runDomainSearch(aaSeq, plot, progress_bar)
 
@@ -102,65 +101,14 @@ Try running: %s <- matchChromosomes(%s, %s)",
     return(sorteach(cds, exonorder))
 }
 
-.featurechecks <- function(hmmer, signalHsmm) {
-    # check for correct feature column names for return
-    hmmer.header <- c(
-        "name", "acc", "bias", "desc", "evalue", "flags", "hindex", "ndom",
-        "nincluded", "nregions", "nreported", "pvalue", "score", "taxid",
-        "pdb.id", "bitscore", "mlog.evalue"
-    )
-    if ("default" %in% hmmer) { # convert default into list of headers
-        hmmer <- c(
-            "desc", "evalue", "nincluded",
-            hmmer[hmmer != "default"]
-        ) %>% unique()
-    }
-    if (any(!hmmer %in% hmmer.header)) {
-        fields_support <- hmmer %in% hmmer.header
-        rlang::warn(sprintf(
-            "`%s` are not supported hmmer reported fields",
-            hmmer[!fields_support]
-        ))
-        if (sum(fields_support) == 0) {
-            hmmer <- c("desc", "evalue", "nincluded")
-            rlang::warn("returning default hmmer fields")
-        } else {
-            hmmer <- hmmer[fields_support]
-        }
-    }
-    # check for correct field names for return
-    signalHsmm.header <- c(
-        "sp_probability", "sp_start", "sp_end",
-        "struc", "prot", "name", "str_approx"
-    )
-    if ("default" %in% signalHsmm) { # convert default into list of headers
-        signalHsmm <- c(
-            "sp_probability",
-            signalHsmm[signalHsmm != "default"]
-        ) %>% unique()
-    }
-    if (any(!signalHsmm %in% signalHsmm.header)) {
-        fields_support <- signalHsmm %in% signalHsmm.header
-        rlang::warn(sprintf(
-            "`%s` are not supported signalHsmm reported fields",
-            signalHsmm[!fields_support]
-        ))
-        if (sum(fields_support) == 0) {
-            signalHsmm <- "sp_probability"
-            rlang::warn("returning default signalHsmm fields")
-        } else {
-            signalHsmm <- signalHsmm[fields_support]
-        }
-    }
-    return(list(hmmer = hmmer, signalHsmm = signalHsmm))
-}
 
 .getSequence <- function(cds, fasta) {
     x <- y <- instop <- NULL
     
     rlang::inform("Checking CDSs and translating protein sequences")
     cdsSeq <- GenomicFeatures::extractTranscriptSeqs(fasta, cds)
-    aaSeq <- suppressWarnings(Biostrings::translate(cdsSeq, if.fuzzy.codon = "solve")) %>%
+    aaSeq <- suppressWarnings(
+        Biostrings::translate(cdsSeq, if.fuzzy.codon = "solve")) %>%
         as.data.frame() %>%
         tibble::rownames_to_column("id") %>%
         dplyr::rowwise() %>%
@@ -169,7 +117,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
         dplyr::mutate(instop = ifelse("*" %in% y, TRUE, FALSE)) %>%
         dplyr::ungroup()
 
-    # check for ATG and internal stop_codon, truncate proteins with internal stop codon
+    # check for ATG and internal stop_codon, truncate proteins with internal 
+    # stop codon
     ## and remove entries without proteins after truncation
     if (TRUE %in% aaSeq$noATG) {
         rlang::warn(sprintf("%s CDSs do not begin with ATG", sum(aaSeq$noATG)))
@@ -178,19 +127,25 @@ Try running: %s <- matchChromosomes(%s, %s)",
         aaSeq <- suppressWarnings(aaSeq %>%
             dplyr::rowwise() %>%
             dplyr::mutate(x = ifelse(instop == TRUE,
-                paste(y[1:which(y == "*") - 1], collapse = ""),
+                paste(y[seq_len(which(y == "*") - 1)], collapse = ""),
                 x
             )) %>%
             dplyr::mutate(y = strsplit(x, split = "")) %>%
             dplyr::ungroup())
 
-        rlang::warn(sprintf("%s CDSs contain internal stop codon. Truncating CDS sequence to retain ORF", sum(aaSeq$instop)))
+        rlang::warn(sprintf(paste0("%s CDSs contain internal stop codon. ",
+                                   "Truncating CDS sequence to retain ORF"), 
+                            sum(aaSeq$instop)))
         if ("" %in% aaSeq$x) {
-            rlang::warn(sprintf("After truncation, %s cds have no coding sequences. These CDSs were not analyzed", sum(aaSeq$x == "")))
+            rlang::warn(sprintf(paste0(
+                "After truncation, %s cds have no ",
+                "coding sequences. These CDSs were not analyzed"), 
+                sum(aaSeq$x == "")))
             aaSeq <- aaSeq[aaSeq$x != "", ]
         }
     }
-    rlang::inform(sprintf("Predicting domain families for %s proteins", nrow(aaSeq)))
+    rlang::inform(sprintf(
+        "Predicting domain families for %s proteins", nrow(aaSeq)))
     return(aaSeq)
 }
 
@@ -201,7 +156,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
     hmm <- RCurl::postForm(url,
         hmmdb = "superfamily", seqdb = NULL,
-        seq = seq, style = "POST", .opts = curl.opts, .contentEncodeFun = RCurl::curlPercentEncode,
+        seq = seq, style = "POST", .opts = curl.opts, 
+        .contentEncodeFun = RCurl::curlPercentEncode,
         .checkParams = TRUE
     )
     xml <- XML::xmlParse(hmm)
@@ -209,7 +165,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
     segment <- XML::xpathSApply(xml, "///segments", XML::xpathSApply, "@*")
 
     if (ncol(family) != ncol(segment)) {
-        ndomains <- XML::xpathSApply(xml, "///domains", XML::xpathSApply, "count(segments)")
+        ndomains <- XML::xpathSApply(xml, "///domains", 
+                                     XML::xpathSApply, "count(segments)")
         family2 <- suppressMessages(lapply(seq_along(ndomains), function(x) {
             return(family[, rep(x, each = ndomains[x])])
         }) %>% dplyr::bind_cols() %>% as.matrix())
@@ -220,8 +177,11 @@ Try running: %s <- matchChromosomes(%s, %s)",
     }
 
     data <- as.data.frame(t(data), stringsAsFactors = FALSE) %>%
-        dplyr::mutate(type = "DOMAIN", begin = as.numeric(start), end = as.numeric(end)) %>%
-        dplyr::select(type, description = famdesc, eval = fameval, begin, end) %>%
+        dplyr::mutate(type = "DOMAIN", 
+                      begin = as.numeric(start), 
+                      end = as.numeric(end)) %>%
+        dplyr::select(type, description = famdesc, 
+                      eval = fameval, begin, end) %>%
         dplyr::mutate(entryName = id)
     # dplyr::mutate(order = n)
     return(data)
@@ -241,16 +201,25 @@ Try running: %s <- matchChromosomes(%s, %s)",
     output <- BiocParallel::bplapply(seq_len(nrow(aaSeq)), function(y) {
         # account for return errors
         report <- tryCatch(
-            .getdomains(url, url.opts, aaSeq[y, ]$x, aaSeq[y, ]$id, nchar(aaSeq[y, ]$x), y),
+            .getdomains(url, url.opts, aaSeq[y, ]$x, 
+                        aaSeq[y, ]$id, nchar(aaSeq[y, ]$x), y),
             error = function(e) NULL
         )
 
         if (is.null(report)) {
-            return(tibble::tibble(type = "CHAIN", description = aaSeq[y, ]$id, begin = 1, end = nchar(aaSeq[y, ]$x), entryName = aaSeq[y, ]$id))
+            return(tibble::tibble(type = "CHAIN", 
+                                  description = aaSeq[y, ]$id, 
+                                  begin = 1, 
+                                  end = nchar(aaSeq[y, ]$x), 
+                                  entryName = aaSeq[y, ]$id))
         } else {
             return(dplyr::bind_rows(
                 report,
-                tibble::tibble(type = "CHAIN", description = aaSeq[y, ]$id, begin = 1, end = nchar(aaSeq[y, ]$x), entryName = aaSeq[y, ]$id)
+                tibble::tibble(type = "CHAIN", 
+                               description = aaSeq[y, ]$id, 
+                               begin = 1, 
+                               end = nchar(aaSeq[y, ]$x), 
+                               entryName = aaSeq[y, ]$id)
             ))
         }
     }, BPPARAM = BiocParallel::MulticoreParam(progressbar = progress_bar)) %>%
@@ -291,8 +260,9 @@ Try running: %s <- matchChromosomes(%s, %s)",
         table.out <- output %>%
             tibble::as_tibble() %>%
             dplyr::filter(type == "DOMAIN") %>%
-            dplyr::select(transcript = entryName, description, eval, begin, end)
-        # dplyr::right_join(aaSeq %>% dplyr::select(transcript = id), by = "transcript")
+            dplyr::select(transcript = entryName, description, 
+                          eval, begin, end)
+
     } else {
         return(NULL)
     }

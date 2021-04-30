@@ -7,7 +7,11 @@
 \format{
 A GRanges object with 56 ranges and 3 metadata columns:
 \describe{
-  \item{element}{Exon start and end coordinates from 4 transcripts}
+  \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+  and its exons}
+  \item{type}{Entry type; transcript or exon}
+  \item{transcript_id}{Name or ID given to transcripts}
+  \item{gene_id}{Name or ID given to gene origin of transcripts}
   ...
 }
 }
@@ -15,11 +19,11 @@ A GRanges object with 56 ranges and 3 metadata columns:
 \url{http://www.ensembl.org/}
 }
 \usage{
-query_gtf
+data(query_gtf)
 }
 \description{
-A dataset containing coordinates of transcript and exons from 4 transcripts of
-mouse Ptbp1. Transcript names and gene IDs have been modified to demonstrate
-de novo origin of GTF
+A dataset containing coordinates of transcript and exons from 4 transcripts 
+of mouse Ptbp1. Transcript names and gene IDs have been modified to 
+demonstrate de novo origin of GTF
 }
 \keyword{datasets}

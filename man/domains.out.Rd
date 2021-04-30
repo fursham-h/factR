@@ -7,12 +7,16 @@
 \format{
 A data.frame with 14880 rows and 5 columns:
 \describe{
-  \item{element}{Predicted domains from newly-discovered mRNAs}
+  \item{transcript}{Transcript ID of protein-coding RNAs}
+  \item{description}{Name of domain families}
+  \item{eval}{E-value score}
+  \item{begin}{Start position of domain in protein}
+  \item{end}{End position of domain in protein}
   ...
 }
 }
 \usage{
-domains.out
+data(domains.out)
 }
 \description{
 Output dataframe from predictDomains() function.

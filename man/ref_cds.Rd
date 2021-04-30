@@ -7,7 +7,13 @@
 \format{
 A GRangesList object with 2 elements:
 \describe{
-  \item{element}{CDS start and end coordinates of each transcript}
+  \item{ranges}{Chromosome, start, end, and strand info of 4 transcripts
+  and its exons}
+  \item{type}{Entry type; transcript or exon}
+  \item{phase}{Phase of open-reading frame}
+  \item{gene_id}{Matched gene_id}
+  \item{gene_name}{Name of gene}
+  \item{transcript_id}{ID given to transcripts}
   ...
 }
 }
@@ -15,7 +21,7 @@ A GRangesList object with 2 elements:
 \url{https://www.gencodegenes.org/}
 }
 \usage{
-ref_cds
+data(ref_cds)
 }
 \description{
 A dataset containing coordinates of CDS from 2 reference transcripts of

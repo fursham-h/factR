@@ -19,6 +19,9 @@ Transformed GRangesList object
 Internally create or transform metadata of a GenomicRangesList
 }
 \examples{
+# Load dataset
+data(query_exons)
+
 # Create chr:start-end id for each entry
 mutateeach(query_exons, id = paste0(seqnames, ":", start, "-", end))
 }

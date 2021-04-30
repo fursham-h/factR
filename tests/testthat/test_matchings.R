@@ -1,5 +1,8 @@
 context("Test matching functions")
 
+data(query_gtf)
+data(ref_gtf)
+
 matched1 <- matchChromosomes(query_gtf, ref_gtf)
 matched2 <- matchGeneInfo(matched1, ref_gtf)
 

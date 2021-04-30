@@ -9,8 +9,8 @@ filtereach(x, ...)
 \arguments{
 \item{x}{GRangesList object}
 
-\item{...}{Logical conditions to filter each element in the GRanges by. Multiple conditions
-can be provided as comma-delimited inputs}
+\item{...}{Logical conditions to filter each element in the GRanges by. 
+Multiple conditions can be provided as comma-delimited inputs}
 }
 \value{
 Filtered GRangesList object
@@ -19,6 +19,9 @@ Filtered GRangesList object
 Internally filter each element of a GenomicRangesList
 }
 \examples{
+# Load dataset
+data(query_exons)
+
 # select first element of each GRangesList item
 filtereach(query_exons, dplyr::row_number() == 1)
 }
