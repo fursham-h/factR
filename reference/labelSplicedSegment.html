@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
       </span>
     </div>
 
@@ -142,6 +142,10 @@
       <td><p>If TRUE, function will append the alternative-spliced segments to x and return
 a new GTF GRanges object (default = TRUE)</p></td>
     </tr>
+    <tr>
+      <th>group.by</th>
+      <td><p>Variable by which transcripts are grouped (default: gene_id)</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -166,19 +170,82 @@ a new GTF GRanges object (default = TRUE)</p></td>
 
 <span class='co'>## Annotate alternative segments</span>
 <span class='fu'>labelSplicedSegment</span><span class='op'>(</span><span class='va'>gr</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in labelSplicedSegment(gr): could not find function "labelSplicedSegment"</span></div><div class='input'>
+</div><div class='output co'>#&gt; GRanges object with 1 range and 5 metadata columns:
+#&gt;       seqnames    ranges strand |     gene_id   gene_name transcript_id
+#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;
+#&gt;   [1]     chr1     51-60      + |       geneA       geneA   transcript2
+#&gt;              type      AStype
+#&gt;       &lt;character&gt; &lt;character&gt;
+#&gt;   [1]          AS          CE
+#&gt;   -------
+#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</div><div class='input'>
 <span class='co'>## ---------------------------------------------------------------------</span>
 <span class='co'>## EXAMPLE USING SAMPLE DATASET</span>
 <span class='co'>## ---------------------------------------------------------------------</span>
 <span class='co'>## Using GTF GRanges as input</span>
 <span class='fu'>labelSplicedSegment</span><span class='op'>(</span><span class='va'>query_gtf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in labelSplicedSegment(query_gtf): could not find function "labelSplicedSegment"</span></div><div class='input'>
+</div><div class='output co'>#&gt; GRanges object with 7 ranges and 5 metadata columns:
+#&gt;       seqnames            ranges strand |     gene_id   gene_name transcript_id
+#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;
+#&gt;   [1]       10 79858952-79859071      + |       GeneA       GeneA   transcript1
+#&gt;   [2]       10 79858952-79859071      + |       GeneA       GeneA   transcript2
+#&gt;   [3]       10 79858952-79859071      + |       GeneA       GeneA   transcript3
+#&gt;   [4]       10 79860117-79860194      + |       GeneA       GeneA   transcript1
+#&gt;   [5]       10 79862014-79862047      + |       GeneA       GeneA   transcript1
+#&gt;   [6]       10 79862014-79862047      + |       GeneA       GeneA   transcript2
+#&gt;   [7]       10 79862014-79862047      + |       GeneA       GeneA   transcript4
+#&gt;              type      AStype
+#&gt;       &lt;character&gt; &lt;character&gt;
+#&gt;   [1]          AS          SA
+#&gt;   [2]          AS          SA
+#&gt;   [3]          AS          SA
+#&gt;   [4]          AS          CE
+#&gt;   [5]          AS          CE
+#&gt;   [6]          AS          CE
+#&gt;   [7]          AS          CE
+#&gt;   -------
+#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</div><div class='input'>
 <span class='co'>## Output as dataframe</span>
 <span class='fu'>labelSplicedSegment</span><span class='op'>(</span><span class='va'>query_gtf</span>, as.data.frame <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in labelSplicedSegment(query_gtf, as.data.frame = TRUE): could not find function "labelSplicedSegment"</span></div><div class='input'>
+</div><div class='output co'>#&gt;   gene_id transcript_id                coord AStype
+#&gt; 1   GeneA   transcript1 10:79858952-79859071     SA
+#&gt; 2   GeneA   transcript2 10:79858952-79859071     SA
+#&gt; 3   GeneA   transcript3 10:79858952-79859071     SA
+#&gt; 4   GeneA   transcript1 10:79860117-79860194     CE
+#&gt; 5   GeneA   transcript1 10:79862014-79862047     CE
+#&gt; 6   GeneA   transcript2 10:79862014-79862047     CE
+#&gt; 7   GeneA   transcript4 10:79862014-79862047     CE</div><div class='input'>
 <span class='co'>## Append AS info to input</span>
 <span class='fu'>labelSplicedSegment</span><span class='op'>(</span><span class='va'>query_gtf</span>, append <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in labelSplicedSegment(query_gtf, append = TRUE): could not find function "labelSplicedSegment"</span></div><div class='input'>
+</div><div class='output co'>#&gt; GRanges object with 63 ranges and 5 metadata columns:
+#&gt;        seqnames            ranges strand |       type transcript_id     gene_id
+#&gt;           &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;factor&gt;   &lt;character&gt; &lt;character&gt;
+#&gt;    [1]       10 79854427-79864432      + | transcript   transcript1       GeneA
+#&gt;    [2]       10 79854427-79854721      + | exon         transcript1       GeneA
+#&gt;    [3]       10 79856504-79856534      + | exon         transcript1       GeneA
+#&gt;    [4]       10 79858752-79858824      + | exon         transcript1       GeneA
+#&gt;    [5]       10 79858952-79859271      + | exon         transcript1       GeneA
+#&gt;    ...      ...               ...    ... .        ...           ...         ...
+#&gt;   [59]       10 79858952-79859071      + |         AS   transcript3       GeneA
+#&gt;   [60]       10 79860117-79860194      + |         AS   transcript1       GeneA
+#&gt;   [61]       10 79862014-79862047      + |         AS   transcript1       GeneA
+#&gt;   [62]       10 79862014-79862047      + |         AS   transcript2       GeneA
+#&gt;   [63]       10 79862014-79862047      + |         AS   transcript4       GeneA
+#&gt;          gene_name      AStype
+#&gt;        &lt;character&gt; &lt;character&gt;
+#&gt;    [1]       GeneA        &lt;NA&gt;
+#&gt;    [2]       GeneA        &lt;NA&gt;
+#&gt;    [3]       GeneA        &lt;NA&gt;
+#&gt;    [4]       GeneA        &lt;NA&gt;
+#&gt;    [5]       GeneA        &lt;NA&gt;
+#&gt;    ...         ...         ...
+#&gt;   [59]       GeneA          SA
+#&gt;   [60]       GeneA          CE
+#&gt;   [61]       GeneA          CE
+#&gt;   [62]       GeneA          CE
+#&gt;   [63]       GeneA          CE
+#&gt;   -------
+#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</div><div class='input'>
 <span class='co'>## ---------------------------------------------------------------------</span>
 <span class='co'>## EXAMPLE USING TRANSCRIPT ANNOTATION DATABASE</span>
 <span class='co'>## ---------------------------------------------------------------------</span>
