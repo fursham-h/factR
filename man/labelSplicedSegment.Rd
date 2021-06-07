@@ -19,6 +19,8 @@ labelSplicedSegment(
 
 \item{append}{If TRUE, function will append the alternative-spliced segments to x and return
 a new GTF GRanges object (default = TRUE)}
+
+\item{group.by}{Variable by which transcripts are grouped (default: gene_id)}
 }
 \value{
 GRanges object or data-frame containing alternative-spliced segments found in x
