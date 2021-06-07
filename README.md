@@ -18,6 +18,8 @@ custom-assembled transcriptomes (GTF). Below are *factR*'s key functions:
   using a reference-guided process
   2. Predict protein domains on coding transcripts
   3. Predict sensitivity of coding transcripts to Nonsense-mediated decay
+  4. [**NEW**] Annotate and compare spliced segments
+  5. [**NEW**] Identify NMD-causing exons
 * Supporting features 
   1. Match chromosome levels of query GTF/object to reference annotation
   2. Match gene_id and gene_names of query GTF to reference annotation
