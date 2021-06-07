@@ -1,8 +1,12 @@
 # factR (development)
 
-## New features (from findNMD branch, not merged)
+# factR 0.99.4
 
-* `labelSpliceSegments()`, `compareSpliceSegments()`, `identifyNMDexons()`
+* New functions added:
+
+* `labelSpliceSegments()` and `compareSpliceSegments()` to annotate and compare spliced segments
+
+* `identifyNMDexons()` to annotate NMD causing exons
 
 # factR 0.99.3
 
