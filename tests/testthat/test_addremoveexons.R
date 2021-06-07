@@ -61,11 +61,11 @@ exonset1 <- c(exon1,exon2,exon3)
 exonset2 <- exonset1 %>% as.data.frame() %>% 
   dplyr::mutate(seqnames = c("1", "2", "1")) %>% 
   dplyr::mutate(strand = c("-", "+", "-")) %>% 
-  makeGRangesFromDataFrame()
+  GenomicRanges::makeGRangesFromDataFrame()
 exonset3 <- exonset1 %>% as.data.frame() %>% 
   dplyr::mutate(seqnames = c("1", "2", "1")) %>% 
   dplyr::mutate(strand = c("+", "+", "-")) %>% 
-  makeGRangesFromDataFrame()
+  GenomicRanges::makeGRangesFromDataFrame()
 
 grl1 <- GenomicRanges::GRangesList(gr1,gr1,gr1)
 names(grl1) <- c("test1", "test2", "tes3")
