@@ -123,14 +123,14 @@ labelSplicedSegment <- function(x, as.data.frame = FALSE, append = FALSE,
 #' require(GenomicRanges)
 #'
 #' ## Create toy GRanges GTF object
-#' gr1 <- GRanges("chr1", IRanges(start = c(1, 101), width = c(20, 20)), "+")
-#' gr2 <- GRanges("chr1", IRanges(start = c(1, 51, 101), width = c(20, 10, 20)), "+")
+#' gr1 <- GRanges("chr1", IRanges(start = c(1, 101), width = c(20, 20)), "+", transcript_id = "transcript1", gene_id = "geneA", gene_name = "gene001")
+#' gr2 <- GRanges("chr1", IRanges(start = c(1, 51, 101), width = c(20, 10, 20)), "+", transcript_id = "transcript2", gene_id = "geneA", gene_name = "gene001")
 #'
 #' ## Pairwise comparison between GRanges object
 #' compareSplicedSegment(gr1, gr2)
 #'
 #' ## Multiple comparisons can be done by providing more GRanges input
-#' gr3 <- GRanges("chr1", IRanges(start = c(1, 91), width = c(20, 30)), "+")
+#' gr3 <- GRanges("chr1", IRanges(start = c(1, 91), width = c(20, 30)), "+", transcript_id = "transcript3", gene_id = "geneA", gene_name = "gene001")
 #' compareSplicedSegment(gr1, gr2, gr3)
 #'
 #' ## GRangesList containing exons per transcript can be given as input
