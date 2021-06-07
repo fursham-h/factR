@@ -28,10 +28,8 @@ CDS features for the list of transcripts in `x`. List names in `x` and
 If `x` is a GRanges object, `cds` has to be a GRanges containing CDS 
 features for the transcript in `x`.}
 
-
 \item{NMD_threshold}{Minimum distance of stop_codon to last exon junction 
 (EJ) which triggers NMD. Default = 50bp}
-
 
 \item{progress_bar}{Whether to display progress 
 Default = TRUE}
