@@ -18,7 +18,8 @@
 #' @param ncol
 #' Number of columns to patch the output plots (default: 1)
 #'
-#' @return ggplot2 object
+#' @return ggplot2 object. If multiple genes are detected, plots will be 
+#' combined using patchwork
 #' @export
 #'
 #' @author Fursham Hamid
