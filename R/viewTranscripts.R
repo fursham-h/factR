@@ -8,12 +8,15 @@
 #' GRanges object containing transcript annotation in GTF format
 #'
 #' @param ...
-#' Logical conditions to pass to dplyr::filter to subset transcripts for plotting.
-#' Variables are metadata information found in `x` and multiple conditions can be
-#' provided delimited by comma. Example: gene_name == "Ptbp1"
+#' Character value of features to plot. Multiple features can be plotted by
+#' entering comma-delimited values. Features will be extracted from
+#' metadata gene_name, gene_id and transcript_id of the GTF.
 #'
 #' @param rescale_introns
 #' Specifies if the introns should be scaled to fixed length or not. (default: FALSE)
+#' 
+#' @param ncol
+#' Number of columns to patch the output plots (default: 1)
 #'
 #' @return ggplot2 object
 #' @export
@@ -25,7 +28,7 @@
 #' ## EXAMPLE USING SAMPLE DATASET
 #' ## ---------------------------------------------------------------------
 #' viewTranscripts(query_gtf)
-#' viewTranscripts(query_gtf, transcript_id == "transcript1")
+#' viewTranscripts(query_gtf, "transcript1")
 #' viewTranscripts(ref_gtf)
 #'
 #' ## ---------------------------------------------------------------------
@@ -39,7 +42,10 @@
 #' GRCm38_gtf <- ah[["AH60127"]]
 #'
 #' ## Plot transcripts from Ptbp1 gene
-#' viewTranscripts(GRCm38_gtf, gene_name == "Ptbp1")
+#' viewTranscripts(GRCm38_gtf, "Ptbp1")
+#' 
+#' # Plot transcripts from Ptbp1 and Ptbp2 genes
+#' viewTranscripts(GRCm38_gtf, "Ptbp1", "Ptbp2")
 #' }
 #'
 viewTranscripts <- function(x, ..., rescale_introns = FALSE, ncol = 1) {
