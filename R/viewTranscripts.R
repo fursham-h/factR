@@ -106,15 +106,8 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE, ncol = 1) {
     if (!missing(...)) {
         x <- tryCatch(
             {
-<<<<<<< HEAD
-                x %>%
-                    as.data.frame() %>%
-                    dplyr::filter(...) %>%
-                    GenomicRanges::makeGRangesFromDataFrame(
-                        keep.extra.columns = TRUE)
-=======
+
                 x[featmeta[featmeta$val %in% c(...),"n"]]
->>>>>>> dev
             },
             error = function(e) {
                 rlang::abort(sprintf(
