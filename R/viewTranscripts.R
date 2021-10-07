@@ -50,6 +50,9 @@
 #' }
 #'
 viewTranscripts <- function(x, ..., rescale_introns = FALSE, ncol = 1) {
+    
+    gene_name <- gene_id <- transcript_id <- NULL
+    transcript_id <- meta <- val <- n <- type <-  NULL
 
     # catch missing args
     mandargs <- c("x")
@@ -73,14 +76,14 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE, ncol = 1) {
     # prepare features
     featmeta <- tryCatch(
         {
-            mcols(x) %>% 
+            GenomicRanges::mcols(x) %>% 
                 as.data.frame() %>% 
                 dplyr::select(gene_name, gene_id, transcript_id) %>% 
                 dplyr::mutate(n = dplyr::row_number()) %>% 
                 tidyr::gather(meta, val, -n)
         },
         error = function(e) {
-            mcols(x) %>% 
+            GenomicRanges::mcols(x) %>% 
                 as.data.frame() %>% 
                 dplyr::select(-type) %>% 
                 dplyr::mutate(n = dplyr::row_number()) %>% 

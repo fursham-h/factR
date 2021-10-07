@@ -4,19 +4,22 @@
 \alias{viewTranscripts}
 \title{Plot transcripts directly from GTF.}
 \usage{
-viewTranscripts(x, ..., rescale_introns = FALSE)
+viewTranscripts(x, ..., rescale_introns = FALSE, ncol = 1)
 }
 \arguments{
 \item{x}{GRanges object containing transcript annotation in GTF format}
 
-\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for plotting.
-Variables are metadata information found in `x` and multiple conditions can be
-provided delimited by comma. Example: gene_name == "Ptbp1"}
+\item{...}{Character value of features to plot. Multiple features can be plotted by
+entering comma-delimited values. Features will be extracted from
+metadata gene_name, gene_id and transcript_id of the GTF.}
 
 \item{rescale_introns}{Specifies if the introns should be scaled to fixed length or not. (default: FALSE)}
+
+\item{ncol}{Number of columns to patch the output plots (default: 1)}
 }
 \value{
-ggplot2 object
+ggplot2 object. If multiple genes are detected, plots will be 
+combined using patchwork
 }
 \description{
 A wrapper around wiggleplotr's plotTranscripts function. See the documentation for (\code{\link[wiggleplotr]{plotTranscripts}})
@@ -27,7 +30,7 @@ for more information.
 ## EXAMPLE USING SAMPLE DATASET
 ## ---------------------------------------------------------------------
 viewTranscripts(query_gtf)
-viewTranscripts(query_gtf, transcript_id == "transcript1")
+viewTranscripts(query_gtf, "transcript1")
 viewTranscripts(ref_gtf)
 
 ## ---------------------------------------------------------------------
@@ -41,7 +44,10 @@ ah <- AnnotationHub()
 GRCm38_gtf <- ah[["AH60127"]]
 
 ## Plot transcripts from Ptbp1 gene
-viewTranscripts(GRCm38_gtf, gene_name == "Ptbp1")
+viewTranscripts(GRCm38_gtf, "Ptbp1")
+
+# Plot transcripts from Ptbp1 and Ptbp2 genes
+viewTranscripts(GRCm38_gtf, "Ptbp1", "Ptbp2")
 }
 
 }
