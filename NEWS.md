@@ -1,5 +1,13 @@
 # factR (development)
 
+# factR 0.99.5
+
+* New functions added:
+
+* `viewTranscripts()` now plots multiple genes and requires only character values to specify features of interest
+
+
+
 # factR 0.99.4
 
 * New functions added:
