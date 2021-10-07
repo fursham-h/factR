@@ -42,7 +42,7 @@
 #' viewTranscripts(GRCm38_gtf, gene_name == "Ptbp1")
 #' }
 #'
-viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
+viewTranscripts <- function(x, ..., rescale_introns = FALSE, ncol = 1) {
 
     # catch missing args
     mandargs <- c("x")
@@ -62,14 +62,29 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
     if (!is_gtf(x)) {
         rlang::abort(sprintf("`%s` is not a GTF GRanges object", argnames[1]))
     }
+    
+    # prepare features
+    featmeta <- tryCatch(
+        {
+            mcols(x) %>% 
+                as.data.frame() %>% 
+                dplyr::select(gene_name, gene_id, transcript_id) %>% 
+                dplyr::mutate(n = dplyr::row_number()) %>% 
+                tidyr::gather(meta, val, -n)
+        },
+        error = function(e) {
+            mcols(x) %>% 
+                as.data.frame() %>% 
+                dplyr::select(-type) %>% 
+                dplyr::mutate(n = dplyr::row_number()) %>% 
+                tidyr::gather(meta, val, -n)
+        }
+    )
 
     if (!missing(...)) {
         x <- tryCatch(
             {
-                x %>%
-                    as.data.frame() %>%
-                    dplyr::filter(...) %>%
-                    GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+                x[featmeta[featmeta$val %in% c(...),"n"]]
             },
             error = function(e) {
                 rlang::abort(sprintf(
@@ -84,26 +99,32 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE) {
     }
 
     # Need to have a check for plotting multiple genes.....
+    ngenes <- unique(x$gene_name)
+    plot <- BiocGenerics::do.call(patchwork::wrap_plots, 
+                                  lapply(ngenes, function(y){
+                                      # Fetch gene exons and cdss
+                                      exons <- S4Vectors::split(x[x$type == "exon" & x$gene_name == y], ~transcript_id)
+                                      cdss <- S4Vectors::split(x[x$type == "CDS" & x$gene_name == y], ~transcript_id)
+                                      as <- S4Vectors::split(x[x$type == "AS" & x$gene_name == y], ~transcript_id)
+                                      if (length(cdss) == 0) {
+                                          cdss <- NULL
+                                      }
+                                      
+                                      
+                                      # Control check for number of plotted transcripts
+                                      if (length(exons) > 25) {
+                                          exons <- exons[seq_len(25)]
+                                          rlang::warn(sprintf("Plotting only first 25 transcripts for %s gene", y))
+                                      }
+                                      
+                                      # main plot function
+                                      suppressWarnings(wiggleplotr::plotTranscripts(
+                                          exons = exons,
+                                          cdss = cdss[names(cdss) %in% names(exons)],
+                                          rescale_introns = rescale_introns
+                                      )) + ggplot2::ggtitle(y)
+                                  }))
 
-    # Fetch gene exons and cdss
-    exons <- S4Vectors::split(x[x$type == "exon"], ~transcript_id)
-    cdss <- S4Vectors::split(x[x$type == "CDS"], ~transcript_id)
-    as <- S4Vectors::split(x[x$type == "AS"], ~transcript_id)
-    if (length(cdss) == 0) {
-        cdss <- NULL
-    }
-
-    # Control check for number of plotted transcripts
-    if (length(exons) > 25) {
-        exons <- exons[seq_len(25)]
-        rlang::warn("Plotting only first 25 transcripts")
-    }
-
-    # main plot function
-    plot <- suppressWarnings(wiggleplotr::plotTranscripts(
-        exons = exons,
-        cdss = cdss[names(cdss) %in% names(exons)],
-        rescale_introns = rescale_introns
-    ))
-    plot
+    
+    plot + patchwork::plot_layout(ncol = ncol)
 }
