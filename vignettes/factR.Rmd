@@ -168,7 +168,7 @@ For example, the following will plot transcripts from the *Zfr* gene encoding a
 conserved zinc finger-containing RNA-binding protein with known neuronal
 functions :  
 ```{r plottranscripts, message=FALSE, warning=FALSE}  
-viewTranscripts(custom.gtf, gene_name == "Zfr")  
+viewTranscripts(custom.gtf, "Zfr")  
 ```  
   
 StringTie2, a popular transcript assembler used to generate our custom GTF, 
@@ -230,7 +230,7 @@ custom_matched_2.gtf <- matchGeneInfo(custom.gtf, ref.gtf,
 Note that custom.gtf updated by `matchGeneInfo` now contains 10 known and 7 
 newly *Zfr* assembled transcripts:  
 ```{r plottranscripts2}  
-viewTranscripts(custom_matched_2.gtf, gene_name == "Zfr")  
+viewTranscripts(custom_matched_2.gtf, "Zfr")  
 ```  
   
 ## Shortlisting novel transcripts  
@@ -240,7 +240,7 @@ transcripts, run the following:
 ```{r subsettx, warning=FALSE}  
 custom_new.gtf <- subsetNewTranscripts(custom_matched_2.gtf, ref.gtf)  
 
-viewTranscripts(custom_new.gtf, gene_name == "Zfr")  
+viewTranscripts(custom_new.gtf,"Zfr")  
 ```  
   
 This will subset custom.gtf transcripts with distinct exonic coordinates 
@@ -252,7 +252,7 @@ intronic coordinates only, simply set the "refine.by" argument to "intron":
 ```{r subsettx2, warning=FALSE}  
 custom_new.gtf <- subsetNewTranscripts(custom_matched_2.gtf, ref.gtf, refine.by = "intron")  
 
-viewTranscripts(custom_new.gtf, gene_name == "Zfr")  
+viewTranscripts(custom_new.gtf, "Zfr")  
 ```  
   
 We will use the custom_new.gtf object in the rest of the workflow.  
@@ -319,19 +319,19 @@ custom_new_CDS.gtf <- buildCDS(custom_new.gtf, ref.gtf, Mmusculus)
 Note that the novel *Zfr* transcripts have been updated with information
 about likely CDSs (dark blue) and untranslated regions (light blue) :  
 ```{r viewafterCDS}  
-viewTranscripts(custom_new_CDS.gtf, gene_name == "Zfr")  
+viewTranscripts(custom_new_CDS.gtf, "Zfr")  
 ```  
   
 We can display exonic regions and CDSs more clearly (at the expense of 
 loosing their bona fide genomic coordinates) by setting rescale_intron 
 argument to TRUE.   
 ```{r viewafterCDSscale}  
-viewTranscripts(custom_new_CDS.gtf, gene_name == "Zfr", rescale_introns = TRUE)  
+viewTranscripts(custom_new_CDS.gtf, "Zfr", rescale_introns = TRUE)  
 ```  
   
 For comparison, here is the CDS situation in the reference Zfr transcripts:  
 ```{r viewrefCDS}   
-viewTranscripts(ref.gtf, gene_name == "Zfr", rescale_introns = TRUE)  
+viewTranscripts(ref.gtf, "Zfr", rescale_introns = TRUE)  
 ```  
   
 ## Predicting NMD  
