@@ -74,7 +74,7 @@ for more information." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.5</span>
       </span>
     </div>
 
@@ -122,7 +122,7 @@ See the documentation for (<code><a href='https://rdrr.io/pkg/wiggleplotr/man/pl
 for more information.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>viewTranscripts</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, rescale_introns <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>viewTranscripts</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, rescale_introns <span class='op'>=</span> <span class='cn'>FALSE</span>, ncol <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -142,11 +142,26 @@ conditions can be provided delimited by comma. Example: gene_name == "Ptbp1"</p>
       <td><p>Specifies if the introns should be scaled to fixed length or not. 
 (default: FALSE)</p></td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Character value of features to plot. Multiple features can be plotted by
+entering comma-delimited values. Features will be extracted from
+metadata gene_name, gene_id and transcript_id of the GTF.</p></td>
+    </tr>
+    <tr>
+      <th>rescale_introns</th>
+      <td><p>Specifies if the introns should be scaled to fixed length or not. (default: FALSE)</p></td>
+    </tr>
+    <tr>
+      <th>ncol</th>
+      <td><p>Number of columns to patch the output plots (default: 1)</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>ggplot2 object</p>
+    <p>ggplot2 object. If multiple genes are detected, plots will be 
+combined using patchwork</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Fursham Hamid</p>
@@ -159,9 +174,9 @@ conditions can be provided delimited by comma. Example: gene_name == "Ptbp1"</p>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>query_gtf</span>, <span class='va'>ref_gtf</span><span class='op'>)</span>
 
 <span class='fu'>viewTranscripts</span><span class='op'>(</span><span class='va'>query_gtf</span><span class='op'>)</span>
-</div><div class='img'><img src='viewTranscripts-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>viewTranscripts</span><span class='op'>(</span><span class='va'>query_gtf</span>, <span class='va'>transcript_id</span> <span class='op'>==</span> <span class='st'>"transcript1"</span><span class='op'>)</span>
-</div><div class='img'><img src='viewTranscripts-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>viewTranscripts</span><span class='op'>(</span><span class='va'>ref_gtf</span><span class='op'>)</span>
-</div><div class='img'><img src='viewTranscripts-3.png' alt='' width='700' height='433' /></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='error'>Error in is_valid_plot(..1): the ... list contains fewer than 1 element</span></div><div class='input'><span class='fu'>viewTranscripts</span><span class='op'>(</span><span class='va'>query_gtf</span>, <span class='st'>"transcript1"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in is_valid_plot(..1): the ... list contains fewer than 1 element</span></div><div class='input'><span class='fu'>viewTranscripts</span><span class='op'>(</span><span class='va'>ref_gtf</span><span class='op'>)</span>
+</div><div class='img'><img src='viewTranscripts-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## ---------------------------------------------------------------------</span>
 <span class='co'>## EXAMPLE USING TRANSCRIPT ANNOTATION</span>
 <span class='co'>## ---------------------------------------------------------------------</span>
@@ -181,8 +196,11 @@ conditions can be provided delimited by comma. Example: gene_name == "Ptbp1"</p>
 #&gt; <span class='message'>replacement repositories:</span>
 #&gt; <span class='message'>    CRAN: https://cloud.r-project.org</span></div><div class='input'>
 <span class='co'>## Plot transcripts from Ptbp1 gene</span>
-<span class='fu'>viewTranscripts</span><span class='op'>(</span><span class='va'>GRCm38_gtf</span>, <span class='va'>gene_name</span> <span class='op'>==</span> <span class='st'>"Ptbp1"</span><span class='op'>)</span>
-</div><div class='img'><img src='viewTranscripts-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># }</span>
+<span class='fu'>viewTranscripts</span><span class='op'>(</span><span class='va'>GRCm38_gtf</span>, <span class='st'>"Ptbp1"</span><span class='op'>)</span>
+</div><div class='img'><img src='viewTranscripts-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># Plot transcripts from Ptbp1 and Ptbp2 genes</span>
+<span class='fu'>viewTranscripts</span><span class='op'>(</span><span class='va'>GRCm38_gtf</span>, <span class='st'>"Ptbp1"</span>, <span class='st'>"Ptbp2"</span><span class='op'>)</span>
+</div><div class='img'><img src='viewTranscripts-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># }</span>
 
 </div></pre>
   </div>
