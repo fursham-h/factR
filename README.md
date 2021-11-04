@@ -63,3 +63,13 @@ If you encounter a bug with *factR*, please file an issue on
 We thank [Kaur Alasoo](https://github.com/kauralasoo) for sharing code 
 resources for *wiggleplotr* and for valuable discussions on the design 
 of the package.
+
+## References
+Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2021); 
+Functional annotation of custom transcriptomes; Methods in Molecular Biology (In Press)
+
+
+
+
+
+
