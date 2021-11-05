@@ -173,78 +173,92 @@ annotate whether insertion/removal is successful. All other metadata in x will
 not be retained</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## ---------------------------------------------------------------------</span>
-<span class='co'>## EXAMPLE USING TOY DATASET</span>
-<span class='co'>## ---------------------------------------------------------------------</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://bioconductor.org/packages/GenomicRanges'>GenomicRanges</a></span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading required package: GenomicRanges</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: stats4</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: BiocGenerics</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: parallel</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘BiocGenerics’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:parallel’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,</span>
-#&gt; <span class='message'>    clusterExport, clusterMap, parApply, parCapply, parLapply,</span>
-#&gt; <span class='message'>    parLapplyLB, parRapply, parSapply, parSapplyLB</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    IQR, mad, sd, var, xtabs</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    anyDuplicated, append, as.data.frame, basename, cbind, colnames,</span>
-#&gt; <span class='message'>    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,</span>
-#&gt; <span class='message'>    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,</span>
-#&gt; <span class='message'>    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,</span>
-#&gt; <span class='message'>    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,</span>
-#&gt; <span class='message'>    union, unique, unsplit, which.max, which.min</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: S4Vectors</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘S4Vectors’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    expand.grid, I, unname</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: IRanges</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: GenomeInfoDb</span></div><div class='input'>
-<span class='co'># create GRangesList of transcript exon coordinates</span>
-<span class='va'>gr1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html'>GRanges</a></span><span class='op'>(</span>
-seqnames <span class='op'>=</span> <span class='st'>"1"</span>, strand <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='st'>"+"</span>, <span class='fl'>2</span><span class='op'>)</span>,
-ranges <span class='op'>=</span> <span class='fu'>IRanges</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html'>IRanges</a></span><span class='op'>(</span>
-start <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>501</span><span class='op'>)</span>,end <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>100</span>, <span class='fl'>600</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='va'>grl1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html'>GRangesList</a></span><span class='op'>(</span><span class='va'>gr1</span>, <span class='va'>gr1</span>, <span class='va'>gr1</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>grl1</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"tx1"</span>, <span class='st'>"tx2"</span>, <span class='st'>"tx3"</span><span class='op'>)</span>
-
-<span class='co'># add casette exon, alternative 3'ss segment and retained intron</span>
-<span class='va'>exons</span> <span class='op'>&lt;-</span> <span class='fu'>GenomicRanges</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html'>GRanges</a></span><span class='op'>(</span>
-seqnames <span class='op'>=</span> <span class='st'>"1"</span>, strand <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='st'>"+"</span>, <span class='fl'>3</span><span class='op'>)</span>,
-ranges <span class='op'>=</span> <span class='fu'>IRanges</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html'>IRanges</a></span><span class='op'>(</span>start <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>201</span>, <span class='fl'>401</span>, <span class='fl'>101</span><span class='op'>)</span>,
-                          end <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>300</span>, <span class='fl'>500</span>, <span class='fl'>500</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-                          
-<span class='va'>mod.grl1</span> <span class='op'>&lt;-</span> <span class='fu'>addExonstoTx</span><span class='op'>(</span><span class='va'>grl1</span>, <span class='va'>exons</span><span class='op'>)</span>
- 
-<span class='co'># remove exons from hypothetical transcripts</span>
-<span class='fu'>removeExonsfromTx</span><span class='op'>(</span><span class='va'>mod.grl1</span>, <span class='va'>exons</span><span class='op'>)</span> 
-</div><div class='output co'>#&gt; GRangesList object of length 3:
-#&gt; $tx1
-#&gt; GRanges object with 2 ranges and 1 metadata column:
-#&gt;       seqnames    ranges strand |  modified
-#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;logical&gt;
-#&gt;   [1]        1     1-100      + |      TRUE
-#&gt;   [2]        1   501-600      + |      TRUE
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; 
-#&gt; $tx2
-#&gt; GRanges object with 2 ranges and 1 metadata column:
-#&gt;       seqnames    ranges strand |  modified
-#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;logical&gt;
-#&gt;   [1]        1     1-100      + |      TRUE
-#&gt;   [2]        1   501-600      + |      TRUE
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; 
-#&gt; $tx3
-#&gt; GRanges object with 2 ranges and 1 metadata column:
-#&gt;       seqnames    ranges strand |  modified
-#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;logical&gt;
-#&gt;   [1]        1     1-100      + |      TRUE
-#&gt;   [2]        1   501-600      + |      TRUE
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; </div><div class='input'>
-
-
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'>## ---------------------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'>## EXAMPLE USING TOY DATASET</span></span>
+<span class='r-in'><span class='co'>## ---------------------------------------------------------------------</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://bioconductor.org/packages/GenomicRanges'>GenomicRanges</a></span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: GenomicRanges</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: stats4</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: BiocGenerics</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: parallel</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Attaching package: ‘BiocGenerics’</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:parallel’:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     clusterExport, clusterMap, parApply, parCapply, parLapply,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     parLapplyLB, parRapply, parSapply, parSapplyLB</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:stats’:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     IQR, mad, sd, var, xtabs</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:base’:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     anyDuplicated, append, as.data.frame, basename, cbind, colnames,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     union, unique, unsplit, which.max, which.min</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: S4Vectors</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Attaching package: ‘S4Vectors’</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:base’:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     expand.grid, I, unname</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: IRanges</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: GenomeInfoDb</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># create GRangesList of transcript exon coordinates</span></span>
+<span class='r-in'><span class='va'>gr1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html'>GRanges</a></span><span class='op'>(</span></span>
+<span class='r-in'>seqnames <span class='op'>=</span> <span class='st'>"1"</span>, strand <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>rep</a></span><span class='op'>(</span><span class='st'>"+"</span>, <span class='fl'>2</span><span class='op'>)</span>,</span>
+<span class='r-in'>ranges <span class='op'>=</span> <span class='fu'>IRanges</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html'>IRanges</a></span><span class='op'>(</span></span>
+<span class='r-in'>start <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>501</span><span class='op'>)</span>,end <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>100</span>, <span class='fl'>600</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>grl1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html'>GRangesList</a></span><span class='op'>(</span><span class='va'>gr1</span>, <span class='va'>gr1</span>, <span class='va'>gr1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>grl1</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='st'>"tx1"</span>, <span class='st'>"tx2"</span>, <span class='st'>"tx3"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># add casette exon, alternative 3'ss segment and retained intron</span></span>
+<span class='r-in'><span class='va'>exons</span> <span class='op'>&lt;-</span> <span class='fu'>GenomicRanges</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html'>GRanges</a></span><span class='op'>(</span></span>
+<span class='r-in'>seqnames <span class='op'>=</span> <span class='st'>"1"</span>, strand <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>rep</a></span><span class='op'>(</span><span class='st'>"+"</span>, <span class='fl'>3</span><span class='op'>)</span>,</span>
+<span class='r-in'>ranges <span class='op'>=</span> <span class='fu'>IRanges</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html'>IRanges</a></span><span class='op'>(</span>start <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>201</span>, <span class='fl'>401</span>, <span class='fl'>101</span><span class='op'>)</span>,</span>
+<span class='r-in'>                          end <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>300</span>, <span class='fl'>500</span>, <span class='fl'>500</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'>                          </span>
+<span class='r-in'><span class='va'>mod.grl1</span> <span class='op'>&lt;-</span> <span class='fu'>addExonstoTx</span><span class='op'>(</span><span class='va'>grl1</span>, <span class='va'>exons</span><span class='op'>)</span></span>
+<span class='r-in'> </span>
+<span class='r-in'><span class='co'># remove exons from hypothetical transcripts</span></span>
+<span class='r-in'><span class='fu'>removeExonsfromTx</span><span class='op'>(</span><span class='va'>mod.grl1</span>, <span class='va'>exons</span><span class='op'>)</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRangesList object of length 3:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $tx1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 2 ranges and 1 metadata column:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |  modified</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;logical&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]        1     1-100      + |      TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]        1   501-600      + |      TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $tx2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 2 ranges and 1 metadata column:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |  modified</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;logical&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]        1     1-100      + |      TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]        1   501-600      + |      TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $tx3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 2 ranges and 1 metadata column:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |  modified</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;logical&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]        1     1-100      + |      TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]        1   501-600      + |      TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

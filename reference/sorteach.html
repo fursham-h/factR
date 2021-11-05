@@ -144,18 +144,19 @@ in exon order</p></td>
     <p>Fursham Hamid</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Load dataset</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>query_exons</span><span class='op'>)</span>
-
-<span class='co'># sort elements in each GRangesList in descending coordinate order</span>
-<span class='va'>query_exons_desc</span> <span class='op'>&lt;-</span> <span class='fu'>sorteach</span><span class='op'>(</span><span class='va'>query_exons</span>, <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/desc.html'>desc</a></span><span class='op'>(</span><span class='va'>start</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># sort elements in each GRangesList in its order in transcript</span>
-<span class='va'>query_exons_exonorder</span> <span class='op'>&lt;-</span> <span class='fu'>sorteach</span><span class='op'>(</span><span class='va'>query_exons_desc</span>, <span class='va'>exonorder</span><span class='op'>)</span>
-
-<span class='co'># test similarity of query_exons and query_exons_exonorder</span>
-<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>query_exons</span>, <span class='va'>query_exons_exonorder</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] TRUE</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># Load dataset</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>query_exons</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># sort elements in each GRangesList in descending coordinate order</span></span>
+<span class='r-in'><span class='va'>query_exons_desc</span> <span class='op'>&lt;-</span> <span class='fu'>sorteach</span><span class='op'>(</span><span class='va'>query_exons</span>, <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/desc.html'>desc</a></span><span class='op'>(</span><span class='va'>start</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># sort elements in each GRangesList in its order in transcript</span></span>
+<span class='r-in'><span class='va'>query_exons_exonorder</span> <span class='op'>&lt;-</span> <span class='fu'>sorteach</span><span class='op'>(</span><span class='va'>query_exons_desc</span>, <span class='va'>exonorder</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># test similarity of query_exons and query_exons_exonorder</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>query_exons</span>, <span class='va'>query_exons_exonorder</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

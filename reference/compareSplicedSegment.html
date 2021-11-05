@@ -145,154 +145,159 @@ in comparison.</p>
     <p>Fursham Hamid</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## ---------------------------------------------------------------------</span>
-<span class='co'>## EXAMPLE USING TOY DATASET</span>
-<span class='co'>## ---------------------------------------------------------------------</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://bioconductor.org/packages/GenomicRanges'>GenomicRanges</a></span><span class='op'>)</span>
-
-<span class='co'>## Create toy GRanges GTF object</span>
-<span class='va'>gr1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html'>GRanges</a></span><span class='op'>(</span><span class='st'>"chr1"</span>, <span class='fu'>IRanges</span><span class='op'>(</span>start <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>101</span><span class='op'>)</span>, width <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>20</span><span class='op'>)</span><span class='op'>)</span>, <span class='st'>"+"</span>, transcript_id <span class='op'>=</span> <span class='st'>"transcript1"</span>, gene_id <span class='op'>=</span> <span class='st'>"geneA"</span>, gene_name <span class='op'>=</span> <span class='st'>"gene001"</span><span class='op'>)</span>
-<span class='va'>gr2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html'>GRanges</a></span><span class='op'>(</span><span class='st'>"chr1"</span>, <span class='fu'>IRanges</span><span class='op'>(</span>start <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>51</span>, <span class='fl'>101</span><span class='op'>)</span>, width <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>10</span>, <span class='fl'>20</span><span class='op'>)</span><span class='op'>)</span>, <span class='st'>"+"</span>, transcript_id <span class='op'>=</span> <span class='st'>"transcript2"</span>, gene_id <span class='op'>=</span> <span class='st'>"geneA"</span>, gene_name <span class='op'>=</span> <span class='st'>"gene001"</span><span class='op'>)</span>
-
-<span class='co'>## Pairwise comparison between GRanges object</span>
-<span class='fu'>compareSplicedSegment</span><span class='op'>(</span><span class='va'>gr1</span>, <span class='va'>gr2</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; GRangesList object of length 1:
-#&gt; $transcript2
-#&gt; GRanges object with 1 range and 5 metadata columns:
-#&gt;       seqnames    ranges strand |     gene_id   gene_name transcript_id
-#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;
-#&gt;   [1]     chr1     51-60      + |       geneA       geneA   transcript2
-#&gt;              type      AStype
-#&gt;       &lt;character&gt; &lt;character&gt;
-#&gt;   [1]          AS          CE
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; </div><div class='input'>
-<span class='co'>## Multiple comparisons can be done by providing more GRanges input</span>
-<span class='va'>gr3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html'>GRanges</a></span><span class='op'>(</span><span class='st'>"chr1"</span>, <span class='fu'>IRanges</span><span class='op'>(</span>start <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>91</span><span class='op'>)</span>, width <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>30</span><span class='op'>)</span><span class='op'>)</span>, <span class='st'>"+"</span>, transcript_id <span class='op'>=</span> <span class='st'>"transcript3"</span>, gene_id <span class='op'>=</span> <span class='st'>"geneA"</span>, gene_name <span class='op'>=</span> <span class='st'>"gene001"</span><span class='op'>)</span>
-<span class='fu'>compareSplicedSegment</span><span class='op'>(</span><span class='va'>gr1</span>, <span class='va'>gr2</span>, <span class='va'>gr3</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; GRangesList object of length 2:
-#&gt; $transcript2
-#&gt; GRanges object with 1 range and 5 metadata columns:
-#&gt;       seqnames    ranges strand |     gene_id   gene_name transcript_id
-#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;
-#&gt;   [1]     chr1     51-60      + |       geneA       geneA   transcript2
-#&gt;              type      AStype
-#&gt;       &lt;character&gt; &lt;character&gt;
-#&gt;   [1]          AS          CE
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; 
-#&gt; $transcript3
-#&gt; GRanges object with 1 range and 5 metadata columns:
-#&gt;       seqnames    ranges strand |     gene_id   gene_name transcript_id
-#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;
-#&gt;   [1]     chr1    91-100      + |       geneA       geneA   transcript3
-#&gt;              type      AStype
-#&gt;       &lt;character&gt; &lt;character&gt;
-#&gt;   [1]          AS          SA
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; </div><div class='input'>
-<span class='co'>## GRangesList containing exons per transcript can be given as input</span>
-<span class='va'>grl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html'>GRangesList</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>gr1</span>, <span class='va'>gr2</span>, <span class='va'>gr3</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'>compareSplicedSegment</span><span class='op'>(</span><span class='va'>grl</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; GRangesList object of length 2:
-#&gt; $transcript2
-#&gt; GRanges object with 1 range and 5 metadata columns:
-#&gt;       seqnames    ranges strand |     gene_id   gene_name transcript_id
-#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;
-#&gt;   [1]     chr1     51-60      + |       geneA       geneA   transcript2
-#&gt;              type      AStype
-#&gt;       &lt;character&gt; &lt;character&gt;
-#&gt;   [1]          AS          CE
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; 
-#&gt; $transcript3
-#&gt; GRanges object with 1 range and 5 metadata columns:
-#&gt;       seqnames    ranges strand |     gene_id   gene_name transcript_id
-#&gt;          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;
-#&gt;   [1]     chr1    91-100      + |       geneA       geneA   transcript3
-#&gt;              type      AStype
-#&gt;       &lt;character&gt; &lt;character&gt;
-#&gt;   [1]          AS          SA
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; </div><div class='input'>
-
-<span class='co'>## ---------------------------------------------------------------------</span>
-<span class='co'>## EXAMPLE USING SAMPLE DATASET</span>
-<span class='co'>## ---------------------------------------------------------------------</span>
-<span class='co'>## Using GRangesList as input</span>
-<span class='fu'>compareSplicedSegment</span><span class='op'>(</span><span class='va'>query_exons</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; GRangesList object of length 4:
-#&gt; $transcript1
-#&gt; GRanges object with 3 ranges and 5 metadata columns:
-#&gt;       seqnames            ranges strand |               gene_id
-#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;
-#&gt;   [1]    chr10 79858952-79859071      + | ENSMUSG00000006498.14
-#&gt;   [2]    chr10 79860117-79860194      + | ENSMUSG00000006498.14
-#&gt;   [3]    chr10 79862014-79862047      + | ENSMUSG00000006498.14
-#&gt;                   gene_name transcript_id        type      AStype
-#&gt;                 &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;
-#&gt;   [1] ENSMUSG00000006498.14   transcript1          AS          SA
-#&gt;   [2] ENSMUSG00000006498.14   transcript1          AS          CE
-#&gt;   [3] ENSMUSG00000006498.14   transcript1          AS          CE
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; 
-#&gt; $transcript2
-#&gt; GRanges object with 2 ranges and 5 metadata columns:
-#&gt;       seqnames            ranges strand |               gene_id
-#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;
-#&gt;   [1]    chr10 79858952-79859071      + | ENSMUSG00000006498.14
-#&gt;   [2]    chr10 79862014-79862047      + | ENSMUSG00000006498.14
-#&gt;                   gene_name transcript_id        type      AStype
-#&gt;                 &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;
-#&gt;   [1] ENSMUSG00000006498.14   transcript2          AS          SA
-#&gt;   [2] ENSMUSG00000006498.14   transcript2          AS          CE
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; 
-#&gt; $transcript3
-#&gt; GRanges object with 1 range and 5 metadata columns:
-#&gt;       seqnames            ranges strand |               gene_id
-#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;
-#&gt;   [1]    chr10 79858952-79859071      + | ENSMUSG00000006498.14
-#&gt;                   gene_name transcript_id        type      AStype
-#&gt;                 &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;
-#&gt;   [1] ENSMUSG00000006498.14   transcript3          AS          SA
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; 
-#&gt; $transcript4
-#&gt; GRanges object with 1 range and 5 metadata columns:
-#&gt;       seqnames            ranges strand |               gene_id
-#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;
-#&gt;   [1]    chr10 79862014-79862047      + | ENSMUSG00000006498.14
-#&gt;                   gene_name transcript_id        type      AStype
-#&gt;                 &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;
-#&gt;   [1] ENSMUSG00000006498.14   transcript4          AS          CE
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; </div><div class='input'>
-<span class='co'>## Compare AS between individual GRanges object</span>
-<span class='fu'>compareSplicedSegment</span><span class='op'>(</span><span class='va'>query_exons</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>, <span class='va'>query_exons</span><span class='op'>[[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; GRangesList object of length 1:
-#&gt; $transcript1
-#&gt; GRanges object with 2 ranges and 5 metadata columns:
-#&gt;       seqnames            ranges strand |               gene_id
-#&gt;          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;
-#&gt;   [1]    chr10 79860117-79860194      + | ENSMUSG00000006498.14
-#&gt;   [2]    chr10 79862014-79862047      + | ENSMUSG00000006498.14
-#&gt;                   gene_name transcript_id        type      AStype
-#&gt;                 &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;
-#&gt;   [1] ENSMUSG00000006498.14   transcript1          AS          CE
-#&gt;   [2] ENSMUSG00000006498.14   transcript1          AS          CE
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; </div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'>## ---------------------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'>## EXAMPLE USING TOY DATASET</span></span>
+<span class='r-in'><span class='co'>## ---------------------------------------------------------------------</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://bioconductor.org/packages/GenomicRanges'>GenomicRanges</a></span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Create toy GRanges GTF object</span></span>
+<span class='r-in'><span class='va'>gr1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html'>GRanges</a></span><span class='op'>(</span><span class='st'>"chr1"</span>, <span class='fu'><a href='https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html'>IRanges</a></span><span class='op'>(</span>start <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>101</span><span class='op'>)</span>, width <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>20</span><span class='op'>)</span><span class='op'>)</span>, <span class='st'>"+"</span>, transcript_id <span class='op'>=</span> <span class='st'>"transcript1"</span>, gene_id <span class='op'>=</span> <span class='st'>"geneA"</span>, gene_name <span class='op'>=</span> <span class='st'>"gene001"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>gr2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html'>GRanges</a></span><span class='op'>(</span><span class='st'>"chr1"</span>, <span class='fu'><a href='https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html'>IRanges</a></span><span class='op'>(</span>start <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>51</span>, <span class='fl'>101</span><span class='op'>)</span>, width <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>10</span>, <span class='fl'>20</span><span class='op'>)</span><span class='op'>)</span>, <span class='st'>"+"</span>, transcript_id <span class='op'>=</span> <span class='st'>"transcript2"</span>, gene_id <span class='op'>=</span> <span class='st'>"geneA"</span>, gene_name <span class='op'>=</span> <span class='st'>"gene001"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Pairwise comparison between GRanges object</span></span>
+<span class='r-in'><span class='fu'>compareSplicedSegment</span><span class='op'>(</span><span class='va'>gr1</span>, <span class='va'>gr2</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRangesList object of length 1:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 1 range and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |     gene_id   gene_name transcript_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]     chr1     51-60      + |       geneA       geneA   transcript2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              type      AStype</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]          AS          CE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Multiple comparisons can be done by providing more GRanges input</span></span>
+<span class='r-in'><span class='va'>gr3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html'>GRanges</a></span><span class='op'>(</span><span class='st'>"chr1"</span>, <span class='fu'><a href='https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html'>IRanges</a></span><span class='op'>(</span>start <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>91</span><span class='op'>)</span>, width <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>30</span><span class='op'>)</span><span class='op'>)</span>, <span class='st'>"+"</span>, transcript_id <span class='op'>=</span> <span class='st'>"transcript3"</span>, gene_id <span class='op'>=</span> <span class='st'>"geneA"</span>, gene_name <span class='op'>=</span> <span class='st'>"gene001"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>compareSplicedSegment</span><span class='op'>(</span><span class='va'>gr1</span>, <span class='va'>gr2</span>, <span class='va'>gr3</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRangesList object of length 2:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 1 range and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |     gene_id   gene_name transcript_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]     chr1     51-60      + |       geneA       geneA   transcript2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              type      AStype</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]          AS          CE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 1 range and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |     gene_id   gene_name transcript_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]     chr1    91-100      + |       geneA       geneA   transcript3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              type      AStype</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]          AS          SA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## GRangesList containing exons per transcript can be given as input</span></span>
+<span class='r-in'><span class='va'>grl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html'>GRangesList</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>gr1</span>, <span class='va'>gr2</span>, <span class='va'>gr3</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>compareSplicedSegment</span><span class='op'>(</span><span class='va'>grl</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRangesList object of length 2:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 1 range and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |     gene_id   gene_name transcript_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]     chr1     51-60      + |       geneA       geneA   transcript2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              type      AStype</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]          AS          CE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 1 range and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |     gene_id   gene_name transcript_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;   &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]     chr1    91-100      + |       geneA       geneA   transcript3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              type      AStype</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]          AS          SA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## ---------------------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'>## EXAMPLE USING SAMPLE DATASET</span></span>
+<span class='r-in'><span class='co'>## ---------------------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'>## Using GRangesList as input</span></span>
+<span class='r-in'><span class='fu'>compareSplicedSegment</span><span class='op'>(</span><span class='va'>query_exons</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRangesList object of length 4:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 3 ranges and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames            ranges strand |               gene_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]    chr10 79858952-79859071      + | ENSMUSG00000006498.14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]    chr10 79860117-79860194      + | ENSMUSG00000006498.14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [3]    chr10 79862014-79862047      + | ENSMUSG00000006498.14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   gene_name transcript_id        type      AStype</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1] ENSMUSG00000006498.14   transcript1          AS          SA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2] ENSMUSG00000006498.14   transcript1          AS          CE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [3] ENSMUSG00000006498.14   transcript1          AS          CE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 2 ranges and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames            ranges strand |               gene_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]    chr10 79858952-79859071      + | ENSMUSG00000006498.14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]    chr10 79862014-79862047      + | ENSMUSG00000006498.14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   gene_name transcript_id        type      AStype</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1] ENSMUSG00000006498.14   transcript2          AS          SA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2] ENSMUSG00000006498.14   transcript2          AS          CE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 1 range and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames            ranges strand |               gene_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]    chr10 79858952-79859071      + | ENSMUSG00000006498.14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   gene_name transcript_id        type      AStype</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1] ENSMUSG00000006498.14   transcript3          AS          SA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 1 range and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames            ranges strand |               gene_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]    chr10 79862014-79862047      + | ENSMUSG00000006498.14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   gene_name transcript_id        type      AStype</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1] ENSMUSG00000006498.14   transcript4          AS          CE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Compare AS between individual GRanges object</span></span>
+<span class='r-in'><span class='fu'>compareSplicedSegment</span><span class='op'>(</span><span class='va'>query_exons</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>, <span class='va'>query_exons</span><span class='op'>[[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRangesList object of length 1:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 2 ranges and 5 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames            ranges strand |               gene_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |           &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]    chr10 79860117-79860194      + | ENSMUSG00000006498.14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]    chr10 79862014-79862047      + | ENSMUSG00000006498.14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   gene_name transcript_id        type      AStype</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 &lt;character&gt;   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1] ENSMUSG00000006498.14   transcript1          AS          CE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2] ENSMUSG00000006498.14   transcript1          AS          CE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

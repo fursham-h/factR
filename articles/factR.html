@@ -69,7 +69,7 @@
       <h1 data-toc-skip>Using factR</h1>
                         <h4 class="author">Fursham Hamid</h4>
             
-            <h4 class="date">2021-10-08</h4>
+            <h4 class="date">2021-11-05</h4>
       
       
       <div class="hidden name"><code>factR.Rmd</code></div>
@@ -156,7 +156,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt; [1] "GenomicRanges"</span></code></pre></div>
 <p>Contents of the object can be examined using <code>head</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">)</span>  
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">)</span>  
 <span class="co">#&gt; GRanges object with 6 ranges and 9 metadata columns:</span>
 <span class="co">#&gt;       seqnames          ranges strand |    source       type     score</span>
 <span class="co">#&gt;          &lt;Rle&gt;       &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;factor&gt;   &lt;factor&gt; &lt;numeric&gt;</span>
@@ -187,11 +187,11 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <p>In addition to genomic coordinates (seqnames and ranges), a typical GTF file contains metadata describing the feature type (e.g. transcript or exon), transcript IDs and some information on their parental genes.</p>
 <p>Use the following command to calculate the total number of transcripts in the input transcriptome:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">$</span><span class="va">transcript_id</span><span class="op">)</span><span class="op">)</span>  
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html">unique</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">$</span><span class="va">transcript_id</span><span class="op">)</span><span class="op">)</span>  
 <span class="co">#&gt; [1] 178195</span></code></pre></div>
 <p>Note that none of the transcripts in the custom.gtf object contain CDS information:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">[</span><span class="va">custom.gtf</span><span class="op">$</span><span class="va">type</span><span class="op">==</span><span class="st">"CDS"</span><span class="op">]</span><span class="op">$</span><span class="va">transcript_id</span><span class="op">)</span><span class="op">)</span>  
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html">unique</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">[</span><span class="va">custom.gtf</span><span class="op">$</span><span class="va">type</span><span class="op">==</span><span class="st">"CDS"</span><span class="op">]</span><span class="op">$</span><span class="va">transcript_id</span><span class="op">)</span><span class="op">)</span>  
 <span class="co">#&gt; [1] 0</span></code></pre></div>
 </div>
 <div id="plotting-transcript-structures" class="section level2">
@@ -215,7 +215,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span>  
 <span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>  
 <span class="co">#&gt; snapshotDate(): 2021-05-18</span>
-<span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Mus musculus'</span>, <span class="st">'gencode'</span>, <span class="st">'gff'</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="st">'Mus musculus'</span>, <span class="st">'gencode'</span>, <span class="st">'gff'</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; AnnotationHub with 9 records</span>
 <span class="co">#&gt; # snapshotDate(): 2021-05-18</span>
 <span class="co">#&gt; # $dataprovider: Gencode</span>
@@ -325,7 +325,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span>   
 <span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>  
 <span class="co">#&gt; snapshotDate(): 2021-05-18</span>
-<span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mm10"</span>,<span class="st">"2bit"</span><span class="op">)</span><span class="op">)</span>   
+<span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="st">"mm10"</span>,<span class="st">"2bit"</span><span class="op">)</span><span class="op">)</span>   
 <span class="co">#&gt; AnnotationHub with 1 record</span>
 <span class="co">#&gt; # snapshotDate(): 2021-05-18</span>
 <span class="co">#&gt; # names(): AH14005</span>
@@ -386,7 +386,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <code class="sourceCode R"><span class="va">NMDprediction.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictNMD.html">predictNMD</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span><span class="op">)</span>  
 <span class="co">#&gt; Predicting NMD sensitivities for 15254 mRNAs</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">NMDprediction.out</span><span class="op">)</span>  
+<span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="va">NMDprediction.out</span><span class="op">)</span>  
 <span class="co">#&gt; # A tibble: 6 × 5</span>
 <span class="co">#&gt;   transcript            stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
 <span class="co">#&gt;   &lt;chr&gt;                          &lt;dbl&gt;          &lt;int&gt;          &lt;dbl&gt; &lt;lgl&gt; </span>
@@ -402,7 +402,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <code class="sourceCode R"><span class="va">NMDprediction.Zfr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictNMD.html">predictNMD</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span><span class="op">)</span> 
 <span class="co">#&gt; Predicting NMD sensitivities for 7 mRNAs</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">NMDprediction.Zfr</span><span class="op">)</span>  
+<span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="va">NMDprediction.Zfr</span><span class="op">)</span>  
 <span class="co">#&gt; # A tibble: 6 × 5</span>
 <span class="co">#&gt;   transcript     stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
 <span class="co">#&gt;   &lt;chr&gt;                   &lt;dbl&gt;          &lt;int&gt;          &lt;dbl&gt; &lt;lgl&gt; </span>
@@ -450,9 +450,9 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <p>Using the above NMDprediction.out object and <em>tidyverse</em> package tools, we can estimate the numbers of NMD-sensitive and non-NMD-sensitive transcripts among newly assembled RNAs:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>  
-<span class="va">NMDprediction.out</span> <span class="op">%&gt;%</span>   
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">is_NMD</span><span class="op">)</span> <span class="op">%&gt;%</span>   
-  <span class="fu">tally</span><span class="op">(</span><span class="op">)</span>  
+<span class="va">NMDprediction.out</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">is_NMD</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">tally</a></span><span class="op">(</span><span class="op">)</span>  
 <span class="co">#&gt; # A tibble: 2 × 2</span>
 <span class="co">#&gt;   is_NMD     n</span>
 <span class="co">#&gt;   &lt;lgl&gt;  &lt;int&gt;</span>
@@ -460,9 +460,9 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt; 2 TRUE    7393</span></code></pre></div>
 <p>We might be interested in calculating mean 3’UTR lengths for these two groups of transcripts:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">NMDprediction.out</span> <span class="op">%&gt;%</span>   
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">is_NMD</span><span class="op">)</span> <span class="op">%&gt;%</span>   
-  <span class="fu">summarise</span><span class="op">(</span>mean_3UTR_length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">`3'UTR_length`</span><span class="op">)</span><span class="op">)</span>    
+<code class="sourceCode R"><span class="va">NMDprediction.out</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">is_NMD</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>mean_3UTR_length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/mean.html">mean</a></span><span class="op">(</span><span class="va">`3'UTR_length`</span><span class="op">)</span><span class="op">)</span>    
 <span class="co">#&gt; # A tibble: 2 × 2</span>
 <span class="co">#&gt;   is_NMD mean_3UTR_length</span>
 <span class="co">#&gt;   &lt;lgl&gt;             &lt;dbl&gt;</span>
@@ -474,13 +474,13 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt; Predicting NMD sensitivities for 67261 mRNAs</span></code></pre></div>
 <p>Next, we combine the NMDprediction.out and NMDprediction.known data frames distinguishing between new and known transcripts:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">NMDprediction.combine</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span><span class="op">(</span><span class="va">NMDprediction.known</span>, <span class="va">NMDprediction.out</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">mutate</span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">transcript</span> <span class="op">%in%</span> <span class="va">NMDprediction.out</span><span class="op">$</span><span class="va">transcript</span>, <span class="st">"New"</span>, <span class="st">"Known"</span><span class="op">)</span><span class="op">)</span>   </code></pre></div>
+<code class="sourceCode R"><span class="va">NMDprediction.combine</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="va">NMDprediction.known</span>, <span class="va">NMDprediction.out</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">transcript</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html">%in%</a></span> <span class="va">NMDprediction.out</span><span class="op">$</span><span class="va">transcript</span>, <span class="st">"New"</span>, <span class="st">"Known"</span><span class="op">)</span><span class="op">)</span>   </code></pre></div>
 <p>Lastly, the combined transcripts are categorised into 4 groups based on their source (“New” vs “Known”) and predicted NMD sensitivity, and the number of transcripts in each group is tallied:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">proportion.NMD</span> <span class="op">&lt;-</span> <span class="va">NMDprediction.combine</span> <span class="op">%&gt;%</span>   
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">group</span>, <span class="va">is_NMD</span><span class="op">)</span> <span class="op">%&gt;%</span>   
-  <span class="fu">tally</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"n_transcripts"</span><span class="op">)</span>  
+<code class="sourceCode R"><span class="va">proportion.NMD</span> <span class="op">&lt;-</span> <span class="va">NMDprediction.combine</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">group</span>, <span class="va">is_NMD</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">tally</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"n_transcripts"</span><span class="op">)</span>  
 <span class="va">proportion.NMD</span>  
 <span class="co">#&gt; # A tibble: 4 × 3</span>
 <span class="co">#&gt; # Groups:   group [2]</span>
@@ -492,10 +492,10 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt; 4 New   TRUE            7399</span></code></pre></div>
 <p>The above data can be visualized using a stacked bar-graph:</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">proportion.NMD</span> <span class="op">%&gt;%</span>   
-  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="va">group</span>, y<span class="op">=</span><span class="va">n_transcripts</span>, fill<span class="op">=</span><span class="va">is_NMD</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>  
-  <span class="fu">geom_bar</span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span>, position<span class="op">=</span><span class="st">"fill"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette<span class="op">=</span><span class="st">"Paired"</span><span class="op">)</span> </code></pre></div>
+<code class="sourceCode R"><span class="va">proportion.NMD</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">group</span>, y<span class="op">=</span><span class="va">n_transcripts</span>, fill<span class="op">=</span><span class="va">is_NMD</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>  
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span>, position<span class="op">=</span><span class="st">"fill"</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette<span class="op">=</span><span class="st">"Paired"</span><span class="op">)</span> </code></pre></div>
 <p><img src="factR_files/figure-html/NMDplot-1.png" width="700"></p>
 </div>
 <div id="summarising-domain-data" class="section level3">
@@ -507,21 +507,21 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <code class="sourceCode R"><span class="va">domains.known</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">ref.gtf</span>, <span class="va">Mmusculus</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </code></pre></div>
 <p>Next, we combine the domains.out and domains.known data frames distinguishing between new and known proteins:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.combine</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span><span class="op">(</span><span class="va">domains.known</span>, <span class="va">domains.out</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">mutate</span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">transcript</span> <span class="op">%in%</span> <span class="va">domains.out</span><span class="op">$</span><span class="va">transcript</span>, <span class="st">"New"</span>, <span class="st">"Known"</span><span class="op">)</span><span class="op">)</span>   </code></pre></div>
+<code class="sourceCode R"><span class="va">domains.combine</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="va">domains.known</span>, <span class="va">domains.out</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">transcript</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html">%in%</a></span> <span class="va">domains.out</span><span class="op">$</span><span class="va">transcript</span>, <span class="st">"New"</span>, <span class="st">"Known"</span><span class="op">)</span><span class="op">)</span>   </code></pre></div>
 <p>To enable grouping of protein isoforms by gene names, let’s append gene information to our combined data frame:</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># generate a transcript to gene df  </span>
-<span class="va">t2g</span> <span class="op">&lt;-</span> <span class="va">custom.gtf</span> <span class="op">%&gt;%</span>  
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">select</span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">gene_name</span>, transcript<span class="op">=</span><span class="va">transcript_id</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">distinct</span><span class="op">(</span><span class="op">)</span>   
+<span class="va">t2g</span> <span class="op">&lt;-</span> <span class="va">custom.gtf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">gene_name</span>, transcript<span class="op">=</span><span class="va">transcript_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="op">)</span>   
   
 <span class="co"># combine t2g with domains.combine   </span>
-<span class="va">domains.combine</span> <span class="op">&lt;-</span> <span class="va">domains.combine</span> <span class="op">%&gt;%</span>  
-  <span class="fu">left_join</span><span class="op">(</span><span class="va">t2g</span><span class="op">)</span>  
+<span class="va">domains.combine</span> <span class="op">&lt;-</span> <span class="va">domains.combine</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">t2g</span><span class="op">)</span>  
 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">domains.combine</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="va">domains.combine</span><span class="op">)</span>
 <span class="co">#&gt;              transcript                                  description     eval</span>
 <span class="co">#&gt; 1  ENSMUST00000000001.4                                   G proteins 2.07e-08</span>
 <span class="co">#&gt; 2  ENSMUST00000000001.4                                   G proteins 2.07e-08</span>
@@ -538,38 +538,38 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt; 6    17  91 Known           MSTRG.40733      Igf2</span></code></pre></div>
 <p>We then generate a non-redundant list of N-to-C-ordered domain architectures for each gene</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.combine.architecture</span> <span class="op">&lt;-</span> <span class="va">domains.combine</span> <span class="op">%&gt;%</span>  
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">transcript</span><span class="op">)</span> <span class="op">%&gt;%</span>   
-  <span class="fu">arrange</span><span class="op">(</span><span class="va">begin</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">mutate</span><span class="op">(</span>domain <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">description</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>   
-  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">description</span>, <span class="op">-</span><span class="va">begin</span>, <span class="op">-</span><span class="va">end</span>, <span class="op">-</span><span class="va">eval</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>   
-  <span class="fu">arrange</span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op">%&gt;%</span>   
-  <span class="fu">distinct</span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">domain</span>,.keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>   </code></pre></div>
+<code class="sourceCode R"><span class="va">domains.combine.architecture</span> <span class="op">&lt;-</span> <span class="va">domains.combine</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">transcript</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">begin</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>domain <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">description</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">description</span>, <span class="op">-</span><span class="va">begin</span>, <span class="op">-</span><span class="va">end</span>, <span class="op">-</span><span class="va">eval</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">domain</span>,.keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>   </code></pre></div>
 <p>Genes with no new domain structures are filtered out:</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.combine.filtered</span> <span class="op">&lt;-</span> <span class="va">domains.combine.architecture</span> <span class="op">%&gt;%</span>  
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">gene_id</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="st">"New"</span> <span class="op">%in%</span> <span class="va">group</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> </code></pre></div>
+<code class="sourceCode R"><span class="va">domains.combine.filtered</span> <span class="op">&lt;-</span> <span class="va">domains.combine.architecture</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">gene_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="st">"New"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html">%in%</a></span> <span class="va">group</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span> </code></pre></div>
 <p>Domains gained in new proteins are shortlisted:</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.combine.shortlist</span> <span class="op">&lt;-</span> <span class="va">domains.combine.filtered</span> <span class="op">%&gt;%</span>  
-  <span class="fu">unnest</span><span class="op">(</span><span class="va">domain</span><span class="op">)</span> <span class="op">%&gt;%</span>   
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">transcript</span>, <span class="va">domain</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">mutate</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>   
-  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">distinct</span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">group</span>, <span class="va">domain</span>, <span class="va">n</span>,.keep_all<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">domain</span>, <span class="va">n</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">group</span> <span class="op">==</span> <span class="st">"New"</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span>   </code></pre></div>
+<code class="sourceCode R"><span class="va">domains.combine.shortlist</span> <span class="op">&lt;-</span> <span class="va">domains.combine.filtered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span><span class="va">domain</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">transcript</span>, <span class="va">domain</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html">row_number</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">group</span>, <span class="va">domain</span>, <span class="va">n</span>,.keep_all<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">domain</span>, <span class="va">n</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">group</span> <span class="op">==</span> <span class="st">"New"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span>   </code></pre></div>
 <p>Top 10 frequently gained domains can be listed as follows:</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.combine.top</span> <span class="op">&lt;-</span> <span class="va">domains.combine.shortlist</span> <span class="op">%&gt;%</span>  
-  <span class="fu">distinct</span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">domain</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">domain</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">tally</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">slice_max</span><span class="op">(</span><span class="va">n</span>, n<span class="op">=</span><span class="fl">10</span>, with_ties <span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>   
+<code class="sourceCode R"><span class="va">domains.combine.top</span> <span class="op">&lt;-</span> <span class="va">domains.combine.shortlist</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">domain</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">domain</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">tally</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_max</a></span><span class="op">(</span><span class="va">n</span>, n<span class="op">=</span><span class="fl">10</span>, with_ties <span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>   
   
 <span class="va">domains.combine.top</span>   
 <span class="co">#&gt; # A tibble: 14 × 2</span>
@@ -591,18 +591,18 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt; 14 WD40-repeat                                        3</span></code></pre></div>
 <p>We can summarise the above analysis as a bar chart:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.combine.top</span> <span class="op">%&gt;%</span>   
-  <span class="fu">mutate</span><span class="op">(</span>domain <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">domain</span>, <span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>  
-  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="va">domain</span>, y <span class="op">=</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>  
-  <span class="fu">geom_bar</span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span>  
-  <span class="fu">coord_flip</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>   
-  <span class="fu">scale_y_continuous</span><span class="op">(</span>name<span class="op">=</span><span class="st">"Number of genes"</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span class="va">domains.combine.top</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>domain <span class="op">=</span> <span class="fu"><a href="https://forcats.tidyverse.org/reference/fct_reorder.html">fct_reorder</a></span><span class="op">(</span><span class="va">domain</span>, <span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">domain</span>, y <span class="op">=</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>  
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat<span class="op">=</span><span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span>  
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>   
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>name<span class="op">=</span><span class="st">"Number of genes"</span><span class="op">)</span>  </code></pre></div>
 <p><img src="factR_files/figure-html/plotdomains-1.png" width="700"></p>
 <p>We can also list the first 10 genes gaining the C2H2 domain:</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.combine.shortlist</span> <span class="op">%&gt;%</span>   
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">domain</span> <span class="op">==</span> <span class="st">"Classic zinc finger, C2H2"</span><span class="op">)</span> <span class="op">%&gt;%</span>   
-  <span class="fu">distinct</span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">gene_name</span><span class="op">)</span>  
+<code class="sourceCode R"><span class="va">domains.combine.shortlist</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">domain</span> <span class="op">==</span> <span class="st">"Classic zinc finger, C2H2"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>   
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span><span class="op">(</span><span class="va">gene_id</span>, <span class="va">gene_name</span><span class="op">)</span>  
 <span class="co">#&gt; # A tibble: 12 × 2</span>
 <span class="co">#&gt;    gene_id     gene_name</span>
 <span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;    </span>
@@ -620,7 +620,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt; 12 MSTRG.14649 &lt;NA&gt;</span></code></pre></div>
 <p>Finally, to visualize domain architectures of new and known protein isoforms produced from a gene of interest (say, <em>Zfp972</em>):</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.Zfp972</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">ref.gtf</span><span class="op">)</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfp972"</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  
+<code class="sourceCode R"><span class="va">domains.Zfp972</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">ref.gtf</span><span class="op">)</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfp972"</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  
 <span class="co">#&gt; Checking CDSs and translating protein sequences</span>
 <span class="co">#&gt; Predicting domain families for 4 proteins</span></code></pre></div>
 <p><img src="factR_files/figure-html/showZfp972-1.png" width="700"></p>
@@ -652,7 +652,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <p>This workflow was conducted on:</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>  
-<span class="co">#&gt; R version 4.1.1 (2021-08-10)</span>
+<span class="co">#&gt; R version 4.1.2 (2021-11-01)</span>
 <span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span>
 <span class="co">#&gt; Running under: macOS Catalina 10.15.7</span>
 <span class="co">#&gt; </span>
@@ -678,7 +678,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt; [15] rtracklayer_1.52.1                 GenomicRanges_1.44.0              </span>
 <span class="co">#&gt; [17] Biostrings_2.60.2                  GenomeInfoDb_1.28.4               </span>
 <span class="co">#&gt; [19] XVector_0.32.0                     IRanges_2.26.0                    </span>
-<span class="co">#&gt; [21] S4Vectors_0.30.2                   AnnotationHub_3.0.1               </span>
+<span class="co">#&gt; [21] S4Vectors_0.30.2                   AnnotationHub_3.0.2               </span>
 <span class="co">#&gt; [23] BiocFileCache_2.0.0                dbplyr_2.1.1                      </span>
 <span class="co">#&gt; [25] BiocGenerics_0.38.0                factR_0.99.5                      </span>
 <span class="co">#&gt; </span>
@@ -691,20 +691,20 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt;  [11] lubridate_1.8.0               xml2_1.3.2                   </span>
 <span class="co">#&gt;  [13] cachem_1.0.6                  knitr_1.36                   </span>
 <span class="co">#&gt;  [15] jsonlite_1.7.2                wiggleplotr_1.16.0           </span>
-<span class="co">#&gt;  [17] Rsamtools_2.8.0               broom_0.7.9                  </span>
+<span class="co">#&gt;  [17] Rsamtools_2.8.0               broom_0.7.10                 </span>
 <span class="co">#&gt;  [19] png_0.1-7                     shiny_1.7.1                  </span>
-<span class="co">#&gt;  [21] BiocManager_1.30.16           compiler_4.1.1               </span>
-<span class="co">#&gt;  [23] httr_1.4.2                    backports_1.2.1              </span>
+<span class="co">#&gt;  [21] BiocManager_1.30.16           compiler_4.1.2               </span>
+<span class="co">#&gt;  [23] httr_1.4.2                    backports_1.3.0              </span>
 <span class="co">#&gt;  [25] assertthat_0.2.1              Matrix_1.3-4                 </span>
-<span class="co">#&gt;  [27] fastmap_1.1.0                 cli_3.0.1                    </span>
+<span class="co">#&gt;  [27] fastmap_1.1.0                 cli_3.1.0                    </span>
 <span class="co">#&gt;  [29] later_1.3.0                   htmltools_0.5.2              </span>
-<span class="co">#&gt;  [31] prettyunits_1.1.1             tools_4.1.1                  </span>
+<span class="co">#&gt;  [31] prettyunits_1.1.1             tools_4.1.2                  </span>
 <span class="co">#&gt;  [33] gtable_0.3.0                  glue_1.4.2                   </span>
 <span class="co">#&gt;  [35] GenomeInfoDbData_1.2.6        rappdirs_0.3.3               </span>
 <span class="co">#&gt;  [37] Rcpp_1.0.7                    cellranger_1.1.0             </span>
 <span class="co">#&gt;  [39] jquerylib_0.1.4               pkgdown_1.6.1                </span>
 <span class="co">#&gt;  [41] vctrs_0.3.8                   drawProteins_1.12.0          </span>
-<span class="co">#&gt;  [43] xfun_0.26                     rvest_1.0.1                  </span>
+<span class="co">#&gt;  [43] xfun_0.28                     rvest_1.0.2                  </span>
 <span class="co">#&gt;  [45] mime_0.12                     lifecycle_1.0.1              </span>
 <span class="co">#&gt;  [47] restfulr_0.0.13               XML_3.99-0.8                 </span>
 <span class="co">#&gt;  [49] zlibbioc_1.38.0               scales_1.1.1                 </span>
@@ -718,20 +718,20 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span class="co">#&gt;  [65] highr_0.9                     BiocVersion_3.13.1           </span>
 <span class="co">#&gt;  [67] BiocIO_1.2.0                  desc_1.4.0                   </span>
 <span class="co">#&gt;  [69] filelock_1.0.2                BiocParallel_1.26.2          </span>
-<span class="co">#&gt;  [71] rlang_0.4.11                  pkgconfig_2.0.3              </span>
+<span class="co">#&gt;  [71] rlang_0.4.12                  pkgconfig_2.0.3              </span>
 <span class="co">#&gt;  [73] systemfonts_1.0.2             matrixStats_0.61.0           </span>
 <span class="co">#&gt;  [75] bitops_1.0-7                  evaluate_0.14                </span>
-<span class="co">#&gt;  [77] lattice_0.20-44               labeling_0.4.2               </span>
+<span class="co">#&gt;  [77] lattice_0.20-45               labeling_0.4.2               </span>
 <span class="co">#&gt;  [79] patchwork_1.1.1               GenomicAlignments_1.28.0     </span>
 <span class="co">#&gt;  [81] bit_4.0.4                     tidyselect_1.1.1             </span>
 <span class="co">#&gt;  [83] magrittr_2.0.1                bookdown_0.24                </span>
-<span class="co">#&gt;  [85] R6_2.5.1                      generics_0.1.0               </span>
+<span class="co">#&gt;  [85] R6_2.5.1                      generics_0.1.1               </span>
 <span class="co">#&gt;  [87] DelayedArray_0.18.0           DBI_1.1.1                    </span>
-<span class="co">#&gt;  [89] withr_2.4.2                   pillar_1.6.3                 </span>
+<span class="co">#&gt;  [89] withr_2.4.2                   pillar_1.6.4                 </span>
 <span class="co">#&gt;  [91] haven_2.4.3                   KEGGREST_1.32.0              </span>
 <span class="co">#&gt;  [93] RCurl_1.98-1.5                modelr_0.1.8                 </span>
-<span class="co">#&gt;  [95] crayon_1.4.1                  utf8_1.2.2                   </span>
-<span class="co">#&gt;  [97] tzdb_0.1.2                    rmarkdown_2.11               </span>
+<span class="co">#&gt;  [95] crayon_1.4.2                  utf8_1.2.2                   </span>
+<span class="co">#&gt;  [97] tzdb_0.2.0                    rmarkdown_2.11               </span>
 <span class="co">#&gt;  [99] progress_1.2.2                readxl_1.3.1                 </span>
 <span class="co">#&gt;  [ reached getOption("max.print") -- omitted 11 entries ]</span></code></pre></div>
 </div>

@@ -163,53 +163,78 @@ then tested for NMD features and if positive, the alternative exon will be
 annotated as NMD-causing.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## ---------------------------------------------------------------------</span>
-<span class='co'>## EXAMPLE USING SAMPLE DATASET</span>
-<span class='co'>## ---------------------------------------------------------------------</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>BSgenome.Mmusculus.UCSC.mm10</span><span class='op'>)</span>
-
-<span class='co'># build CDS information first</span>
-<span class='va'>out.gtf</span> <span class='op'>&lt;-</span> <span class='fu'><a href='buildCDS.html'>buildCDS</a></span><span class='op'>(</span><span class='va'>matched_query_gtf</span>, <span class='va'>ref_gtf</span>, <span class='va'>Mmusculus</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Searching for reference mRNAs in query</span></div><div class='output co'>#&gt; <span class='message'>2 reference mRNAs found and its CDS were assigned</span></div><div class='output co'>#&gt; <span class='message'>Building database of annotated ATG codons</span></div><div class='output co'>#&gt; <span class='message'>Selecting best ATG start codon for remaining transcripts and determining open-reading frame</span></div><div class='output co'>#&gt; <span class='message'>2 new CDSs constructed</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Summary: Out of 4 transcripts in `matched_query_gtf`, 4 transcript CDSs were built</span></div><div class='input'>
-<span class='co'># proceed with identifying NMD exons</span>
-<span class='va'>NMD.exons_1</span> <span class='op'>&lt;-</span> <span class='fu'>identifyNMDexons</span><span class='op'>(</span><span class='va'>out.gtf</span>, <span class='va'>Mmusculus</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>`NMD.result` not provided, running predictNMD()</span></div><div class='output co'>#&gt; <span class='message'>Selecting best reference mRNAs</span></div><div class='output co'>#&gt; <span class='message'>Finding NMD causing exons</span></div><div class='input'>
-<span class='co'># if output of predictNMD() has been generated, this can be provided to</span>
-<span class='co'># NMD.result argument</span>
-<span class='va'>NMD.output</span> <span class='op'>&lt;-</span> <span class='fu'><a href='predictNMD.html'>predictNMD</a></span><span class='op'>(</span><span class='va'>out.gtf</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Predicting NMD sensitivities for 4 mRNAs</span></div><div class='input'><span class='va'>NMD.exons_2</span> <span class='op'>&lt;-</span> <span class='fu'>identifyNMDexons</span><span class='op'>(</span><span class='va'>out.gtf</span>, <span class='va'>Mmusculus</span>, NMD.result <span class='op'>=</span> <span class='va'>NMD.output</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Selecting best reference mRNAs</span></div><div class='output co'>#&gt; <span class='message'>Finding NMD causing exons</span></div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>NMD.exons_1</span>, <span class='va'>NMD.exons_2</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-
-<span class='co'>## ---------------------------------------------------------------------</span>
-<span class='co'>## EXAMPLE USING TRANSCRIPT ANNOTATION</span>
-<span class='co'>## ---------------------------------------------------------------------</span>
-<span class='co'># \donttest{</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>AnnotationHub</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading required package: BiocFileCache</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: dbplyr</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘AnnotationHub’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:rtracklayer’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    hubUrl</span></div><div class='input'>
-<span class='co'>## Retrieve GRCm38 trancript annotation</span>
-<span class='va'>ah</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html'>AnnotationHub</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>snapshotDate(): 2021-05-18</span></div><div class='input'><span class='va'>GRCm38_gtf</span> <span class='op'>&lt;-</span> <span class='va'>ah</span><span class='op'>[[</span><span class='st'>"AH60127"</span><span class='op'>]</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; <span class='message'>downloading 1 resources</span></div><div class='output co'>#&gt; <span class='message'>retrieving 1 resource</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='output co'>#&gt; <span class='message'>Importing File into R ..</span></div><div class='output co'>#&gt; <span class='message'>'getOption("repos")' replaces Bioconductor standard repositories, see</span>
-#&gt; <span class='message'>'?repositories' for details</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>replacement repositories:</span>
-#&gt; <span class='message'>    CRAN: https://cloud.r-project.org</span></div><div class='output co'>#&gt; <span class='message'>'getOption("repos")' replaces Bioconductor standard repositories, see</span>
-#&gt; <span class='message'>'?repositories' for details</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>replacement repositories:</span>
-#&gt; <span class='message'>    CRAN: https://cloud.r-project.org</span></div><div class='input'>
-<span class='co'>## Identify NMD-causing exons in entire transcriptome</span>
-<span class='va'>NMD.exons.all</span> <span class='op'>&lt;-</span> <span class='fu'>identifyNMDexons</span><span class='op'>(</span><span class='va'>GRCm38_gtf</span>, <span class='va'>Mmusculus</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error: `GRCm38_gtf` and `Mmusculus` has unmatched seqlevel styles. </span>
-#&gt; <span class='error'>Try running: GRCm38_gtf &lt;- matchChromosomes(GRCm38_gtf, Mmusculus)</span></div><div class='input'><span class='co'># }</span>
-
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'>## ---------------------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'>## EXAMPLE USING SAMPLE DATASET</span></span>
+<span class='r-in'><span class='co'>## ---------------------------------------------------------------------</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>BSgenome.Mmusculus.UCSC.mm10</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># build CDS information first</span></span>
+<span class='r-in'><span class='va'>out.gtf</span> <span class='op'>&lt;-</span> <span class='fu'><a href='buildCDS.html'>buildCDS</a></span><span class='op'>(</span><span class='va'>matched_query_gtf</span>, <span class='va'>ref_gtf</span>, <span class='va'>Mmusculus</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Searching for reference mRNAs in query</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> 2 reference mRNAs found and its CDS were assigned</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Building database of annotated ATG codons</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Selecting best ATG start codon for remaining transcripts and determining open-reading frame</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> 2 new CDSs constructed</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Summary: Out of 4 transcripts in `matched_query_gtf`, 4 transcript CDSs were built</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># proceed with identifying NMD exons</span></span>
+<span class='r-in'><span class='va'>NMD.exons_1</span> <span class='op'>&lt;-</span> <span class='fu'>identifyNMDexons</span><span class='op'>(</span><span class='va'>out.gtf</span>, <span class='va'>Mmusculus</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> `NMD.result` not provided, running predictNMD()</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Selecting best reference mRNAs</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Finding NMD causing exons</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># if output of predictNMD() has been generated, this can be provided to</span></span>
+<span class='r-in'><span class='co'># NMD.result argument</span></span>
+<span class='r-in'><span class='va'>NMD.output</span> <span class='op'>&lt;-</span> <span class='fu'><a href='predictNMD.html'>predictNMD</a></span><span class='op'>(</span><span class='va'>out.gtf</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Predicting NMD sensitivities for 4 mRNAs</span>
+<span class='r-in'><span class='va'>NMD.exons_2</span> <span class='op'>&lt;-</span> <span class='fu'>identifyNMDexons</span><span class='op'>(</span><span class='va'>out.gtf</span>, <span class='va'>Mmusculus</span>, NMD.result <span class='op'>=</span> <span class='va'>NMD.output</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Selecting best reference mRNAs</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Finding NMD causing exons</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>NMD.exons_1</span>, <span class='va'>NMD.exons_2</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE</span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## ---------------------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'>## EXAMPLE USING TRANSCRIPT ANNOTATION</span></span>
+<span class='r-in'><span class='co'>## ---------------------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>AnnotationHub</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: BiocFileCache</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: dbplyr</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Attaching package: ‘AnnotationHub’</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> The following object is masked from ‘package:rtracklayer’:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     hubUrl</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Retrieve GRCm38 trancript annotation</span></span>
+<span class='r-in'><span class='va'>ah</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html'>AnnotationHub</a></span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> snapshotDate(): 2021-05-18</span>
+<span class='r-in'><span class='va'>GRCm38_gtf</span> <span class='op'>&lt;-</span> <span class='va'>ah</span><span class='op'>[[</span><span class='st'>"AH60127"</span><span class='op'>]</span><span class='op'>]</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> downloading 1 resources</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> retrieving 1 resource</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> loading from cache</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Importing File into R ..</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> 'getOption("repos")' replaces Bioconductor standard repositories, see</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> '?repositories' for details</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> replacement repositories:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     CRAN: https://cloud.r-project.org</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> 'getOption("repos")' replaces Bioconductor standard repositories, see</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> '?repositories' for details</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> replacement repositories:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     CRAN: https://cloud.r-project.org</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Identify NMD-causing exons in entire transcriptome</span></span>
+<span class='r-in'><span class='va'>NMD.exons.all</span> <span class='op'>&lt;-</span> <span class='fu'>identifyNMDexons</span><span class='op'>(</span><span class='va'>GRCm38_gtf</span>, <span class='va'>Mmusculus</span><span class='op'>)</span></span>
+<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error:</span> `GRCm38_gtf` and `Mmusculus` has unmatched seqlevel styles. </span>
+<span class='r-err co'><span class='r-pr'>#&gt;</span> Try running: GRCm38_gtf &lt;- matchChromosomes(GRCm38_gtf, Mmusculus)</span>
+<span class='r-in'><span class='co'># }</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -142,58 +142,59 @@ of a new metadata column, and the value will be its corresponding value.</p></td
     <p>Fursham Hamid</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Load dataset</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>query_exons</span><span class='op'>)</span>
-
-<span class='co'># Create chr:start-end id for each entry</span>
-<span class='fu'>mutateeach</span><span class='op'>(</span><span class='va'>query_exons</span>, id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>seqnames</span>, <span class='st'>":"</span>, <span class='va'>start</span>, <span class='st'>"-"</span>, <span class='va'>end</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; GRangesList object of length 4:
-#&gt; $transcript1
-#&gt; GRanges object with 14 ranges and 7 metadata columns:
-#&gt;        seqnames            ranges strand |     type transcript_id
-#&gt;           &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;factor&gt;   &lt;character&gt;
-#&gt;    [1]    chr10 79854427-79854721      + |     exon   transcript1
-#&gt;    [2]    chr10 79856504-79856534      + |     exon   transcript1
-#&gt;    [3]    chr10 79858752-79858824      + |     exon   transcript1
-#&gt;    [4]    chr10 79858952-79859271      + |     exon   transcript1
-#&gt;    [5]    chr10 79859352-79859522      + |     exon   transcript1
-#&gt;    ...      ...               ...    ... .      ...           ...
-#&gt;   [10]    chr10 79862014-79862047      + |     exon   transcript1
-#&gt;   [11]    chr10 79862449-79862541      + |     exon   transcript1
-#&gt;   [12]    chr10 79862653-79862869      + |     exon   transcript1
-#&gt;   [13]    chr10 79862978-79863055      + |     exon   transcript1
-#&gt;   [14]    chr10 79863145-79864432      + |     exon   transcript1
-#&gt;                      gene_id old_gene_id match_level   gene_name
-#&gt;                  &lt;character&gt; &lt;character&gt;   &lt;numeric&gt; &lt;character&gt;
-#&gt;    [1] ENSMUSG00000006498.14       GeneA           4       Ptbp1
-#&gt;    [2] ENSMUSG00000006498.14       GeneA           4       Ptbp1
-#&gt;    [3] ENSMUSG00000006498.14       GeneA           4       Ptbp1
-#&gt;    [4] ENSMUSG00000006498.14       GeneA           4       Ptbp1
-#&gt;    [5] ENSMUSG00000006498.14       GeneA           4       Ptbp1
-#&gt;    ...                   ...         ...         ...         ...
-#&gt;   [10] ENSMUSG00000006498.14       GeneA           4       Ptbp1
-#&gt;   [11] ENSMUSG00000006498.14       GeneA           4       Ptbp1
-#&gt;   [12] ENSMUSG00000006498.14       GeneA           4       Ptbp1
-#&gt;   [13] ENSMUSG00000006498.14       GeneA           4       Ptbp1
-#&gt;   [14] ENSMUSG00000006498.14       GeneA           4       Ptbp1
-#&gt;                            id
-#&gt;                   &lt;character&gt;
-#&gt;    [1] chr10:79854427-79854..
-#&gt;    [2] chr10:79856504-79856..
-#&gt;    [3] chr10:79858752-79858..
-#&gt;    [4] chr10:79858952-79859..
-#&gt;    [5] chr10:79859352-79859..
-#&gt;    ...                    ...
-#&gt;   [10] chr10:79862014-79862..
-#&gt;   [11] chr10:79862449-79862..
-#&gt;   [12] chr10:79862653-79862..
-#&gt;   [13] chr10:79862978-79863..
-#&gt;   [14] chr10:79863145-79864..
-#&gt;   -------
-#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths
-#&gt; 
-#&gt; ...
-#&gt; &lt;3 more elements&gt;</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># Load dataset</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>query_exons</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Create chr:start-end id for each entry</span></span>
+<span class='r-in'><span class='fu'>mutateeach</span><span class='op'>(</span><span class='va'>query_exons</span>, id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>seqnames</span>, <span class='st'>":"</span>, <span class='va'>start</span>, <span class='st'>"-"</span>, <span class='va'>end</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRangesList object of length 4:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 14 ranges and 7 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        seqnames            ranges strand |     type transcript_id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;factor&gt;   &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [1]    chr10 79854427-79854721      + |     exon   transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [2]    chr10 79856504-79856534      + |     exon   transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [3]    chr10 79858752-79858824      + |     exon   transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [4]    chr10 79858952-79859271      + |     exon   transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [5]    chr10 79859352-79859522      + |     exon   transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    ...      ...               ...    ... .      ...           ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [10]    chr10 79862014-79862047      + |     exon   transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [11]    chr10 79862449-79862541      + |     exon   transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [12]    chr10 79862653-79862869      + |     exon   transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [13]    chr10 79862978-79863055      + |     exon   transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [14]    chr10 79863145-79864432      + |     exon   transcript1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                      gene_id old_gene_id match_level   gene_name</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  &lt;character&gt; &lt;character&gt;   &lt;numeric&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [1] ENSMUSG00000006498.14       GeneA           4       Ptbp1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [2] ENSMUSG00000006498.14       GeneA           4       Ptbp1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [3] ENSMUSG00000006498.14       GeneA           4       Ptbp1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [4] ENSMUSG00000006498.14       GeneA           4       Ptbp1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [5] ENSMUSG00000006498.14       GeneA           4       Ptbp1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    ...                   ...         ...         ...         ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [10] ENSMUSG00000006498.14       GeneA           4       Ptbp1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [11] ENSMUSG00000006498.14       GeneA           4       Ptbp1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [12] ENSMUSG00000006498.14       GeneA           4       Ptbp1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [13] ENSMUSG00000006498.14       GeneA           4       Ptbp1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [14] ENSMUSG00000006498.14       GeneA           4       Ptbp1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                            id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [1] chr10:79854427-79854..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [2] chr10:79856504-79856..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [3] chr10:79858752-79858..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [4] chr10:79858952-79859..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [5] chr10:79859352-79859..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    ...                    ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [10] chr10:79862014-79862..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [11] chr10:79862449-79862..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [12] chr10:79862653-79862..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [13] chr10:79862978-79863..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [14] chr10:79863145-79864..</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;3 more elements&gt;</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
