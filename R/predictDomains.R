@@ -161,7 +161,9 @@ Try running: %s <- matchChromosomes(%s, %s)",
         .checkParams = TRUE
     )
     xml <- XML::xmlParse(hmm)
+    domains <- XML::xpathSApply(xml, "///domains", XML::xpathSApply, "@*")
     family <- XML::xpathSApply(xml, "///family", XML::xpathSApply, "@*")
+    family[2,] <- domains['alihmmdesc',]
     segment <- XML::xpathSApply(xml, "///segments", XML::xpathSApply, "@*")
 
     if (ncol(family) != ncol(segment)) {
