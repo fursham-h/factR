@@ -256,7 +256,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
         codons_gr <- codons_gr[as.character(seqnames(codons_gr)) %in% seqnames(fasta)]
 
         # further trim exons to only retain ATG codon
-        codons_seq <- BSgenome::getSeq(fasta, codons_gr)
+        codons_seq <-  suppressWarnings(BSgenome::getSeq(fasta, codons_gr))
         # codons_seq <- tryCatch(
         #     {
         #         BSgenome::getSeq(fasta, codons_gr)
