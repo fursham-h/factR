@@ -317,13 +317,13 @@ Try running: %s <- matchChromosomes(%s, %s)",
         unmatched_granges <- GenomicRanges::makeGRangesFromDataFrame(
             unmatched_df, keep.extra.columns = TRUE)
         
-        matched_df <- IRanges::mergeByOverlaps(unmatched_granges, ref) %>%
+        matched_df <-  suppressWarnings(IRanges::mergeByOverlaps(unmatched_granges, ref) %>%
             as.data.frame() %>%
             dplyr::mutate(offset = abs(unmatched_granges.end - ref.end) + 
                               abs(unmatched_granges.start - ref.start)) %>%
             dplyr::arrange(offset) %>%
             dplyr::select(transcript_id, basic_gene_id = gene_id) %>%
-            dplyr::distinct(transcript_id, .keep_all = TRUE)
+            dplyr::distinct(transcript_id, .keep_all = TRUE))
         
         query <- suppressMessages(
             query %>%  
