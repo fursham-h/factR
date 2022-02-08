@@ -254,14 +254,13 @@ Try running: %s <- matchChromosomes(%s, %s)",
                                                type = "within")
 
         # further trim exons to only retain ATG codon
-        codons_seq <- 
         codons_seq <- tryCatch(
             {
                 BSgenome::getSeq(fasta, codons_gr)
             },
             error = function(e) {
                 BSgenome::getSeq(fasta, 
-                                 codons_gr[seqnames(codons_gr) %in% seqnames(fasta)])
+                                 codons_gr[as.character(GenomeInfoDb::seqnames(codons_gr)) %in% GenomeInfoDb::seqnames(fasta)])
             }
         )
         
