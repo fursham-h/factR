@@ -1,4 +1,4 @@
-context("Test add/remove exon function")
+context("Test identifying NMD exon function")
 
 query_cds_gtf <- suppressMessages(buildCDS(matched_query_gtf, ref_gtf, Mmusculus))
 
