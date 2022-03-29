@@ -29,13 +29,13 @@
 #' data-frame do not contain necessary variables, identifyNMDexons will run
 #' predictNMD() first.
 #' @param ConsScores
-#' Character value of the annotation database to use to calculate exon 
+#' Character value of the annotation database to use to calculate mean exon 
 #' conservation scores. Database can be a Bioconductor annotation package or
 #' one of the available database from AnnotationHub. See
 #' \code{\link[GenomicScores]{availableGScores}} function for a list of available 
 #' databases. A vector of connservation score for each exon will be appended
 #' as a metadata column in the output GRanges object.
-#' By default ("none"), conservation scores will not be calculated.
+#' By default ("none"), exon conservation scores will not be calculated.
 #'
 #' @return
 #' GRanges object containing coordinates of identified NMD-causing exons, 
