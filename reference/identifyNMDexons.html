@@ -52,7 +52,7 @@ spliced or skipped.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">identifyNMDexons</span><span class="op">(</span><span class="va">x</span>, <span class="va">fasta</span>, NMD.result <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">identifyNMDexons</span><span class="op">(</span><span class="va">x</span>, <span class="va">fasta</span>, NMD.result <span class="op">=</span> <span class="cn">NULL</span>, ConsScores <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -65,6 +65,14 @@ spliced or skipped.</p>
 <dd><p>Output dataframe from predictNMD() [Optional]. If not provided, or if 
 data-frame do not contain necessary variables, identifyNMDexons will run
 predictNMD() first.</p></dd>
+<dt>ConsScores</dt>
+<dd><p>Character value of the annotation database to use to calculate mean exon 
+conservation scores. Database can be a Bioconductor annotation package or
+one of the available database from AnnotationHub. Run
+<code><a href="https://rdrr.io/pkg/GenomicScores/man/availableGScores.html" class="external-link">GenomicScores::availableGScores()</a></code> to list the available 
+databases. A vector of connservation score for each exon will be appended
+as a metadata column in the output GRanges object.
+By default ("none"), exon conservation scores will not be calculated.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -109,22 +117,14 @@ annotated as NMD-causing.</p>
 <span class="r-in"><span class="co"># proceed with identifying NMD exons</span></span>
 <span class="r-in"><span class="va">NMD.exons_1</span> <span class="op">&lt;-</span> <span class="fu">identifyNMDexons</span><span class="op">(</span><span class="va">out.gtf</span>, <span class="va">Mmusculus</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `NMD.result` not provided, running predictNMD()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Selecting best reference mRNAs</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::slice_max(., order_by = ".", n = 1):</span> Problem while computing indices.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The error occurred in group 1: gene_id = "ENSMUSG00000006498.14".</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error:</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> `order_by` must have size 83, not size 1.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .GScorecheck(ConsScores):</span> object 'phast' not found</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># if output of predictNMD() has been generated, this can be provided to</span></span>
 <span class="r-in"><span class="co"># NMD.result argument</span></span>
 <span class="r-in"><span class="va">NMD.output</span> <span class="op">&lt;-</span> <span class="fu"><a href="predictNMD.html">predictNMD</a></span><span class="op">(</span><span class="va">out.gtf</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting NMD sensitivities for 4 mRNAs</span>
 <span class="r-in"><span class="va">NMD.exons_2</span> <span class="op">&lt;-</span> <span class="fu">identifyNMDexons</span><span class="op">(</span><span class="va">out.gtf</span>, <span class="va">Mmusculus</span>, NMD.result <span class="op">=</span> <span class="va">NMD.output</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Selecting best reference mRNAs</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::slice_max(., order_by = ".", n = 1):</span> Problem while computing indices.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The error occurred in group 1: gene_id = "ENSMUSG00000006498.14".</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error:</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> `order_by` must have size 83, not size 1.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .GScorecheck(ConsScores):</span> object 'phast' not found</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">NMD.exons_1</span>, <span class="va">NMD.exons_2</span><span class="op">)</span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in identical(NMD.exons_1, NMD.exons_2):</span> object 'NMD.exons_1' not found</span>
