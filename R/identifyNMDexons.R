@@ -88,7 +88,7 @@ identifyNMDexons <- function(x, fasta,
   ref <- .getbestref(x, NMD.result)
   
   # run core function and return GRanges of predicted NMD exons
-  return(.runidentifynmdexons(x, ref, fasta, NMD.result))
+  return(.runidentifynmdexons(x, ref, fasta, NMD.result, phastGScore))
 
 }
 
@@ -208,7 +208,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
   return(x[x$transcript_id %in% cds.reference$transcript_id])
 }
 
-.runidentifynmdexons <- function(x, ref, fasta, NMD.result) {
+.runidentifynmdexons <- function(x, ref, fasta, NMD.result, phast) {
   
   rlang::inform("Finding NMD causing exons")
   
@@ -316,6 +316,24 @@ Try running: %s <- matchChromosomes(%s, %s)",
   ## Useful to know if exons are 3'UTR introns etc
   ref.cds.grl <- S4Vectors::split(ref[ref$type == "CDS"], ~gene_id)
   AS.exons$within.CDS <- IRanges::overlapsAny(AS.exons, range(ref.cds.grl))
+  
+  ## run conservation scoring
+  if(typeof(phast) == "S4"){
+    rlang::inform("Quantifying exon conservation scores")
+    AS.exons <- tryCatch(
+      {
+        AS.exons <- GenomicScores::gscores(phast, AS.exons)
+        BiocGenerics::colnames(S4Vectors::mcols(AS.exons))[5] <- phast@data_pkgname
+        return(AS.exons)
+      },
+      error = function(cond){
+        rlang::warn("Unable to quantify exon conservation scores. Check if annotation package matches the genome used")
+        return(AS.exons)
+      }
+    )
+    
+
+  }
   
   return(AS.exons)
 }
