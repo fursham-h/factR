@@ -170,7 +170,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
                      by = "transcript_id") %>% 
     dplyr::filter(transcript_id %in% NMD.pos$transcript) %>% 
     dplyr::group_by(gene_id) %>% 
-    dplyr::slice_max(order_by = ".", n = 1)
+    dplyr::slice_max(order_by = cds.sizes, n = 1)
   
   return(x[x$transcript_id %in% cds.reference$transcript_id])
 }
