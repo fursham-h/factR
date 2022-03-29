@@ -31,8 +31,8 @@
 #' @param ConsScores
 #' Character value of the annotation database to use to calculate mean exon 
 #' conservation scores. Database can be a Bioconductor annotation package or
-#' one of the available database from AnnotationHub. See
-#' \code{\link[GenomicScores]{availableGScores}} function for a list of available 
+#' one of the available database from AnnotationHub. Run
+#' \code{GenomicScores::availableGScores()} to list the available 
 #' databases. A vector of connservation score for each exon will be appended
 #' as a metadata column in the output GRanges object.
 #' By default ("none"), exon conservation scores will not be calculated.

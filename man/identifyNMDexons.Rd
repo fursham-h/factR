@@ -15,13 +15,13 @@ identifyNMDexons(x, fasta, NMD.result = NULL, ConsScores = "none")
 data-frame do not contain necessary variables, identifyNMDexons will run
 predictNMD() first.}
 
-\item{ConsScores}{Character value of the annotation database to use to calculate exon 
+\item{ConsScores}{Character value of the annotation database to use to calculate mean exon 
 conservation scores. Database can be a Bioconductor annotation package or
-one of the available database from AnnotationHub. See
-\code{\link[GenomicScores]{availableGScores}} function for a list of available 
+one of the available database from AnnotationHub. Run
+\code{GenomicScores::availableGScores()} to list the available 
 databases. A vector of connservation score for each exon will be appended
 as a metadata column in the output GRanges object.
-By default ("none"), conservation scores will not be calculated.}
+By default ("none"), exon conservation scores will not be calculated.}
 }
 \value{
 GRanges object containing coordinates of identified NMD-causing exons, 
