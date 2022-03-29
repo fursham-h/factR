@@ -82,6 +82,7 @@ identifyNMDexons <- function(x, fasta,
   
   # check input objects
   NMD.result <- .identifynmdchecks(x, fasta, NMD.result, argnames) 
+  phastGScore <- .GScorecheck(ConsScores)
 
   # get reference CDS transcript for each gene
   ref <- .getbestref(x, NMD.result)
@@ -133,6 +134,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
     ))
   }
   
+  
+  
   # check for correct formatting of NMD df and create new one if not
   if(!is.null(NMD)) {
     # check format of NMD df
@@ -153,6 +156,34 @@ Try running: %s <- matchChromosomes(%s, %s)",
 }
 
 
+.GScorecheck <- function(ConsScore){
+  if(ConsScore != "none"){
+    
+    
+    ## try loading GScore package
+    phast <- tryCatch(
+      {
+        library(ConsScore, character.only = T)
+        rlang::inform(sprintf("Loaded %s package",
+                              ConsScore))
+        get(ConsScore)
+      },
+      error = function(cond){
+        GScoresList <- rownames(GenomicScores::availableGScores())
+        if(ConsScore %in% GScoresList){
+          rlang::inform(sprintf("Retrieving %s scores",
+                                ConsScore))
+          GenomicScores::getGScores(ConsScore)
+        } else {
+          rlang::inform(sprintf("%s score database not found. Skipping conservation scoring.",
+                                ConsScore))
+          return(NULL)
+        }
+      })
+    
+  }
+  return(phast)
+}
 
 
 .getbestref <- function(x, NMD.result) {
