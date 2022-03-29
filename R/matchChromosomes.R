@@ -12,7 +12,6 @@
 #' @return Corrected input GRanges
 #' @export
 #' @author Fursham Hamid
-#' @importFrom GenomeInfoDb GenomeInfoDb::renameSeqlevels
 #'
 #' @examples
 #' ## ---------------------------------------------------------------------
