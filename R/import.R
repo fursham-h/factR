@@ -16,12 +16,17 @@
 #' @author Fursham Hamid
 #' @export
 importGTF <- function(con) {
-    infile <- try(rtracklayer::import(con, format = "GTF"), silent = TRUE)
-    if (is_gtf(infile)) {
-        return(infile)
+    if(file.exists(con)){
+        infile <- try(rtracklayer::import(con, format = "GTF"), silent = TRUE)
+        if (is_gtf(infile)) {
+            return(infile)
+        } else {
+            rlang::abort(paste(con, " is not in GTF format"))
+        }
     } else {
-        rlang::abort(paste(con, " is not in GTF format"))
+        rlang::abort(paste("File ", con, " does not exists"))
     }
+    
 }
 
 
