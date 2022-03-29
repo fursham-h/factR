@@ -70,7 +70,9 @@
 #' NMD.exons.all <- identifyNMDexons(GRCm38_gtf, Mmusculus)
 #' }
 #' 
-identifyNMDexons <- function(x, fasta, NMD.result = NULL) {
+identifyNMDexons <- function(x, fasta, 
+                             NMD.result = NULL,
+                             ConsScores = "none") {
   
   # catch missing args
   .catchargs(c("x", "fasta"), names(as.list(match.call())[-1]))
