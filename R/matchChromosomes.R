@@ -12,10 +12,7 @@
 #' @return Corrected input GRanges
 #' @export
 #' @author Fursham Hamid
-#' @importFrom GenomeInfoDb seqlevelsStyle
-#' @importFrom GenomeInfoDb mapSeqlevels
-#' @importFrom GenomeInfoDb seqlevels
-#' @importFrom GenomeInfoDb renameSeqlevels
+#' @importFrom GenomeInfoDb GenomeInfoDb::renameSeqlevels
 #'
 #' @examples
 #' ## ---------------------------------------------------------------------
@@ -42,9 +39,9 @@ matchChromosomes <- function(x, to) {
     suppressWarnings(
         if (!has_consistentSeqlevels(x, to)) {
             # attempt to match style first
-            newStyle <- mapSeqlevels(seqlevels(x), (seqlevelsStyle(to)[1]))
+            newStyle <- GenomeInfoDb::mapSeqlevels(GenomeInfoDb::seqlevels(x), (GenomeInfoDb::seqlevelsStyle(to)[1]))
             newStyle <- newStyle[!is.na(newStyle)]
-            x <- renameSeqlevels(x, newStyle)
+            x <- GenomeInfoDb::renameSeqlevels(x, newStyle)
         }
     )
     if (length(GenomeInfoDb::seqlevels(x)) < nseqlevelsbefore) {

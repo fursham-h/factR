@@ -4,7 +4,7 @@
 \alias{identifyNMDexons}
 \title{Find NMD-causing exons from GTF objects}
 \usage{
-identifyNMDexons(x, fasta, NMD.result = NULL)
+identifyNMDexons(x, fasta, NMD.result = NULL, ConsScores = "none")
 }
 \arguments{
 \item{x}{GRanges object containing query GTF data with CDS information.}
@@ -14,6 +14,14 @@ identifyNMDexons(x, fasta, NMD.result = NULL)
 \item{NMD.result}{Output dataframe from predictNMD() [Optional]. If not provided, or if 
 data-frame do not contain necessary variables, identifyNMDexons will run
 predictNMD() first.}
+
+\item{ConsScores}{Character value of the annotation database to use to calculate exon 
+conservation scores. Database can be a Bioconductor annotation package or
+one of the available database from AnnotationHub. See
+\code{\link[GenomicScores]{availableGScores}} function for a list of available 
+databases. A vector of connservation score for each exon will be appended
+as a metadata column in the output GRanges object.
+By default ("none"), conservation scores will not be calculated.}
 }
 \value{
 GRanges object containing coordinates of identified NMD-causing exons, 

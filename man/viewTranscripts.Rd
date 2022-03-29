@@ -9,14 +9,6 @@ viewTranscripts(x, ..., rescale_introns = FALSE, ncol = 1)
 \arguments{
 \item{x}{GRanges object containing transcript annotation in GTF format}
 
-<<<<<<< HEAD
-\item{...}{Logical conditions to pass to dplyr::filter to subset transcripts for 
-plotting. Variables are metadata information found in `x` and multiple 
-conditions can be provided delimited by comma. Example: gene_name == "Ptbp1"}
-
-\item{rescale_introns}{Specifies if the introns should be scaled to fixed length or not. 
-(default: FALSE)}
-=======
 \item{...}{Character value of features to plot. Multiple features can be plotted by
 entering comma-delimited values. Features will be extracted from
 metadata gene_name, gene_id and transcript_id of the GTF.}
@@ -24,7 +16,6 @@ metadata gene_name, gene_id and transcript_id of the GTF.}
 \item{rescale_introns}{Specifies if the introns should be scaled to fixed length or not. (default: FALSE)}
 
 \item{ncol}{Number of columns to patch the output plots (default: 1)}
->>>>>>> dev
 }
 \value{
 ggplot2 object. If multiple genes are detected, plots will be 
