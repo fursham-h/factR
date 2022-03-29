@@ -270,7 +270,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
   AS.exons <- AS.exons %>% 
     dplyr::left_join(mod.NMD %>% dplyr::select(transcript, is_NMD), 
                      by = c("coord"="transcript")) %>% 
-    dplyr::mutate(NMDtype = ifelse(splice == "skipped", "ORF-maintain", "Poison")) %>% 
+    dplyr::mutate(NMDtype = ifelse(splice == "skipped", "Repressive", "Stimulating")) %>% 
     dplyr::select(coord, gene_id, NMDtype, is_NMD) %>% 
     tidyr::separate(coord, c("seqnames", "start", "end", "strand", "AStype"),
                     sep = "_") %>% 
