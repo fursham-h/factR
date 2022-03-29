@@ -18,8 +18,9 @@ custom-assembled transcriptomes (GTF). Below are *factR*'s key functions:
   using a reference-guided process
   2. Predict protein domains on coding transcripts
   3. Predict sensitivity of coding transcripts to Nonsense-mediated decay
-  4. [**NEW**] Annotate and compare spliced segments
-  5. [**NEW**] Identify NMD-causing exons
+  4. Annotate and compare spliced segments
+  5. Identify NMD-causing exons
+  6. [**NEW**] Score NMD-causing exons for conservation
 * Supporting features 
   1. Match chromosome levels of query GTF/object to reference annotation
   2. Match gene_id and gene_names of query GTF to reference annotation
@@ -27,19 +28,13 @@ custom-assembled transcriptomes (GTF). Below are *factR*'s key functions:
   4. Select new transcripts from custom transcriptome
 
 ## How to install
-The latest stable version of *factR* can be 
-downloaded from Bioconductor as such:
-```r
-if (!requireNamespace("BiocManager", quietly=TRUE))
-    install.packages("BiocManager")
-BiocManager::install("factR")
-```
-
-Alternatively, you may retrieve the development version from this repository:
+The latest version of *factR* can be 
+downloaded directly from GitHub as such:
 ```r
 # install.packages("devtools")
 devtools::install_github("fursham-h/factR")
 ```
+
 
 ## What you need
 1. Custom-assembled transcriptome (GTF)
@@ -66,7 +61,7 @@ of the package.
 
 ## References
 Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2021); 
-Functional annotation of custom transcriptomes; Methods in Molecular Biology (In Press)
+Functional annotation of custom transcriptomes; Methods in Molecular Biology
 
 
 

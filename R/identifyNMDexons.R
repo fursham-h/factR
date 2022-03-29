@@ -311,12 +311,12 @@ Try running: %s <- matchChromosomes(%s, %s)",
   AS.exons <- AS.exons %>% 
     dplyr::left_join(mod.NMD %>% dplyr::select(transcript, is_NMD), 
                      by = c("coord"="transcript")) %>% 
-    dplyr::mutate(NMDtype = ifelse(splice == "skipped", "Repressive", "Stimulating")) %>% 
-    dplyr::select(coord, gene_id, NMDtype, is_NMD) %>% 
+    dplyr::mutate(Exontype = ifelse(splice == "skipped", "NMD-Repressive", "NMD-Stimulating")) %>% 
+    dplyr::select(coord, gene_id, Exontype, is_NMD) %>% 
     tidyr::separate(coord, c("seqnames", "start", "end", "strand", "AStype"),
                     sep = "_") %>% 
     dplyr::filter(is_NMD) %>% 
-    dplyr::select(seqnames:strand, gene_id, AStype, NMDtype) %>% 
+    dplyr::select(seqnames:strand, gene_id, AStype, Exontype) %>% 
     GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
   AS.exons$is_NMD <- NULL
   
