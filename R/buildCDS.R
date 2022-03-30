@@ -253,7 +253,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
         # shortlist trimmed exons which fully overlap query transcripts
         codons_gr <-  suppressWarnings(IRanges::subsetByOverlaps(codons_gr, nonexact, 
                                                type = "within"))
-        codons_gr <- codons_gr[as.character(seqnames(codons_gr)) %in% seqnames(fasta)]
+        codons_gr <- codons_gr[as.character(seqnames(codons_gr)) %in% seqlevels(fasta)]
 
         # further trim exons to only retain ATG codon
         codons_seq <-  suppressWarnings(BSgenome::getSeq(fasta, codons_gr))

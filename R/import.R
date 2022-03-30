@@ -56,7 +56,7 @@ importFASTA <- function(con) {
             rlang::abort(paste(con, " not found or not in FASTA format"))
         }
     )
-    names(infile) <- stringr::str_split(seqlevels(infile), " ") %>% 
+    names(infile) <- stringr::str_split(GenomeInfoDb::seqlevels(infile), " ") %>% 
         purrr::map_chr(`[`, 1)
     return(infile)
 }
