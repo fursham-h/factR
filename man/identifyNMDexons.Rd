@@ -67,6 +67,9 @@ NMD.exons_2 <- identifyNMDexons(out.gtf, Mmusculus, NMD.result = NMD.output)
 
 identical(NMD.exons_1, NMD.exons_2)
 
+# To quantify exon conservation scores using 60-way PhastCons Score (mm10)
+NMD.exons_3 <- identifyNMDexons(out.gtf, Mmusculuse, NMD.result = NMD.output, ConsScores = "phastCons60way.UCSC.mm10")
+
 
 ## ---------------------------------------------------------------------
 ## EXAMPLE USING TRANSCRIPT ANNOTATION

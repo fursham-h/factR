@@ -11,7 +11,8 @@ viewTranscripts(x, ..., rescale_introns = FALSE, ncol = 1)
 
 \item{...}{Character value of features to plot. Multiple features can be plotted by
 entering comma-delimited values. Features will be extracted from
-metadata gene_name, gene_id and transcript_id of the GTF.}
+metadata gene_name, gene_id and transcript_id of the GTF. Can also be a
+conditional statement to filter values from variables in the GTF (e.g. gene_name == "Ptbp1")}
 
 \item{rescale_introns}{Specifies if the introns should be scaled to fixed length or not. (default: FALSE)}
 
