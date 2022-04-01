@@ -100,10 +100,17 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE, ncol = 1) {
                 x[featmeta[featmeta$val %in% c(...),"n"]]
             },
             error = function(e) {
-                rlang::abort(sprintf(
-                    "Variables given in ... are not found in `%s`",
-                    argnames[1]
-                ))
+                y <- tryCatch({
+                    x %>% as.data.frame() %>% 
+                        dplyr::filter(...) %>% 
+                        GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+                },
+                error = function(e){
+                    rlang::abort(sprintf(
+                        "Variables given in ... are not found in `%s`",
+                        argnames[1]
+                    ))
+                })
             }
         )
         if (length(x) == 0) {
