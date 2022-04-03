@@ -191,9 +191,9 @@ Try running: %s <- matchChromosomes(%s, %s)",
           return(NULL)
         }
       })
-    
+    return(phast)
   }
-  return(phast)
+  return(NULL)
 }
 
 
