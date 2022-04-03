@@ -117,17 +117,23 @@ annotated as NMD-causing.</p>
 <span class="r-in"><span class="co"># proceed with identifying NMD exons</span></span>
 <span class="r-in"><span class="va">NMD.exons_1</span> <span class="op">&lt;-</span> <span class="fu">identifyNMDexons</span><span class="op">(</span><span class="va">out.gtf</span>, <span class="va">Mmusculus</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `NMD.result` not provided, running predictNMD()</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .GScorecheck(ConsScores):</span> object 'phast' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Selecting best reference mRNAs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding NMD causing exons</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># if output of predictNMD() has been generated, this can be provided to</span></span>
 <span class="r-in"><span class="co"># NMD.result argument</span></span>
 <span class="r-in"><span class="va">NMD.output</span> <span class="op">&lt;-</span> <span class="fu"><a href="predictNMD.html">predictNMD</a></span><span class="op">(</span><span class="va">out.gtf</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting NMD sensitivities for 4 mRNAs</span>
 <span class="r-in"><span class="va">NMD.exons_2</span> <span class="op">&lt;-</span> <span class="fu">identifyNMDexons</span><span class="op">(</span><span class="va">out.gtf</span>, <span class="va">Mmusculus</span>, NMD.result <span class="op">=</span> <span class="va">NMD.output</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .GScorecheck(ConsScores):</span> object 'phast' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Selecting best reference mRNAs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding NMD causing exons</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">NMD.exons_1</span>, <span class="va">NMD.exons_2</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in identical(NMD.exons_1, NMD.exons_2):</span> object 'NMD.exons_1' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># To quantify exon conservation scores using 60-way PhastCons Score (mm10)</span></span>
+<span class="r-in"><span class="va">NMD.exons_3</span> <span class="op">&lt;-</span> <span class="fu">identifyNMDexons</span><span class="op">(</span><span class="va">out.gtf</span>, <span class="va">Mmusculuse</span>, NMD.result <span class="op">=</span> <span class="va">NMD.output</span>, ConsScores <span class="op">=</span> <span class="st">"phastCons60way.UCSC.mm10"</span><span class="op">)</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in has_consistentSeqlevels(x, fasta):</span> object 'Mmusculuse' not found</span>
 <span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
