@@ -50,6 +50,7 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
+    markdown,
     zeallot,
     rmdformats,
     bio3d (>= 2.4),
