@@ -96,7 +96,7 @@ progress of predicting a long list of proteins.</p></dd>
 <span class="r-in"><span class="fu">predictDomains</span><span class="op">(</span><span class="va">new_query_gtf</span>, <span class="va">Mmusculus</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Checking CDSs and translating protein sequences</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting domain families for 4 proteins</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    transcript  description             eval     begin   end</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> transcript1 RNA-binding domain, RBD 1.54e-20    46   143</span>
@@ -109,55 +109,19 @@ progress of predicting a long list of proteins.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> transcript2 RNA-binding domain, RBD 1.54e-20   443   527</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> transcript3 RNA-binding domain, RBD 1.54e-20    46   143</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> transcript3 RNA-binding domain, RBD 1.54e-20   177   281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> transcript4 RNA-binding domain, RBD 1.54e-20   291   380</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> transcript4 RNA-binding domain, RBD 1.54e-20   137   241</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> transcript4 RNA-binding domain, RBD 1.54e-20    39    95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> transcript4 RNA-binding domain, RBD 1.54e-20   403   487</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># predict domains of CDSs from Ptbp1 gene</span></span>
 <span class="r-in"><span class="fu">predictDomains</span><span class="op">(</span><span class="va">new_query_gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Ptbp1"</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Checking CDSs and translating protein sequences</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting domain families for 4 proteins</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    transcript  description             eval     begin   end</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> transcript1 RNA-binding domain, RBD 1.54e-20    46   143</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> transcript1 RNA-binding domain, RBD 1.54e-20   357   446</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> transcript1 RNA-binding domain, RBD 1.54e-20   177   281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> transcript1 RNA-binding domain, RBD 1.54e-20   469   553</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> transcript2 RNA-binding domain, RBD 1.54e-20    46   143</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> transcript2 RNA-binding domain, RBD 1.54e-20   331   420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> transcript2 RNA-binding domain, RBD 1.54e-20   177   281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> transcript2 RNA-binding domain, RBD 1.54e-20   443   527</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> transcript3 RNA-binding domain, RBD 1.54e-20    46   143</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> transcript3 RNA-binding domain, RBD 1.54e-20   177   281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> transcript4 RNA-binding domain, RBD 1.54e-20   291   380</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> transcript4 RNA-binding domain, RBD 1.54e-20   137   241</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> transcript4 RNA-binding domain, RBD 1.54e-20    39    95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> transcript4 RNA-binding domain, RBD 1.54e-20   403   487</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># predict domains of CDSs from Ptbp1 gene and plot architecture out</span></span>
 <span class="r-in"><span class="fu">predictDomains</span><span class="op">(</span><span class="va">new_query_gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Ptbp1"</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Checking CDSs and translating protein sequences</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting domain families for 4 proteins</span>
 <span class="r-plt img"><img src="predictDomains-1.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    transcript  description             eval     begin   end</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> transcript1 RNA-binding domain, RBD 1.54e-20    46   143</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> transcript1 RNA-binding domain, RBD 1.54e-20   357   446</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> transcript1 RNA-binding domain, RBD 1.54e-20   177   281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> transcript1 RNA-binding domain, RBD 1.54e-20   469   553</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> transcript2 RNA-binding domain, RBD 1.54e-20    46   143</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> transcript2 RNA-binding domain, RBD 1.54e-20   331   420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> transcript2 RNA-binding domain, RBD 1.54e-20   177   281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> transcript2 RNA-binding domain, RBD 1.54e-20   443   527</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> transcript3 RNA-binding domain, RBD 1.54e-20    46   143</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> transcript3 RNA-binding domain, RBD 1.54e-20   177   281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> transcript4 RNA-binding domain, RBD 1.54e-20   291   380</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> transcript4 RNA-binding domain, RBD 1.54e-20   137   241</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> transcript4 RNA-binding domain, RBD 1.54e-20    39    95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> transcript4 RNA-binding domain, RBD 1.54e-20   403   487</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 </code></pre></div>
     </div>
   </div>
