@@ -415,7 +415,15 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <code class="sourceCode R"><span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  
 <span class="co">#&gt; Checking CDSs and translating protein sequences</span>
 <span class="co">#&gt; Predicting domain families for 7 proteins</span>
-<span class="co">#&gt; NULL</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span>
+<span class="co">#&gt;   transcript    description                  eval     begin   end</span>
+<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> MSTRG.14649.1 beta-beta-alpha zinc fingers 1.54e-20   303   364</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> MSTRG.14649.1 beta-beta-alpha zinc fingers 1.54e-20   371   414</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> MSTRG.14649.3 beta-beta-alpha zinc fingers 1.54e-20   303   350</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> MSTRG.14649.4 beta-beta-alpha zinc fingers 1.54e-20   311   358</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> MSTRG.14649.9 beta-beta-alpha zinc fingers 1.54e-20   289   350</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> MSTRG.14649.9 beta-beta-alpha zinc fingers 1.54e-20   357   400</span></code></pre></div>
 <p>The domain architectures for the set of query proteins can be additionally plotted by switching the argument “plot” to TRUE:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">domains.Zfr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span>, plot <span class="op">=</span> <span class="cn">TRUE</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  
