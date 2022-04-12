@@ -80,7 +80,7 @@ addExonstoTx <- function(x, y, drop.unmodified = FALSE,
     }
     
     # drop all metadata first
-    mcols(x, level = "within") <- NULL
+    S4Vectors::mcols(x, level = "within") <- NULL
     
     # retain pairs with same chr and strand
     chr.x <- as.character(S4Vectors::runValue(GenomeInfoDb::seqnames(x)))
@@ -133,7 +133,7 @@ removeExonsfromTx <- function(x, y, drop.unmodified = FALSE,
                                             ignore.strand)
     
     # drop all metadata first
-    mcols(x, level = "within") <- NULL
+    S4Vectors::mcols(x, level = "within") <- NULL
     
     # merge x and y and prepare for intron removals
     x.y <- .mergexyandcorrectIR(x, y)
