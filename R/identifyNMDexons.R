@@ -227,7 +227,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
       if(length(temp.x)!=0){
           x <- temp.x
       } else {
-          rlang::inform("Prefix pattern not found")
+          rlang::inform("Note: References not found. Using all transcripts for reference selection")
       }
   }
   
