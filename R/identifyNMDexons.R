@@ -28,6 +28,12 @@
 #' Output dataframe from predictNMD() [Optional]. If not provided, or if 
 #' data-frame do not contain necessary variables, identifyNMDexons will run
 #' predictNMD() first.
+#' @param refs.to.use
+#' Transcripts to use as reference. By default ("none"), the best reference
+#' will be selected from all detected transcripts. To use a subset of transcripts
+#' for reference selection, users can provide (1) a string character containing
+#' a pattern common to desired transcripts ("ENS" to select for annotated transcripts)
+#' or (2) a character vector containing a list of transcript ids. 
 #' @param ConsScores
 #' Character value of the annotation database to use to calculate mean exon 
 #' conservation scores. Database can be a Bioconductor annotation package or
@@ -83,7 +89,7 @@
 #' 
 identifyNMDexons <- function(x, fasta, 
                              NMD.result = NULL,
-                             refs.to.use = FALSE,
+                             refs.to.use = "none",
                              ConsScores = "none") {
   
   # catch missing args
@@ -208,11 +214,11 @@ Try running: %s <- matchChromosomes(%s, %s)",
   NMD.pos <- NMD.result[!NMD.result$is_NMD,]
   
   ## prepare x if known transcripts are to be used as ref
-  if(refs != FALSE){
+  if(refs != "none"){
       temp.x <- x[x$type!="gene"]
 
       if(length(refs)==1){
-          temp.x <- temp.x[stringr::str_starts(temp.x$transcript_id, refs)]
+          temp.x <- temp.x[stringr::str_detect(temp.x$transcript_id, refs)]
       } else {
           temp.x <- temp.x[temp.x$transcript_id %in% refs]
       }
