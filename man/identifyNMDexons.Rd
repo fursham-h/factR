@@ -4,7 +4,13 @@
 \alias{identifyNMDexons}
 \title{Find NMD-causing exons from GTF objects}
 \usage{
-identifyNMDexons(x, fasta, NMD.result = NULL, ConsScores = "none")
+identifyNMDexons(
+  x,
+  fasta,
+  NMD.result = NULL,
+  refs.to.use = "none",
+  ConsScores = "none"
+)
 }
 \arguments{
 \item{x}{GRanges object containing query GTF data with CDS information.}
@@ -14,6 +20,12 @@ identifyNMDexons(x, fasta, NMD.result = NULL, ConsScores = "none")
 \item{NMD.result}{Output dataframe from predictNMD() [Optional]. If not provided, or if 
 data-frame do not contain necessary variables, identifyNMDexons will run
 predictNMD() first.}
+
+\item{refs.to.use}{Transcripts to use as reference. By default ("none"), the best reference
+will be selected from all detected transcripts. To use a subset of transcripts
+for reference selection, users can provide (1) a string character containing
+a pattern common to desired transcripts ("ENS" to select for annotated transcripts)
+or (2) a character vector containing a list of transcript ids.}
 
 \item{ConsScores}{Character value of the annotation database to use to calculate mean exon 
 conservation scores. Database can be a Bioconductor annotation package or
