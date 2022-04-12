@@ -83,6 +83,8 @@
 #' 
 identifyNMDexons <- function(x, fasta, 
                              NMD.result = NULL,
+                             known.tx.as.ref = FALSE,
+                             known.tx.prefix = NULL,
                              ConsScores = "none") {
   
   # catch missing args
