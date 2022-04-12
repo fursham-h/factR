@@ -208,6 +208,18 @@ Try running: %s <- matchChromosomes(%s, %s)",
   ## shortlist non NMD transcripts
   NMD.pos <- NMD.result[!NMD.result$is_NMD,]
   
+  ## prepare x if known transcripts are to be used as ref
+  if(use.known){
+      temp.x <- x[x$type!="gene"]
+      temp.x <- temp.x[stringr::str_starts(temp.x$transcript_id, known.prefix)]
+      
+      if(length(temp.x)!=0){
+          x <- temp.x
+      } else {
+          rlang::inform("Prefix pattern not found")
+      }
+  }
+  
   ## select best reference
   cds.reference <- x %>% 
     as.data.frame() %>% 
@@ -217,6 +229,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
     dplyr::filter(transcript_id %in% NMD.pos$transcript) %>% 
     dplyr::group_by(gene_id) %>% 
     dplyr::slice_max(order_by = cds.sizes, n = 1)
+  
+
   
   return(x[x$transcript_id %in% cds.reference$transcript_id])
 }
