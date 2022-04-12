@@ -98,7 +98,7 @@ identifyNMDexons <- function(x, fasta,
   phastGScore <- .GScorecheck(ConsScores)
 
   # get reference CDS transcript for each gene
-  ref <- .getbestref(x, NMD.result)
+  ref <- .getbestref(x, NMD.result, known.tx.as.ref, known.tx.prefix)
   
   # run core function and return GRanges of predicted NMD exons
   return(.runidentifynmdexons(x, ref, fasta, NMD.result, phastGScore))
@@ -199,7 +199,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
 }
 
 
-.getbestref <- function(x, NMD.result) {
+.getbestref <- function(x, NMD.result, use.known, known.prefix) {
   rlang::inform("Selecting best reference mRNAs")
   # get reference CDS transcript for each gene
   ## get sizes of all CDSs
