@@ -83,8 +83,7 @@
 #' 
 identifyNMDexons <- function(x, fasta, 
                              NMD.result = NULL,
-                             known.tx.as.ref = FALSE,
-                             known.tx.prefix = NULL,
+                             refs.to.use = FALSE,
                              ConsScores = "none") {
   
   # catch missing args
@@ -98,7 +97,7 @@ identifyNMDexons <- function(x, fasta,
   phastGScore <- .GScorecheck(ConsScores)
 
   # get reference CDS transcript for each gene
-  ref <- .getbestref(x, NMD.result, known.tx.as.ref, known.tx.prefix)
+  ref <- .getbestref(x, NMD.result, refs.to.use)
   
   # run core function and return GRanges of predicted NMD exons
   return(.runidentifynmdexons(x, ref, fasta, NMD.result, phastGScore))
@@ -199,7 +198,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
 }
 
 
-.getbestref <- function(x, NMD.result, use.known, known.prefix) {
+.getbestref <- function(x, NMD.result, refs) {
   rlang::inform("Selecting best reference mRNAs")
   # get reference CDS transcript for each gene
   ## get sizes of all CDSs
@@ -209,9 +208,15 @@ Try running: %s <- matchChromosomes(%s, %s)",
   NMD.pos <- NMD.result[!NMD.result$is_NMD,]
   
   ## prepare x if known transcripts are to be used as ref
-  if(use.known){
+  if(refs != FALSE){
       temp.x <- x[x$type!="gene"]
-      temp.x <- temp.x[stringr::str_starts(temp.x$transcript_id, known.prefix)]
+
+      if(length(refs)==1){
+          temp.x <- temp.x[stringr::str_starts(temp.x$transcript_id, refs)]
+      } else {
+          temp.x <- temp.x[temp.x$transcript_id %in% refs]
+      }
+      
       
       if(length(temp.x)!=0){
           x <- temp.x
