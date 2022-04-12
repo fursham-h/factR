@@ -52,7 +52,13 @@ spliced or skipped.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">identifyNMDexons</span><span class="op">(</span><span class="va">x</span>, <span class="va">fasta</span>, NMD.result <span class="op">=</span> <span class="cn">NULL</span>, ConsScores <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">identifyNMDexons</span><span class="op">(</span>
+  <span class="va">x</span>,
+  <span class="va">fasta</span>,
+  NMD.result <span class="op">=</span> <span class="cn">NULL</span>,
+  refs.to.use <span class="op">=</span> <span class="st">"none"</span>,
+  ConsScores <span class="op">=</span> <span class="st">"none"</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -65,6 +71,12 @@ spliced or skipped.</p>
 <dd><p>Output dataframe from predictNMD() [Optional]. If not provided, or if 
 data-frame do not contain necessary variables, identifyNMDexons will run
 predictNMD() first.</p></dd>
+<dt>refs.to.use</dt>
+<dd><p>Transcripts to use as reference. By default ("none"), the best reference
+will be selected from all detected transcripts. To use a subset of transcripts
+for reference selection, users can provide (1) a string character containing
+a pattern common to desired transcripts ("ENS" to select for annotated transcripts)
+or (2) a character vector containing a list of transcript ids.</p></dd>
 <dt>ConsScores</dt>
 <dd><p>Character value of the annotation database to use to calculate mean exon 
 conservation scores. Database can be a Bioconductor annotation package or
