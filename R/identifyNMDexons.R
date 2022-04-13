@@ -217,12 +217,17 @@ Try running: %s <- matchChromosomes(%s, %s)",
   if(refs != "none"){
       temp.x <- x[x$type!="gene"]
 
-      if(length(refs)==1){
+      if(length(refs)==1 & class(refs) == "character"){
           temp.x <- temp.x[stringr::str_detect(temp.x$transcript_id, refs)]
-      } else {
+      } 
+      else if(class(refs) == "character"){
           temp.x <- temp.x[temp.x$transcript_id %in% refs]
       }
-      
+      else if(class(refs) == "GRanges"){
+          temp.x <- temp.x[temp.x$transcript_id %in% refs$transcript_id]
+      } else{
+          rlang::inform("Incompatible reference input format. Using all transcripts for reference selection")
+      }
       
       if(length(temp.x)!=0){
           x <- temp.x
