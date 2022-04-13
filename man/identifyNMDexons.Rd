@@ -8,8 +8,8 @@ identifyNMDexons(
   x,
   fasta,
   NMD.result = NULL,
-  refs.to.use = "none",
-  ConsScores = "none"
+  refs.to.use = NULL,
+  ConsScores = NULL
 )
 }
 \arguments{
@@ -17,44 +17,46 @@ identifyNMDexons(
 
 \item{fasta}{BSgenome or Biostrings object containing genomic sequence}
 
-\item{NMD.result}{Output dataframe from predictNMD() [Optional]. If not provided, or if 
+\item{NMD.result}{Output dataframe from predictNMD() \link{Optional}. If not provided, or if
 data-frame do not contain necessary variables, identifyNMDexons will run
 predictNMD() first.}
 
-\item{refs.to.use}{Transcripts to use as reference. By default ("none"), the best reference
-will be selected from all detected transcripts. To use a subset of transcripts
-for reference selection, users can provide (1) a string character containing
-a pattern common to desired transcripts ("ENS" to select for annotated transcripts)
-or (2) a character vector containing a list of transcript ids.}
+\item{refs.to.use}{Transcripts to use as reference. By default (NULL), the best reference
+will be selected from all detected transcripts. Other input options include:
+\itemize{
+\item String character containing a pattern common to desired transcripts ("ENS" to select for annotated transcripts)
+\item Character vector containing a list of transcript ids.
+\item GenomicRanges object containing 'transcript_id' metadata column
+}}
 
-\item{ConsScores}{Character value of the annotation database to use to calculate mean exon 
+\item{ConsScores}{Character value of the annotation database to use to calculate mean exon
 conservation scores. Database can be a Bioconductor annotation package or
 one of the available database from AnnotationHub. Run
-\code{GenomicScores::availableGScores()} to list the available 
+\code{GenomicScores::availableGScores()} to list the available
 databases. A vector of connservation score for each exon will be appended
 as a metadata column in the output GRanges object.
-By default ("none"), exon conservation scores will not be calculated.}
+By default (NULL), exon conservation scores will not be calculated.}
 }
 \value{
-GRanges object containing coordinates of identified NMD-causing exons, 
+GRanges object containing coordinates of identified NMD-causing exons,
 including metadata on its gene of origin, type of AS exon, type of NMD exon
 and whether it is spliced within CDS
 }
 \description{
-This function will identify alternative exons that triggers NMD when 
+This function will identify alternative exons that triggers NMD when
 spliced or skipped.
 }
 \details{
-Alternative splicing of regulated exons may introduce premature termination 
-codon which are cleared by nonsense-mediated decay. There are two major class 
+Alternative splicing of regulated exons may introduce premature termination
+codon which are cleared by nonsense-mediated decay. There are two major class
 of such exons: Poison and ORF-maintaining exons. The former triggers NMD when
-spliced in, hence its name, while the latter triggers NMD when removed from a 
+spliced in, hence its name, while the latter triggers NMD when removed from a
 transcript.
 
 To identify and classify NMD-causing exons, identifyNMDexons first find
-alternative segments between NMD-sensitive transcripts and pre-determined 
-reference transcript of the same gene. The longest, NMD-insensitive coding 
-transcript of each gene is chosen as the best reference. For each alternative segment, 
+alternative segments between NMD-sensitive transcripts and pre-determined
+reference transcript of the same gene. The longest, NMD-insensitive coding
+transcript of each gene is chosen as the best reference. For each alternative segment,
 a modified version of reference RNA is built by inserting exons spliced in NMD transcripts, or
 by removing exons skipped from NMD transcripts. These modified transcripts are
 then tested for NMD features and if positive, the alternative exon will be

@@ -1,7 +1,7 @@
-#' Find NMD-causing exons from GTF objects
+#' Detect NMD-causing exons from GTF objects
 #' 
 #' @description 
-#' This function will identify alternative exons that triggers NMD when 
+#' This function will identify alternatively spliced exons that trigger NMD when 
 #' spliced or skipped.
 #' 
 #' @details 
@@ -29,11 +29,12 @@
 #' data-frame do not contain necessary variables, identifyNMDexons will run
 #' predictNMD() first.
 #' @param refs.to.use
-#' Transcripts to use as reference. By default ("none"), the best reference
-#' will be selected from all detected transcripts. To use a subset of transcripts
-#' for reference selection, users can provide (1) a string character containing
-#' a pattern common to desired transcripts ("ENS" to select for annotated transcripts)
-#' or (2) a character vector containing a list of transcript ids. 
+#' Transcripts to use as reference. By default (NULL), the best reference
+#' will be selected from all detected transcripts. Other input options include:
+#' * String character containing a pattern common to desired transcripts ("ENS" to select for annotated transcripts)
+#' * Character vector containing a list of transcript ids. 
+#' * GenomicRanges object containing 'transcript_id' metadata column 
+#' @md
 #' @param ConsScores
 #' Character value of the annotation database to use to calculate mean exon 
 #' conservation scores. Database can be a Bioconductor annotation package or
@@ -41,7 +42,7 @@
 #' \code{GenomicScores::availableGScores()} to list the available 
 #' databases. A vector of connservation score for each exon will be appended
 #' as a metadata column in the output GRanges object.
-#' By default ("none"), exon conservation scores will not be calculated.
+#' By default (NULL), exon conservation scores will not be calculated.
 #'
 #' @return
 #' GRanges object containing coordinates of identified NMD-causing exons, 
