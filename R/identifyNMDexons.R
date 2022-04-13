@@ -90,7 +90,7 @@
 identifyNMDexons <- function(x, fasta, 
                              NMD.result = NULL,
                              refs.to.use = NULL,
-                             ConsScores = "none") {
+                             ConsScores = NULL) {
   
   # catch missing args
   .catchargs(c("x", "fasta"), names(as.list(match.call())[-1]))
@@ -175,7 +175,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
 
 .GScorecheck <- function(ConsScore){
-  if(ConsScore != "none"){
+  if(!is.null(ConsScore)){
     
     
     ## try loading GScore package
