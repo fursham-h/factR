@@ -89,7 +89,7 @@
 #' 
 identifyNMDexons <- function(x, fasta, 
                              NMD.result = NULL,
-                             refs.to.use = "none",
+                             refs.to.use = NULL,
                              ConsScores = "none") {
   
   # catch missing args
@@ -214,7 +214,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
   NMD.pos <- NMD.result[!NMD.result$is_NMD,]
   
   ## prepare x if known transcripts are to be used as ref
-  if(refs != "none"){
+  if(!is.null(refs)){
       temp.x <- x[x$type!="gene"]
 
       if(length(refs)==1 & class(refs) == "character"){
