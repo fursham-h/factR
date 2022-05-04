@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -66,30 +66,23 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="factr-functional-annotation-of-custom-transcriptomes-in-r">
-<strong>factR</strong>: Functional Annotation of Custom Transcriptomes in R<a class="anchor" aria-label="anchor" href="#factr-functional-annotation-of-custom-transcriptomes-in-r"></a>
+<div class="page-header"><h1 id="factr-v1-functional-annotation-of-custom-transcriptomes-in-r">
+<strong>factR v.1</strong>: Functional Annotation of Custom Transcriptomes in R<a class="anchor" aria-label="anchor" href="#factr-v1-functional-annotation-of-custom-transcriptomes-in-r"></a>
 </h1></div>
 <!-- badges: start -->
-
 <div class="section level2">
 <h2 id="general-workflow">General workflow<a class="anchor" aria-label="anchor" href="#general-workflow"></a>
 </h2>
-<p align="center">
-<img src="reference/figures/factR_workflow.png" width="450"></p>
+<p align="center"><img src="reference/figures/factR_workflow.png" width="450"></p>
 <p><em>factR</em> is a robust and easy-to-use R package with tools to process custom-assembled transcriptomes (GTF). Below are <em>factR</em>’s key functions:</p>
 <ul>
-<li>Core features
-<ol style="list-style-type: decimal">
+<li>Core features<ol style="list-style-type: decimal">
 <li>Construct transcript coding (CDS) information using a reference-guided process</li>
 <li>Predict protein domains on coding transcripts</li>
 <li>Predict sensitivity of coding transcripts to Nonsense-mediated decay</li>
-<li>Annotate and compare spliced segments</li>
-<li>Identify NMD-causing exons</li>
-<li>[<strong>NEW</strong>] Score NMD-causing exons for conservation</li>
 </ol>
 </li>
-<li>Supporting features
-<ol style="list-style-type: decimal">
+<li>Supporting features<ol style="list-style-type: decimal">
 <li>Match chromosome levels of query GTF/object to reference annotation</li>
 <li>Match gene_id and gene_names of query GTF to reference annotation</li>
 <li>Plot transcripts from GTF GRanges object using <em>wiggleplotr</em>
@@ -112,14 +105,12 @@
 </h2>
 <ol style="list-style-type: decimal">
 <li>Custom-assembled transcriptome (GTF)</li>
-<li>Reference annotation as GenomicRanges object. Obtained from:
-<ul>
+<li>Reference annotation as GenomicRanges object. Obtained from:<ul>
 <li>Resource database including AnnotationHub</li>
 <li>Import of reference annotation assembly (GTF/GFF3)</li>
 </ul>
 </li>
-<li>Genomic sequence. Obtained from:
-<ul>
+<li>Genomic sequence. Obtained from:<ul>
 <li>Resource database including BSGenome, AnnotationHub</li>
 <li>Import of genomic fasta file</li>
 </ul>
@@ -144,7 +135,7 @@
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2021); Functional annotation of custom transcriptomes; Methods in Molecular Biology</p>
+<p>Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2022); Functional annotation of custom transcriptomes; Methods in Molecular Biology</p>
 </div>
 </div>
   </div>
@@ -192,7 +183,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>

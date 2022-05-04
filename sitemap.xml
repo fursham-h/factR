@@ -22,16 +22,10 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/Add-remove-exons.html</loc>
-  </url>
-  <url>
     <loc>/reference/buildCDS.html</loc>
   </url>
   <url>
     <loc>/reference/chrom_matched_query_gtf.html</loc>
-  </url>
-  <url>
-    <loc>/reference/compareSplicedSegment.html</loc>
   </url>
   <url>
     <loc>/reference/domains.known.html</loc>
@@ -46,9 +40,6 @@
     <loc>/reference/has_consistentSeqlevels.html</loc>
   </url>
   <url>
-    <loc>/reference/identifyNMDexons.html</loc>
-  </url>
-  <url>
     <loc>/reference/importFASTA.html</loc>
   </url>
   <url>
@@ -56,9 +47,6 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/labelSplicedSegment.html</loc>
   </url>
   <url>
     <loc>/reference/matchChromosomes.html</loc>
