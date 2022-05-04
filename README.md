@@ -10,8 +10,7 @@
   <img src="man/figures/factR_workflow.png" width="450"/>
 </p>
 
-*factR* is a robust and easy-to-use R package with tools to process
-custom-assembled transcriptomes (GTF). Below are *factR*'s key functions:
+*factR* is a robust and easy-to-use R package with tools to process custom-assembled transcriptomes (GTF). Below are *factR*'s key functions:
 
 * Core features 
   1. Construct transcript coding (CDS) information 
