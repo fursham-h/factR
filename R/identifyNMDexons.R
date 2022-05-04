@@ -49,7 +49,6 @@
 #' including metadata on its gene of origin, type of AS exon, type of NMD exon
 #' and whether it is spliced within CDS
 #' 
-#' @export
 #'
 #' @examples
 #' ## ---------------------------------------------------------------------

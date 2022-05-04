@@ -42,7 +42,6 @@
 #' annotate whether insertion/removal is successful. All other metadata in x will 
 #' not be retained
 #' 
-#' @export
 #'
 #' @examples
 #' ## ---------------------------------------------------------------------
@@ -123,7 +122,6 @@ addExonstoTx <- function(x, y, drop.unmodified = FALSE,
 
 
 #' @rdname Add-remove-exons
-#' @export
 #'
 removeExonsfromTx <- function(x, y, drop.unmodified = FALSE,
                               ignore.strand = FALSE) {
