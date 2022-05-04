@@ -12,8 +12,8 @@ test_that("Test the structure of outputs", {
   expect_equal(length(matched1), 56)
   expect_equal(length(matched2), 56)
   expect_equal(names(S4Vectors::mcols(matched2)), c(
-    "type", "transcript_id", "gene_id",
-    "old_gene_id", "match_level", "gene_name"
+    "type", "transcript_id", "gene_id", "gene_name",
+    "old_gene_id", "match_level"
   ))
 })
 

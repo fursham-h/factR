@@ -12,6 +12,7 @@ A GRanges object with 56 ranges and 3 metadata columns:
   \item{type}{Entry type; transcript or exon}
   \item{transcript_id}{ID given to transcripts}
   \item{gene_id}{ID given to gene origin of transcripts}
+  \item{gene_name}{Name given to gene origin of transcripts}
   ...
 }
 }
