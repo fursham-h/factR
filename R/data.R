@@ -28,6 +28,7 @@
 #'   \item{type}{Entry type; transcript or exon}
 #'   \item{transcript_id}{ID given to transcripts}
 #'   \item{gene_id}{ID given to gene origin of transcripts}
+#'   \item{gene_name}{Name given to gene origin of transcripts}
 #'   ...
 #' }
 #' @usage data(chrom_matched_query_gtf)
