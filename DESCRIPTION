@@ -57,8 +57,7 @@ Suggests:
     signalHsmm (>= 1.5),
     tidyverse (>= 1.3),
     covr,
-    patchwork,
-    phastCons100way.UCSC.hg19
+    patchwork
 VignetteBuilder: knitr
 LazyData: TRUE
 BiocType: Software
