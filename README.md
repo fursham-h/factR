@@ -57,7 +57,7 @@ resources for *wiggleplotr* and for valuable discussions on the design
 of the package.
 
 ## References
-Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2021); 
+Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2022); 
 Functional annotation of custom transcriptomes; Methods in Molecular Biology
 
 
