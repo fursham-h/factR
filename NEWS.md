@@ -1,33 +1,17 @@
-# factR (development)
+# *factR* v.1.0.0
 
-# factR 0.99.5
+We are pleased to announce the release of *factR* v.1.0. This bioinformatics 
+workflow is now published in the Methods in Molecular Biology book series 
+entitled [**Alternative splicing**](add-link-in-future). 
 
-* New functions added:
+## Core features
+1. Construct transcript coding (CDS) information using a reference-guided process
+2. Predict protein domains on coding transcripts
+3. Predict sensitivity of coding transcripts to Nonsense-mediated decay
+ 
+## Supporting features 
+1. Match chromosome levels of query GTF/object to reference annotation
+2. Match gene_id and gene_names of query GTF to reference annotation
+3. Plot transcripts from GTF GRanges object using *wiggleplotr*
+4. Select new transcripts from custom transcriptome
 
-* `viewTranscripts()` now plots multiple genes and requires only character values to specify features of interest
-
-
-
-# factR 0.99.4
-
-* New functions added:
-
-* `labelSpliceSegments()` and `compareSpliceSegments()` to annotate and compare spliced segments
-
-* `identifyNMDexons()` to annotate NMD causing exons
-
-# factR 0.99.3
-
-* Minor reformatting for Bioconductor resubmission
-
-# factR 0.99.2
-
-* `predictNMD()` now contain progress_bar switch to disable progress_bar
-
-* `buildCDS()` now re-build CDSs for known non-coding transcripts
-
-* Vignette text improvements
-
-# factR 0.99.1
-
-* factR submitted to Bioconductor
