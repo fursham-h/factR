@@ -21,7 +21,7 @@
   1. Match chromosome levels of query GTF/object to reference annotation
   2. Match gene_id and gene_names of query GTF to reference annotation
   3. Plot transcripts from GTF GRanges object using *wiggleplotr*
-  4. Select new transcripts from custom transcriptome
+  4. Subset new transcripts from custom transcriptome
 
 ## How to install
 The latest version of *factR* can be downloaded directly from GitHub as such:
