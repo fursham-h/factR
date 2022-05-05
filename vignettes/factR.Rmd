@@ -32,8 +32,6 @@ library(BSgenome.Mmusculus.UCSC.mm10)
 library(GenomicFeatures)  
 library(rtracklayer)  
 library(tidyverse) 
-
-
 ```  
   
 # Introduction  
@@ -72,16 +70,18 @@ devtools::install_github("fursham-h/factR")
 ### Custom-assembled transcriptome  
   
 *factR* requires a custom transcriptome file in the GTF format as an input, 
-and we provide the following three custom transcriptome files that can be 
-used to test *factR* tools:
+and we provide the following three sample custom transcriptome files that can 
+be used to test *factR* tools:
   
-1. **bulk_merged.gtf.gz** assembled using the HISAT2-StringtTie2 pipeline 
+1. **bulk_merged_sample.gtf.gz** assembled using the HISAT2-StringtTie2 pipeline 
 [@Pertea2016] from bulk RNA-seq data for mouse embryonic stem cells treated 
 with the NMD inhibitor cycloheximide (CHX) or left untreated as a control.   
-2. **sc_merged.gtf.gz** assembled using the HISAT2-StringtTie2 pipeline from 
+2. **sc_merged_sample.gtf.gz** assembled using the HISAT2-StringtTie2 pipeline from 
 single-cell RNA-seq data for glutamatergic neurons, GABAergic neurons, 
-astrocytes or endothelial cells from the mouse visual cortex [@Tasic2018].   
-3. **lr_merged.gtf.gz** assembled using minimap2 [@Li2018] and StringtTie2 
+astrocytes or endothelial cells from the mouse visual cortex [@Tasic2018]. 
+A simplified version of this GTF containing the first 500 genes on chr15 is
+available as part of *factR*.
+3. **lr_merged_sample.gtf.gz** assembled using minimap2 [@Li2018] and StringtTie2 
 [@Kovaka2019] from brain-specific long-read Oxford Nanopore RNA sequencing 
 data [@Sessegolo2019].  
   
