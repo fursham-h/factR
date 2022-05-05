@@ -18,7 +18,6 @@ Imports:
     dplyr (>= 1.0),
     GenomicFeatures (>= 1.44),
     GenomicRanges (>= 1.44),
-    GenomicScores (>= 2.2.0),
     IRanges (>= 2.26),
     purrr (>= 0.3),
     rtracklayer (>= 1.52), 
