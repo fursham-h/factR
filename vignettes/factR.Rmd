@@ -369,7 +369,7 @@ predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Zfr", progress_bar =
   
 The domain architectures for the set of query proteins can be additionally 
 plotted by switching the argument "plot" to TRUE:  
-```{r predDomain3}  
+```{r predDomain3, eval = F}  
 domains.Zfr <- predictDomains(custom_new_CDS.gtf, Mmusculus, gene_name == "Zfr", plot = TRUE, progress_bar = FALSE)  
 ```  
   
