@@ -122,19 +122,14 @@ library(factR)
 objects containing genomic interval data and relevant metadata. To create such 
 an object from a GTF file, we use the `importGTF` function:  
 ```{r importGTF}  
-selected.data <- "sc"  
-
-tmp <- paste0(tempfile(), ".gtf")
-download.file(paste0("https://github.com/fursham-h/MiMB-factR-supplement/raw/master/",  
-                     "Custom%20transcriptome/", selected.data, "_merged.gtf.gz"),   
-              tmp)  
-custom.gtf <- importGTF(tmp)  
+gtf <- system.file("extdata", "sc_merged_sample.gtf.gz", package = "factR")
+custom.gtf <- importGTF(gtf)  
 ```  
-This should import sc_merged.gtf.gz, and we will use this input in the 
-walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply 
-change "sc" to "bulk" or "lr" in the selected.data variable. Users may import 
-their own GTF file by specifying the path to such file in the `importGTF` 
-function. 
+<!-- This should import sc_merged_sample.gtf.gz, and we will use this input in the  -->
+<!-- walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply  -->
+<!-- change "sc" to "bulk" or "lr" in the selected.data variable. Users may import  -->
+<!-- their own GTF file by specifying the path to such file in the `importGTF`  -->
+<!-- function.  -->
   
 The imported GTF file is stored as a *GenomicRanges* object.  
 ```{r checktype}  
@@ -378,167 +373,6 @@ for some time depending on the connection speed and the PFAM server load,
 run the following:
 ```{r predDomain1, eval=FALSE}  
 domains.out <- predictDomains(custom_new_CDS.gtf, Mmusculus, progress_bar = FALSE)  
-```  
-  
-
-## Processing *factR* output  
-Here we describe several ways to summarize information-rich outputs of 
-`predictNMD` and `predictDomains` functions.   
-  
-### Summarising NMD data  
-  
-Using the above NMDprediction.out object and *tidyverse* package tools, we 
-can estimate the numbers of NMD-sensitive and non-NMD-sensitive transcripts 
-among newly assembled RNAs:  
-```{r NMDsumm1, message=FALSE}  
-library(tidyverse)  
-NMDprediction.out %>%   
-  group_by(is_NMD) %>%   
-  tally()  
-```  
-  
-We might be interested in calculating mean 3'UTR lengths for these two 
-groups of transcripts:  
-```{r NMDsumm2, message=FALSE}  
-NMDprediction.out %>%   
-  group_by(is_NMD) %>%   
-  summarise(mean_3UTR_length = mean(`3'UTR_length`))    
-```  
-  
-To compare the prevalence of NMD regulation between newly assembled and 
-reference transcripts, we first predict NMD susceptibility on reference 
-transcripts:  
-```{r NMDknown}  
-NMDprediction.known <- predictNMD(ref.gtf)  
-```  
-
-Next, we combine the NMDprediction.out and NMDprediction.known data frames 
-distinguishing between new and known transcripts:  
-```{r NMDanalysis1}  
-NMDprediction.combine <- bind_rows(NMDprediction.known, NMDprediction.out) %>%  
-  mutate(group = ifelse(transcript %in% NMDprediction.out$transcript, "New", "Known"))   
-```  
-  
-Lastly, the combined transcripts are categorised into 4 groups based on their 
-source ("New" vs "Known") and predicted NMD sensitivity, and the number of 
-transcripts in each group is tallied:  
-```{r NMDanalysis2, message=FALSE}  
-proportion.NMD <- NMDprediction.combine %>%   
-  group_by(group, is_NMD) %>%   
-  tally(name = "n_transcripts")  
-proportion.NMD  
-  
-```  
-  
-The above data can be visualized using a stacked bar-graph:  
-```{r NMDplot}  
-proportion.NMD %>%   
-  ggplot(aes(x=group, y=n_transcripts, fill=is_NMD)) +  
-  geom_bar(stat="identity", position="fill") + 
-  scale_fill_brewer(palette="Paired") 
-```  
-  
-### Summarising domain data  
- 
-Gain and loss of domains can alter protein function in a profound manner. To 
-identify domains frequently added in newly predicted protein products, we 
-first predict protein domains of known reference proteins:  
-(Note: code below will predict domains on all proteins and will require a 
-substantial amount of time to complete)
-<!-- Code below not evaluated as it takes substantial amount of time to complete -->
-```{r preddomref, eval=FALSE}  
-domains.known <- predictDomains(ref.gtf, Mmusculus, progress_bar = FALSE)  
-```  
-  
-Next, we combine the domains.out and domains.known data frames distinguishing 
-between new and known proteins:  
-```{r domcombine}  
-domains.combine <- bind_rows(domains.known, domains.out) %>%  
-  mutate(group = ifelse(transcript %in% domains.out$transcript, "New", "Known"))   
-```  
-  
-To enable grouping of protein isoforms by gene names, let's append gene 
-information to our combined data frame:  
-```{r fillgenemeta, message=FALSE}  
-# generate a transcript to gene df  
-t2g <- custom.gtf %>%  
-  as.data.frame() %>%  
-  select(gene_id, gene_name, transcript=transcript_id) %>%  
-  distinct()   
-  
-# combine t2g with domains.combine   
-domains.combine <- domains.combine %>%  
-  left_join(t2g)  
-
-head(domains.combine)
-```  
-  
-We then generate a non-redundant list of N-to-C-ordered domain architectures 
-for each gene  
-```{r nestdomains}  
-domains.combine.architecture <- domains.combine %>%  
-  group_by(transcript) %>%   
-  arrange(begin) %>%  
-  mutate(domain = list(description)) %>%   
-  select(-description, -begin, -end, -eval) %>%  
-  ungroup() %>%   
-  arrange(group) %>%   
-  distinct(gene_id, domain,.keep_all = TRUE)   
-```  
-  
-Genes with no new domain structures are filtered out:  
-```{r filtergeneswithnonew}  
-domains.combine.filtered <- domains.combine.architecture %>%  
-  group_by(gene_id) %>%  
-  filter("New" %in% group) %>%  
-  ungroup() 
-```  
-  
-Domains gained in new proteins are shortlisted:  
-```{r shortlistgains}  
-domains.combine.shortlist <- domains.combine.filtered %>%  
-  unnest(domain) %>%   
-  group_by(transcript, domain) %>%  
-  mutate(n = row_number()) %>%   
-  ungroup() %>%  
-  distinct(gene_id, group, domain, n,.keep_all=TRUE) %>%  
-  group_by(gene_id, domain, n) %>%  
-  filter(n() == 1 & group == "New") %>%  
-  ungroup()   
-```  
-  
-Top 10 frequently gained domains can be listed as follows:  
-```{r top10domains}  
-domains.combine.top <- domains.combine.shortlist %>%  
-  distinct(gene_id, domain) %>%  
-  group_by(domain) %>%  
-  tally() %>%  
-  slice_max(n, n=10, with_ties =TRUE)   
-  
-domains.combine.top   
-```  
-  
-We can summarise the above analysis as a bar chart:  
-```{r plotdomains}  
-domains.combine.top %>%   
-  mutate(domain = fct_reorder(domain, n)) %>%  
-  ggplot(aes(x=domain, y =n)) +  
-  geom_bar(stat="identity") +  
-  coord_flip() +   
-  scale_y_continuous(name="Number of genes")  
-```  
-  
-We can also list the first 10 genes gaining the C2H2 domain:  
-```{r list10C2H2}  
-domains.combine.shortlist %>%   
-  filter(domain == "Classic zinc finger, C2H2") %>%   
-  distinct(gene_id, gene_name)  
-```  
-  
-Finally, to visualize domain architectures of new and known protein isoforms 
-produced from a gene of interest (say, *Zfp972*):  
-```{r showZfp972, warning=FALSE}  
-domains.Zfp972 <- predictDomains(c(custom_new_CDS.gtf, ref.gtf), Mmusculus, gene_name == "Zfp972", plot = TRUE)  
 ```  
   
 ## Export output objects  
