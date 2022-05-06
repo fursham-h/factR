@@ -26,35 +26,28 @@
   4. Subset new transcripts from custom transcriptome
 
 ## How to install
-The latest version of *factR* can be downloaded directly from GitHub as such:
+The latest stable version can be installed directly from [Bioconductor]():
 ```r
-# install.packages("devtools")
-devtools::install_github("fursham-h/factR")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("factR")
 ```
 
-
-## What you need
-1. Custom-assembled transcriptome (GTF)
-2. Reference annotation as GenomicRanges object. Obtained from:
-    * Resource database including AnnotationHub
-    * Import of reference annotation assembly (GTF/GFF3)
-3. Genomic sequence. Obtained from:
-    * Resource database including BSGenome, AnnotationHub
-    * Import of genomic fasta file
-
+Alternatively, you may install the development version of *factR* using devtools:
+```r
+# install.packages("devtools")
+devtools::install_github("fursham-h/factR", ref = "dev")
+```
 
 ## Getting started
 See our [vignette](https://fursham-h.github.io/factR/articles/factR.html) for full instructions on how to get started
-
-## Reporting bugs and issues
-If you encounter a bug with *factR*, please file an issue on [GitHub](https://github.com/fursham-h/factR/issues).
 
 ## Acknowledgements
 We thank [Kaur Alasoo](https://github.com/kauralasoo) for sharing code 
 resources for *wiggleplotr* and for valuable discussions on the design 
 of the package.
 
-## References
+## Citing factR
 Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2022); Functional annotation of custom transcriptomes; Methods in Molecular Biology
 
 
