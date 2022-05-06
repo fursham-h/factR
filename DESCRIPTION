@@ -9,7 +9,7 @@ Description: factR contain tools to process and interact with custom-assembled
     custom transcripts and subsequently predicts its functional output. 
     In addition,  factR has tools capable of plotting transcripts, 
     correcting chromosome and gene information and shortlisting new transcripts.
-Depends: R (>= 4.1)
+Depends: R (>= 4.2)
 biocViews: AlternativeSplicing, FunctionalPrediction, GenePrediction
 Imports:
     BiocGenerics (>= 0.38),
