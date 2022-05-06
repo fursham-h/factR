@@ -1,0 +1,36 @@
+url: https://fursham-h.github.io/factR/
+
+home:
+  title: "factR"
+  # links:
+  # - text: CDN homepage
+  #   href: https://devneuro.org/cdn/index.php
+
+template:
+  params:
+    bootswatch: readable
+
+navbar:
+  type: inverse
+  left:
+    - text: "Quick start"
+      icon: fa-rocket-launch
+      href: articles/factR.html
+    - text: "Vignettes"
+      icon: 'fas fa-book-open'
+      menu:
+        - text: "1) factR workflow"
+          href: articles/factR.html
+        - text: "2) Analyzing factR output"
+          href: articles/analyzing_outputs.html
+    - text: "News"
+      icon: fa-newspaper
+      href: news/index.html
+    - text: "Functions"
+      icon: fa-code
+      href: reference/index.html
+  right:
+    - icon: 'fab fa-github fa-lg'
+      href: https://github.com/fursham-h/factR
+    - icon: 'fab fa-twitter fa-lg'
+      href: https://twitter.com/FurshamH
