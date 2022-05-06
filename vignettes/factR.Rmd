@@ -377,17 +377,16 @@ domains.out <- predictDomains(custom_new_CDS.gtf, Mmusculus, progress_bar = FALS
   
 ## Export output objects  
 Annotated *custom_new_CDS.gtf* object can be exported to a GTF file as follows:  
-```{r exportgtf}  
+```{r exportgtf, eval=FALSE}  
 library(rtracklayer) 
-tmp <- tempdir()
-export(custom_new_CDS.gtf, paste0(tmp, "Custom_new.gtf"), format = "GTF")  
+export(custom_new_CDS.gtf, "Custom_new.gtf", format = "GTF")  
 ```  
   
 Finally, to export *NMDprediction.out* and *domains.out* data frames as 
 tab-delimited text files, run the following:  
-```{r exporttable}  
-write.table(NMDprediction.out, paste0(tmp, "Custom_new_NMD.txt"), sep = "\t", row.names = FALSE, quote = FALSE)  
-write.table(domains.out, paste0(tmp, "Custom_new_domains.txt"), sep = "\t", row.names = FALSE, quote = FALSE)  
+```{r exporttable, eval=FALSE}  
+write.table(NMDprediction.out, "Custom_new_NMD.txt", sep = "\t", row.names = FALSE, quote = FALSE)  
+write.table(domains.out, "Custom_new_domains.txt", sep = "\t", row.names = FALSE, quote = FALSE)  
 ```  
   
 # Citing *factR*  
