@@ -1,0 +1,114 @@
+---  
+title: "Analyzing factR output"  
+author: "Fursham Hamid"  
+date: "`r Sys.Date()`"  
+output:  
+  rmdformats::readthedown:  
+    highlight: kate  
+    number_sections: true  
+    toc_depth: 3  
+vignette: >  
+  %\VignetteIndexEntry{factR}  
+  %\VignetteEngine{knitr::rmarkdown}  
+bibliography: references.bib 
+---  
+  
+```{r setup, echo=FALSE, cache=FALSE}  
+## Global options  
+options(max.print="100")  
+knitr::opts_chunk$set(  
+  collapse = TRUE,  
+  comment = "#>")  
+knitr::opts_knit$set(width=75)  
+```  
+  
+  
+```{r silentload, include=FALSE}  
+#Silent load all dependencies for vignette  
+
+
+```  
+  
+# Motivation
+
+*factR* returns information-rich outputs of predicted protein domains expressed
+by newly-identified transcripts and predicted susceptibility to NMD pathway.
+A key challenge in biological data analysis is to convert such large data into 
+meaningful information for downstream validation. Here, we describe several 
+ways to summarize *factR* outputs.
+
+# Materials needed
+
+To follow along this tutorial, you need dataframes that are returned from `predictNMD()`
+and/or `predictDomains()` functions. You may obtain these outputs by executing
+*factR* workflow on your own custom transcriptomes. Alternatively, you may utilise
+sample output dataframes that come with *factR*. To use these sample data, run
+the following in R console:
+
+```{r loaddata}
+data(NMD.out)
+data(domains.out)
+```
+
+In addition, you would need the following packages installed and attached onto
+your R environment:
+
+```{r loadpkg}
+library(tidyverse)
+library(AnnotationHub)
+```
+
+# Summarising NMD data  
+
+We begin with counting the numbers of NMD-sensitive and non-NMD-sensitive 
+transcripts among newly assembled RNAs:  
+```{r NMDsumm1, message=FALSE}  
+NMD.out %>%   
+  count(is_NMD)
+```  
+  
+We might be interested in calculating mean 3'UTR lengths for these two 
+groups of transcripts:  
+```{r NMDsumm2, message=FALSE}  
+NMD.out %>%   
+  group_by(is_NMD) %>%   
+  summarise(mean_3UTR_length = mean(`3'UTR_length`))    
+```  
+  
+To compare the prevalence of NMD regulation between newly assembled and 
+reference transcripts, we first retrieve reference mouse transcriptome and 
+predict NMD susceptibility on reference transcripts:  
+```{r NMDknown}  
+ah <- AnnotationHub()
+ref.gtf <- ah[['AH49546']]  
+NMDprediction.known <- predictNMD(ref.gtf)  
+```  
+
+Next, we combine the NMD.out and NMDprediction.known data frames 
+distinguishing between new and known transcripts:  
+```{r NMDanalysis1}  
+NMDprediction.combine <- bind_rows(NMDprediction.known, NMD.out) %>%  
+  mutate(group = ifelse(transcript %in% NMD.out$transcript, "New", "Known"))   
+```  
+  
+Lastly, the combined transcripts are categorised into 4 groups based on their 
+source ("New" vs "Known") and predicted NMD sensitivity, and the number of 
+transcripts in each group is tallied:  
+```{r NMDanalysis2, message=FALSE}  
+proportion.NMD <- NMDprediction.combine %>%   
+  group_by(group, is_NMD) %>%   
+  tally(name = "n_transcripts")  
+proportion.NMD  
+  
+```  
+  
+The above data can be visualized using a stacked bar-graph:  
+```{r NMDplot}  
+proportion.NMD %>%   
+  ggplot(aes(x=group, y=n_transcripts, fill=is_NMD)) +  
+  geom_bar(stat="identity", position="fill") + 
+  scale_fill_brewer(palette="Paired") 
+```  
+  
+
+# Summarising domain data
