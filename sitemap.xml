@@ -1,102 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://fursham-h.github.io/factR/404.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>https://fursham-h.github.io/factR/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>/articles/factR.html</loc>
+    <loc>https://fursham-h.github.io/factR/articles/factR.html</loc>
   </url>
   <url>
-    <loc>/articles/index.html</loc>
+    <loc>https://fursham-h.github.io/factR/articles/index.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://fursham-h.github.io/factR/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://fursham-h.github.io/factR/index.html</loc>
   </url>
   <url>
-    <loc>/news/index.html</loc>
+    <loc>https://fursham-h.github.io/factR/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/buildCDS.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/buildCDS.html</loc>
   </url>
   <url>
-    <loc>/reference/chrom_matched_query_gtf.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/chrom_matched_query_gtf.html</loc>
   </url>
   <url>
-    <loc>/reference/domains.known.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/domains.known.html</loc>
   </url>
   <url>
-    <loc>/reference/domains.out.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/domains.out.html</loc>
   </url>
   <url>
-    <loc>/reference/filtereach.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/filtereach.html</loc>
   </url>
   <url>
-    <loc>/reference/has_consistentSeqlevels.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/has_consistentSeqlevels.html</loc>
   </url>
   <url>
-    <loc>/reference/importFASTA.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/importFASTA.html</loc>
   </url>
   <url>
-    <loc>/reference/importGTF.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/importGTF.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/matchChromosomes.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/matchChromosomes.html</loc>
   </url>
   <url>
-    <loc>/reference/matchGeneInfo.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/matchGeneInfo.html</loc>
   </url>
   <url>
-    <loc>/reference/matched_query_gtf.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/matched_query_gtf.html</loc>
   </url>
   <url>
-    <loc>/reference/mutateeach.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/mutateeach.html</loc>
   </url>
   <url>
-    <loc>/reference/new_query_gtf.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/new_query_gtf.html</loc>
   </url>
   <url>
-    <loc>/reference/predictDomains.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/predictDomains.html</loc>
   </url>
   <url>
-    <loc>/reference/predictNMD.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/predictNMD.html</loc>
   </url>
   <url>
-    <loc>/reference/query_cds.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/query_cds.html</loc>
   </url>
   <url>
-    <loc>/reference/query_exons.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/query_exons.html</loc>
   </url>
   <url>
-    <loc>/reference/query_gtf.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/query_gtf.html</loc>
   </url>
   <url>
-    <loc>/reference/ref_cds.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/ref_cds.html</loc>
   </url>
   <url>
-    <loc>/reference/ref_exons.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/ref_exons.html</loc>
   </url>
   <url>
-    <loc>/reference/ref_gtf.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/ref_gtf.html</loc>
   </url>
   <url>
-    <loc>/reference/sorteach.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/sorteach.html</loc>
   </url>
   <url>
-    <loc>/reference/subsetNewTranscripts.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/subsetNewTranscripts.html</loc>
   </url>
   <url>
-    <loc>/reference/trimTranscripts.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/trimTranscripts.html</loc>
   </url>
   <url>
-    <loc>/reference/viewTranscripts.html</loc>
+    <loc>https://fursham-h.github.io/factR/reference/viewTranscripts.html</loc>
   </url>
 </urlset>
