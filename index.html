@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.1</span>
       </span>
     </div>
 
@@ -66,10 +66,14 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="factr-v1-functional-annotation-of-custom-transcriptomes-in-r">
-<strong>factR v.1</strong>: Functional Annotation of Custom Transcriptomes in R<a class="anchor" aria-label="anchor" href="#factr-v1-functional-annotation-of-custom-transcriptomes-in-r"></a>
+<div class="page-header"><h1 id="factr-v1">
+<strong>factR v.1</strong><a class="anchor" aria-label="anchor" href="#factr-v1"></a>
 </h1></div>
+<div class="section level2">
+<h2 id="functional-annotation-of-custom-transcriptomes-in-r">Functional Annotation of Custom Transcriptomes in R<a class="anchor" aria-label="anchor" href="#functional-annotation-of-custom-transcriptomes-in-r"></a>
+</h2>
 <!-- badges: start -->
+</div>
 <div class="section level2">
 <h2 id="general-workflow">General workflow<a class="anchor" aria-label="anchor" href="#general-workflow"></a>
 </h2>
@@ -95,27 +99,15 @@
 <div class="section level2">
 <h2 id="how-to-install">How to install<a class="anchor" aria-label="anchor" href="#how-to-install"></a>
 </h2>
-<p>The latest version of <em>factR</em> can be downloaded directly from GitHub as such:</p>
+<p>The latest stable version can be installed directly from <a href="">Bioconductor</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"factR"</span><span class="op">)</span></code></pre></div>
+<p>Alternatively, you may install the development version of <em>factR</em> using devtools:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"fursham-h/factR"</span><span class="op">)</span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="what-you-need">What you need<a class="anchor" aria-label="anchor" href="#what-you-need"></a>
-</h2>
-<ol style="list-style-type: decimal">
-<li>Custom-assembled transcriptome (GTF)</li>
-<li>Reference annotation as GenomicRanges object. Obtained from:<ul>
-<li>Resource database including AnnotationHub</li>
-<li>Import of reference annotation assembly (GTF/GFF3)</li>
-</ul>
-</li>
-<li>Genomic sequence. Obtained from:<ul>
-<li>Resource database including BSGenome, AnnotationHub</li>
-<li>Import of genomic fasta file</li>
-</ul>
-</li>
-</ol>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"fursham-h/factR"</span>, ref <span class="op">=</span> <span class="st">"dev"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
@@ -123,17 +115,12 @@
 <p>See our <a href="https://fursham-h.github.io/factR/articles/factR.html" class="external-link">vignette</a> for full instructions on how to get started</p>
 </div>
 <div class="section level2">
-<h2 id="reporting-bugs-and-issues">Reporting bugs and issues<a class="anchor" aria-label="anchor" href="#reporting-bugs-and-issues"></a>
-</h2>
-<p>If you encounter a bug with <em>factR</em>, please file an issue on <a href="https://github.com/fursham-h/factR/issues" class="external-link">GitHub</a>.</p>
-</div>
-<div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
 </h2>
 <p>We thank <a href="https://github.com/kauralasoo" class="external-link">Kaur Alasoo</a> for sharing code resources for <em>wiggleplotr</em> and for valuable discussions on the design of the package.</p>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 id="citing-factr">Citing factR<a class="anchor" aria-label="anchor" href="#citing-factr"></a>
 </h2>
 <p>Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2022); Functional annotation of custom transcriptomes; Methods in Molecular Biology</p>
 </div>

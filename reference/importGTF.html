@@ -20,7 +20,7 @@ import GTF file into R as a GenomicRanges object."><!-- mathjax --><script src="
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.1</span>
       </span>
     </div>
 
@@ -73,6 +73,54 @@ import GTF file into R as a GenomicRanges object.</p>
     <p>Fursham Hamid</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sc_merged_sample.gtf.gz"</span>, package <span class="op">=</span> <span class="st">"factR"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">importGTF</span><span class="op">(</span><span class="va">gtf</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 8117 ranges and 9 metadata columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          seqnames            ranges strand |    source       type     score</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;factor&gt;   &lt;factor&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [1]    chr15   3180731-3180944      * | StringTie transcript      1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [2]    chr15   3180731-3180944      * | StringTie exon            1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [3]    chr15   3217391-3219698      - | StringTie transcript      1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [4]    chr15   3217391-3219698      - | StringTie exon            1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [5]    chr15   3268547-3277274      + | StringTie transcript      1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ...      ...               ...    ... .       ...        ...       ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8113]    chr15 39922327-39924849      * | StringTie exon            1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8114]    chr15 40326499-40326982      * | StringTie transcript      1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8115]    chr15 40326499-40326982      * | StringTie exon            1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8116]    chr15 40552598-40553130      * | StringTie transcript      1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8117]    chr15 40552598-40553130      * | StringTie exon            1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              phase     gene_id        transcript_id exon_number   gene_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;integer&gt; &lt;character&gt;          &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [1]      &lt;NA&gt; MSTRG.14523        MSTRG.14523.1        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [2]      &lt;NA&gt; MSTRG.14523        MSTRG.14523.1           1        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [3]      &lt;NA&gt; MSTRG.14524 ENSMUST00000227053.1        &lt;NA&gt;      Gm7962</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [4]      &lt;NA&gt; MSTRG.14524 ENSMUST00000227053.1           1      Gm7962</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [5]      &lt;NA&gt; MSTRG.14525 ENSMUST00000160787.8        &lt;NA&gt;     Selenop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ...       ...         ...                  ...         ...         ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8113]      &lt;NA&gt; MSTRG.15020        MSTRG.15020.1           1        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8114]      &lt;NA&gt; MSTRG.15021        MSTRG.15021.1        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8115]      &lt;NA&gt; MSTRG.15021        MSTRG.15021.1           1        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8116]      &lt;NA&gt; MSTRG.15022        MSTRG.15022.1        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8117]      &lt;NA&gt; MSTRG.15022        MSTRG.15022.1           1        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    ref_gene_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [1]                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [2]                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [3]  ENSMUSG00000114999.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [4]  ENSMUSG00000114999.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [5] ENSMUSG00000064373.12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ...                   ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8113]                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8114]                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8115]                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8116]                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8117]                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
