@@ -207,3 +207,20 @@
 #' }
 #' @usage data(domains.known)
 "domains.known"
+
+
+#' Example output of predictNMD()
+#'
+#' Output dataframe from predictNMD() function.
+#'
+#' @format A data.frame with 15254 rows and 4 columns:
+#' \describe{
+#'   \item{transcript}{Transcript ID of protein-coding RNAs}
+#'   \item{stop_to_lastEJ}{Distance of stop codon to last exon junction}
+#'   \item{num_of_downEJs}{Number of exon junctions downstream of stop codon}
+#'   \item{3'UTR_length}{Length of 3'UTR (bp)}
+#'   \item{is_NMD}{Boolean on whether transcript is NMD sensitive}
+#'   ...
+#' }
+#' @usage data(domains.out)
+"NMD.out"
