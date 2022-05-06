@@ -195,7 +195,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
     group <- resize <- width <- NULL
 
     # search for exact query and ref matches
-    fulloverlap <-  suppressWarnings(GenomicRanges::findOverlaps(query_exons, ref_exons,
+    fulloverlap <-  suppressWarnings(
+        GenomicRanges::findOverlaps(query_exons, ref_exons,
         type = "equal", select = "first"
     ))
 
@@ -251,23 +252,14 @@ Try running: %s <- matchChromosomes(%s, %s)",
             unique()
         
         # shortlist trimmed exons which fully overlap query transcripts
-        codons_gr <-  suppressWarnings(IRanges::subsetByOverlaps(codons_gr, nonexact, 
-                                               type = "within"))
-        codons_gr <- codons_gr[as.character(GenomeInfoDb::seqnames(codons_gr)) %in% GenomeInfoDb::seqlevels(fasta)]
+        codons_gr <-  suppressWarnings(
+            IRanges::subsetByOverlaps(codons_gr, nonexact, type = "within"))
+        codons_gr <- codons_gr[as.character(GenomeInfoDb::seqnames(codons_gr)) 
+                               %in% GenomeInfoDb::seqlevels(fasta)]
 
         # further trim exons to only retain ATG codon
         codons_seq <-  suppressWarnings(BSgenome::getSeq(fasta, codons_gr))
-        # codons_seq <- tryCatch(
-        #     {
-        #         BSgenome::getSeq(fasta, codons_gr)
-        #     },
-        #     error = function(e) {
-        #         BSgenome::getSeq(fasta, 
-        #                          codons_gr[as.character(GenomeInfoDb::seqnames(codons_gr)) %in% GenomeInfoDb::seqnames(fasta)])
-        #     }
-        # )
-        
-        
+
         
         startMatch <- Biostrings::vmatchPattern("ATG", codons_seq) %>%
             as.data.frame() %>%
