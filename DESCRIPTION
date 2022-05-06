@@ -1,6 +1,6 @@
 Package: factR
 Title: Functional Annotation of Custom Transcriptomes
-Version: 0.99.0
+Version: 0.99.1
 Authors@R: person("Fursham", "Hamid", 
     email = "fursham.h@gmail.com", 
     role = c("aut", "cre"))
