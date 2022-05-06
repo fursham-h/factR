@@ -15,6 +15,10 @@
 #'
 #' @author Fursham Hamid
 #' @export
+#' 
+#' @examples 
+#' gtf <- system.file("extdata", "sc_merged_sample.gtf.gz", package = "factR")
+#' importGTF(gtf)
 importGTF <- function(con) {
     if(file.exists(con)){
         infile <- try(rtracklayer::import(con, format = "GTF"), silent = TRUE)

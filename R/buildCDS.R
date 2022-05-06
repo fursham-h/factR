@@ -172,8 +172,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
         successtx <- length(unique(outCDS$transcript_id))
         message(sprintf(
-            paste0("\nSummary: Out of %s transcripts in `%s`,",
-                   " %s transcript CDSs were built"),
+            "\nSummary: Out of %s transcripts in `%s`, 
+            %s transcript CDSs were built",
             totaltx, argnames[1], successtx
         ))
         return(GenomicRanges::makeGRangesFromDataFrame(outCDS,
@@ -181,8 +181,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
         ))
     } else {
         rlang::inform(sprintf(
-            paste0("\nSummary: Out of %s transcripts in `%s`,",
-                   " none transcript CDSs were built"),
+            "\nSummary: Out of %s transcripts in `%s`, 
+            none transcript CDSs were built",
             totaltx, argnames[1]
         ))
         return(NULL)

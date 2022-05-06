@@ -104,7 +104,7 @@ viewTranscripts <- function(x, ..., rescale_introns = FALSE, ncol = 1) {
                 y <- tryCatch({
                     x %>% as.data.frame() %>% 
                         dplyr::filter(...) %>% 
-                        GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T)
+                        GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
                 },
                 error = function(e){
                     rlang::abort(sprintf(
