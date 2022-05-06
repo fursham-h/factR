@@ -58,6 +58,6 @@ Suggests:
     covr,
     patchwork
 VignetteBuilder: knitr
-LazyData: TRUE
+LazyData: FALSE
 BiocType: Software
 URL: https://fursham-h.github.io/factR/
