@@ -40,7 +40,8 @@ devtools::install_github("fursham-h/factR", ref = "dev")
 ```
 
 ## Getting started
-See our [vignette](https://fursham-h.github.io/factR/articles/factR.html) for full instructions on how to get started
+See our [quickstart guide](https://fursham-h.github.io/factR/articles/quickstart.html) or our 
+[full vignette](https://fursham-h.github.io/factR/articles/factR.html) on how to get started
 
 ## Acknowledgements
 We thank [Kaur Alasoo](https://github.com/kauralasoo) for sharing code 
