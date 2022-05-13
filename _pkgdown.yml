@@ -15,7 +15,7 @@ navbar:
   left:
     - text: "Quick start"
       icon: fa-rocket-launch
-      href: articles/factR.html
+      href: articles/quickstart.html
     - text: "Vignettes"
       icon: 'fas fa-book-open'
       menu:
