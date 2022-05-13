@@ -3,7 +3,8 @@ pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
   factR: factR.html
-last_built: 2022-05-06T13:51Z
+  quickstart: quickstart.html
+last_built: 2022-05-13T09:59Z
 urls:
   reference: https://fursham-h.github.io/factR/reference
   article: https://fursham-h.github.io/factR/articles
