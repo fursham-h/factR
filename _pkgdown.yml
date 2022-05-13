@@ -14,7 +14,7 @@ navbar:
   type: inverse
   left:
     - text: "Quick start"
-      icon: 'fas fa-rocken-launch'
+      icon: 'fas fa-rocket-launch'
       href: articles/quickstart.html
     - text: "Vignettes"
       icon: 'fas fa-book-open'
