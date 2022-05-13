@@ -8,7 +8,7 @@ output:
     number_sections: true  
     toc_depth: 3  
 vignette: >  
-  %\VignetteIndexEntry{factR}  
+  %\VignetteIndexEntry{quickstart}  
   %\VignetteEngine{knitr::rmarkdown}  
 ---  
   
