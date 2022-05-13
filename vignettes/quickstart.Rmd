@@ -22,17 +22,6 @@ knitr::opts_knit$set(width=75)
 ```  
   
   
-```{r silentload, include=FALSE}  
-#Silent load all dependencies for vignette  
-library(factR)  
-library(AnnotationHub)  
-library(Biostrings)  
-library(BSgenome.Mmusculus.UCSC.mm10)  
-library(GenomicFeatures)  
-library(rtracklayer)  
-library(tidyverse) 
-```  
-  
 Here we show the most basic steps for processing custom transcriptome and
 predicting novel transcripts for functional protein domains and for susceptibility
 to nonsense-mediated decay. We will demonstrate this workflow using a sample GTF 
@@ -43,7 +32,7 @@ imported these files as `ref.gtf` and `sequence` variables respectively. Refer
 to the [full description of our workflow](https://fursham-h.github.io/factR/articles/factR.html#materials-needed) f
 or details on obtaining these files.
 
-```{r}
+```{r eval=F}
 # load factR
 library(factR)
 
