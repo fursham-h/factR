@@ -1,4 +1,3 @@
-# factR (development)
 
 # factR 0.99.4
 
