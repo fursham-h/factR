@@ -1,3 +1,6 @@
+# factR 0.99.5
+
+* Address changes for Bioconductor submission
 
 # factR 0.99.4
 
