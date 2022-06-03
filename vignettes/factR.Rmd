@@ -108,7 +108,7 @@ GENCODE or Ensembl. Both possibilities are described in the
 *factR* needs genomic DNA sequence to predict CDSs. Users may obtain genome 
 files using e.g. *BSgenome* or *AnnotationHub* or download them from an 
 external database such as GENCODE or Ensembl. We describe this in more detail 
-in the ["Constructing CDS information"](#constructing-CDS-information) 
+in the ["Constructing CDS information"](#constructing-cds-information) 
 section below.  
   
 # Using *factR*  
