@@ -76,14 +76,14 @@ buildCDS <- function(query, ref, fasta) {
     }
 
     # catch unmatched seqlevels
-    if (suppressWarnings(!has_consistentSeqlevels(query, fasta))) {
+    if (!has_consistentSeqlevels(query, fasta, verbose = F)) {
         rlang::abort(sprintf(
             "`%s` and `%s` has unmatched seqlevel styles. 
 Try running: %s <- matchChromosomes(%s, %s)",
             argnames[1], argnames[3], argnames[1], argnames[1], argnames[3]
         ))
     }
-    if (suppressWarnings(!has_consistentSeqlevels(ref, fasta))) {
+    if (!has_consistentSeqlevels(ref, fasta, verbose = F)) {
         rlang::abort(sprintf(
             "`%s` and `%s` has unmatched seqlevel styles. 
 Try running: %s <- matchChromosomes(%s, %s)",
@@ -162,7 +162,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     }
 
     # combine all CDSs and print out stats
-    outCDS <- suppressWarnings(dplyr::bind_rows(fulloutCDS, restoutCDS))
+    outCDS <- dplyr::bind_rows(fulloutCDS, restoutCDS)
     if (nrow(outCDS) > 0) {
         outCDS <- outCDS %>%
             dplyr::arrange(transcript_id, ifelse(strand == "-",
@@ -195,10 +195,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
     group <- resize <- width <- NULL
 
     # search for exact query and ref matches
-    fulloverlap <-  suppressWarnings(
-        GenomicRanges::findOverlaps(query_exons, ref_exons,
-        type = "equal", select = "first"
-    ))
+    fulloverlap <-  GenomicRanges::findOverlaps(query_exons, ref_exons,
+                                        type = "equal", select = "first")
 
     # prepare dataframe of query to reference pairs
     q2r <- data.frame(
@@ -226,7 +224,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     if (nrow(q2r) < length(query_exons)) {
         rlang::inform("Building database of annotated ATG codons")
         nonexact <- query_exons[!names(query_exons) %in% q2r$transcript_id]
-        subsetRef <- suppressWarnings(IRanges::subsetByOverlaps(ref, nonexact))
+        subsetRef <- IRanges::subsetByOverlaps(ref, nonexact)
 
         # prepare a list of exons trimmed by codon triplets
         codons_gr <- subsetRef %>%
@@ -252,13 +250,13 @@ Try running: %s <- matchChromosomes(%s, %s)",
             unique()
         
         # shortlist trimmed exons which fully overlap query transcripts
-        codons_gr <-  suppressWarnings(
-            IRanges::subsetByOverlaps(codons_gr, nonexact, type = "within"))
+        codons_gr <-  IRanges::subsetByOverlaps(codons_gr, nonexact, 
+                                                type = "within")
         codons_gr <- codons_gr[as.character(GenomeInfoDb::seqnames(codons_gr)) 
                                %in% GenomeInfoDb::seqlevels(fasta)]
 
         # further trim exons to only retain ATG codon
-        codons_seq <-  suppressWarnings(BSgenome::getSeq(fasta, codons_gr))
+        codons_seq <-  BSgenome::getSeq(fasta, codons_gr)
 
         
         startMatch <- Biostrings::vmatchPattern("ATG", codons_seq) %>%
@@ -275,10 +273,10 @@ Try running: %s <- matchChromosomes(%s, %s)",
         # select up-stream most ATG codon for remaining transcripts
         rlang::inform(paste0("Selecting best ATG start codon for remaining ",
         "transcripts and determining open-reading frame"))
-        firstATGoverlap <-  suppressWarnings(GenomicRanges::findOverlaps(nonexact, 
+        firstATGoverlap <-  GenomicRanges::findOverlaps(nonexact, 
                                                        codons_gr, 
                                                        minoverlap = 3, 
-                                                       select = "first"))
+                                                       select = "first")
         
         # Update q2r with selected ATG start
         firstATGq2r <- data.frame(
@@ -323,13 +321,12 @@ Try running: %s <- matchChromosomes(%s, %s)",
                           start = newstart, end = newend, 
                           strand = newstrand) %>%
             GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
-    )
 
     # get exon coordinates and sequence from ATG to end of transcript
-    startToendexons <-  suppressWarnings(GenomicRanges::pintersect(order_query, 
+    startToendexons <-  GenomicRanges::pintersect(order_query, 
                                                  startToend, 
                                                  drop.nohit.ranges = TRUE) %>%
-        sorteach(exonorder))
+        sorteach(exonorder)
     seq <- GenomicFeatures::extractTranscriptSeqs(fasta, startToendexons)
 
     # search for in-frame stop codon and return a df of 
