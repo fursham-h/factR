@@ -70,7 +70,7 @@ subsetNewTranscripts <- function(query, ref,
 
 
     # catch unmatched seqlevels
-    if (suppressWarnings(!has_consistentSeqlevels(query, ref))) {
+    if (!has_consistentSeqlevels(query, ref, verbose = FALSE)) {
         rlang::abort(sprintf(
             "`%s` and `%s` has unmatched seqlevel styles. 
 Try running: %s <- matchChromosomes(%s, %s)",

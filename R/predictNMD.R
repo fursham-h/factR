@@ -136,7 +136,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
     }
 
     # catch unmatched seqlevels
-    if (suppressWarnings(!has_consistentSeqlevels(exons, cds))) {
+    if (!has_consistentSeqlevels(exons, cds, verbose = FALSE)) {
         rlang::abort("exons and cds have inconsistent seqlevels")
     }
 

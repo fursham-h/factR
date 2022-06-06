@@ -76,14 +76,14 @@ buildCDS <- function(query, ref, fasta) {
     }
 
     # catch unmatched seqlevels
-    if (!has_consistentSeqlevels(query, fasta, verbose = F)) {
+    if (!has_consistentSeqlevels(query, fasta, verbose = FALSE)) {
         rlang::abort(sprintf(
             "`%s` and `%s` has unmatched seqlevel styles. 
 Try running: %s <- matchChromosomes(%s, %s)",
             argnames[1], argnames[3], argnames[1], argnames[1], argnames[3]
         ))
     }
-    if (!has_consistentSeqlevels(ref, fasta, verbose = F)) {
+    if (!has_consistentSeqlevels(ref, fasta, verbose = FALSE)) {
         rlang::abort(sprintf(
             "`%s` and `%s` has unmatched seqlevel styles. 
 Try running: %s <- matchChromosomes(%s, %s)",
@@ -320,7 +320,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
             dplyr::select(group, group_name, seqnames = seqnames...3, 
                           start = newstart, end = newend, 
                           strand = newstrand) %>%
-            GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+            GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE))
 
     # get exon coordinates and sequence from ATG to end of transcript
     startToendexons <-  GenomicRanges::pintersect(order_query, 

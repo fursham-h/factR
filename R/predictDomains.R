@@ -73,7 +73,7 @@ predictDomains <- function(x, fasta, ..., plot = FALSE, progress_bar = FALSE) {
     # define global variables
     exonorder <- NULL
 
-    if (suppressWarnings(!has_consistentSeqlevels(cds, fasta))) {
+    if (!has_consistentSeqlevels(cds, fasta, verbose = FALSE)) {
         rlang::abort(sprintf(
             "`%s` and `%s` has unmatched seqlevel styles. 
 Try running: %s <- matchChromosomes(%s, %s)",

@@ -43,7 +43,7 @@
 #' ## Test for seqlevels consistency
 #' has_consistentSeqlevels(gr1, dna)
 #' has_consistentSeqlevels(gr2, dna)
-has_consistentSeqlevels <- function(...) {
+has_consistentSeqlevels <- function(..., verbose = TRUE) {
     dots <- list(...)
     argnames <- as.character(match.call())[-1]
 
@@ -63,15 +63,21 @@ has_consistentSeqlevels <- function(...) {
                                   GenomeInfoDb::seqlevels(dots[[j]]))
             consistent <- c(consistent, test)
             if (!test) {
-                rlang::warn(sprintf(
-                    "Try running: %s <- matchChromosomes(%s, %s)", 
-                    argnames[i], argnames[i], argnames[j]
-                ))
+                if(verbose){
+                    rlang::warn(sprintf(
+                        "Try running: %s <- matchChromosomes(%s, %s)", 
+                        argnames[i], argnames[i], argnames[j]
+                    )) 
+                }
+                
             } else if (testlevels > 0) {
-                rlang::warn(sprintf(
-                    "%s seqlevel(s) in `%s` are not found in `%s`", 
-                    testlevels, argnames[i], argnames[j]
-                ))
+                if(verbose){
+                    rlang::warn(sprintf(
+                        "%s seqlevel(s) in `%s` are not found in `%s`", 
+                        testlevels, argnames[i], argnames[j]
+                    ))
+                }
+                
             }
             break
         }
