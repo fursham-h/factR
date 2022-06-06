@@ -3,10 +3,11 @@ title: "Using factR"
 author: "Fursham Hamid"  
 date: "`r Sys.Date()`"  
 output:  
-  rmdformats::readthedown:  
-    highlight: kate  
-    number_sections: true  
-    toc_depth: 3  
+  rmarkdown::html_document:
+    highlight: kate
+    toc: true
+    toc_depth: 3
+    number_sections: true
 vignette: >  
   %\VignetteIndexEntry{factR}  
   %\VignetteEngine{knitr::rmarkdown}  
@@ -61,8 +62,9 @@ spliced segments.
 ## Installing *factR*  
 To install *factR*, enter the following commands in your R environment:  
 ```{r install.factR, eval = FALSE}  
-install.packages("devtools")  
-devtools::install_github("fursham-h/factR")  
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("factR")
 ```  
   
 ## Materials needed  
@@ -106,7 +108,7 @@ GENCODE or Ensembl. Both possibilities are described in the
 *factR* needs genomic DNA sequence to predict CDSs. Users may obtain genome 
 files using e.g. *BSgenome* or *AnnotationHub* or download them from an 
 external database such as GENCODE or Ensembl. We describe this in more detail 
-in the ["Constructing CDS information"](#constructing-CDS-information) 
+in the ["Constructing CDS information"](#constructing-cds-information) 
 section below.  
   
 # Using *factR*  

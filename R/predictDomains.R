@@ -153,13 +153,20 @@ Try running: %s <- matchChromosomes(%s, %s)",
 
 .getdomains <- function(url, curl.opts, seq, id, length, n) {
     type <- famdesc <- fameval <- begin <- NULL
+    
+    hmm <- ""
+    while(!grepl("data name=\"results\"", hmm)){
+        hmm <- RCurl::postForm(url,
+                               hmmdb = "superfamily", seqdb = NULL,
+                               seq = seq, style = "POST", .opts = curl.opts,
+                               .contentEncodeFun = RCurl::curlPercentEncode,
+                               .checkParams = TRUE
+        )
+        if (grepl("status=\"PEND\"", hmm)) {
+            Sys.sleep(30)
+        }
+    }
 
-    hmm <- RCurl::postForm(url,
-        hmmdb = "superfamily", seqdb = NULL,
-        seq = seq, style = "POST", .opts = curl.opts, 
-        .contentEncodeFun = RCurl::curlPercentEncode,
-        .checkParams = TRUE
-    )
     xml <- XML::xmlParse(hmm)
     domains <- XML::xpathSApply(xml, "///domains", XML::xpathSApply, "@*")
     family <- XML::xpathSApply(xml, "///family", XML::xpathSApply, "@*")
