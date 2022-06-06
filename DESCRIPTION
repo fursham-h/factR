@@ -1,6 +1,6 @@
 Package: factR
 Title: Functional Annotation of Custom Transcriptomes
-Version: 0.99.5
+Version: 0.99.6
 Authors@R: person("Fursham", "Hamid", 
     email = "fursham.h@gmail.com", 
     role = c("aut", "cre"))
@@ -41,7 +41,7 @@ Imports:
 License: file LICENSE
 Encoding: UTF-8
 ByteCompile: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Suggests: 
     AnnotationHub (>= 2.22),
     BSgenome (>= 1.58),

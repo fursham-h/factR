@@ -7,6 +7,7 @@
 #' BSgenome or Biostrings object with seqlevel information.
 #'
 #' @param ... Two or more objects with seqlevels information
+#' @param verbose Whether to print out message
 #'
 #' @export
 #' @author Fursham Hamid

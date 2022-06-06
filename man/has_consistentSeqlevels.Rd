@@ -5,10 +5,12 @@
 \title{Test consistency of chromosome naming styles 
 (aka seqlevels; e.g. "chr1" vs "1") across multiple objects}
 \usage{
-has_consistentSeqlevels(...)
+has_consistentSeqlevels(..., verbose = TRUE)
 }
 \arguments{
 \item{...}{Two or more objects with seqlevels information}
+
+\item{verbose}{Whether to print out message}
 }
 \value{
 Logical value as to whether all objects have consistent 

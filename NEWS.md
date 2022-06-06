@@ -1,3 +1,7 @@
+# factR 0.99.6
+
+* Corrected Roxygen documentation for `has_consistentSeqlevels`
+
 # factR 0.99.5
 
 * Address changes for Bioconductor submission
