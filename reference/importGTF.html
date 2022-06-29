@@ -95,17 +95,20 @@ import GTF file into R as a GenomicRanges object.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">importGTF</span><span class="op">(</span><span class="va">con</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">importGTF</span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>con</dt>
 <dd><p>Path to GTF file</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Imported GenomicRanges object in GTF format</p>
+    
+
+<p>Imported GenomicRanges object in GTF format</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -114,8 +117,8 @@ import GTF file into R as a GenomicRanges object.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sc_merged_sample.gtf.gz"</span>, package <span class="op">=</span> <span class="st">"factR"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">importGTF</span><span class="op">(</span><span class="va">gtf</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sc_merged_sample.gtf.gz"</span>, package <span class="op">=</span> <span class="st">"factR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">importGTF</span><span class="op">(</span><span class="va">gtf</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 8117 ranges and 9 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          seqnames            ranges strand |    source       type     score</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;factor&gt;   &lt;factor&gt; &lt;numeric&gt;</span>
@@ -172,7 +175,7 @@ import GTF file into R as a GenomicRanges object.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

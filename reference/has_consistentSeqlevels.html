@@ -96,19 +96,24 @@ BSgenome or Biostrings object with seqlevel information.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">has_consistentSeqlevels</span><span class="op">(</span><span class="va">...</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">has_consistentSeqlevels</span><span class="op">(</span><span class="va">...</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>...</dt>
 <dd><p>Two or more objects with seqlevels information</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>Whether to print out message</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Logical value as to whether all objects have consistent 
+    
+
+<p>Logical value as to whether all objects have consistent 
 seqlevel styles</p>
     </div>
     <div id="author">
@@ -118,29 +123,29 @@ seqlevel styles</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
-<span class="r-in"><span class="co">## EXAMPLE USING TOY DATASET</span></span>
-<span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges" class="external-link">GenomicRanges</a></span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Create toy GRanges objects</span></span>
-<span class="r-in"><span class="va">gr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html" class="external-link">IRanges</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">101</span><span class="op">)</span>, width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span>, <span class="st">"+"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">gr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1"</span>, <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html" class="external-link">IRanges</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">101</span><span class="op">)</span>, width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span>, <span class="st">"+"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Test for seqlevels consistency</span></span>
-<span class="r-in"><span class="fu">has_consistentSeqlevels</span><span class="op">(</span><span class="va">gr1</span>, <span class="va">gr2</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## ---------------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## EXAMPLE USING TOY DATASET</span></span></span>
+<span class="r-in"><span><span class="co">## ---------------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges" class="external-link">GenomicRanges</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Create toy GRanges objects</span></span></span>
+<span class="r-in"><span><span class="va">gr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html" class="external-link">IRanges</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">101</span><span class="op">)</span>, width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span>, <span class="st">"+"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1"</span>, <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html" class="external-link">IRanges</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">101</span><span class="op">)</span>, width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span>, <span class="st">"+"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Test for seqlevels consistency</span></span></span>
+<span class="r-in"><span><span class="fu">has_consistentSeqlevels</span><span class="op">(</span><span class="va">gr1</span>, <span class="va">gr2</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Try running: gr1 &lt;- matchChromosomes(gr1, gr2)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Input can be a Biostrings object with seqlevels information</span></span>
-<span class="r-in"><span class="va">x0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr2"</span> <span class="op">=</span> <span class="st">"CTCACCAGTAT"</span>, <span class="st">"chr3"</span> <span class="op">=</span> <span class="st">"TGTCAGTCGA"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dna</span> <span class="op">&lt;-</span> <span class="fu">Biostrings</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-class.html" class="external-link">DNAStringSet</a></span><span class="op">(</span><span class="va">x0</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Test for seqlevels consistency</span></span>
-<span class="r-in"><span class="fu">has_consistentSeqlevels</span><span class="op">(</span><span class="va">gr1</span>, <span class="va">dna</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Input can be a Biostrings object with seqlevels information</span></span></span>
+<span class="r-in"><span><span class="va">x0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr2"</span> <span class="op">=</span> <span class="st">"CTCACCAGTAT"</span>, <span class="st">"chr3"</span> <span class="op">=</span> <span class="st">"TGTCAGTCGA"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dna</span> <span class="op">&lt;-</span> <span class="fu">Biostrings</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-class.html" class="external-link">DNAStringSet</a></span><span class="op">(</span><span class="va">x0</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Test for seqlevels consistency</span></span></span>
+<span class="r-in"><span><span class="fu">has_consistentSeqlevels</span><span class="op">(</span><span class="va">gr1</span>, <span class="va">dna</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Try running: gr1 &lt;- matchChromosomes(gr1, dna)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-in"><span class="fu">has_consistentSeqlevels</span><span class="op">(</span><span class="va">gr2</span>, <span class="va">dna</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">has_consistentSeqlevels</span><span class="op">(</span><span class="va">gr2</span>, <span class="va">dna</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>1 seqlevel(s) in `gr2` are not found in `dna`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 </code></pre></div>
@@ -157,7 +162,7 @@ seqlevel styles</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

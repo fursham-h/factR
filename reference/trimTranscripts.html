@@ -89,27 +89,34 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">trimTranscripts</span><span class="op">(</span><span class="va">x</span>, start <span class="op">=</span> <span class="fl">0</span>, end <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">trimTranscripts</span><span class="op">(</span><span class="va">x</span>, start <span class="op">=</span> <span class="fl">0</span>, end <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>GRanges or GRangesList object containing exon coordinates for each transcript</p></dd>
+
+
 <dt>start</dt>
 <dd><p>Number of bases to trim from the start of transcript. Providing a negative 
 value will extend the transcript instead. If `x` is a GRanges object,
 `start` is a single integer. If `x` is a GRangesList, `start` can be a single
 integer or a list of integers of the same length as `x`</p></dd>
+
+
 <dt>end</dt>
 <dd><p>Number of bases to trim from the end of transcript. Providing a negative 
 value will extend the transcript instead. If `x` is a GRanges object,
 `end` is a single integer. If `x` is a GRangesList, `end` can be a single
 integer or a list of integers of the same length as `x`</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Trimmed GenomicRanges object</p>
+    
+
+<p>Trimmed GenomicRanges object</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -118,16 +125,16 @@ integer or a list of integers of the same length as `x`</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges" class="external-link">GenomicRanges</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">gr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span></span>
-<span class="r-in">  seqnames <span class="op">=</span> <span class="st">"chr1"</span>, strand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"+"</span>, <span class="st">"+"</span>, <span class="st">"+"</span><span class="op">)</span>,</span>
-<span class="r-in">  ranges <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html" class="external-link">IRanges</a></span><span class="op">(</span></span>
-<span class="r-in">    start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">500</span>, <span class="fl">1000</span><span class="op">)</span>,</span>
-<span class="r-in">    end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">600</span>, <span class="fl">1100</span><span class="op">)</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">trimTranscripts</span><span class="op">(</span><span class="va">gr1</span>, <span class="fl">20</span>, <span class="fl">80</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges" class="external-link">GenomicRanges</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  seqnames <span class="op">=</span> <span class="st">"chr1"</span>, strand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"+"</span>, <span class="st">"+"</span>, <span class="st">"+"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ranges <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html" class="external-link">IRanges</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">500</span>, <span class="fl">1000</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">600</span>, <span class="fl">1100</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">trimTranscripts</span><span class="op">(</span><span class="va">gr1</span>, <span class="fl">20</span>, <span class="fl">80</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 3 ranges and 0 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;</span>
@@ -136,7 +143,7 @@ integer or a list of integers of the same length as `x`</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1 1000-1020      +</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"><span class="fu">trimTranscripts</span><span class="op">(</span><span class="va">gr1</span>, <span class="fl">110</span>, <span class="fl">150</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">trimTranscripts</span><span class="op">(</span><span class="va">gr1</span>, <span class="fl">110</span>, <span class="fl">150</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 1 range and 0 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;</span>
@@ -157,7 +164,7 @@ integer or a list of integers of the same length as `x`</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

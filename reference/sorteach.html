@@ -89,22 +89,27 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">sorteach</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sorteach</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>GRangesList object</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Comma separated list of unquoted variable names to sort by. Variables are 
 names of metadata columns found in GRangesList object. Use desc() to sort a
 variable in descending order. Input can be `exonorder` to sort each element 
 in exon order</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Sorted GRangesList object</p>
+    
+
+<p>Sorted GRangesList object</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -113,17 +118,17 @@ in exon order</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Load dataset</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">query_exons</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># sort elements in each GRangesList in descending coordinate order</span></span>
-<span class="r-in"><span class="va">query_exons_desc</span> <span class="op">&lt;-</span> <span class="fu">sorteach</span><span class="op">(</span><span class="va">query_exons</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">start</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># sort elements in each GRangesList in its order in transcript</span></span>
-<span class="r-in"><span class="va">query_exons_exonorder</span> <span class="op">&lt;-</span> <span class="fu">sorteach</span><span class="op">(</span><span class="va">query_exons_desc</span>, <span class="va">exonorder</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># test similarity of query_exons and query_exons_exonorder</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">query_exons</span>, <span class="va">query_exons_exonorder</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load dataset</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">query_exons</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># sort elements in each GRangesList in descending coordinate order</span></span></span>
+<span class="r-in"><span><span class="va">query_exons_desc</span> <span class="op">&lt;-</span> <span class="fu">sorteach</span><span class="op">(</span><span class="va">query_exons</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">start</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># sort elements in each GRangesList in its order in transcript</span></span></span>
+<span class="r-in"><span><span class="va">query_exons_exonorder</span> <span class="op">&lt;-</span> <span class="fu">sorteach</span><span class="op">(</span><span class="va">query_exons_desc</span>, <span class="va">exonorder</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># test similarity of query_exons and query_exons_exonorder</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">query_exons</span>, <span class="va">query_exons_exonorder</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 </code></pre></div>
     </div>
@@ -139,7 +144,7 @@ in exon order</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

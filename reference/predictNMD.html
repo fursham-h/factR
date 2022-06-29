@@ -89,7 +89,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">predictNMD</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, cds <span class="op">=</span> <span class="cn">NULL</span>, NMD_threshold <span class="op">=</span> <span class="fl">50</span>, progress_bar <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, cds <span class="op">=</span> <span class="cn">NULL</span>, NMD_threshold <span class="op">=</span> <span class="fl">50</span>, progress_bar <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -101,33 +101,52 @@ format.</p>
 transcripts.If so, `cds` argument have to be provided.</p>
 <p>Can be a GRanges object containing exon features for a transcript. 
 If so, `cds` argument have to be provided.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Logical conditions to pass to dplyr::filter to subset transcripts for 
 analysis. Variables are metadata information found in `x` and multiple 
 conditions can be provided delimited by comma. 
 Example: transcript_id == "transcript1"</p></dd>
+
+
 <dt>cds</dt>
 <dd><p>If `x` is a GRangesList object, `cds` has to be a GRangesList containing 
 CDS features for the list of transcripts in `x`. List names in `x` and 
 `cds` have to match.</p>
 <p>If `x` is a GRanges object, `cds` has to be a GRanges containing CDS 
 features for the transcript in `x`.</p></dd>
+
+
 <dt>NMD_threshold</dt>
 <dd><p>Minimum distance of stop_codon to last exon junction 
 (EJ) which triggers NMD. Default = 50bp</p></dd>
+
+
 <dt>progress_bar</dt>
 <dd><p>Whether to display progress 
 Default = TRUE</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Dataframe with prediction of NMD sensitivity and NMD features:
-is_NMD: logical value in prediciting transcript sensitivity to NMD
-stop_to_lastEJ: Integer value of the number of bases between the first
+    
+
+<p>Dataframe with prediction of NMD sensitivity and NMD features:</p>
+
+
+<p>is_NMD: logical value in prediciting transcript sensitivity to NMD</p>
+
+
+<p>stop_to_lastEJ: Integer value of the number of bases between the first
 base of the stop_codon to the last base of EJ. A positive value indicates 
-that the last EJ is downstream of the stop_codon.
-num_of_down_EJs: Number of EJs downstream of the stop_codon.
-`3_UTR_length`: Length of 3' UTR</p>
+that the last EJ is downstream of the stop_codon.</p>
+
+
+<p>num_of_down_EJs: Number of EJs downstream of the stop_codon.</p>
+
+
+<p>`3_UTR_length`: Length of 3' UTR</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -136,16 +155,16 @@ num_of_down_EJs: Number of EJs downstream of the stop_codon.
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
-<span class="r-in"><span class="co">## EXAMPLE USING SAMPLE DATASET</span></span>
-<span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Load datasets</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">new_query_gtf</span>, <span class="va">query_exons</span>, <span class="va">query_cds</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Using GTF GRanges as input</span></span>
-<span class="r-in"><span class="fu">predictNMD</span><span class="op">(</span><span class="va">new_query_gtf</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ---------------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## EXAMPLE USING SAMPLE DATASET</span></span></span>
+<span class="r-in"><span><span class="co">## ---------------------------------------------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load datasets</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">new_query_gtf</span>, <span class="va">query_exons</span>, <span class="va">query_cds</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Using GTF GRanges as input</span></span></span>
+<span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">new_query_gtf</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting NMD sensitivities for 4 mRNAs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
@@ -154,26 +173,26 @@ num_of_down_EJs: Number of EJs downstream of the stop_codon.
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> transcript2           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>497 FALSE </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> transcript3            364              3            644 TRUE  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> transcript4           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>085 FALSE </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">### Transcripts for analysis can be subsetted using logical conditions</span></span>
-<span class="r-in"><span class="fu">predictNMD</span><span class="op">(</span><span class="va">new_query_gtf</span>, <span class="va">transcript_id</span> <span class="op">==</span> <span class="st">"transcript1"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">### Transcripts for analysis can be subsetted using logical conditions</span></span></span>
+<span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">new_query_gtf</span>, <span class="va">transcript_id</span> <span class="op">==</span> <span class="st">"transcript1"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting NMD sensitivities for 1 mRNAs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE </span>
-<span class="r-in"><span class="fu">predictNMD</span><span class="op">(</span><span class="va">new_query_gtf</span>, </span>
-<span class="r-in"><span class="va">transcript_id</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"transcript1"</span>, <span class="st">"transcript3"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">new_query_gtf</span>, </span></span>
+<span class="r-in"><span><span class="va">transcript_id</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"transcript1"</span>, <span class="st">"transcript3"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting NMD sensitivities for 2 mRNAs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript1           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> transcript3            364              3            644 TRUE  </span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Using exon and CDS GRangesLists as input</span></span>
-<span class="r-in"><span class="fu">predictNMD</span><span class="op">(</span><span class="va">query_exons</span>, cds <span class="op">=</span> <span class="va">query_cds</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Using exon and CDS GRangesLists as input</span></span></span>
+<span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">query_exons</span>, cds <span class="op">=</span> <span class="va">query_cds</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting NMD sensitivities for 4 mRNAs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
@@ -182,29 +201,29 @@ num_of_down_EJs: Number of EJs downstream of the stop_codon.
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> transcript2           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>497 FALSE </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> transcript3            364              3            644 TRUE  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> transcript4           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>085 FALSE </span>
-<span class="r-in"><span class="fu">predictNMD</span><span class="op">(</span><span class="va">query_exons</span>, cds <span class="op">=</span> <span class="va">query_cds</span>, <span class="va">transcript_id</span> <span class="op">==</span> <span class="st">"transcript3"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">query_exons</span>, cds <span class="op">=</span> <span class="va">query_cds</span>, <span class="va">transcript_id</span> <span class="op">==</span> <span class="st">"transcript3"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting NMD sensitivities for 1 mRNAs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript            364              3            644 TRUE  </span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Using exon and CDS GRanges as input</span></span>
-<span class="r-in"><span class="fu">predictNMD</span><span class="op">(</span><span class="va">query_exons</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, cds <span class="op">=</span> <span class="va">query_cds</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Using exon and CDS GRanges as input</span></span></span>
+<span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">query_exons</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, cds <span class="op">=</span> <span class="va">query_cds</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting NMD sensitivities for 1 mRNAs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript            364              3            644 TRUE  </span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
-<span class="r-in"><span class="co">## EXAMPLE USING TRANSCRIPT ANNOTATION</span></span>
-<span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
-<span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ---------------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## EXAMPLE USING TRANSCRIPT ANNOTATION</span></span></span>
+<span class="r-in"><span><span class="co">## ---------------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: BiocFileCache</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: dbplyr</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -212,11 +231,11 @@ num_of_down_EJs: Number of EJs downstream of the stop_codon.
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:rtracklayer’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     hubUrl</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Retrieve GRCm38 trancript annotation</span></span>
-<span class="r-in"><span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Retrieve GRCm38 trancript annotation</span></span></span>
+<span class="r-in"><span><span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> snapshotDate(): 2022-04-21</span>
-<span class="r-in"><span class="va">GRCm38_gtf</span> <span class="op">&lt;-</span> <span class="va">ah</span><span class="op">[[</span><span class="st">"AH60127"</span><span class="op">]</span><span class="op">]</span></span>
+<span class="r-in"><span><span class="va">GRCm38_gtf</span> <span class="op">&lt;-</span> <span class="va">ah</span><span class="op">[[</span><span class="st">"AH60127"</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> downloading 1 resources</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> retrieving 1 resource</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> loading from cache</span>
@@ -231,9 +250,9 @@ num_of_down_EJs: Number of EJs downstream of the stop_codon.
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> replacement repositories:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     CRAN: https://cloud.r-project.org</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Run tool on specific gene family</span></span>
-<span class="r-in"><span class="fu">predictNMD</span><span class="op">(</span><span class="va">GRCm38_gtf</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Ptbp1"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Run tool on specific gene family</span></span></span>
+<span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">GRCm38_gtf</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Ptbp1"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting NMD sensitivities for 9 mRNAs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   transcript         stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
@@ -247,8 +266,8 @@ num_of_down_EJs: Number of EJs downstream of the stop_codon.
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> ENSMUST00000169483            139              1            152 TRUE  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> ENSMUST00000171599            -<span style="color: #BB0000;">63</span>              0              0 FALSE </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> ENSMUST00000172282           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE </span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -263,7 +282,7 @@ num_of_down_EJs: Number of EJs downstream of the stop_codon.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

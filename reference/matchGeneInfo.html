@@ -91,25 +91,34 @@ query GTF object to a reference GTF</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">matchGeneInfo</span><span class="op">(</span><span class="va">query</span>, <span class="va">ref</span>, primary_gene_id <span class="op">=</span> <span class="cn">NULL</span>, secondary_gene_id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">matchGeneInfo</span><span class="op">(</span><span class="va">query</span>, <span class="va">ref</span>, primary_gene_id <span class="op">=</span> <span class="cn">NULL</span>, secondary_gene_id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>query</dt>
 <dd><p>Query GTF imported as GRanges object</p></dd>
+
+
 <dt>ref</dt>
 <dd><p>Reference GTF as GRanges object</p></dd>
+
+
 <dt>primary_gene_id</dt>
 <dd><p>Character name of the primary gene id metadata in query GTF.
 Input to this argument is typically 'gene_id'</p></dd>
+
+
 <dt>secondary_gene_id</dt>
 <dd><p>Character name of the secondary gene id in query file.
 Example of input to this argument is 'ref_gene_id'</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Gene_id-matched query GRanges</p>
+    
+
+<p>Gene_id-matched query GRanges</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -139,14 +148,14 @@ columns</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
-<span class="r-in"><span class="co">## EXAMPLE USING SAMPLE DATASET</span></span>
-<span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
-<span class="r-in"><span class="co"># Load datasets</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">chrom_matched_query_gtf</span>, <span class="va">ref_gtf</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Run matching function</span></span>
-<span class="r-in"><span class="fu">matchGeneInfo</span><span class="op">(</span><span class="va">chrom_matched_query_gtf</span>, <span class="va">ref_gtf</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## ---------------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## EXAMPLE USING SAMPLE DATASET</span></span></span>
+<span class="r-in"><span><span class="co">## ---------------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co"># Load datasets</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">chrom_matched_query_gtf</span>, <span class="va">ref_gtf</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Run matching function</span></span></span>
+<span class="r-in"><span><span class="fu">matchGeneInfo</span><span class="op">(</span><span class="va">chrom_matched_query_gtf</span>, <span class="va">ref_gtf</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Number of mismatched gene_ids found: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ---&gt; Attempting to match gene_ids by finding overlapping coordinates...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ---&gt; 1 gene_id matched</span>
@@ -195,7 +204,7 @@ columns</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

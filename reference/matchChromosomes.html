@@ -95,19 +95,24 @@ to match will be dropped.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">matchChromosomes</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">matchChromosomes</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>GRanges object with seqnames to change</p></dd>
+
+
 <dt>to</dt>
 <dd><p>GRanges object from which seqnames is referenced</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Corrected input GRanges</p>
+    
+
+<p>Corrected input GRanges</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -116,17 +121,17 @@ to match will be dropped.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
-<span class="r-in"><span class="co">## EXAMPLE USING TOY DATASET</span></span>
-<span class="r-in"><span class="co">## ---------------------------------------------------------------------</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges" class="external-link">GenomicRanges</a></span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Create toy GRanges objects</span></span>
-<span class="r-in"><span class="va">gr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html" class="external-link">IRanges</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">101</span><span class="op">)</span>, width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span>, <span class="st">"+"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">gr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1"</span>, <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html" class="external-link">IRanges</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">101</span><span class="op">)</span>, width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span>, <span class="st">"+"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Match Ensembl-style chromosomes from gr1 to UCSC-style gr2</span></span>
-<span class="r-in"><span class="fu">matchChromosomes</span><span class="op">(</span><span class="va">gr1</span>, <span class="va">gr2</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## ---------------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## EXAMPLE USING TOY DATASET</span></span></span>
+<span class="r-in"><span><span class="co">## ---------------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges" class="external-link">GenomicRanges</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Create toy GRanges objects</span></span></span>
+<span class="r-in"><span><span class="va">gr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html" class="external-link">IRanges</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">101</span><span class="op">)</span>, width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span>, <span class="st">"+"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1"</span>, <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/IRanges-constructor.html" class="external-link">IRanges</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">101</span><span class="op">)</span>, width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span>, <span class="st">"+"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Match Ensembl-style chromosomes from gr1 to UCSC-style gr2</span></span></span>
+<span class="r-in"><span><span class="fu">matchChromosomes</span><span class="op">(</span><span class="va">gr1</span>, <span class="va">gr2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 0 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;</span>
@@ -134,14 +139,14 @@ to match will be dropped.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1   101-120      +</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Possible to match chrosomomes from GRanges object to a Biostrings </span></span>
-<span class="r-in"><span class="co">#    object containing seqlevels</span></span>
-<span class="r-in"><span class="va">x0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr2"</span> <span class="op">=</span> <span class="st">"CTCACCAGTAT"</span>, <span class="st">"chr3"</span> <span class="op">=</span> <span class="st">"TGTCAGTCGA"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dna</span> <span class="op">&lt;-</span> <span class="fu">Biostrings</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-class.html" class="external-link">DNAStringSet</a></span><span class="op">(</span><span class="va">x0</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Match gr1 to dna</span></span>
-<span class="r-in"><span class="fu">matchChromosomes</span><span class="op">(</span><span class="va">gr1</span>, <span class="va">dna</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Possible to match chrosomomes from GRanges object to a Biostrings </span></span></span>
+<span class="r-in"><span><span class="co">#    object containing seqlevels</span></span></span>
+<span class="r-in"><span><span class="va">x0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr2"</span> <span class="op">=</span> <span class="st">"CTCACCAGTAT"</span>, <span class="st">"chr3"</span> <span class="op">=</span> <span class="st">"TGTCAGTCGA"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dna</span> <span class="op">&lt;-</span> <span class="fu">Biostrings</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-class.html" class="external-link">DNAStringSet</a></span><span class="op">(</span><span class="va">x0</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Match gr1 to dna</span></span></span>
+<span class="r-in"><span><span class="fu">matchChromosomes</span><span class="op">(</span><span class="va">gr1</span>, <span class="va">dna</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>1 seqlevel(s) in `x` are not found in `to`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 0 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand</span>
@@ -164,7 +169,7 @@ to match will be dropped.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -91,23 +91,30 @@ from those in `ref`</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">subsetNewTranscripts</span><span class="op">(</span><span class="va">query</span>, <span class="va">ref</span>, refine.by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"intron"</span>, <span class="st">"cds"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">subsetNewTranscripts</span><span class="op">(</span><span class="va">query</span>, <span class="va">ref</span>, refine.by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"intron"</span>, <span class="st">"cds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>query</dt>
 <dd><p>GRanges object containing query GTF data.</p></dd>
+
+
 <dt>ref</dt>
 <dd><p>GRanges object containing reference GTF data.</p></dd>
+
+
 <dt>refine.by</dt>
 <dd><p>Whether to refine the selection process by removing query transcripts with
 similar introns or CDS structure to reference. Default input is "none", and 
 can be changed to "intron" or "cds" respectively.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Filtered GRanges GTF object</p>
+    
+
+<p>Filtered GRanges GTF object</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -127,11 +134,11 @@ typing "cds" to the refine.by argument.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Load dataset</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">matched_query_gtf</span>, <span class="va">ref_gtf</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># shortlist new transcripts</span></span>
-<span class="r-in"><span class="fu">subsetNewTranscripts</span><span class="op">(</span><span class="va">matched_query_gtf</span>, <span class="va">ref_gtf</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load dataset</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">matched_query_gtf</span>, <span class="va">ref_gtf</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># shortlist new transcripts</span></span></span>
+<span class="r-in"><span><span class="fu">subsetNewTranscripts</span><span class="op">(</span><span class="va">matched_query_gtf</span>, <span class="va">ref_gtf</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Removing transcripts with exact exon coordinates</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 27 ranges and 6 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        seqnames            ranges strand |       type transcript_id</span>
@@ -176,7 +183,7 @@ typing "cds" to the refine.by argument.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

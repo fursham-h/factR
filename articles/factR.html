@@ -107,7 +107,7 @@
       <h1 data-toc-skip>Using factR</h1>
                         <h4 data-toc-skip class="author">Fursham Hamid</h4>
             
-            <h4 data-toc-skip class="date">2022-06-06</h4>
+            <h4 data-toc-skip class="date">2022-06-29</h4>
       
       
       <div class="hidden name"><code>factR.Rmd</code></div>
@@ -130,9 +130,9 @@
 </h3>
 <p>To install <em>factR</em>, enter the following commands in your R environment:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
-<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"factR"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"factR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="materials-needed">Materials needed<a class="anchor" aria-label="anchor" href="#materials-needed"></a>
@@ -170,14 +170,14 @@ Users may alternatively prepare their own GTF files making sure that these conta
 </h2>
 <p>Load <em>factR</em> to the R environment as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fursham-h.github.io/factR/">factR</a></span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fursham-h.github.io/factR/">factR</a></span><span class="op">)</span>  </span></code></pre></div>
 <div class="section level3">
 <h3 id="importing-and-inspecting-gtf-data">Importing and inspecting GTF data<a class="anchor" aria-label="anchor" href="#importing-and-inspecting-gtf-data"></a>
 </h3>
 <p><em>factR</em> handles transcriptome information in the form of <em>GenomicRanges</em> objects containing genomic interval data and relevant metadata. To create such an object from a GTF file, we use the <code>importGTF</code> function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sc_merged_sample.gtf.gz"</span>, package <span class="op">=</span> <span class="st">"factR"</span><span class="op">)</span>
-<span class="va">custom.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importGTF.html">importGTF</a></span><span class="op">(</span><span class="va">gtf</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sc_merged_sample.gtf.gz"</span>, package <span class="op">=</span> <span class="st">"factR"</span><span class="op">)</span></span>
+<span><span class="va">custom.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importGTF.html">importGTF</a></span><span class="op">(</span><span class="va">gtf</span><span class="op">)</span>  </span></code></pre></div>
 <!-- This should import sc_merged_sample.gtf.gz, and we will use this input in the  -->
 <!-- walk-through below. To try bulk_merged.gtf.gz or lr_merged.gtf.gz, simply  -->
 <!-- change "sc" to "bulk" or "lr" in the selected.data variable. Users may import  -->
@@ -185,56 +185,56 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <!-- function.  -->
 <p>The imported GTF file is stored as a <em>GenomicRanges</em> object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">)</span>  
-<span class="co">#&gt; [1] "GRanges"</span>
-<span class="co">#&gt; attr(,"package")</span>
-<span class="co">#&gt; [1] "GenomicRanges"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; [1] "GRanges"</span></span>
+<span><span class="co">#&gt; attr(,"package")</span></span>
+<span><span class="co">#&gt; [1] "GenomicRanges"</span></span></code></pre></div>
 <p>Contents of the object can be examined using <code>head</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">)</span>  
-<span class="co">#&gt; GRanges object with 6 ranges and 9 metadata columns:</span>
-<span class="co">#&gt;       seqnames          ranges strand |    source       type     score</span>
-<span class="co">#&gt;          &lt;Rle&gt;       &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;factor&gt;   &lt;factor&gt; &lt;numeric&gt;</span>
-<span class="co">#&gt;   [1]    chr15 3180731-3180944      * | StringTie transcript      1000</span>
-<span class="co">#&gt;   [2]    chr15 3180731-3180944      * | StringTie exon            1000</span>
-<span class="co">#&gt;   [3]    chr15 3217391-3219698      - | StringTie transcript      1000</span>
-<span class="co">#&gt;   [4]    chr15 3217391-3219698      - | StringTie exon            1000</span>
-<span class="co">#&gt;   [5]    chr15 3268547-3277274      + | StringTie transcript      1000</span>
-<span class="co">#&gt;   [6]    chr15 3268547-3268768      + | StringTie exon            1000</span>
-<span class="co">#&gt;           phase     gene_id        transcript_id exon_number   gene_name</span>
-<span class="co">#&gt;       &lt;integer&gt; &lt;character&gt;          &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
-<span class="co">#&gt;   [1]      &lt;NA&gt; MSTRG.14523        MSTRG.14523.1        &lt;NA&gt;        &lt;NA&gt;</span>
-<span class="co">#&gt;   [2]      &lt;NA&gt; MSTRG.14523        MSTRG.14523.1           1        &lt;NA&gt;</span>
-<span class="co">#&gt;   [3]      &lt;NA&gt; MSTRG.14524 ENSMUST00000227053.1        &lt;NA&gt;      Gm7962</span>
-<span class="co">#&gt;   [4]      &lt;NA&gt; MSTRG.14524 ENSMUST00000227053.1           1      Gm7962</span>
-<span class="co">#&gt;   [5]      &lt;NA&gt; MSTRG.14525 ENSMUST00000160787.8        &lt;NA&gt;     Selenop</span>
-<span class="co">#&gt;   [6]      &lt;NA&gt; MSTRG.14525 ENSMUST00000160787.8           1     Selenop</span>
-<span class="co">#&gt;                 ref_gene_id</span>
-<span class="co">#&gt;                 &lt;character&gt;</span>
-<span class="co">#&gt;   [1]                  &lt;NA&gt;</span>
-<span class="co">#&gt;   [2]                  &lt;NA&gt;</span>
-<span class="co">#&gt;   [3]  ENSMUSG00000114999.1</span>
-<span class="co">#&gt;   [4]  ENSMUSG00000114999.1</span>
-<span class="co">#&gt;   [5] ENSMUSG00000064373.12</span>
-<span class="co">#&gt;   [6] ENSMUSG00000064373.12</span>
-<span class="co">#&gt;   -------</span>
-<span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; GRanges object with 6 ranges and 9 metadata columns:</span></span>
+<span><span class="co">#&gt;       seqnames          ranges strand |    source       type     score</span></span>
+<span><span class="co">#&gt;          &lt;Rle&gt;       &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;factor&gt;   &lt;factor&gt; &lt;numeric&gt;</span></span>
+<span><span class="co">#&gt;   [1]    chr15 3180731-3180944      * | StringTie transcript      1000</span></span>
+<span><span class="co">#&gt;   [2]    chr15 3180731-3180944      * | StringTie exon            1000</span></span>
+<span><span class="co">#&gt;   [3]    chr15 3217391-3219698      - | StringTie transcript      1000</span></span>
+<span><span class="co">#&gt;   [4]    chr15 3217391-3219698      - | StringTie exon            1000</span></span>
+<span><span class="co">#&gt;   [5]    chr15 3268547-3277274      + | StringTie transcript      1000</span></span>
+<span><span class="co">#&gt;   [6]    chr15 3268547-3268768      + | StringTie exon            1000</span></span>
+<span><span class="co">#&gt;           phase     gene_id        transcript_id exon_number   gene_name</span></span>
+<span><span class="co">#&gt;       &lt;integer&gt; &lt;character&gt;          &lt;character&gt; &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt;   [1]      &lt;NA&gt; MSTRG.14523        MSTRG.14523.1        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   [2]      &lt;NA&gt; MSTRG.14523        MSTRG.14523.1           1        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   [3]      &lt;NA&gt; MSTRG.14524 ENSMUST00000227053.1        &lt;NA&gt;      Gm7962</span></span>
+<span><span class="co">#&gt;   [4]      &lt;NA&gt; MSTRG.14524 ENSMUST00000227053.1           1      Gm7962</span></span>
+<span><span class="co">#&gt;   [5]      &lt;NA&gt; MSTRG.14525 ENSMUST00000160787.8        &lt;NA&gt;     Selenop</span></span>
+<span><span class="co">#&gt;   [6]      &lt;NA&gt; MSTRG.14525 ENSMUST00000160787.8           1     Selenop</span></span>
+<span><span class="co">#&gt;                 ref_gene_id</span></span>
+<span><span class="co">#&gt;                 &lt;character&gt;</span></span>
+<span><span class="co">#&gt;   [1]                  &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   [2]                  &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   [3]  ENSMUSG00000114999.1</span></span>
+<span><span class="co">#&gt;   [4]  ENSMUSG00000114999.1</span></span>
+<span><span class="co">#&gt;   [5] ENSMUSG00000064373.12</span></span>
+<span><span class="co">#&gt;   [6] ENSMUSG00000064373.12</span></span>
+<span><span class="co">#&gt;   -------</span></span>
+<span><span class="co">#&gt;   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></span></code></pre></div>
 <p>In addition to genomic coordinates (seqnames and ranges), a typical GTF file contains metadata describing the feature type (e.g. transcript or exon), transcript IDs and some information on their parental genes.</p>
 <p>Use the following command to calculate the total number of transcripts in the input transcriptome:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">$</span><span class="va">transcript_id</span><span class="op">)</span><span class="op">)</span>  
-<span class="co">#&gt; [1] 1202</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">$</span><span class="va">transcript_id</span><span class="op">)</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; [1] 1202</span></span></code></pre></div>
 <p>Note that none of the transcripts in the custom.gtf object contain CDS information:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">[</span><span class="va">custom.gtf</span><span class="op">$</span><span class="va">type</span><span class="op">==</span><span class="st">"CDS"</span><span class="op">]</span><span class="op">$</span><span class="va">transcript_id</span><span class="op">)</span><span class="op">)</span>  
-<span class="co">#&gt; [1] 0</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">custom.gtf</span><span class="op">[</span><span class="va">custom.gtf</span><span class="op">$</span><span class="va">type</span><span class="op">==</span><span class="st">"CDS"</span><span class="op">]</span><span class="op">$</span><span class="va">transcript_id</span><span class="op">)</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="plotting-transcript-structures">Plotting transcript structures<a class="anchor" aria-label="anchor" href="#plotting-transcript-structures"></a>
 </h3>
 <p>Users may visualize specific sets of transcripts using <code>viewTranscripts</code>. For example, the following will plot transcripts from the <em>Zfr</em> gene encoding a conserved zinc finger-containing RNA-binding protein with known neuronal functions :</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom.gtf</span>, <span class="st">"Zfr"</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom.gtf</span>, <span class="st">"Zfr"</span><span class="op">)</span>  </span></code></pre></div>
 <p><img src="factR_files/figure-html/plottranscripts-1.png" width="700"></p>
 <p>StringTie2, a popular transcript assembler used to generate our custom GTF, typically assigns arbitrary names to newly identified transcripts (e.g. “MSTRG.x.y”) and uses the same prefix for their gene IDs (e.g. “MSTRG.x”). Incidentally, this is why the output above contains 10 previously known <em>Zfr</em> transcripts but lacks any novel entries.</p>
 </div>
@@ -246,73 +246,49 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <li>Using <em>AnnotationHub</em> package</li>
 </ol>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># query database for mouse gencode basic annotation  </span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span>  
-<span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>  
-<span class="co">#&gt; snapshotDate(): 2022-04-21</span>
-<span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Mus musculus'</span>, <span class="st">'gencode'</span>, <span class="st">'gff'</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; AnnotationHub with 9 records</span>
-<span class="co">#&gt; # snapshotDate(): 2022-04-21</span>
-<span class="co">#&gt; # $dataprovider: Gencode</span>
-<span class="co">#&gt; # $species: Mus musculus</span>
-<span class="co">#&gt; # $rdataclass: GRanges</span>
-<span class="co">#&gt; # additional mcols(): taxonomyid, genome, description,</span>
-<span class="co">#&gt; #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,</span>
-<span class="co">#&gt; #   rdatapath, sourceurl, sourcetype </span>
-<span class="co">#&gt; # retrieve records with, e.g., 'object[["AH49545"]]' </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;             title                                                    </span>
-<span class="co">#&gt;   AH49545 | gencode.vM6.2wayconspseudos.gff3.gz                      </span>
-<span class="co">#&gt;   AH49546 | gencode.vM6.annotation.gff3.gz                           </span>
-<span class="co">#&gt;   AH49547 | gencode.vM6.basic.annotation.gff3.gz                     </span>
-<span class="co">#&gt;   AH49548 | gencode.vM6.chr_patch_hapl_scaff.annotation.gff3.gz      </span>
-<span class="co">#&gt;   AH49549 | gencode.vM6.chr_patch_hapl_scaff.basic.annotation.gff3.gz</span>
-<span class="co">#&gt;   AH49550 | gencode.vM6.long_noncoding_RNAs.gff3.gz                  </span>
-<span class="co">#&gt;   AH49551 | gencode.vM6.polyAs.gff3.gz                               </span>
-<span class="co">#&gt;   AH49552 | gencode.vM6.primary_assembly.annotation.gff3.gz          </span>
-<span class="co">#&gt;   AH49553 | gencode.vM6.tRNAs.gff3.gz</span>
-  
-<span class="co"># Download full annotation  </span>
-<span class="va">ref.gtf</span> <span class="op">&lt;-</span> <span class="va">ah</span><span class="op">[[</span><span class="st">'AH49546'</span><span class="op">]</span><span class="op">]</span>  
-<span class="co">#&gt; downloading 1 resources</span>
-<span class="co">#&gt; retrieving 1 resource</span>
-<span class="co">#&gt; loading from cache</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># query database for mouse gencode basic annotation  </span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span>  </span>
+<span><span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>  </span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Mus musculus'</span>, <span class="st">'gencode'</span>, <span class="st">'gff'</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span><span class="co"># Download full annotation  </span></span>
+<span><span class="va">ref.gtf</span> <span class="op">&lt;-</span> <span class="va">ah</span><span class="op">[[</span><span class="st">'AH49546'</span><span class="op">]</span><span class="op">]</span>  </span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Downloading from a GENCODE database (ref.gtf generated from this method will be used for the remaining of the workflow)</li>
 </ol>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz"</span>,  
-              destfile <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-<span class="va">ref.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importGTF.html">importGTF</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span> </code></pre></div>
+<code class="sourceCode R"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz"</span>,  </span>
+<span>              destfile <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
+<span><span class="va">ref.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importGTF.html">importGTF</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span> </span></code></pre></div>
 <p>When choosing a reference, users should consider using one with the same chromosome naming style (e.g. “chr1” or “1”). Alternatively, the styles can be matched using the <code>matchChromosomes</code> function (see <code><a href="../reference/matchChromosomes.html">help(matchChromosomes)</a></code> for more detail).</p>
 <p>Once the ref.gtf object is ready, novel transcripts in custom.gtf can be assigned to “official” gene IDs, whenever possible, using <code>matchGeneInfo</code>. By default, this function matches the query (custom.gtf) to the reference (ref.gtf) by finding overlapping coordinates:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># matching gene metadata  </span>
-<span class="va">custom_matched_1.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchGeneInfo.html">matchGeneInfo</a></span><span class="op">(</span><span class="va">custom.gtf</span>, <span class="va">ref.gtf</span><span class="op">)</span>  
-<span class="co">#&gt; Number of mismatched gene_ids found: 500</span>
-<span class="co">#&gt; ---&gt; Attempting to match gene_ids by finding overlapping coordinates...</span>
-<span class="co">#&gt; ---&gt; 386 gene_id matched</span>
-<span class="co">#&gt; Total gene_ids corrected: 386</span>
-<span class="co">#&gt; Remaining number of mismatched gene_ids: 114</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># matching gene metadata  </span></span>
+<span><span class="va">custom_matched_1.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchGeneInfo.html">matchGeneInfo</a></span><span class="op">(</span><span class="va">custom.gtf</span>, <span class="va">ref.gtf</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; Number of mismatched gene_ids found: 500</span></span>
+<span><span class="co">#&gt; ---&gt; Attempting to match gene_ids by finding overlapping coordinates...</span></span>
+<span><span class="co">#&gt; ---&gt; 386 gene_id matched</span></span>
+<span><span class="co">#&gt; Total gene_ids corrected: 386</span></span>
+<span><span class="co">#&gt; Remaining number of mismatched gene_ids: 114</span></span></code></pre></div>
 <p>To tune the performance of <code>matchGeneInfo</code>, we provide additional arguments specifying the name of columns containing “primary” and potentially “secondary” gene IDs from the query (custom.gtf). For further information, see <code><a href="../reference/matchGeneInfo.html">help(matchGeneInfo)</a></code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># matching gene metadata  </span>
-<span class="va">custom_matched_2.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchGeneInfo.html">matchGeneInfo</a></span><span class="op">(</span><span class="va">custom.gtf</span>, <span class="va">ref.gtf</span>,   
-                            primary_gene_id <span class="op">=</span> <span class="st">"gene_id"</span>,   
-                            secondary_gene_id <span class="op">=</span> <span class="st">"ref_gene_id"</span><span class="op">)</span>  
-<span class="co">#&gt; Number of mismatched gene_ids found: 500</span>
-<span class="co">#&gt; -&gt; Attempting to correct gene ids by replacing gene_id with ref_gene_id...</span>
-<span class="co">#&gt; -&gt; 212 gene_ids matched</span>
-<span class="co">#&gt; --&gt; Attempting to match ensembl gene_ids...</span>
-<span class="co">#&gt; --&gt; All ensembl gene ids have been matched</span>
-<span class="co">#&gt; ---&gt; Attempting to match gene_ids by finding overlapping coordinates...</span>
-<span class="co">#&gt; ---&gt; 174 gene_id matched</span>
-<span class="co">#&gt; Total gene_ids corrected: 386</span>
-<span class="co">#&gt; Remaining number of mismatched gene_ids: 114</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># matching gene metadata  </span></span>
+<span><span class="va">custom_matched_2.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchGeneInfo.html">matchGeneInfo</a></span><span class="op">(</span><span class="va">custom.gtf</span>, <span class="va">ref.gtf</span>,   </span>
+<span>                            primary_gene_id <span class="op">=</span> <span class="st">"gene_id"</span>,   </span>
+<span>                            secondary_gene_id <span class="op">=</span> <span class="st">"ref_gene_id"</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; Number of mismatched gene_ids found: 500</span></span>
+<span><span class="co">#&gt; -&gt; Attempting to correct gene ids by replacing gene_id with ref_gene_id...</span></span>
+<span><span class="co">#&gt; -&gt; 212 gene_ids matched</span></span>
+<span><span class="co">#&gt; --&gt; Attempting to match ensembl gene_ids...</span></span>
+<span><span class="co">#&gt; --&gt; All ensembl gene ids have been matched</span></span>
+<span><span class="co">#&gt; ---&gt; Attempting to match gene_ids by finding overlapping coordinates...</span></span>
+<span><span class="co">#&gt; ---&gt; 174 gene_id matched</span></span>
+<span><span class="co">#&gt; Total gene_ids corrected: 386</span></span>
+<span><span class="co">#&gt; Remaining number of mismatched gene_ids: 114</span></span></code></pre></div>
 <p>Note that custom.gtf updated by <code>matchGeneInfo</code> now contains 10 known and 7 newly <em>Zfr</em> assembled transcripts:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom_matched_2.gtf</span>, <span class="st">"Zfr"</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom_matched_2.gtf</span>, <span class="st">"Zfr"</span><span class="op">)</span>  </span></code></pre></div>
 <p><img src="factR_files/figure-html/plottranscripts2-1.png" width="700"></p>
 </div>
 <div class="section level3">
@@ -320,18 +296,18 @@ Users may alternatively prepare their own GTF files making sure that these conta
 </h3>
 <p>As seen in the above example, custom transcriptomes typically combine both new and previously annotated transcripts. To select only newly predicted transcripts, run the following:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">custom_new.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subsetNewTranscripts.html">subsetNewTranscripts</a></span><span class="op">(</span><span class="va">custom_matched_2.gtf</span>, <span class="va">ref.gtf</span><span class="op">)</span>  
-<span class="co">#&gt; Removing transcripts with exact exon coordinates</span>
-
-<span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom_new.gtf</span>,<span class="st">"Zfr"</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="va">custom_new.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subsetNewTranscripts.html">subsetNewTranscripts</a></span><span class="op">(</span><span class="va">custom_matched_2.gtf</span>, <span class="va">ref.gtf</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; Removing transcripts with exact exon coordinates</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom_new.gtf</span>,<span class="st">"Zfr"</span><span class="op">)</span>  </span></code></pre></div>
 <p><img src="factR_files/figure-html/subsettx-1.png" width="700"></p>
 <p>This will subset custom.gtf transcripts with distinct exonic coordinates compared to ref.gtf and will store these transcripts in the custom_new.gtf object. Some custom-built transcripts may differ from their reference counterparts by having different start or/and end coordinates, with otherwise similar exon-intron structure. To shortlist novel transcripts with distinct intronic coordinates only, simply set the “refine.by” argument to “intron”:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">custom_new.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subsetNewTranscripts.html">subsetNewTranscripts</a></span><span class="op">(</span><span class="va">custom_matched_2.gtf</span>, <span class="va">ref.gtf</span>, refine.by <span class="op">=</span> <span class="st">"intron"</span><span class="op">)</span>  
-<span class="co">#&gt; Removing transcripts with exact exon coordinates</span>
-<span class="co">#&gt; Removing transcripts with exact intron coordinates</span>
-
-<span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom_new.gtf</span>, <span class="st">"Zfr"</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="va">custom_new.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subsetNewTranscripts.html">subsetNewTranscripts</a></span><span class="op">(</span><span class="va">custom_matched_2.gtf</span>, <span class="va">ref.gtf</span>, refine.by <span class="op">=</span> <span class="st">"intron"</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; Removing transcripts with exact exon coordinates</span></span>
+<span><span class="co">#&gt; Removing transcripts with exact intron coordinates</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom_new.gtf</span>, <span class="st">"Zfr"</span><span class="op">)</span>  </span></code></pre></div>
 <p><img src="factR_files/figure-html/subsettx2-1.png" width="700"></p>
 <p>We will use the custom_new.gtf object in the rest of the workflow.</p>
 </div>
@@ -344,74 +320,74 @@ Users may alternatively prepare their own GTF files making sure that these conta
 </li>
 </ol>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>  
-    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>  
-  
-<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"BSgenome.Mmusculus.UCSC.mm10"</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>  </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>  </span>
+<span>  </span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"BSgenome.Mmusculus.UCSC.mm10"</span><span class="op">)</span>  </span></code></pre></div>
 <p>and loaded into R environment:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">BSgenome.Mmusculus.UCSC.mm10</span><span class="op">)</span>
-<span class="va">Mmusculus</span> <span class="op">&lt;-</span> <span class="va">BSgenome.Mmusculus.UCSC.mm10</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">BSgenome.Mmusculus.UCSC.mm10</span><span class="op">)</span></span>
+<span><span class="va">Mmusculus</span> <span class="op">&lt;-</span> <span class="va">BSgenome.Mmusculus.UCSC.mm10</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Using <em>AnnotationHub</em>
 </li>
 </ol>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span>   
-<span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>  
-<span class="co">#&gt; snapshotDate(): 2022-04-21</span>
-<span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mm10"</span>,<span class="st">"2bit"</span><span class="op">)</span><span class="op">)</span>   
-<span class="co">#&gt; AnnotationHub with 1 record</span>
-<span class="co">#&gt; # snapshotDate(): 2022-04-21</span>
-<span class="co">#&gt; # names(): AH14005</span>
-<span class="co">#&gt; # $dataprovider: UCSC</span>
-<span class="co">#&gt; # $species: Mus musculus</span>
-<span class="co">#&gt; # $rdataclass: TwoBitFile</span>
-<span class="co">#&gt; # $rdatadateadded: 2014-12-15</span>
-<span class="co">#&gt; # $title: mm10.2bit</span>
-<span class="co">#&gt; # $description: UCSC 2 bit file for mm10 </span>
-<span class="co">#&gt; # $taxonomyid: 10090</span>
-<span class="co">#&gt; # $genome: mm10</span>
-<span class="co">#&gt; # $sourcetype: TwoBit</span>
-<span class="co">#&gt; # $sourceurl: http://hgdownload.cse.ucsc.edu/goldenpath/mm10/bigZips/mm10.2bit</span>
-<span class="co">#&gt; # $sourcesize: NA</span>
-<span class="co">#&gt; # $tags: c("2bit", "UCSC", "genome") </span>
-<span class="co">#&gt; # retrieve record with 'object[["AH14005"]]'</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span>   </span>
+<span><span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; snapshotDate(): 2022-04-21</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mm10"</span>,<span class="st">"2bit"</span><span class="op">)</span><span class="op">)</span>   </span>
+<span><span class="co">#&gt; AnnotationHub with 1 record</span></span>
+<span><span class="co">#&gt; # snapshotDate(): 2022-04-21</span></span>
+<span><span class="co">#&gt; # names(): AH14005</span></span>
+<span><span class="co">#&gt; # $dataprovider: UCSC</span></span>
+<span><span class="co">#&gt; # $species: Mus musculus</span></span>
+<span><span class="co">#&gt; # $rdataclass: TwoBitFile</span></span>
+<span><span class="co">#&gt; # $rdatadateadded: 2014-12-15</span></span>
+<span><span class="co">#&gt; # $title: mm10.2bit</span></span>
+<span><span class="co">#&gt; # $description: UCSC 2 bit file for mm10 </span></span>
+<span><span class="co">#&gt; # $taxonomyid: 10090</span></span>
+<span><span class="co">#&gt; # $genome: mm10</span></span>
+<span><span class="co">#&gt; # $sourcetype: TwoBit</span></span>
+<span><span class="co">#&gt; # $sourceurl: http://hgdownload.cse.ucsc.edu/goldenpath/mm10/bigZips/mm10.2bit</span></span>
+<span><span class="co">#&gt; # $sourcesize: NA</span></span>
+<span><span class="co">#&gt; # $tags: c("2bit", "UCSC", "genome") </span></span>
+<span><span class="co">#&gt; # retrieve record with 'object[["AH14005"]]'</span></span></code></pre></div>
 <!-- Code below not evaluated as it serves as an alternative method of retrieving genome data -->
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Retrieve mouse genome</span>
-<span class="va">Mmusculus</span> <span class="op">&lt;-</span> <span class="va">ah</span><span class="op">[[</span><span class="st">'AH14005'</span><span class="op">]</span><span class="op">]</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Retrieve mouse genome</span></span>
+<span><span class="va">Mmusculus</span> <span class="op">&lt;-</span> <span class="va">ah</span><span class="op">[[</span><span class="st">'AH14005'</span><span class="op">]</span><span class="op">]</span>  </span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Downloading from a database (e.g. GENCODE)<br><!-- Code below not evaluated as it serves as an alternative method of retrieving genome data -->
 </li>
 </ol>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/GRCm38.primary_assembly.genome.fa.gz"</span>,  
-              <span class="va">tmp</span><span class="op">)</span>  
-<span class="va">Mmusculus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importFASTA.html">importFASTA</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"/GRCm38.primary_assembly.genome.fa.gz"</span><span class="op">)</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="st">"ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/GRCm38.primary_assembly.genome.fa.gz"</span>,  </span>
+<span>              <span class="va">tmp</span><span class="op">)</span>  </span>
+<span><span class="va">Mmusculus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importFASTA.html">importFASTA</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"/GRCm38.primary_assembly.genome.fa.gz"</span><span class="op">)</span><span class="op">)</span>  </span></code></pre></div>
 <p>Once the genome sequence object is ready, <em>factR</em> can predict CDSs using its buildCDS() function and reference transcriptome data as a guide. buildCDS() first generates a database of previously annotated ATGs and uses this information to search for a potential translation start sites in query transcripts. buildCDS() then deduces the CDS and appends its coordinates to the custom transcriptome object. Let’s run this function for our novel transcripts:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">custom_new_CDS.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/buildCDS.html">buildCDS</a></span><span class="op">(</span><span class="va">custom_new.gtf</span>, <span class="va">ref.gtf</span>, <span class="va">Mmusculus</span><span class="op">)</span>  
-<span class="co">#&gt; Searching for reference mRNAs in query</span>
-<span class="co">#&gt; No reference mRNAs found</span>
-<span class="co">#&gt; Building database of annotated ATG codons</span>
-<span class="co">#&gt; Selecting best ATG start codon for remaining transcripts and determining open-reading frame</span>
-<span class="co">#&gt; 114 new CDSs constructed</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Summary: Out of 380 transcripts in `custom_new.gtf`, </span>
-<span class="co">#&gt;             114 transcript CDSs were built</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">custom_new_CDS.gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/buildCDS.html">buildCDS</a></span><span class="op">(</span><span class="va">custom_new.gtf</span>, <span class="va">ref.gtf</span>, <span class="va">Mmusculus</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; Searching for reference mRNAs in query</span></span>
+<span><span class="co">#&gt; No reference mRNAs found</span></span>
+<span><span class="co">#&gt; Building database of annotated ATG codons</span></span>
+<span><span class="co">#&gt; Selecting best ATG start codon for remaining transcripts and determining open-reading frame</span></span>
+<span><span class="co">#&gt; 114 new CDSs constructed</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Summary: Out of 380 transcripts in `custom_new.gtf`, </span></span>
+<span><span class="co">#&gt;             114 transcript CDSs were built</span></span></code></pre></div>
 <p>Note that the novel <em>Zfr</em> transcripts have been updated with information about likely CDSs (dark blue) and untranslated regions (light blue) :</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="st">"Zfr"</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="st">"Zfr"</span><span class="op">)</span>  </span></code></pre></div>
 <p><img src="factR_files/figure-html/viewafterCDS-1.png" width="700"></p>
 <p>We can display exonic regions and CDSs more clearly (at the expense of loosing their bona fide genomic coordinates) by setting rescale_intron argument to TRUE.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="st">"Zfr"</span>, rescale_introns <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="st">"Zfr"</span>, rescale_introns <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </span></code></pre></div>
 <p><img src="factR_files/figure-html/viewafterCDSscale-1.png" width="700"></p>
 <p>For comparison, here is the CDS situation in the reference Zfr transcripts:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">ref.gtf</span>, <span class="st">"Zfr"</span>, rescale_introns <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/viewTranscripts.html">viewTranscripts</a></span><span class="op">(</span><span class="va">ref.gtf</span>, <span class="st">"Zfr"</span>, rescale_introns <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </span></code></pre></div>
 <p><img src="factR_files/figure-html/viewrefCDS-1.png" width="700"></p>
 </div>
 <div class="section level3">
@@ -419,71 +395,71 @@ Users may alternatively prepare their own GTF files making sure that these conta
 </h3>
 <p>To explore possible susceptibility of newly identified mRNA isoforms to NMD, we use the <code>predictNMD</code> function:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">NMDprediction.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictNMD.html">predictNMD</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span><span class="op">)</span>  
-<span class="co">#&gt; Predicting NMD sensitivities for 114 mRNAs</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">NMDprediction.out</span><span class="op">)</span>  
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span>
-<span class="co">#&gt;   transcript           stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ENSMUST00000100790.3            222              3           <span style="text-decoration: underline;">2</span>895 TRUE  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ENSMUST00000228827.1             <span style="color: #BB0000;">NA</span>              0           <span style="text-decoration: underline;">1</span>672 FALSE </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> MSTRG.14527.7                  -<span style="color: #BB0000;">131</span>              0           <span style="text-decoration: underline;">2</span>244 FALSE </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> MSTRG.14531.1                  <span style="text-decoration: underline;">1</span>937              9           <span style="text-decoration: underline;">4</span>141 TRUE  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> MSTRG.14531.5                   872              3           <span style="text-decoration: underline;">5</span>317 TRUE  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> MSTRG.14533.2                  <span style="text-decoration: underline;">1</span>073              1           <span style="text-decoration: underline;">2</span>541 TRUE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">NMDprediction.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictNMD.html">predictNMD</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; Predicting NMD sensitivities for 114 mRNAs</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">NMDprediction.out</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span></span>
+<span><span class="co">#&gt;   transcript           stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ENSMUST00000100790.3            222              3           <span style="text-decoration: underline;">2</span>895 TRUE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ENSMUST00000228827.1             <span style="color: #BB0000;">NA</span>              0           <span style="text-decoration: underline;">1</span>672 FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> MSTRG.14527.7                  -<span style="color: #BB0000;">131</span>              0           <span style="text-decoration: underline;">2</span>244 FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> MSTRG.14531.1                  <span style="text-decoration: underline;">1</span>937              9           <span style="text-decoration: underline;">4</span>141 TRUE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> MSTRG.14531.5                   872              3           <span style="text-decoration: underline;">5</span>317 TRUE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> MSTRG.14533.2                  <span style="text-decoration: underline;">1</span>073              1           <span style="text-decoration: underline;">2</span>541 TRUE</span></span></code></pre></div>
 <p><code>predictNMD</code> outputs a data frame containing information on features that may promote NMD and predicts NMD sensitivity for each CDS-containing transcript based on the distance between the stop codon and the last exon-exon junction.</p>
 <p>To identify putative NMD targets for specific genes (e.g. <em>Zfr</em>), run the following:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">NMDprediction.Zfr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictNMD.html">predictNMD</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span><span class="op">)</span> 
-<span class="co">#&gt; Predicting NMD sensitivities for 7 mRNAs</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">NMDprediction.Zfr</span><span class="op">)</span>  
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span>
-<span class="co">#&gt;   transcript     stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> MSTRG.14649.1            <span style="text-decoration: underline;">3</span>857             11           <span style="text-decoration: underline;">8</span>774 TRUE  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> MSTRG.14649.10           -<span style="color: #BB0000;">177</span>              0           <span style="text-decoration: underline;">4</span>740 FALSE </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> MSTRG.14649.11             41              1           <span style="text-decoration: underline;">4</span>958 FALSE </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> MSTRG.14649.12           -<span style="color: #BB0000;">300</span>              0           <span style="text-decoration: underline;">2</span>242 FALSE </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> MSTRG.14649.3            <span style="text-decoration: underline;">3</span>857             11           <span style="text-decoration: underline;">8</span>774 TRUE  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> MSTRG.14649.4            -<span style="color: #BB0000;">300</span>              0           <span style="text-decoration: underline;">2</span>242 FALSE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">NMDprediction.Zfr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictNMD.html">predictNMD</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; Predicting NMD sensitivities for 7 mRNAs</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">NMDprediction.Zfr</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span></span>
+<span><span class="co">#&gt;   transcript     stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> MSTRG.14649.1            <span style="text-decoration: underline;">3</span>857             11           <span style="text-decoration: underline;">8</span>774 TRUE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> MSTRG.14649.10           -<span style="color: #BB0000;">177</span>              0           <span style="text-decoration: underline;">4</span>740 FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> MSTRG.14649.11             41              1           <span style="text-decoration: underline;">4</span>958 FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> MSTRG.14649.12           -<span style="color: #BB0000;">300</span>              0           <span style="text-decoration: underline;">2</span>242 FALSE </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> MSTRG.14649.3            <span style="text-decoration: underline;">3</span>857             11           <span style="text-decoration: underline;">8</span>774 TRUE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> MSTRG.14649.4            -<span style="color: #BB0000;">300</span>              0           <span style="text-decoration: underline;">2</span>242 FALSE</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="predicting-protein-domains">Predicting protein domains<a class="anchor" aria-label="anchor" href="#predicting-protein-domains"></a>
 </h3>
 <p><em>factR</em> can also inspect domain structure of protein products encoded by newly identified mRNA isoforms using its <code><a href="../reference/predictDomains.html">predictDomains()</a></code> function. This requires connection to the online PFAM database and may require a substantial amount of time and stable internet connection to query multiple transcripts simultaneously. To quickly explore functionality of the <code><a href="../reference/predictDomains.html">predictDomains()</a></code> tool, users may prefer to begin with a relatively small subset of transcripts. For example, the following will predict domain structure for all transcripts of the Zfr gene:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  
-<span class="co">#&gt; Checking CDSs and translating protein sequences</span>
-<span class="co">#&gt; Predicting domain families for 7 proteins</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span>
-<span class="co">#&gt;   transcript    description                  eval     begin   end</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> MSTRG.14649.1 beta-beta-alpha zinc fingers 1.54e-20   303   364</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> MSTRG.14649.1 beta-beta-alpha zinc fingers 1.54e-20   371   414</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> MSTRG.14649.3 beta-beta-alpha zinc fingers 1.54e-20   303   350</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> MSTRG.14649.4 beta-beta-alpha zinc fingers 1.54e-20   311   358</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> MSTRG.14649.9 beta-beta-alpha zinc fingers 1.54e-20   289   350</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> MSTRG.14649.9 beta-beta-alpha zinc fingers 1.54e-20   357   400</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; Checking CDSs and translating protein sequences</span></span>
+<span><span class="co">#&gt; Predicting domain families for 7 proteins</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span></span>
+<span><span class="co">#&gt;   transcript    description                  eval     begin   end</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> MSTRG.14649.1 beta-beta-alpha zinc fingers 1.54e-20   303   364</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> MSTRG.14649.1 beta-beta-alpha zinc fingers 1.54e-20   371   414</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> MSTRG.14649.3 beta-beta-alpha zinc fingers 1.54e-20   303   350</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> MSTRG.14649.4 beta-beta-alpha zinc fingers 1.54e-20   311   358</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> MSTRG.14649.9 beta-beta-alpha zinc fingers 1.54e-20   289   350</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> MSTRG.14649.9 beta-beta-alpha zinc fingers 1.54e-20   357   400</span></span></code></pre></div>
 <p>The domain architectures for the set of query proteins can be additionally plotted by switching the argument “plot” to TRUE:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.Zfr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span>, plot <span class="op">=</span> <span class="cn">TRUE</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="va">domains.Zfr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Zfr"</span>, plot <span class="op">=</span> <span class="cn">TRUE</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </span></code></pre></div>
 <p>If you want to predict domains for all new transcripts and do not mind waiting for some time depending on the connection speed and the PFAM server load, run the following:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">domains.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="va">domains.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictDomains.html">predictDomains</a></span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="va">Mmusculus</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="export-output-objects">Export output objects<a class="anchor" aria-label="anchor" href="#export-output-objects"></a>
 </h3>
 <p>Annotated <em>custom_new_CDS.gtf</em> object can be exported to a GTF file as follows:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span> 
-<span class="fu">export</span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="st">"Custom_new.gtf"</span>, format <span class="op">=</span> <span class="st">"GTF"</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span> </span>
+<span><span class="fu">export</span><span class="op">(</span><span class="va">custom_new_CDS.gtf</span>, <span class="st">"Custom_new.gtf"</span>, format <span class="op">=</span> <span class="st">"GTF"</span><span class="op">)</span>  </span></code></pre></div>
 <p>Finally, to export <em>NMDprediction.out</em> and <em>domains.out</em> data frames as tab-delimited text files, run the following:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span><span class="va">NMDprediction.out</span>, <span class="st">"Custom_new_NMD.txt"</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, quote <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  
-<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span><span class="va">domains.out</span>, <span class="st">"Custom_new_domains.txt"</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, quote <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span><span class="va">NMDprediction.out</span>, <span class="st">"Custom_new_NMD.txt"</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, quote <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span><span class="va">domains.out</span>, <span class="st">"Custom_new_domains.txt"</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, quote <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -496,89 +472,89 @@ Users may alternatively prepare their own GTF files making sure that these conta
 </h2>
 <p>This workflow was conducted on:</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>  
-<span class="co">#&gt; R version 4.2.0 (2022-04-22)</span>
-<span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span>
-<span class="co">#&gt; Running under: macOS Big Sur/Monterey 10.16</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Matrix products: default</span>
-<span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib</span>
-<span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; locale:</span>
-<span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; attached base packages:</span>
-<span class="co">#&gt; [1] stats4    stats     graphics  grDevices utils     datasets  methods  </span>
-<span class="co">#&gt; [8] base     </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt;  [1] forcats_0.5.1                      stringr_1.4.0                     </span>
-<span class="co">#&gt;  [3] dplyr_1.0.9                        purrr_0.3.4                       </span>
-<span class="co">#&gt;  [5] readr_2.1.2                        tidyr_1.2.0                       </span>
-<span class="co">#&gt;  [7] tibble_3.1.7                       ggplot2_3.3.6                     </span>
-<span class="co">#&gt;  [9] tidyverse_1.3.1                    GenomicFeatures_1.48.3            </span>
-<span class="co">#&gt; [11] AnnotationDbi_1.58.0               Biobase_2.56.0                    </span>
-<span class="co">#&gt; [13] BSgenome.Mmusculus.UCSC.mm10_1.4.3 BSgenome_1.64.0                   </span>
-<span class="co">#&gt; [15] rtracklayer_1.56.0                 GenomicRanges_1.48.0              </span>
-<span class="co">#&gt; [17] Biostrings_2.64.0                  GenomeInfoDb_1.32.2               </span>
-<span class="co">#&gt; [19] XVector_0.36.0                     IRanges_2.30.0                    </span>
-<span class="co">#&gt; [21] S4Vectors_0.34.0                   AnnotationHub_3.4.0               </span>
-<span class="co">#&gt; [23] BiocFileCache_2.4.0                dbplyr_2.2.0                      </span>
-<span class="co">#&gt; [25] BiocGenerics_0.42.0                factR_0.99.6                      </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;   [1] colorspace_2.0-3              rjson_0.2.21                 </span>
-<span class="co">#&gt;   [3] ellipsis_0.3.2                rprojroot_2.0.3              </span>
-<span class="co">#&gt;   [5] fs_1.5.2                      rstudioapi_0.13              </span>
-<span class="co">#&gt;   [7] farver_2.1.0                  bit64_4.0.5                  </span>
-<span class="co">#&gt;   [9] interactiveDisplayBase_1.34.0 fansi_1.0.3                  </span>
-<span class="co">#&gt;  [11] lubridate_1.8.0               xml2_1.3.3                   </span>
-<span class="co">#&gt;  [13] cachem_1.0.6                  knitr_1.39                   </span>
-<span class="co">#&gt;  [15] jsonlite_1.8.0                wiggleplotr_1.20.0           </span>
-<span class="co">#&gt;  [17] Rsamtools_2.12.0              broom_0.8.0                  </span>
-<span class="co">#&gt;  [19] png_0.1-7                     shiny_1.7.1                  </span>
-<span class="co">#&gt;  [21] BiocManager_1.30.18           compiler_4.2.0               </span>
-<span class="co">#&gt;  [23] httr_1.4.3                    backports_1.4.1              </span>
-<span class="co">#&gt;  [25] assertthat_0.2.1              Matrix_1.4-1                 </span>
-<span class="co">#&gt;  [27] fastmap_1.1.0                 cli_3.3.0                    </span>
-<span class="co">#&gt;  [29] later_1.3.0                   htmltools_0.5.2              </span>
-<span class="co">#&gt;  [31] prettyunits_1.1.1             tools_4.2.0                  </span>
-<span class="co">#&gt;  [33] gtable_0.3.0                  glue_1.6.2                   </span>
-<span class="co">#&gt;  [35] GenomeInfoDbData_1.2.8        rappdirs_0.3.3               </span>
-<span class="co">#&gt;  [37] Rcpp_1.0.8.3                  cellranger_1.1.0             </span>
-<span class="co">#&gt;  [39] jquerylib_0.1.4               pkgdown_2.0.3                </span>
-<span class="co">#&gt;  [41] vctrs_0.4.1                   xfun_0.31                    </span>
-<span class="co">#&gt;  [43] rvest_1.0.2                   mime_0.12                    </span>
-<span class="co">#&gt;  [45] lifecycle_1.0.1               restfulr_0.0.14              </span>
-<span class="co">#&gt;  [47] XML_3.99-0.9                  zlibbioc_1.42.0              </span>
-<span class="co">#&gt;  [49] scales_1.2.0                  ragg_1.2.2                   </span>
-<span class="co">#&gt;  [51] hms_1.1.1                     promises_1.2.0.1             </span>
-<span class="co">#&gt;  [53] MatrixGenerics_1.8.0          parallel_4.2.0               </span>
-<span class="co">#&gt;  [55] SummarizedExperiment_1.26.1   yaml_2.3.5                   </span>
-<span class="co">#&gt;  [57] curl_4.3.2                    pbapply_1.5-0                </span>
-<span class="co">#&gt;  [59] memoise_2.0.1                 sass_0.4.1                   </span>
-<span class="co">#&gt;  [61] biomaRt_2.52.0                stringi_1.7.6                </span>
-<span class="co">#&gt;  [63] RSQLite_2.2.14                highr_0.9                    </span>
-<span class="co">#&gt;  [65] BiocVersion_3.15.2            BiocIO_1.6.0                 </span>
-<span class="co">#&gt;  [67] desc_1.4.1                    filelock_1.0.2               </span>
-<span class="co">#&gt;  [69] BiocParallel_1.30.2           rlang_1.0.2                  </span>
-<span class="co">#&gt;  [71] pkgconfig_2.0.3               systemfonts_1.0.4            </span>
-<span class="co">#&gt;  [73] matrixStats_0.62.0            bitops_1.0-7                 </span>
-<span class="co">#&gt;  [75] evaluate_0.15                 lattice_0.20-45              </span>
-<span class="co">#&gt;  [77] labeling_0.4.2                patchwork_1.1.1              </span>
-<span class="co">#&gt;  [79] GenomicAlignments_1.32.0      bit_4.0.4                    </span>
-<span class="co">#&gt;  [81] tidyselect_1.1.2              magrittr_2.0.3               </span>
-<span class="co">#&gt;  [83] R6_2.5.1                      generics_0.1.2               </span>
-<span class="co">#&gt;  [85] DelayedArray_0.22.0           DBI_1.1.2                    </span>
-<span class="co">#&gt;  [87] withr_2.5.0                   pillar_1.7.0                 </span>
-<span class="co">#&gt;  [89] haven_2.5.0                   KEGGREST_1.36.0              </span>
-<span class="co">#&gt;  [91] RCurl_1.98-1.6                modelr_0.1.8                 </span>
-<span class="co">#&gt;  [93] crayon_1.5.1                  utf8_1.2.2                   </span>
-<span class="co">#&gt;  [95] tzdb_0.3.0                    rmarkdown_2.14               </span>
-<span class="co">#&gt;  [97] progress_1.2.2                readxl_1.4.0                 </span>
-<span class="co">#&gt;  [99] grid_4.2.0                    data.table_1.14.2            </span>
-<span class="co">#&gt;  [ reached getOption("max.print") -- omitted 8 entries ]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; R version 4.2.1 (2022-06-23)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span></span>
+<span><span class="co">#&gt; Running under: macOS Big Sur ... 10.16</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib</span></span>
+<span><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats4    stats     graphics  grDevices utils     datasets  methods  </span></span>
+<span><span class="co">#&gt; [8] base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt;  [1] forcats_0.5.1                      stringr_1.4.0                     </span></span>
+<span><span class="co">#&gt;  [3] dplyr_1.0.9                        purrr_0.3.4                       </span></span>
+<span><span class="co">#&gt;  [5] readr_2.1.2                        tidyr_1.2.0                       </span></span>
+<span><span class="co">#&gt;  [7] tibble_3.1.7                       ggplot2_3.3.6                     </span></span>
+<span><span class="co">#&gt;  [9] tidyverse_1.3.1                    GenomicFeatures_1.48.3            </span></span>
+<span><span class="co">#&gt; [11] AnnotationDbi_1.58.0               Biobase_2.56.0                    </span></span>
+<span><span class="co">#&gt; [13] BSgenome.Mmusculus.UCSC.mm10_1.4.3 BSgenome_1.64.0                   </span></span>
+<span><span class="co">#&gt; [15] rtracklayer_1.56.1                 GenomicRanges_1.48.0              </span></span>
+<span><span class="co">#&gt; [17] Biostrings_2.64.0                  GenomeInfoDb_1.32.2               </span></span>
+<span><span class="co">#&gt; [19] XVector_0.36.0                     IRanges_2.30.0                    </span></span>
+<span><span class="co">#&gt; [21] S4Vectors_0.34.0                   AnnotationHub_3.4.0               </span></span>
+<span><span class="co">#&gt; [23] BiocFileCache_2.4.0                dbplyr_2.2.1                      </span></span>
+<span><span class="co">#&gt; [25] BiocGenerics_0.42.0                factR_0.99.6                      </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;   [1] colorspace_2.0-3              rjson_0.2.21                 </span></span>
+<span><span class="co">#&gt;   [3] ellipsis_0.3.2                rprojroot_2.0.3              </span></span>
+<span><span class="co">#&gt;   [5] fs_1.5.2                      rstudioapi_0.13              </span></span>
+<span><span class="co">#&gt;   [7] farver_2.1.0                  bit64_4.0.5                  </span></span>
+<span><span class="co">#&gt;   [9] lubridate_1.8.0               interactiveDisplayBase_1.34.0</span></span>
+<span><span class="co">#&gt;  [11] fansi_1.0.3                   xml2_1.3.3                   </span></span>
+<span><span class="co">#&gt;  [13] codetools_0.2-18              cachem_1.0.6                 </span></span>
+<span><span class="co">#&gt;  [15] knitr_1.39                    jsonlite_1.8.0               </span></span>
+<span><span class="co">#&gt;  [17] wiggleplotr_1.20.0            Rsamtools_2.12.0             </span></span>
+<span><span class="co">#&gt;  [19] broom_0.8.0                   png_0.1-7                    </span></span>
+<span><span class="co">#&gt;  [21] shiny_1.7.1                   BiocManager_1.30.18          </span></span>
+<span><span class="co">#&gt;  [23] compiler_4.2.1                httr_1.4.3                   </span></span>
+<span><span class="co">#&gt;  [25] backports_1.4.1               assertthat_0.2.1             </span></span>
+<span><span class="co">#&gt;  [27] Matrix_1.4-1                  fastmap_1.1.0                </span></span>
+<span><span class="co">#&gt;  [29] cli_3.3.0                     later_1.3.0                  </span></span>
+<span><span class="co">#&gt;  [31] htmltools_0.5.2               prettyunits_1.1.1            </span></span>
+<span><span class="co">#&gt;  [33] tools_4.2.1                   gtable_0.3.0                 </span></span>
+<span><span class="co">#&gt;  [35] glue_1.6.2                    GenomeInfoDbData_1.2.8       </span></span>
+<span><span class="co">#&gt;  [37] rappdirs_0.3.3                Rcpp_1.0.8.3                 </span></span>
+<span><span class="co">#&gt;  [39] cellranger_1.1.0              jquerylib_0.1.4              </span></span>
+<span><span class="co">#&gt;  [41] pkgdown_2.0.5                 vctrs_0.4.1                  </span></span>
+<span><span class="co">#&gt;  [43] xfun_0.31                     rvest_1.0.2                  </span></span>
+<span><span class="co">#&gt;  [45] mime_0.12                     lifecycle_1.0.1              </span></span>
+<span><span class="co">#&gt;  [47] restfulr_0.0.15               XML_3.99-0.10                </span></span>
+<span><span class="co">#&gt;  [49] zlibbioc_1.42.0               scales_1.2.0                 </span></span>
+<span><span class="co">#&gt;  [51] ragg_1.2.2                    hms_1.1.1                    </span></span>
+<span><span class="co">#&gt;  [53] promises_1.2.0.1              MatrixGenerics_1.8.1         </span></span>
+<span><span class="co">#&gt;  [55] parallel_4.2.1                SummarizedExperiment_1.26.1  </span></span>
+<span><span class="co">#&gt;  [57] yaml_2.3.5                    curl_4.3.2                   </span></span>
+<span><span class="co">#&gt;  [59] pbapply_1.5-0                 memoise_2.0.1                </span></span>
+<span><span class="co">#&gt;  [61] sass_0.4.1                    biomaRt_2.52.0               </span></span>
+<span><span class="co">#&gt;  [63] stringi_1.7.6                 RSQLite_2.2.14               </span></span>
+<span><span class="co">#&gt;  [65] highr_0.9                     BiocVersion_3.15.2           </span></span>
+<span><span class="co">#&gt;  [67] BiocIO_1.6.0                  desc_1.4.1                   </span></span>
+<span><span class="co">#&gt;  [69] filelock_1.0.2                BiocParallel_1.30.3          </span></span>
+<span><span class="co">#&gt;  [71] rlang_1.0.3                   pkgconfig_2.0.3              </span></span>
+<span><span class="co">#&gt;  [73] systemfonts_1.0.4             matrixStats_0.62.0           </span></span>
+<span><span class="co">#&gt;  [75] bitops_1.0-7                  evaluate_0.15                </span></span>
+<span><span class="co">#&gt;  [77] lattice_0.20-45               labeling_0.4.2               </span></span>
+<span><span class="co">#&gt;  [79] patchwork_1.1.1               GenomicAlignments_1.32.0     </span></span>
+<span><span class="co">#&gt;  [81] bit_4.0.4                     tidyselect_1.1.2             </span></span>
+<span><span class="co">#&gt;  [83] magrittr_2.0.3                R6_2.5.1                     </span></span>
+<span><span class="co">#&gt;  [85] generics_0.1.2                DelayedArray_0.22.0          </span></span>
+<span><span class="co">#&gt;  [87] DBI_1.1.3                     withr_2.5.0                  </span></span>
+<span><span class="co">#&gt;  [89] pillar_1.7.0                  haven_2.5.0                  </span></span>
+<span><span class="co">#&gt;  [91] KEGGREST_1.36.2               RCurl_1.98-1.7               </span></span>
+<span><span class="co">#&gt;  [93] modelr_0.1.8                  crayon_1.5.1                 </span></span>
+<span><span class="co">#&gt;  [95] utf8_1.2.2                    tzdb_0.3.0                   </span></span>
+<span><span class="co">#&gt;  [97] rmarkdown_2.14                progress_1.2.2               </span></span>
+<span><span class="co">#&gt;  [99] readxl_1.4.0                  grid_4.2.1                   </span></span>
+<span><span class="co">#&gt;  [ reached getOption("max.print") -- omitted 9 entries ]</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -620,7 +596,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>
