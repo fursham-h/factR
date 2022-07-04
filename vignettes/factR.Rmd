@@ -180,7 +180,7 @@ reference annotation as guide. Below, we describe two alternative ways to
 obtain mouse reference transcriptome data from GENCODE.  
   
 1. Using *AnnotationHub* package  
-```{r load.gencode, eval = FALSE}  
+```{r load.gencode, eval = TRUE}  
 # query database for mouse gencode basic annotation  
 library(AnnotationHub)  
 ah <- AnnotationHub()  

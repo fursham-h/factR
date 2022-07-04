@@ -1,6 +1,6 @@
-# factR 1.0.0
+# factR 0.99.7
 
-* factR is now on Bioconductor!
+* Fixed vignette for build
 
 # factR 0.99.6
 
