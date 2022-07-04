@@ -1,3 +1,7 @@
+# factR 1.0.0
+
+* factR is now on Bioconductor!
+
 # factR 0.99.6
 
 * Corrected Roxygen documentation for `has_consistentSeqlevels`
