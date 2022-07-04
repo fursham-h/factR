@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.7</span>
       </span>
     </div>
 
@@ -249,10 +249,34 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <code class="sourceCode R"><span><span class="co"># query database for mouse gencode basic annotation  </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">AnnotationHub</span><span class="op">)</span>  </span>
 <span><span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; snapshotDate(): 2022-04-21</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">query</a></span><span class="op">(</span><span class="va">ah</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Mus musculus'</span>, <span class="st">'gencode'</span>, <span class="st">'gff'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; AnnotationHub with 9 records</span></span>
+<span><span class="co">#&gt; # snapshotDate(): 2022-04-21</span></span>
+<span><span class="co">#&gt; # $dataprovider: Gencode</span></span>
+<span><span class="co">#&gt; # $species: Mus musculus</span></span>
+<span><span class="co">#&gt; # $rdataclass: GRanges</span></span>
+<span><span class="co">#&gt; # additional mcols(): taxonomyid, genome, description,</span></span>
+<span><span class="co">#&gt; #   coordinate_1_based, maintainer, rdatadateadded, preparerclass, tags,</span></span>
+<span><span class="co">#&gt; #   rdatapath, sourceurl, sourcetype </span></span>
+<span><span class="co">#&gt; # retrieve records with, e.g., 'object[["AH49545"]]' </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;             title                                                    </span></span>
+<span><span class="co">#&gt;   AH49545 | gencode.vM6.2wayconspseudos.gff3.gz                      </span></span>
+<span><span class="co">#&gt;   AH49546 | gencode.vM6.annotation.gff3.gz                           </span></span>
+<span><span class="co">#&gt;   AH49547 | gencode.vM6.basic.annotation.gff3.gz                     </span></span>
+<span><span class="co">#&gt;   AH49548 | gencode.vM6.chr_patch_hapl_scaff.annotation.gff3.gz      </span></span>
+<span><span class="co">#&gt;   AH49549 | gencode.vM6.chr_patch_hapl_scaff.basic.annotation.gff3.gz</span></span>
+<span><span class="co">#&gt;   AH49550 | gencode.vM6.long_noncoding_RNAs.gff3.gz                  </span></span>
+<span><span class="co">#&gt;   AH49551 | gencode.vM6.polyAs.gff3.gz                               </span></span>
+<span><span class="co">#&gt;   AH49552 | gencode.vM6.primary_assembly.annotation.gff3.gz          </span></span>
+<span><span class="co">#&gt;   AH49553 | gencode.vM6.tRNAs.gff3.gz</span></span>
 <span>  </span>
 <span><span class="co"># Download full annotation  </span></span>
-<span><span class="va">ref.gtf</span> <span class="op">&lt;-</span> <span class="va">ah</span><span class="op">[[</span><span class="st">'AH49546'</span><span class="op">]</span><span class="op">]</span>  </span></code></pre></div>
+<span><span class="va">ref.gtf</span> <span class="op">&lt;-</span> <span class="va">ah</span><span class="op">[[</span><span class="st">'AH49546'</span><span class="op">]</span><span class="op">]</span>  </span>
+<span><span class="co">#&gt; downloading 1 resources</span></span>
+<span><span class="co">#&gt; retrieving 1 resource</span></span>
+<span><span class="co">#&gt; loading from cache</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Downloading from a GENCODE database (ref.gtf generated from this method will be used for the remaining of the workflow)</li>
 </ol>
@@ -501,7 +525,7 @@ Users may alternatively prepare their own GTF files making sure that these conta
 <span><span class="co">#&gt; [19] XVector_0.36.0                     IRanges_2.30.0                    </span></span>
 <span><span class="co">#&gt; [21] S4Vectors_0.34.0                   AnnotationHub_3.4.0               </span></span>
 <span><span class="co">#&gt; [23] BiocFileCache_2.4.0                dbplyr_2.2.1                      </span></span>
-<span><span class="co">#&gt; [25] BiocGenerics_0.42.0                factR_1.0.0                       </span></span>
+<span><span class="co">#&gt; [25] BiocGenerics_0.42.0                factR_0.99.7                      </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;   [1] colorspace_2.0-3              rjson_0.2.21                 </span></span>
