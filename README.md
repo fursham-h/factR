@@ -37,7 +37,7 @@ BiocManager::install("factR")
 Alternatively, you may install the development version of *factR* using devtools:
 ```r
 # install.packages("devtools")
-devtools::install_github("fursham-h/factR", ref = "dev")
+devtools::install_github("fursham-h/factR")
 ```
 
 ## Getting started
@@ -50,7 +50,10 @@ resources for *wiggleplotr* and for valuable discussions on the design
 of the package.
 
 ## Citing factR
-Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2022); Functional annotation of custom transcriptomes; Methods in Molecular Biology
+Please cite the following references if you use factR:
+
+1. Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2022); Functional annotation of custom transcriptomes; Methods in Molecular Biology
+2. [Fursham Hamid (2022); Functional Annotation of Custom Transcriptomes; Bioconductor](https://doi.org/doi:10.18129/B9.bioc.factR)
 
 
 
