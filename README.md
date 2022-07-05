@@ -53,7 +53,7 @@ of the package.
 Please cite the following references if you use factR:
 
 1. Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2022); Functional annotation of custom transcriptomes; Methods in Molecular Biology
-2. [Fursham Hamid (2022); Functional Annotation of Custom Transcriptomes; Bioconductor](https://doi.org/doi:10.18129/B9.bioc.factR)
+2. [Fursham Hamid (2022); Functional Annotation of Custom Transcriptomes; Bioconductor](https://bioconductor.org/packages/devel/bioc/html/factR.html )
 
 
 
