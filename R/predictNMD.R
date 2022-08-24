@@ -187,7 +187,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
         pbo <- pbapply::pboptions(type = "none")
         on.exit(pbapply::pboptions(pbo), add = TRUE)
     }
-
+    cat("    ")
     out <- dplyr::bind_rows(out, pbapply::pblapply(EJtoStop, function(x) {
         id <- ifelse(!is.null(names(x)), names(x)[1], "transcript")
         x <- sort(x, decreasing = TRUE)
@@ -235,9 +235,9 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
     if (length(txwithcds) < length(totest)) {
         totest <- txwithcds
     }
-    rlang::inform(sprintf(
-        "Predicting NMD sensitivities for %s mRNAs",
+    rlang::inform(italic(sprintf(
+        "    Predicting NMD sensitivities for %s mRNAs",
         length(totest)
-    ))
+    )))
     return(totest)
 }

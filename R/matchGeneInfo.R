@@ -87,8 +87,8 @@ matchGeneInfo <- function(query, ref,
         dplyr::distinct(gene_id, .keep_all = TRUE) %>%
         dplyr::filter(is.na(matched)) %>%
         nrow()
-    rlang::inform(sprintf("Number of mismatched gene_ids found: %s", 
-                          nonstand_before))
+    rlang::inform(italic(sprintf("    Number of mismatched gene_ids found: %s", 
+                          nonstand_before)))
     
     
     ###########################################################################
@@ -154,10 +154,10 @@ Try running: %s <- matchChromosomes(%s, %s)",
     
     # proceed with matching only if there are unmatched gene ids
     if (countsbefore > 0) {
-        rlang::inform(sprintf(
-            "-> Attempting to correct gene ids by replacing %s with %s...",
+        rlang::inform(italic(sprintf(
+            "    -> Attempting to correct gene ids by replacing %s with %s...",
             primary_gene_id, secondary_gene_id
-        ))
+        )))
         
         # prepare a df with a list of gene_ids found in reference
         ref.genelist.1 <- ref %>%
@@ -197,10 +197,10 @@ Try running: %s <- matchChromosomes(%s, %s)",
         } 
         
         # report number of IDs corrected
-        rlang::inform(sprintf(
-            "-> %s gene_ids matched",
+        rlang::inform(italic(sprintf(
+            "    -> %s gene_ids matched",
             (countsbefore - countsafter)
-        ))
+        )))
     }
     return(query)
 }
@@ -217,7 +217,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     
     # proceed with matching only if there are unmatched gene ids
     if (countsbefore > 0) {
-        rlang::inform("--> Attempting to match ensembl gene_ids...")
+        rlang::inform(italic("    --> Attempting to match ensembl gene_ids..."))
         # prepare a df with a list of reference gene_ids and append 
         # ENSEMBL style ids to remove suffixes
         ref.genelist.2 <- ref %>%
@@ -267,8 +267,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
         # print out statistics of the match
         #   or print out warning if none of the genes were matched
         if (countsbefore > countsafter) {
-            rlang::inform(sprintf("--> %s gene_ids matched", 
-                                  (countsbefore - countsafter)))
+            rlang::inform(italic(sprintf("    --> %s gene_ids matched", 
+                                  (countsbefore - countsafter))))
         } else {
             anyEnsid <- query %>%
                 dplyr::select(gene_id) %>%
@@ -277,9 +277,11 @@ Try running: %s <- matchChromosomes(%s, %s)",
                 nrow() > 0
             
             if (anyEnsid == TRUE) {
-                rlang::inform("--> All ensembl gene ids have been matched")
+                rlang::inform(italic(
+                    "    --> All ensembl gene ids have been matched"))
             } else {
-                rlang::inform("--> No ensembl gene ids found in query")
+                rlang::inform(italic(
+                    "    --> No ensembl gene ids found in query"))
             }
         }
     }
@@ -301,10 +303,10 @@ Try running: %s <- matchChromosomes(%s, %s)",
         nrow()
     
     if (countsbefore == 0) {
-        rlang::inform("--> All gene ids have been matched")
+        rlang::inform(italic("    --> All gene ids have been matched"))
     } else {
-        rlang::inform(paste0("---> Attempting to match gene_ids by" ,
-                             " finding overlapping coordinates..."))
+        rlang::inform(italic(paste0("    ---> Attempting to match gene_ids by" ,
+                             " finding overlapping coordinates...")))
         # core of the function.
         #   this function will gather all unmatched transcripts
         #   and attempt to find its overlap with the reference
@@ -344,8 +346,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
         
         
         # report statistics of the match
-        rlang::inform(sprintf("---> %s gene_id matched", 
-                              (countsbefore - countsafter)))
+        rlang::inform(italic(sprintf("    ---> %s gene_id matched", 
+                              (countsbefore - countsafter))))
     }
     return(query)
 }
@@ -380,9 +382,9 @@ Try running: %s <- matchChromosomes(%s, %s)",
         nrow()
     corrected_ids <- nonstand_before - nonstand_after
     
-    rlang::inform(sprintf("Total gene_ids corrected: %s", corrected_ids))
-    rlang::inform(sprintf("Remaining number of mismatched gene_ids: %s", 
-                          nonstand_after))
+    rlang::inform(italic(sprintf("    Total gene_ids corrected: %s", corrected_ids)))
+    rlang::inform(italic(sprintf("    Remaining number of mismatched gene_ids: %s", 
+                          nonstand_after)))
     
     query <- GenomicRanges::makeGRangesFromDataFrame(query, 
                                                      keep.extra.columns = TRUE)

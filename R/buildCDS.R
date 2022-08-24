@@ -114,7 +114,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     query <- query[BiocGenerics::strand(query) != "*"]
 
     # Create lists of cds and exons
-    rlang::inform("Searching for reference mRNAs in query")
+    rlang::inform(italic("    Searching for reference mRNAs in query"))
     query_exons <- S4Vectors::split(query[query$type == "exon"], ~transcript_id)
     ref_cds <- S4Vectors::split(ref[ref$type == "CDS"], ~transcript_id)
     ref_exons <- S4Vectors::split(ref[ref$type == "exon"], ~transcript_id)
@@ -155,8 +155,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
     # run .getCDS function for remaining transcripts
     if (length(order_query) > 0) {
         restoutCDS <- .getCDS(order_query, order_ref, fasta)
-        rlang::inform(sprintf("%s new CDSs constructed",
-                              length(unique(restoutCDS$transcript_id))))
+        rlang::inform(italic(sprintf("    %s new CDSs constructed",
+                              length(unique(restoutCDS$transcript_id)))))
     } else {
         restoutCDS <- NULL
     }
@@ -171,20 +171,20 @@ Try running: %s <- matchChromosomes(%s, %s)",
             dplyr::left_join(genelist, by = "transcript_id")
 
         successtx <- length(unique(outCDS$transcript_id))
-        message(sprintf(
-            "\nSummary: Out of %s transcripts in `%s`, 
-            %s transcript CDSs were built",
+        rlang::inform(italic(sprintf(
+            paste0("\n    Summary: Out of %s transcripts in `%s`,\n", 
+                   "    %s transcript CDSs were built"),
             totaltx, argnames[1], successtx
-        ))
+        )))
         return(GenomicRanges::makeGRangesFromDataFrame(outCDS,
             keep.extra.columns = TRUE
         ))
     } else {
-        rlang::inform(sprintf(
-            "\nSummary: Out of %s transcripts in `%s`, 
-            none transcript CDSs were built",
+        rlang::inform(italic(sprintf(
+            paste0("\n    Summary: Out of %s transcripts in `%s`,\n", 
+                   "    no CDSs were built"),
             totaltx, argnames[1]
-        ))
+        )))
         return(NULL)
     }
 }
@@ -212,17 +212,17 @@ Try running: %s <- matchChromosomes(%s, %s)",
     
     # report known mRNAs
     if (nrow(q2r) > 0) {
-        rlang::inform(sprintf(
-            "%s reference mRNAs found and its CDS were assigned",
-                              nrow(q2r)))
+        rlang::inform(italic(sprintf(
+            "    %s reference mRNAs found and its CDS were assigned",
+                              nrow(q2r))))
     } else {
-        rlang::inform("No reference mRNAs found")
+        rlang::inform(italic("    No reference mRNAs found"))
     }
     
 
     # search for first ATG overlap for non-exact transcripts
     if (nrow(q2r) < length(query_exons)) {
-        rlang::inform("Building database of annotated ATG codons")
+        rlang::inform(italic("    Building database of annotated ATG codons"))
         nonexact <- query_exons[!names(query_exons) %in% q2r$transcript_id]
         subsetRef <- IRanges::subsetByOverlaps(ref, nonexact)
 
@@ -256,7 +256,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
                                %in% GenomeInfoDb::seqlevels(fasta)]
 
         # further trim exons to only retain ATG codon
-        codons_seq <-  BSgenome::getSeq(fasta, codons_gr)
+        codons_seq <-  suppressWarnings(BSgenome::getSeq(fasta, codons_gr))
 
         
         startMatch <- Biostrings::vmatchPattern("ATG", codons_seq) %>%
@@ -271,8 +271,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
         codons_gr <- GenomicRanges::resize(codons_gr, width = 3, fix = "start")
 
         # select up-stream most ATG codon for remaining transcripts
-        rlang::inform(paste0("Selecting best ATG start codon for remaining ",
-        "transcripts and determining open-reading frame"))
+        rlang::inform(italic(paste0("    Selecting best ATG start codon for remaining ",
+        "transcripts and determining open-reading frame")))
         firstATGoverlap <-  GenomicRanges::findOverlaps(nonexact, 
                                                        codons_gr, 
                                                        minoverlap = 3, 
