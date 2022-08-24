@@ -23,6 +23,7 @@
 #' @importFrom stats dist end start offset
 #' @importFrom utils head tail
 #' @importFrom rlang .data
+#' @importFrom crayon italic
 #'
 #' @examples
 #' ## ---------------------------------------------------------------------

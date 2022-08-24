@@ -4,7 +4,7 @@
 \alias{predictDomains}
 \title{Predict protein domain families from coding transcripts}
 \usage{
-predictDomains(x, fasta, ..., plot = FALSE, progress_bar = FALSE)
+predictDomains(x, fasta, ..., plot = FALSE, progress_bar = FALSE, ncores = 4)
 }
 \arguments{
 \item{x}{Can be a GRanges object containing 'CDS' features in GTF format
@@ -41,13 +41,13 @@ library(BSgenome.Mmusculus.UCSC.mm10)
 data(new_query_gtf)
 
 # predict domains of all CDSs in query GTF
-predictDomains(new_query_gtf, Mmusculus)
+predictDomains(new_query_gtf, Mmusculus, ncores=1)
 
 # predict domains of CDSs from Ptbp1 gene
-predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1")
+predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1",ncores=1)
 
 # predict domains of CDSs from Ptbp1 gene and plot architecture out
-predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE)
+predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE,ncores=1)
 }
 \author{
 Fursham Hamid

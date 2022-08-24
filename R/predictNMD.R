@@ -235,9 +235,9 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
     if (length(txwithcds) < length(totest)) {
         totest <- txwithcds
     }
-    rlang::inform(sprintf(
-        "Predicting NMD sensitivities for %s mRNAs",
+    rlang::inform(italic(sprintf(
+        "    Predicting NMD sensitivities for %s mRNAs",
         length(totest)
-    ))
+    )))
     return(totest)
 }
