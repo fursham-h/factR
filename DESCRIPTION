@@ -56,7 +56,8 @@ Suggests:
     signalHsmm (>= 1.5),
     tidyverse (>= 1.3),
     covr,
-    patchwork
+    patchwork,
+    crayon
 VignetteBuilder: knitr
 LazyData: FALSE
 BiocType: Software
