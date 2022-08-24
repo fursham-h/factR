@@ -41,7 +41,7 @@ Imports:
 License: file LICENSE
 Encoding: UTF-8
 ByteCompile: true
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Suggests: 
     AnnotationHub (>= 2.22),
     BSgenome (>= 1.58),
