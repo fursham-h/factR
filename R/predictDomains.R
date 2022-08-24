@@ -32,16 +32,17 @@
 #' data(new_query_gtf)
 #'
 #' # predict domains of all CDSs in query GTF
-#' predictDomains(new_query_gtf, Mmusculus)
+#' predictDomains(new_query_gtf, Mmusculus, ncores=1)
 #'
 #' # predict domains of CDSs from Ptbp1 gene
-#' predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1")
+#' predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1",ncores=1)
 #'
 #' # predict domains of CDSs from Ptbp1 gene and plot architecture out
-#' predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE)
+#' predictDomains(new_query_gtf, Mmusculus, gene_name == "Ptbp1", plot = TRUE,ncores=1)
 #' @author Fursham Hamid
 #' @export
-predictDomains <- function(x, fasta, ..., plot = FALSE, progress_bar = FALSE) {
+predictDomains <- function(x, fasta, ..., plot = FALSE, 
+                           progress_bar = FALSE, ncores = 4) {
 
     # catch missing args
     mandargs <- c("x", "fasta")
@@ -63,7 +64,7 @@ predictDomains <- function(x, fasta, ..., plot = FALSE, progress_bar = FALSE) {
     # get sequence
     aaSeq <- .getSequence(cds, fasta)
 
-    output_table <- .runDomainSearch(aaSeq, plot, progress_bar)
+    output_table <- .runDomainSearch(aaSeq, plot, progress_bar, ncores)
 
     return(output_table)
 }
@@ -196,7 +197,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
     return(data)
 }
 
-.runDomainSearch <- function(aaSeq, plot, progress_bar) {
+.runDomainSearch <- function(aaSeq, plot, progress_bar, ncores) {
     type <- entryName <- description <- begin <- id <- NULL
 
     # prepare URL
@@ -231,7 +232,8 @@ Try running: %s <- matchChromosomes(%s, %s)",
                                entryName = aaSeq[y, ]$id)
             ))
         }
-    }, BPPARAM = BiocParallel::MulticoreParam(progressbar = progress_bar)) %>%
+    }, BPPARAM = BiocParallel::MulticoreParam(progressbar = progress_bar,
+                                              workers = ncores)) %>%
         dplyr::bind_rows()
 
     # plot protein domains if requested
