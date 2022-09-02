@@ -17,6 +17,8 @@
 #' @param progress_bar
 #' Argument whether to show progress bar (Default: FALSE). Useful to track
 #' progress of predicting a long list of proteins.
+#' @param ncores
+#' Number of cores to utilise to perform prediction
 #'
 #' @return
 #' Dataframe containing protein features for each cds entry

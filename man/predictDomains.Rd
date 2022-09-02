@@ -23,6 +23,8 @@ Note: only first 20 proteins will be plotted}
 
 \item{progress_bar}{Argument whether to show progress bar (Default: FALSE). Useful to track
 progress of predicting a long list of proteins.}
+
+\item{ncores}{Number of cores to utilise to perform prediction}
 }
 \value{
 Dataframe containing protein features for each cds entry
