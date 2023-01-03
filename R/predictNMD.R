@@ -188,6 +188,8 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
         dplyr::select()
     StopCoord <- trimTranscripts(y, end = -3)
     StopCoord <- trimTranscripts(StopCoord, sum(BiocGenerics::width(y)))
+    StopCoordString <- paste0(as.character(seqnames(unlist(StopCoord))), ":",
+                              BiocGenerics::start(unlist(StopCoord)))
     
     # switch off progress_bar if requested
     if(!progress_bar) {
