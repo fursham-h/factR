@@ -185,7 +185,7 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
     
     StopCoord <- trimTranscripts(y, end = -3)
     StopCoord <- trimTranscripts(StopCoord, sum(BiocGenerics::width(y)))
-    StopCoordString <- paste0(as.character(seqnames(unlist(StopCoord))), ":",
+    StopCoordString <- paste0(as.character(GenomeInfoDb::seqnames(unlist(StopCoord))), ":",
                               BiocGenerics::start(unlist(StopCoord)))
     
     # switch off progress_bar if requested
