@@ -217,6 +217,9 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
         ))
     }) %>% dplyr::bind_rows() %>%
         tidyr::replace_na(list(is_NMD = FALSE)))
+    
+    out$PTC_coord <- ifelse(out$is_NMD, StopCoordString, out$PTC_coord)
+    
     return(out)
 }
 
