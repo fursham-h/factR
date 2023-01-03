@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">factR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
       </span>
     </div>
 
@@ -166,56 +166,56 @@ that the last EJ is downstream of the stop_codon.</p>
 <span class="r-in"><span><span class="co">## Using GTF GRanges as input</span></span></span>
 <span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">new_query_gtf</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">    Predicting NMD sensitivities for 4 mRNAs</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript1           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> transcript2           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>497 FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> transcript3            364              3            644 TRUE  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> transcript4           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>085 FALSE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD PTC_coord     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript1           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE  <span style="color: #BB0000;">NA</span>            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> transcript2           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>497 FALSE  <span style="color: #BB0000;">NA</span>            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> transcript3            364              3            644 TRUE   chr10:79862473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> transcript4           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>085 FALSE  <span style="color: #BB0000;">NA</span>            </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Transcripts for analysis can be subsetted using logical conditions</span></span></span>
 <span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">new_query_gtf</span>, <span class="va">transcript_id</span> <span class="op">==</span> <span class="st">"transcript1"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">    Predicting NMD sensitivities for 1 mRNAs</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD PTC_coord</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE  <span style="color: #BB0000;">NA</span>       </span>
 <span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">new_query_gtf</span>, </span></span>
 <span class="r-in"><span><span class="va">transcript_id</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"transcript1"</span>, <span class="st">"transcript3"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">    Predicting NMD sensitivities for 2 mRNAs</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript1           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> transcript3            364              3            644 TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD PTC_coord     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript1           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE  <span style="color: #BB0000;">NA</span>            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> transcript3            364              3            644 TRUE   chr10:79862473</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Using exon and CDS GRangesLists as input</span></span></span>
 <span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">query_exons</span>, cds <span class="op">=</span> <span class="va">query_cds</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">    Predicting NMD sensitivities for 4 mRNAs</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript1           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> transcript2           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>497 FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> transcript3            364              3            644 TRUE  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> transcript4           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>085 FALSE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript  stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD PTC_coord     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript1           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE  <span style="color: #BB0000;">NA</span>            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> transcript2           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>497 FALSE  <span style="color: #BB0000;">NA</span>            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> transcript3            364              3            644 TRUE   chr10:79862473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> transcript4           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>085 FALSE  <span style="color: #BB0000;">NA</span>            </span>
 <span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">query_exons</span>, cds <span class="op">=</span> <span class="va">query_cds</span>, <span class="va">transcript_id</span> <span class="op">==</span> <span class="st">"transcript3"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">    Predicting NMD sensitivities for 1 mRNAs</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript            364              3            644 TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD PTC_coord     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript            364              3            644 TRUE   chr10:79862473</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Using exon and CDS GRanges as input</span></span></span>
 <span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">query_exons</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, cds <span class="op">=</span> <span class="va">query_cds</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">    Predicting NMD sensitivities for 1 mRNAs</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript            364              3            644 TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD PTC_coord     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> transcript            364              3            644 TRUE   chr10:79862473</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
@@ -234,7 +234,7 @@ that the last EJ is downstream of the stop_codon.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Retrieve GRCm38 trancript annotation</span></span></span>
 <span class="r-in"><span><span class="va">ah</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationHub/man/AnnotationHub-class.html" class="external-link">AnnotationHub</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> snapshotDate(): 2022-04-25</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> snapshotDate(): 2022-10-31</span>
 <span class="r-in"><span><span class="va">GRCm38_gtf</span> <span class="op">&lt;-</span> <span class="va">ah</span><span class="op">[[</span><span class="st">"AH60127"</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> downloading 1 resources</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> retrieving 1 resource</span>
@@ -254,18 +254,19 @@ that the last EJ is downstream of the stop_codon.</p>
 <span class="r-in"><span><span class="co">## Run tool on specific gene family</span></span></span>
 <span class="r-in"><span><span class="fu">predictNMD</span><span class="op">(</span><span class="va">GRCm38_gtf</span>, <span class="va">gene_name</span> <span class="op">==</span> <span class="st">"Ptbp1"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">    Predicting NMD sensitivities for 9 mRNAs</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript         stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> ENSMUST00000057343            364              3            644 TRUE  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> ENSMUST00000095457           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>085 FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> ENSMUST00000165704           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>497 FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> ENSMUST00000165724            286              2            362 TRUE  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> ENSMUST00000168683           -<span style="color: #BB0000;">145</span>              0              0 FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> ENSMUST00000169091            -<span style="color: #BB0000;">36</span>              0              0 FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> ENSMUST00000169483            139              1            152 TRUE  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> ENSMUST00000171599            -<span style="color: #BB0000;">63</span>              0              0 FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> ENSMUST00000172282           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   transcript         stop_to_lastEJ num_of_downEJs `3'UTR_length` is_NMD PTC_c…¹</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> ENSMUST00000057343            364              3            644 TRUE   10:798…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> ENSMUST00000095457           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>085 FALSE  <span style="color: #BB0000;">NA</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> ENSMUST00000165704           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>497 FALSE  <span style="color: #BB0000;">NA</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> ENSMUST00000165724            286              2            362 TRUE   10:798…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> ENSMUST00000168683           -<span style="color: #BB0000;">145</span>              0              0 FALSE  <span style="color: #BB0000;">NA</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> ENSMUST00000169091            -<span style="color: #BB0000;">36</span>              0              0 FALSE  <span style="color: #BB0000;">NA</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> ENSMUST00000169483            139              1            152 TRUE   10:798…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> ENSMUST00000171599            -<span style="color: #BB0000;">63</span>              0              0 FALSE  <span style="color: #BB0000;">NA</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> ENSMUST00000172282           -<span style="color: #BB0000;">130</span>              0           <span style="text-decoration: underline;">1</span>158 FALSE  <span style="color: #BB0000;">NA</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable name ¹​PTC_coord</span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -282,7 +283,7 @@ that the last EJ is downstream of the stop_codon.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
