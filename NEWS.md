@@ -1,3 +1,11 @@
+# factR 1.1.1
+
+* `predictNMD()` now outputs PTC start coordinate
+
+# factR 1.0.0
+
+* factR is now on Bioconductor!
+
 # factR 0.99.7
 
 * Fixed vignette for build
