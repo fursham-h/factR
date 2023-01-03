@@ -27,7 +27,7 @@ test_that("Test the structure of outputs", {
   expect_equal(names(out1), c(
     "transcript", "stop_to_lastEJ",
     "num_of_downEJs",
-    "3'UTR_length", "is_NMD"
+    "3'UTR_length", "is_NMD", "PTC_Coord"
   ))
   expect_equal(nrow(out1), 4)
 })

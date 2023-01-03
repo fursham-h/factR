@@ -183,9 +183,6 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
         GenomicRanges::pintersect(x, toStopRange)))
     EJtoStop <- cumsum(BiocGenerics::width(x)) - toStopWidth
     
-    toStopRange2 <- toStopRange %<% 
-        as.data.frame() %>%
-        dplyr::select()
     StopCoord <- trimTranscripts(y, end = -3)
     StopCoord <- trimTranscripts(StopCoord, sum(BiocGenerics::width(y)))
     StopCoordString <- paste0(as.character(seqnames(unlist(StopCoord))), ":",
