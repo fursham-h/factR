@@ -183,6 +183,11 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
         GenomicRanges::pintersect(x, toStopRange)))
     EJtoStop <- cumsum(BiocGenerics::width(x)) - toStopWidth
     
+    toStopRange2 <- toStopRange %<% 
+        as.data.frame() %>%
+        dplyr::select()
+    StopCoord <- trimTranscripts(y, sum(BiocGenerics::width(y))-3)
+    
     # switch off progress_bar if requested
     if(!progress_bar) {
         pbo <- pbapply::pboptions(type = "none")
