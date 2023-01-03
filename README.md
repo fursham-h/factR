@@ -27,7 +27,7 @@
   4. Subset new transcripts from custom transcriptome
 
 ## How to install
-The latest stable version can be installed directly from [Bioconductor]():
+The latest stable version can be installed directly from [Bioconductor](https://bioconductor.org/packages/release/bioc/html/factR.html):
 ```r
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
@@ -53,7 +53,7 @@ of the package.
 Please cite the following references if you use factR:
 
 1. Fursham Hamid, Kaur Alasoo, Jaak Vilo, Eugene Makeyev (2022); Functional annotation of custom transcriptomes; Methods in Molecular Biology
-2. [Fursham Hamid (2022); Functional Annotation of Custom Transcriptomes; Bioconductor](https://bioconductor.org/packages/devel/bioc/html/factR.html )
+2. [Fursham Hamid (2022); Functional Annotation of Custom Transcriptomes; Bioconductor](https://bioconductor.org/packages/release/bioc/html/factR.html)
 
 
 
