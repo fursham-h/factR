@@ -163,7 +163,8 @@ predictNMD <- function(x, ..., cds = NULL, NMD_threshold = 50,
         "num_of_downEJs" = as.integer(),
         # "stop_to_downEJs" = as.character(),
         "3'UTR_length" = as.double(),
-        "is_NMD" = as.logical()
+        "is_NMD" = as.logical(),
+        "PTC_coord" = as.character()
     )
 
     toStopRange <- suppressMessages(
