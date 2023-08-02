@@ -224,11 +224,11 @@ Try running: %s <- matchChromosomes(%s, %s)",
             as.data.frame() %>%
             dplyr::select(gene_id) %>%
             dplyr::distinct() %>%
-            dplyr::rowwise() %>%
             dplyr::mutate(matched = TRUE) %>%
             dplyr::mutate(appended_ens_id = ifelse(
                 startsWith(gene_id, "ENS"),
-                strsplit(gene_id, split = "\\.")[[1]][1], NA
+                stringr::str_remove(gene_id, pattern = "\\.[0-9]+$"), 
+                NA
             )) %>%
             dplyr::filter(!is.na(appended_ens_id)) %>%
             dplyr::select(appended_ens_id, basic_gene_id = gene_id, 
@@ -244,7 +244,7 @@ Try running: %s <- matchChromosomes(%s, %s)",
                 dplyr::group_by(transcript_id) %>% 
                 dplyr::mutate(appended_ens_id = ifelse(
                     startsWith(get(primary_gene_id), "ENS") & is.na(matched), 
-                    strsplit(get(primary_gene_id), split = "\\.")[[1]][1],
+                    stringr::str_remove(get(primary_gene_id), pattern = "\\.[0-9]+$"),
                     as.character(NA))) %>%
                 dplyr::left_join(ref.genelist.2) %>%
                 dplyr::mutate(!!primary_gene_id := ifelse(

@@ -1,5 +1,9 @@
 # factR 1.1.1
 
+* Sped up matching of genes by ENS id
+
+# factR 1.1.1
+
 * `predictNMD()` now outputs PTC start coordinate
 
 # factR 1.0.0
